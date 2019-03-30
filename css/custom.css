@@ -1,0 +1,165 @@
+.nocolpadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* @media (max-width: 575.98px) { ... }
+
+
+@media (max-width: 767.98px) { ... }
+
+
+@media (max-width: 991.98px) { ... } */
+
+
+@media (max-width: 1199.98px) { 
+    .profilecard {
+        width: 100%;
+        float: left;
+    }
+    .profileImage {
+        max-height: 10em;
+        max-width: 10em; 
+    }
+    .problock {
+        float: left;
+    }
+}
+
+
+.score-widget-container {
+    background: #FFFFFF;
+    box-shadow: inset 0px 0px 100px rgba(0, 10, 255, 0.8);
+    border-radius: 15px;
+}
+
+.score-widget-main-text {
+
+    left: 0%;
+    right: 0%;
+    top: 20.78%;
+    /*bottom: 27.92%;*/
+    font-size: 3em;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+
+    text-align: center;
+
+    color: #000000;
+}
+
+.score-widget-catagory {
+
+    left: 0%;
+    right: 0%;
+    top: 5%;
+    bottom: 79.22%;
+    font-size: 1.5em;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+
+    text-align: center;
+
+    color: #000000;
+
+}
+
+.score-widget-comparison {
+
+    left: 0%;
+    right: 44.16%;
+    top: 56.49%;
+    bottom: 0%;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+
+    text-align: center;
+
+    color: #000000;
+
+}
+
+img.resize {
+
+    width: auto;
+    height: auto;
+    max-height: 100px;
+    max-width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+
+    /* max-width:85px;
+    max-height:85px;
+    float: left; */
+}
+
+.profileImage {
+    /* float: left;
+    max-height: 14em;
+    max-width: 14em; */
+    width: 100%;
+    overflow: hidden;
+}
+
+.textFact {
+    background-color: lightgrey;
+    border-radius: 10px;
+    height: auto;
+    text-align: center;
+}
+
+
+
+.donutchart {
+    max-height: 16em;
+    position: relative;
+}
+
+.DONUTCANVAS1 {
+    position: absolute;
+    top: 50%;
+    height: 100%;
+    width: 100%;
+    margin: 0 0 0 0;
+}
+
+
+.statcard {
+    text-overflow: clip;
+    padding-top: auto;
+    padding-bottom: auto;
+    overflow: hidden;
+    font-family: 'Bitter', serif;
+}
+
+/* .sidebar {
+    height: 100%;
+} */
+/* 
+.statcard:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.mvpcard:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.profilecard:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+} */
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3);
+    filter: brightness(95%);
+  }
