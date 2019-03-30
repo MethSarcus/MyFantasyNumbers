@@ -103,7 +103,7 @@ $(document).ready(function () {
                     for (i in json.schedule) { //increments through each matchup
                         let curWeek = json.schedule[i];
                         if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod != undefined) { //checks if the roster data is available for scraping
-                            let week = new Week(); //creates a new week object to store stats
+                            let week = new Week(activeLineupSlots); //creates a new week object to store stats
                             week.leagueID = 340734;
                             week.teamID = curWeek.home.teamId;
                             week.weekNumber = q;

@@ -1,5 +1,5 @@
 //Class for containing a members week data
-function Week() {
+function Week(activeLineupSlots) {
     this.leagueID = "";
     this.memberID = "";
     this.teamID = "";
