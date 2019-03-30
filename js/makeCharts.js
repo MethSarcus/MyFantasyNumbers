@@ -88,7 +88,6 @@ function createWeeklyLineCharts(leagueMembers) {
 
 
 function createDonutChart(leagueMember) {
-    //console.log("running");
     var ctx = document.getElementById(leagueMember.teamID + "DONUTCANVAS");
     var data = {
         datasets: [{

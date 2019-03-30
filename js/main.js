@@ -2,7 +2,6 @@ var myLeague;
 var myYear;
 
 $(document).ready(function () {
-    //console.log("running")
     //leagueID = 340734;
     var input = prompt("Please enter ESPN League ID", "2319896");
     var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
@@ -11,7 +10,6 @@ $(document).ready(function () {
 
         //localStorage.clear();
         if (localStorage.getItem(leagueID + "2018")) {
-            //console.log("retrieved json")
             myYear = JSON.parse(localStorage.getItem(leagueID + "2018"));
         } else {
             var league = new League();
@@ -23,13 +21,10 @@ $(document).ready(function () {
             myXhr('get', {
                 path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mTeam'
             }, '').done(function (json) {
-                //console.log("Team Endpoint")
-                //console.log(json);
                 league.id = json.id;
                 year.leagueID = json.id;
                 var teams = json.teams;
                 seasonLength = json.status.finalScoringPeriod;
-                //console.log(seasonLength);
                 for (i in json.members) {
 
                     leagueMember = new LeagueMember();
@@ -55,16 +50,9 @@ $(document).ready(function () {
                             year.members.push(leagueMember);
                         }
                     }
-
-
-
-
-
                 }
             });
 
-
-            //gets league settings
             myXhr('get', {
                 path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mSettings'
             }, '').done(function (json) {
@@ -75,7 +63,6 @@ $(document).ready(function () {
                 year.totalMatchupCount = json.status.finalScoringPeriod;
                 year.lineupSlotCount = Object.entries(json.settings.rosterSettings.lineupSlotCounts);
                 year.leagueName = json.settings.name;
-                //console.log(Object.entries(json.settings.rosterSettings.lineupSlotCounts));
                 for (g in year.lineupSlotCount) {
                     if (year.lineupSlotCount[g][1] == 0) {
                         year.lineupSlotCount.splice(g, 1);
@@ -98,8 +85,6 @@ $(document).ready(function () {
                 }
             });
 
-
-            //console.log(seasonLength);
             //'apis/v3/games/ffl/seasons/2018/segments/0/leagues/340734?view=mMatchupScore&teamId=1&scoringPeriodId=1' for telling if a game is a playoff game
             var activeLineupSlots = [];
             for (a in year.lineupSlotCount) {
@@ -109,43 +94,14 @@ $(document).ready(function () {
                 }
             }
 
-            function Week() {
-                this.leagueID = "";
-                this.memberID = "";
-                this.teamID = "";
-                this.opponentTeamID = "";
-                this.activePlayers = [];
-                this.benchPlayers = [];
-                this.irPlayers = [];
-                this.activeScore = 0;
-                this.benchScore = 0;
-                this.projectedScore = 0;
-                this.weekNumber = "";
-                this.regularSeason = false;
-                this.opponentActiveScore = 0;
-                this.opponentProjectedScore = 0;
-                this.opponentActivePlayers = [];
-                this.opponentBenchPlayers = [];
-                this.optimalLineup = [];
-                this.potentialPoints = 0;
-                this.potentialPointsDifference;
-                this.activeLineupSlots = activeLineupSlots;
-            }
-
-            //console.log(activeLineupSlots);
             for (q = 1; q <= 16; q++) {
-                //console.log("getting players");
-                //console.log(year.leagueID);
+
                 myXhr('get', {
                     path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q
                 }, '').done(function (json) {
-                    //console.log('apis/v3/games/ffl/seasons/' + year.seasonID + '/segments/0/leagues/' + year.leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q);
-                    // console.log("ScoringPeriodID: " + q);
-                    // console.log(json);
 
                     for (i in json.schedule) { //increments through each matchup
                         let curWeek = json.schedule[i];
-                        //console.log(curWeek);
                         if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod != undefined) { //checks if the roster data is available for scraping
                             let week = new Week(); //creates a new week object to store stats
                             week.leagueID = 340734;
@@ -153,8 +109,7 @@ $(document).ready(function () {
                             week.weekNumber = q;
                             week.teamSlots = year.lineupSlotCount;
                             let weekTotalScore = 0;
-                            //week.activeLineupSlots = activeLineupSlots;
-                            //week.activeScore = curWeek.home.totalPoints;
+
                             for (z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
 
                                 let curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
@@ -163,7 +118,7 @@ $(document).ready(function () {
                                 player.firstName = curPlayer.playerPoolEntry.player.firstName;
                                 player.lastName = curPlayer.playerPoolEntry.player.lastName;
                                 player.fullName = curPlayer.playerPoolEntry.player.fullName;
-                                player.actualScore = Math.round((curPlayer.playerPoolEntry.appliedStatTotal) * 100) / 100;
+                                player.actualScore = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
                                 weekTotalScore += player.actualScore;
                                 //console.log(curPlayer);
                                 if (curPlayer.playerPoolEntry.player.stats.length == 0) {
@@ -171,9 +126,9 @@ $(document).ready(function () {
                                 } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
                                     player.projectedScore = 0;
                                 } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
-                                    player.projectedScore = Math.round((curPlayer.playerPoolEntry.player.stats[1].appliedTotal) * 100) / 100;
+                                    player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
                                 } else {
-                                    player.projectedScore = Math.round((curPlayer.playerPoolEntry.player.stats[0].appliedTotal) * 100) / 100;
+                                    player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
                                 }
 
                                 player.eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
@@ -182,9 +137,7 @@ $(document).ready(function () {
                                 player.jerseyNumber = curPlayer.playerPoolEntry.player.jersey;
                                 player.playerID = curPlayer.playerId;
                                 player.lineupSlotID = curPlayer.lineupSlotId;
-                                //player.gameStats = curPlayer.playerPoolEntry.player.stats;
                                 player.lineupSlot = getLineupSlot(player.lineupSlotID);
-                                //console.log(player);
                                 if (player.lineupSlotID == 21) {
                                     week.irPlayers.push(player);
                                 } else if (player.lineupSlotID == 20) {
@@ -195,7 +148,6 @@ $(document).ready(function () {
                             }
                             week.activeScore = weekTotalScore;
                             week.projectedScore = getProjectedScore(week.activePlayers);
-
 
                             if (curWeek.away != null || curWeek.away != undefined) { //sets opponent stats if there is an opponent
                                 week.opponentTeamID = curWeek.away.teamId;
@@ -214,11 +166,10 @@ $(document).ready(function () {
 
                             if (curWeek.away != null && curWeek.away != undefined) {
                                 let weekTotalScore = 0
-                                week = new Week(); //resets the week to do add the away team
+                                week = new Week();
                                 week.leagueID = 340734;
                                 week.weekNumber = q;
                                 week.teamID = curWeek.away.teamId;
-                                //week.activeScore = curWeek.away.totalPoints;
                                 for (l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
                                     let curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
                                     let player = new Player();
@@ -233,9 +184,9 @@ $(document).ready(function () {
                                     } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
                                         player.projectedScore = 0;
                                     } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
-                                        player.projectedScore = Math.round((curPlayer.playerPoolEntry.player.stats[1].appliedTotal) * 100) / 100;
+                                        player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
                                     } else {
-                                        player.projectedScore = Math.round((curPlayer.playerPoolEntry.player.stats[0].appliedTotal) * 100) / 100;
+                                        player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
                                     }
 
                                     player.eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
@@ -244,9 +195,7 @@ $(document).ready(function () {
                                     player.jerseyNumber = curPlayer.playerPoolEntry.player.jersey;
                                     player.playerID = curPlayer.playerId;
                                     player.lineupSlotID = curPlayer.lineupSlotId;
-                                    //player.gameStats = curPlayer.playerPoolEntry.player.stats;
                                     player.lineupSlot = getLineupSlot(player.lineupSlotID);
-                                    //console.log(player);
                                     if (player.lineupSlotID == 21) {
                                         week.irPlayers.push(player);
                                     } else if (player.lineupSlotID == 20) {
@@ -267,19 +216,14 @@ $(document).ready(function () {
                                 }
                             }
 
-
                         } else {
-                            //console.log("incremented week");
                         }
-
                     }
-
                     myYear = year;
                 });
                 myYear = year;
             }
             myYear = year;
-
 
             for (j in myYear.members) {
                 var totalPF = 0;
@@ -315,49 +259,33 @@ $(document).ready(function () {
                         myYear.members[j].pastWeeks[n].regularSeason = true;
                     }
 
-
-
-
-
                 }
                 myYear.members[j].completeSeasonPoints = totalPF;
                 myYear.members[j].completeSeasonPointsAgainst = totalPA;
-                myYear.members[j].postSeasonPF = Math.round((myYear.members[j].completeSeasonPoints - myYear.members[j].record.overall.pointsFor) * 100) / 100;
+                myYear.members[j].postSeasonPF = roundToHundred(myYear.members[j].completeSeasonPoints - myYear.members[j].record.overall.pointsFor);
 
 
             }
 
             for (s in myYear.members) {
-                // myYear.members[s].completeSeasonPoints = 0;
-                // myYear.members[s].postSeasonPF = 0;
-                // myYear.members.completeSeasonPointsAgainst
+
                 for (e in myYear.members[s].pastWeeks) {
                     myYear.members[s].pastWeeks[e].optimalLineup = getOptimalLineup(myYear.members[s].pastWeeks[e]);
                     if (getOptimalLineup(myYear.members[s].pastWeeks[e]).length == 0) {
-                        // console.log("ERROR");
-                        // console.log("Problem with " + myYear.members[s].firstName + " at week " + myYear.members[s].pastWeeks[e].weekNumber);
+
                     }
                     myYear.members[s].pastWeeks[e].potentialPoints = getPPoints(myYear.members[s].pastWeeks[e].optimalLineup);
-                    // console.log(getPPoints(myYear.members[s].pastWeeks[e].optimalLineup));
-                    // console.log(myYear.members[s].pastWeeks[e].optimalLineup);
+
                     myYear.members[s].pastWeeks[e].potentialPointsDifference = myYear.members[s].pastWeeks[e].potentialPoints - myYear.members[s].pastWeeks[e].activeScore;
                 }
             }
-            //console.log("myYear");
-            //console.log(JSON.stringify(myYear));
             localStorage.setItem(myYear.leagueID + "" + myYear.seasonID, JSON.stringify(myYear));
 
         }
 
-
-        //myYear = year;
         document.getElementById("my-navbar-brand").innerHTML = myYear.leagueName;
-        //console.log(myYear);
-        //$.post( "js/data.php", { leagueID: myYear.leagueID, season: myYear.seasonID, leagueObject: myYear } );
         setPage(myYear);
     }
-
-
 
 });
 
@@ -372,11 +300,3 @@ function myXhr(t, d, id) {
     })
 }
 
-function calcRosterScore(activePlayers){
-    var points = 0;
-    for (i = 0; i < activePlayers.length; i++){
-        points += activePlayers[i].actualScore;
-    }
-
-    return points;
-}

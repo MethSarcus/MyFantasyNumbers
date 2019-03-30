@@ -44,27 +44,3 @@ function myXhr(t, d, id) {
     })
 }
 
-function LeagueDraft(){
-    this.leagueID = "";
-    this.seasonID = "";
-    this.draftType = "";
-    this.auctionBudget = "";
-    this.pickOrder = [];
-    this.draftPicks = [];
-}
-
-function DraftPick() {
-    this.teamID = "";
-    this.memberID = "";
-    this.overallPickNumber = "";
-    this.roundID = "";
-    this.roundPickNumber = "";
-    this.playerID = "";
-    this.playerAuctionCost = "";
-    this.owningTeamIDs = []; //lists team id's that have owned the pick
-    this.nominatingTeamID = ""; //used to see what team id nominated the player
-    this.autoDraftTypeID = "";
-}
-
-//console.log(newDraft);
-
