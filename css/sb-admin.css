@@ -10525,11 +10525,15 @@ body {
 }
 
 .sidebar .nav-item .nav-link {
-  color: orange;
+  color: white;
+}
+
+.nav-link:hover {
+  background-color: #002752;
 }
 
 .sidebar .nav-item .nav-link:active, .sidebar .nav-item .nav-link:focus, .sidebar .nav-item .nav-link:hover {
-  color: orange;
+  color: white;
 }
 
 .sidebar.toggled {

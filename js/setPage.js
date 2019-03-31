@@ -343,6 +343,7 @@ function setPage(myYear) {
         createWeeklyLineChart(myYear.members[i], myYear);
         createDonutChart(myYear.members[i]);
     }
+    
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
