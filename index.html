@@ -68,19 +68,25 @@
 <body id="page-top">
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" aria-expanded="true" aria-controls="sidewrapper" id="sidebarToggle" href="#" data-toggle="collapse" data-target="#sidewrapper" >
+    <!-- <button class="btn btn-link btn-sm text-white order-1 order-sm-0" aria-expanded="true" aria-controls="sidewrapper" id="sidebarToggle" href="#" data-toggle="collapse" data-target="#sidewrapper" >
       <i class="fas fa-bars"></i>
-    </button>
+    </button> -->
     <a id="my-navbar-brand" class="navbar-brand mr-1" href="index.html"></a>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>Teams</button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="teamDropdown">
+       
+          <ul id="sideNav" class="sidebar sidebar-expand navbar-nav nav nav-pills nav-stacked">
+          </ul>
+        
+      </div>
+    </div>
 
 
   </nav>
 
   <div id="wrapper">
-    <div id="sidewrapper">
-    <ul id="sideNav" class="sidebar sidebar-expand navbar-nav nav nav-pills nav-stacked">
-    </ul>
-  </div>
+    
 
     <div id="content-wrapper">
 

@@ -11,6 +11,10 @@
 
 @media (max-width: 991.98px) { ... } */
 
+.dropdown {
+    width: 300px;
+      height: auto;
+}
 
 @media (max-width: 1199.98px) { 
     .profilecard {
@@ -163,3 +167,27 @@ img.resize {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3);
     filter: brightness(95%);
   }
+
+  .sidebar-nav {
+    padding: 9px 0;
+}
+
+.dropdown-menu .sub-menu {
+    left: 100%;
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    margin-top: -1px;
+}
+
+.dropdown-menu li:hover .sub-menu {
+    visibility: visible;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
+    margin-top: 0;
+}

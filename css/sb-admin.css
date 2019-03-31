@@ -3283,7 +3283,7 @@ input[type="button"].btn-block {
   display: none;
   float: left;
   min-width: 10rem;
-  padding: 0.5rem 0;
+  /* padding: 0.5rem 0; */
   margin: 0.125rem 0 0;
   font-size: 1rem;
   color: #212529;
@@ -10489,7 +10489,7 @@ body {
 .sidebar {
   width: 90px !important;
   background-color: #212529;
-  min-height: calc(100vh - 56px);
+  /* min-height: calc(100vh - 56px); */
 }
 
 .sidebar .nav-item:last-child {
@@ -10539,16 +10539,18 @@ body {
 
 @media (min-width: 768px) {
   .sidebar {
-    width: 225px !important;
-    height: 100% !important;
+    width: 300px !important;
+    /* height: 100% !important; */
 
   }
   .sidebar .nav-item .nav-link {
     display: block;
     width: 100%;
     text-align: left;
-    padding: 1rem;
-    width: 225px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: .5rem;
+    width: 300px;
   }
   .sidebar .nav-item .nav-link span {
     font-size: 1rem;
@@ -10712,7 +10714,7 @@ footer.sticky-footer .copyright {
 
 @media (min-width: 768px) {
   footer.sticky-footer {
-    width: calc(100% - 225px);
+    width: 100%;
   }
 }
 
@@ -10722,6 +10724,6 @@ body.sidebar-toggled footer.sticky-footer {
 
 @media (min-width: 768px) {
   body.sidebar-toggled footer.sticky-footer {
-    width: calc(100% - 90px);
+    width: 100% - 90px;
   }
 }

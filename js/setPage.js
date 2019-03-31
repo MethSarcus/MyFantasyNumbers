@@ -14,13 +14,13 @@ function setPage(myYear) {
     let b = document.createElement("a");
     b.setAttribute('data-toggle', 'pill');
     b.href = "#leaguePage";
-    b.classList.add('nav-link', );
+    b.classList.add('nav-link');
     let dash = document.createElement('i');
     dash.classList.add('fas', 'fa-fw', 'fa-tachometer-alt', 'mx-auto');
     b.classList.add('nav-link', "show", 'active')
     b.appendChild(dash);
-    b.appendChild(document.createElement('br'));
-    let d = document.createTextNode(myYear.leagueName);
+    //b.appendChild(document.createElement('br'));
+    let d = document.createTextNode(" " + myYear.leagueName);
     b.appendChild(d);
     a.appendChild(b);
     nav.appendChild(a);
@@ -42,12 +42,35 @@ function setPage(myYear) {
         c.style.marginLeft = "auto";
         c.style.marginRight = "auto";
         b.appendChild(c);
-        b.appendChild(document.createElement('br'));
+        //b.appendChild(document.createElement('br'));
         let d = document.createTextNode(" " + myYear.members[i].teamLocation + " " + myYear.members[i].teamNickname);
         b.appendChild(d);
         a.appendChild(b);
         nav.appendChild(a);
     }
+    /*
+    for (i in myYear.members) {
+        var dropdown = document.getElementById('teamDropdown')
+        let a = document.createElement("a");
+        a.classList.add("dropdown-item", 'align-items-center', 'd-flex', 'justify-content-center');
+        //a.setAttribute('data-toggle', 'pill');
+        a.href = "#pillTeam" + myYear.members[i].teamID;
+        //a.classList.add('nav-link');
+        // let b = document.createElement('img');
+        // b.src = myYear.members[i].logoURL;
+        // b.style.width = "25px";
+        // b.style.height = "25px";
+        // b.style.borderRadius = "25px";
+        // b.addEventListener("error", fixNoImage);
+        // b.style.marginLeft = "auto";
+        // b.style.marginRight = "auto";
+        // a.appendChild(b);
+        // a.appendChild(document.createElement('br'));
+        let c = document.createTextNode(" " + myYear.members[i].teamLocation + " " + myYear.members[i].teamNickname);
+        //b.appendChild(c);
+        a.appendChild(c);
+        dropdown.appendChild(a);
+    }*/
 
     //make league main page
     q = document.createElement("div");
