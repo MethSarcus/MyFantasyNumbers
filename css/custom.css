@@ -1,7 +1,7 @@
-.nocolpadding {
+/* .nocolpadding {
     padding: 0 !important;
     margin: 0 !important;
-}
+} */
 
 /* @media (max-width: 575.98px) { ... }
 
@@ -12,8 +12,13 @@
 @media (max-width: 991.98px) { ... } */
 
 .dropdown {
-    width: 300px;
+    /* width: 400px; */
       height: auto;
+}
+
+.dropdown-menu .nav-link {
+    width: 225px;
+    /*margin: 0;*/
 }
 
 @media (max-width: 1199.98px) { 
