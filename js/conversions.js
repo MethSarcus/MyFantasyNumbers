@@ -152,7 +152,7 @@ function getRealTeamInitials(realteamID) {
             team = "TB";
             break;
         case 28:
-            team = "Was";
+            team = "Wsh";
             break;
         case 29:
             team = "Car";
