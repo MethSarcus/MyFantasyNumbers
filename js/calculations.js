@@ -1,4 +1,3 @@
-
 //given an array of players it calculates how much they scored that week
 function calcRosterScore(players){
     var points = 0;
