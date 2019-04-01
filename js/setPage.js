@@ -29,6 +29,7 @@ function setPage(myYear) {
     for (i in myYear.members) {
         let a = document.createElement("li");
         a.classList.add("nav-item", 'align-items-center', 'd-flex', 'justify-content-center');
+        a.onclick = function() {$(".nav-link").removeClass('active');};
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
         b.href = "#pillTeam" + myYear.members[i].teamID;
@@ -97,7 +98,7 @@ function setPage(myYear) {
     q.appendChild(stackedRow);
     tabsList.appendChild(q);
     createStackedColumns(myYear);
-
+    
     //where the magic happens, creates each league page
     for (var i = 0; i < myYear.members.length; i++) {
         //console.log(myYear.members[i]);
