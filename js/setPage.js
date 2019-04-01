@@ -199,7 +199,7 @@ function setPage(myYear) {
 
         cardColor = getCardColor(getPPFinish(myYear, myYear.members[i]), myYear.members.length);
         textColor = getTextColor(getPPFinish(myYear, myYear.members[i]), myYear.members.length);
-        let statCardPP = makeStatCard((ordinal_suffix_of(getPPFinish(myYear, myYear.members[i])) + " in Possible Points"), Math.round(getPotentialPoints(myYear.members[i]) * 10) / 10, "Potential Points", difference, false, cardColor, textColor, "Total points achievable by always playing the most optimal lineup");
+        let statCardPP = makeStatCard((ordinal_suffix_of(getPPFinish(myYear, myYear.members[i])) + " in Potential Points"), roundToHundred(getPotentialPoints(myYear.members[i])), "Potential Points", difference, false, cardColor, textColor, "Total points achievable by always playing the most optimal lineup");
         miniColOne.appendChild(statCardPP);
 
         difference = roundToTen(memberPP - memberPF);

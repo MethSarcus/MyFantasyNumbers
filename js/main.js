@@ -16,7 +16,6 @@ $(document).ready(function () {
             var year = new Year();
             year.seasonID = "2018";
             year.leagueID = leagueID;
-
             var seasonLength = 16;
             myXhr('get', {
                 path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mTeam'
@@ -86,6 +85,7 @@ $(document).ready(function () {
             });
 
             //'apis/v3/games/ffl/seasons/2018/segments/0/leagues/340734?view=mMatchupScore&teamId=1&scoringPeriodId=1' for telling if a game is a playoff game
+            
             var activeLineupSlots = [];
             for (a in year.lineupSlotCount) {
                 if (year.lineupSlotCount[a][0] != 21 && year.lineupSlotCount[a][0] != 20) {
@@ -93,7 +93,6 @@ $(document).ready(function () {
                     activeLineupSlots.push(year.lineupSlotCount[a]);
                 }
             }
-
             for (q = 1; q <= 16; q++) {
 
                 myXhr('get', {
@@ -166,7 +165,7 @@ $(document).ready(function () {
 
                             if (curWeek.away != null && curWeek.away != undefined) {
                                 let weekTotalScore = 0
-                                week = new Week();
+                                week = new Week(activeLineupSlots);
                                 week.leagueID = 340734;
                                 week.weekNumber = q;
                                 week.teamID = curWeek.away.teamId;
