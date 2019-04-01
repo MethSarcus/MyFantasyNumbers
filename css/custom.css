@@ -209,7 +209,7 @@ img.resize {
     z-index: 1;
     top: 0;
     left: 0;
-    margin-top: 60px;
+    margin-top: 56px;
     background-color: #111;
     overflow-x: hidden;
     transition: 0.5s;
@@ -239,4 +239,10 @@ img.resize {
 
 #tabs-content {
     transition: margin-left .5s;
+}
+
+.breadcrumb {
+    width: 100%;
+    margin-left: -15px;
+    margin-right: -15px;
 }
