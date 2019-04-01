@@ -300,7 +300,7 @@ function setPage(myYear) {
         if (teamWorstPlayer.position == "D/ST") {
             wvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamWorstPlayer.realTeamID) + ".png&h=150&w=150";
         } else {
-            wvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamWorstPlayer.playerId + ".png";
+            wvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamWorstPlayer.playerID + ".png";
         }
         worstPlayerCard.appendChild(wvpImage);
         let wvpName;
