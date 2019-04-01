@@ -224,7 +224,7 @@ function setPage(myYear) {
         mvpCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center');
 
         mvpHeader.classList.add('card-title');
-        mvpHeader.innerText = 'Team MVP';
+        mvpHeader.innerText = 'Most Valuable Player';
         mvpCard.appendChild(mvpHeader);
 
         let mvpImage = document.createElement('img');
@@ -291,7 +291,7 @@ function setPage(myYear) {
         let wvpHeader = document.createElement('h1');
         worstPlayerCard.classList.add('card', 'mvpcard', 'text-center', 'h-100','justify-content-center', 'align-items-center');
         wvpHeader.classList.add('card-title');
-        wvpHeader.innerText = 'Worst Player';
+        wvpHeader.innerText = 'Least Valuable Player';
         worstPlayerCard.appendChild(wvpHeader);
 
         let wvpImage = document.createElement('img');
