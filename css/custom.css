@@ -217,9 +217,8 @@ img.resize {
 }
 
 .sidenav a {
-    /* padding: 8px 8px 8px 32px; */
     text-decoration: none;
-    font-size: 2.5em;
+    font-size: 1.25em;
     color: white;
     display: block;
     transition: 0.3s
