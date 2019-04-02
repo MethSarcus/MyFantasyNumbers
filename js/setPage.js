@@ -28,7 +28,7 @@ function setPage(myYear) {
     //adds teams to sidebar
     for (i in myYear.members) {
         let a = document.createElement("li");
-        a.classList.add("nav-item", 'align-items-center', 'd-flex', 'justify-content-center');
+        a.classList.add("nav-item", /*'align-items-center', 'd-flex', 'justify-content-center'*/);
         a.onclick = function() {$(".nav-link").removeClass('active');};
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
