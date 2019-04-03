@@ -20,6 +20,10 @@ function Week(activeLineupSlots) {
     this.potentialPoints = 0;
     this.potentialPointsDifference;
     this.activeLineupSlots = activeLineupSlots;
+    this.powerRank = 1; //Weekly Rank in non H2H scoring
+    this.powerWins = 0; //Number of total wins in non h2h scoring
+    this.powerLosses = 0; //Number of total losses in non h2h scoring
+
 }
 
 function LeagueDraft(){

@@ -492,3 +492,32 @@ function getPPoints(optimalLineup) {
 
     return roundToHundred(score);
 }
+
+function getSmallestMOV(myYear){
+    var closestMatch = myYear.members[0].pastWeeks[0];
+
+    for (i = 0; i < myYear.members; i++){
+        let curMember = myYear.members[i];
+        for (x = 0; x < curMember.pastWeeks; x++){
+            let curWeek = curMember.pastWeeks[x];
+            if (calcMatchupPointDifference(curWeek) < calcMatchupPointDifference(closestMatch)){
+                closestMatch = curWeek;
+            }
+        }
+    }
+
+    return curWeek;
+}
+
+function getLargestMOV(myYear){
+    var largestMatch = myYear.members[0].pastWeeks[0];
+    for (i = 0; i < myYear.members; i++){
+        let curMember = myYear.members[i];
+        for (x = 0; x < curMember.pastWeeks; x++){
+            let curWeek = curMember.pastWeeks[x];
+            if (calcMatchupPointDifference(curWeek) > calcMatchupPointDifference(largestMatch)){
+                largestMatch = curWeek;
+            }
+        }
+    }
+}
