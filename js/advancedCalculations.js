@@ -1,7 +1,7 @@
 //add number of matchups projected to win and number of upsets
 
 //params: year object
-//returns: powerrankobject
+//returns: updated members
 function setPowerRankings(members){
     for (i = 0; i < members.length; i++){
         let curMember = members[i];
@@ -24,17 +24,23 @@ function setPowerRankings(members){
 
                     else if (curWeekScore > curOpponentScore) {
                         totalWins += 1;
+                        curWeek.powerWins +=1;
                     }
                 }
-                
+                curWeek.powerPct = curWeek.powerWins/curWeek.powerLosses;
             }
         }
+        curMember.totalWins = totalWins;
+        curMember.totalLosses = totalLosses;
+        curMember.powerPct = totalWins/totalLosses;
     }
+    return members
 }
 
-function retrievePowerRankList(members){
+function makePowerTable(members){
     for (i = 0; i < members.length; i++){
         let curMember = members[i];
+        
 
     }
 }
