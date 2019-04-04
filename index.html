@@ -99,18 +99,26 @@
     </button> -->
     <!-- <i class="fas fa-bars" "></i> -->
     <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i class="fas fa-bars" "></i></span>
-    <a id="my-navbar-brand" class="navbar-brand mr-1 nav-link" data-toggle="pill" href="#leaguePage"></a>
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false" disabled>Teams</button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="teamDropdown">
-
+    <a id="my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
+      <ul class="navbar-nav ml-2 w-100">
         
-
-      </div>
-    </div>
-
-
+        
+        <li class="nav-item ml-2">
+          <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
+        </li>
+        <li class="nav-item ml-2">
+          <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power Ranks</a>
+        </li>
+        <li class="nav-item ml-auto mr-0" id="yearSelector">
+              <select class="form-control" >
+                <option selected id="curSeason">Season</option>
+                <option value="1">2019</option>
+                <option value="2">2018</option>
+                <option value="3">2017</option>
+          </select>
+        </li>
+      </ul>
+      
   </nav>
 
   <div id="wrapper">

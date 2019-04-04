@@ -21,7 +21,7 @@
     background-color: #343a40;
 }
 
-.nav-link {
+.side-item {
     width: 250px;
     /*margin: 0;*/
 }
@@ -243,4 +243,24 @@ img.resize {
     width: 100%;
     margin-left: -15px;
     margin-right: -15px;
+}
+
+#my-navbar-brand{
+    width: auto;
+    line-height: auto;
+}
+
+#yearSelector{
+    color: black;
+}
+.navBut {
+    text-decoration: none;
+    -webkit-appearance: none;
+    color: rgba(255,255,255, 1) !important;
+}
+
+.navBut:hover {
+    -webkit-appearance: none;
+    background-color: blue;
+    border-radius: 10px;
 }

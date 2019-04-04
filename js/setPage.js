@@ -28,7 +28,7 @@ function setPage(myYear) {
     //adds teams to sidebar
     for (i in myYear.members) {
         let a = document.createElement("li");
-        a.classList.add("nav-item", 'align-items-left');
+        a.classList.add("nav-item", 'align-items-left', 'side-item');
         a.onclick = function() {$(".nav-link").removeClass('active');};
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
@@ -410,3 +410,50 @@ function makeStatCard(title, main, small, extraSmall, bottom, cardColor, textCol
     containment.appendChild(card);
     return containment;
 }
+
+function createCrossChart(myLeague, divID) {
+    var myTable = document.createElement("TABLE");
+    myTable.setAttribute("id", "scoreTable");
+    document.getElementById(divID).appendChild(myTable);
+    var tableHead = document.createElement("TR");
+    tableHead.setAttribute("id", "tableHead");
+    for (y in myLeague.members[1].pastWeeks) {
+      myNum = parseInt(y);
+      if (myNum == 0) {
+        var headerElement = document.createElement("TD");
+        var t = document.createTextNode("Owner");
+        headerElement.appendChild(t);
+        tableHead.appendChild(headerElement);
+      } else {
+        var headerElement = document.createElement("TD");
+        var t = document.createTextNode("Week " + myNum);
+        headerElement.appendChild(t);
+        tableHead.appendChild(headerElement);
+      }
+    }
+    
+    var headerElement = document.createElement("TD");
+    var t = document.createTextNode("Week " + myLeague.members[1].pastWeeks.length);
+    headerElement.appendChild(t);
+    tableHead.appendChild(headerElement);
+    document.getElementById("scoreTable").appendChild(tableHead);
+    for (x in myLeague.members) {
+      var q = document.createElement("TR");
+      q.setAttribute("id", "myTr");
+  
+      var z = document.createElement("TD");
+      var h = document.createTextNode(myLeague.members[x].memberFirstName + " " + myLeague.members[x].memberLastName);
+      z.appendChild(h);
+      q.appendChild(z);
+      for (y in myLeague.members[x].pastWeeks) {
+        var k = document.createElement("TD");
+        var t = document.createTextNode(myLeague.members[x].pastWeeks[y].actualScore);
+        k.appendChild(t);
+        q.appendChild(k);
+      }
+  
+      document.getElementById("scoreTable").appendChild(q);
+    }
+    document.getElementById(divID).appendChild(myTable);
+  
+  }
