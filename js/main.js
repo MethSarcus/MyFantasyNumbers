@@ -283,6 +283,7 @@ $(document).ready(function () {
         }
 
         document.getElementById("my-navbar-brand").innerHTML = myYear.leagueName;
+        myYear.members = setPowerRankings(myYear.members);
         setPage(myYear);
     }
 

@@ -75,6 +75,9 @@ function LeagueMember() {
     this.finalStanding = 0;
     this.transactions;
     this.record;
+    this.powerRank = 1;
+    this.powerWins = 0;
+    this.powerLosses = 0;
 }
 
 function Player() {

@@ -28,6 +28,10 @@
     /*margin: 0;*/
 }
 
+.padMe{
+    padding-left: 3px !important;
+}
+
 @media (max-width: 1199.98px) { 
     .profilecard {
         width: 100%;

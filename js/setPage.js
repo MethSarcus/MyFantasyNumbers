@@ -9,6 +9,7 @@ function setPage(myYear) {
     //<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#menu1"><img src="https://i.imgur.com/bpdH6p4.png" width="25px" height="25px" style = "border-radius:90px;"/></img> Menu 1</a></li>
 
     //adds league to sidebar
+    /*
     let a = document.createElement("li");
     a.classList.add("nav-item", 'align-items-left');
     let b = document.createElement("a");
@@ -24,6 +25,7 @@ function setPage(myYear) {
     b.appendChild(d);
     a.appendChild(b);
     nav.appendChild(a);
+    */
 
     //adds teams to sidebar
     for (i in myYear.members) {
@@ -33,7 +35,8 @@ function setPage(myYear) {
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
         b.href = "#pillTeam" + myYear.members[i].teamID;
-        b.classList.add('nav-link', 'pl-3');
+        b.classList.add('nav-link');
+        b.style.paddingLeft = "3px;"
         let c = document.createElement('img');
         c.src = myYear.members[i].logoURL;
         c.style.width = "25px";

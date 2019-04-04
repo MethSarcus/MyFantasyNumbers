@@ -8,7 +8,9 @@ function setPowerRankings(members){
         let totalWins = 0;
         let totalLosses = 0;
         //loop thrugh pastweeks of the current member
-        for (x = 0; x = curMember.pastWeeks.length; x++){
+        //console.log(curMember);
+        for (x = 0; x < curMember.pastWeeks.length; x++){
+            //console.log(curMember.pastWeeks[x]);
             let curWeek = curMember.pastWeeks[x];
             let curWeekScore = curWeek.activeScore;
             //loop through all opponents to check how many matchups you would win
@@ -30,18 +32,25 @@ function setPowerRankings(members){
                 curWeek.powerPct = curWeek.powerWins/curWeek.powerLosses;
             }
         }
-        curMember.totalWins = totalWins;
-        curMember.totalLosses = totalLosses;
-        curMember.powerPct = totalWins/totalLosses;
+        curMember.powerWins = totalWins;
+        curMember.powerLosses = totalLosses;
+        curMember.powerPct = roundToHundred(totalWins/(totalLosses + totalWins));
     }
+    for (i = 0; i < members.length; i++){
+        let curMember = members[i];
+        for (y = 0; y < members.length; y++){
+            let curOpponent = members[y];
+            if (curOpponent.memberID != curMember.memberID){
+                if (curOpponent.powerWins > curMember.powerWins){
+                    curMember.powerRank += 1;
+                }
+
+            }
+            curWeek.powerPct = curWeek.powerWins/curWeek.powerLosses;
+        }
+    }
+    console.log(members);
     return members
 }
 
-function makePowerTable(members){
-    for (i = 0; i < members.length; i++){
-        let curMember = members[i];
-        
-
-    }
-}
 
