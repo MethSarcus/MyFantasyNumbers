@@ -33,7 +33,7 @@ function setPage(myYear) {
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
         b.href = "#pillTeam" + myYear.members[i].teamID;
-        b.classList.add('nav-link')
+        b.classList.add('nav-link', 'pl-3');
         let c = document.createElement('img');
         c.src = myYear.members[i].logoURL;
         c.style.width = "25px";
