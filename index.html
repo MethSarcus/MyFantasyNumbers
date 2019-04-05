@@ -51,11 +51,10 @@
       navSize = document.getElementById("mySidenav").style.width;
       if (navSize == "250px") {
         return closeNav();
-      }
-      else{
+      } else {
         return openNav();
       }
-      
+
     }
 
     function openNav() {
@@ -76,34 +75,35 @@
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
     <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i class="fas fa-bars" "></i></span>
-    <a id="my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
-      <ul class="navbar-nav ml-2 w-100">
-        <li class="nav-item ml-2">
-          <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
-        </li>
-        <li class="nav-item ml-2">
-          <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power Ranks</a>
-        </li>
-        <li class="nav-item ml-auto mr-0" id="yearSelector">
-              <select class="form-control" >
-                <option value="1">2019</option>
-                <option selected value="2">2018</option>
-                <option value="3">2017</option>
-          </select>
-        </li>
-      </ul>
-      
+    <a id=" my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
+        <ul class="navbar-nav ml-2 w-100">
+          <li class="nav-item ml-2">
+            <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
+          </li>
+          <li class="nav-item ml-2">
+            <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power
+              Ranks</a>
+          </li>
+          <li class="nav-item ml-auto mr-0" id="yearSelector">
+            <select class="form-control">
+              <option value="1">2019</option>
+              <option selected value="2">2018</option>
+              <option value="3">2017</option>
+            </select>
+          </li>
+        </ul>
+
   </nav>
   <div class="container-fluid">
-      <div id="mySidenav" class="sidenav">
-        <ul id="sideNav" class="sidebar sidebar-expand navbar-nav nav-pills nav-stacked">
-        </ul>
-      </div>
-  <div id="wrapper">
+    <div id="mySidenav" class="sidenav">
+      <ul id="sideNav" class="sidebar sidebar-expand navbar-nav nav-pills nav-stacked">
+      </ul>
+    </div>
+    <div id="wrapper">
 
 
-    <div id="content-wrapper">
-      
+      <div id="content-wrapper">
+
         <div id="tabs-content" class="tab-content">
         </div>
 
@@ -128,4 +128,5 @@
     </a>
 </body>
 <script type="text/javascript" src="js/main.js"></script>
+
 </html>

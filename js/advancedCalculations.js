@@ -38,7 +38,6 @@ function setPowerRankings(members){
     }
     for (i = 0; i < members.length; i++){
         let curMember = members[i];
-        console.log(curMember.powerRank);
         for (y = 0; y < members.length; y++){
             let curOpponent = members[y];
             if (curOpponent.memberID != curMember.memberID){
@@ -49,7 +48,6 @@ function setPowerRankings(members){
             }
         }
     }
-    console.log(members);
     return members
 }
 

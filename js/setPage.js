@@ -94,9 +94,10 @@ function setPage(myYear) {
     var stackedRow = document.createElement('div');
     stackedRow.classList.add('row');
     var stackSpace = document.createElement('div');
-    stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-12');
+    stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-9', 'col-xl-9');
     var stackedCanvas = document.createElement('canvas');
     stackedCanvas.id = "LEAGUESTACKEDCANVAS";
+    stackedRow.appendChild(createPowerRankTable(myYear));
     stackedRow.appendChild(stackedCanvas);
     q.appendChild(stackedRow);
     tabsList.appendChild(q);
@@ -459,4 +460,38 @@ function createCrossChart(myLeague, divID) {
     }
     document.getElementById(divID).appendChild(myTable);
   
+  }
+
+  function createPowerRankTable(myYear){
+    var powerRankTable = document.createElement('div');
+    powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-3', 'col-xl-3');
+    var powerTable = document.createElement('table');
+    powerTable.classList.add('table');
+    var tableHead = document.createElement('thead');
+    var tableHeader = document.createElement('tr');
+    var tableHeaderElement1 = document.createElement('th');
+    tableHeaderElement1.setAttribute('scope', 'col');
+    tableHeaderElement1.createTextNode('Power Rank');
+    var tableHeaderElement2 = document.createElement('th');
+    tableHeaderElement2.setAttribute('scope', 'col');
+    tableHeaderElement2.createTextNode('Team');
+    tableHeader.appendChild(tableHeaderElement1);
+    tableHeader.appendChild(tableHeaderElement2);
+    tableHead.appendChild(tableHeader);
+    var tableBody = document.createElement('tbody');
+    for (i = 0; i < myYear.members.length; i++){
+        let curMember = myYear.members[i];
+        let row = document.createElement('tr');
+        let pwrRankCell = document.createElement('td');
+        let teamNameCell = document.createElement('td');
+        pwrRankCell.innerHTML = curMember.powerRank;
+        teamNameCell.innerHTML = curMember.teamLocation + " " + curMember.teamNickname;
+        row.appendChild(pwrRankCell);
+        row.appendChild(teamNameCell);
+        tableBody.appendChild(row);
+    }
+    powerTable.appendChild(tableHead);
+    powerTable.appendChild(tableBody);
+    powerRankTable.appendChild(powerTable);
+    return powerRankTable;
   }
