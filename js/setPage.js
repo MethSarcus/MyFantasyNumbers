@@ -471,10 +471,10 @@ function createCrossChart(myLeague, divID) {
     var tableHeader = document.createElement('tr');
     var tableHeaderElement1 = document.createElement('th');
     tableHeaderElement1.setAttribute('scope', 'col');
-    tableHeaderElement1.createTextNode('Power Rank');
+    tableHeaderElement1.innerText('Power Rank');
     var tableHeaderElement2 = document.createElement('th');
     tableHeaderElement2.setAttribute('scope', 'col');
-    tableHeaderElement2.createTextNode('Team');
+    tableHeaderElement2.innerText('Team');
     tableHeader.appendChild(tableHeaderElement1);
     tableHeader.appendChild(tableHeaderElement2);
     tableHead.appendChild(tableHeader);
