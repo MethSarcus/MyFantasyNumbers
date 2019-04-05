@@ -281,7 +281,7 @@ $(document).ready(function () {
             localStorage.setItem(myYear.leagueID + "" + myYear.seasonID, JSON.stringify(myYear));
 
         }
-
+        console.log(myYear);
         document.getElementById("my-navbar-brand").innerHTML = myYear.leagueName;
         myYear.members = setPowerRankings(myYear.members);
         setPage(myYear);

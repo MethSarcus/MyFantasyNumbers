@@ -481,6 +481,7 @@ function createCrossChart(myLeague, divID) {
     var tableBody = document.createElement('tbody');
     for (i = 0; i < myYear.members.length; i++){
         let curMember = myYear.members[i];
+        console.log(curMember);
         let row = document.createElement('tr');
         let pwrRankCell = document.createElement('td');
         let teamNameCell = document.createElement('td');
