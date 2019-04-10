@@ -94,11 +94,12 @@ function setPage(myYear) {
     var stackedRow = document.createElement('div');
     stackedRow.classList.add('row');
     var stackSpace = document.createElement('div');
-    stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-9', 'col-xl-9');
+    stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
     var stackedCanvas = document.createElement('canvas');
     stackedCanvas.id = "LEAGUESTACKEDCANVAS";
-    stackedRow.appendChild(createPowerRankTable(myYear));
-    stackedRow.appendChild(stackedCanvas);
+    stackSpace.appendChild(stackedCanvas);
+    stackedRow.appendChild(createPwerRankTable(myYear));
+    stackedRow.appendChild(stackSpace);
     q.appendChild(stackedRow);
     tabsList.appendChild(q);
     createStackedColumns(myYear);
@@ -462,9 +463,9 @@ function createCrossChart(myLeague, divID) {
   
   }
 
-  function createPowerRankTable(myYear){
+  function createPwerRankTable(myYear){
     var powerRankTable = document.createElement('div');
-    powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-3', 'col-xl-3');
+    powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
     var powerTable = document.createElement('table');
     powerTable.classList.add('table');
     var tableHead = document.createElement('thead');
@@ -475,20 +476,37 @@ function createCrossChart(myLeague, divID) {
     var tableHeaderElement2 = document.createElement('th');
     tableHeaderElement2.setAttribute('scope', 'col');
     tableHeaderElement2.appendChild(document.createTextNode('Team'));
+    var tableHeaderElement3 = document.createElement('th');
+    tableHeaderElement3.setAttribute('scope', 'col');
+    tableHeaderElement3.appendChild(document.createTextNode('Win %'));
     tableHeader.appendChild(tableHeaderElement1);
     tableHeader.appendChild(tableHeaderElement2);
+    tableHeader.appendChild(tableHeaderElement3);
     tableHead.appendChild(tableHeader);
     var tableBody = document.createElement('tbody');
+    var tempMemberArray = myYear.members;
     for (i = 0; i < myYear.members.length; i++){
-        let curMember = myYear.members[i];
+        let curMember = tempMemberArray[0];
         console.log(curMember);
+        for (q = 0; q = tempMemberArray.length; q++){
+            console.log(tempMemberArray[q].powerRank);
+            if (tempMemberArray[q].powerRank > curMember.powerRank){
+                
+                curMember = tempMemberArray.splice(q, 1);
+            }
+        }
+        //let curMember = myYear.members[i];
+        
         let row = document.createElement('tr');
         let pwrRankCell = document.createElement('td');
         let teamNameCell = document.createElement('td');
+        let pwrPctCell = document.createElement('td');
         pwrRankCell.innerHTML = curMember.powerRank;
         teamNameCell.innerHTML = curMember.teamLocation + " " + curMember.teamNickname;
+        pwrPctCell.innerHTML = curMember.powerPct * 100;
         row.appendChild(pwrRankCell);
         row.appendChild(teamNameCell);
+        row.appendChild(pwrPctCell);
         tableBody.appendChild(row);
     }
     powerTable.appendChild(tableHead);
