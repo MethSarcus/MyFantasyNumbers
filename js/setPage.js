@@ -487,11 +487,11 @@ function createCrossChart(myLeague, divID) {
     var tempMemberArray = myYear.members;
     for (i = 0; i < myYear.members.length; i++){
         let curMember = tempMemberArray[0];
-        console.log(curMember);
-        for (q = 0; q = tempMemberArray.length; q++){
-            console.log(tempMemberArray[q].powerRank);
+        //console.log(tempMemberArray);
+        for (q = 0; q < tempMemberArray.length; q++){
+            //console.log(q);
+            //console.log(tempMemberArray[1]);
             if (tempMemberArray[q].powerRank > curMember.powerRank){
-                
                 curMember = tempMemberArray.splice(q, 1);
             }
         }
