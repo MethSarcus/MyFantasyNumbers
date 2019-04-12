@@ -100,6 +100,8 @@ function setPage(myYear) {
     stackSpace.appendChild(stackedCanvas);
     stackedRow.appendChild(createPwerRankTable(myYear));
     stackedRow.appendChild(stackSpace);
+    console.log("stackedRow");
+    console.log(stackedRow);
     q.appendChild(stackedRow);
     tabsList.appendChild(q);
     createStackedColumns(myYear);
