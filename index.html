@@ -6,8 +6,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="Seth Marcus" content="Fantasy App">
 
   <title>My Fantasy Numbers</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
@@ -15,12 +14,8 @@
   <link href="https://fonts.googleapis.com/css?family=Bitter:700" rel="stylesheet">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <script src="vendor/jquery/jquery.min.js"></script>
-  <script type="text/javascript" src="js/getLeague.js">
-  </script>
-  <script type="text/javascript" src="js/getDraft.js"></script>
   <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-  <script src="js/makeCharts.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js"></script>
   <script src="node_modules\rainbowvis.js\rainbowvis.js"></script>
   <script src="https://www.amcharts.com/lib/4/core.js"></script>
@@ -33,18 +28,12 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
   </script>
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <link href="css/custom.css" rel="stylesheet">
-
-  <script type="text/javascript" src="js/Classes.js"></script>
-  <script type="text/javascript" src="js/advancedCalculations.js"></script>
-  <script type="text/javascript" src="js/setPage.js"></script>
-  <script type="text/javascript" src="js/calculations.js"></script>
-  <script type="text/javascript" src="js/conversions.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="vendor/datatables/jquery.dataTables.js"></script>
@@ -70,14 +59,9 @@
       document.getElementById("mySidenav").style.width = "0";
       document.getElementById("wrapper").style.marginLeft = "0";
     }
-
-    
   </script>
-
 </head>
-
-<body id="page-top">
-
+<header>
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
     <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i class="fas fa-bars" "></i></span>
     <a id="my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
@@ -97,56 +81,45 @@
             </select>
           </li>
         </ul>
-
   </nav>
+</header>
+
+<body id="page-top">
   <div class="container-fluid">
     <div id="mySidenav" class="sidenav">
       <ul id="sideNav" class="sidebar sidebar-expand navbar-nav nav-pills nav-stacked">
       </ul>
     </div>
     <div id="wrapper">
-
-
       <div id="content-wrapper">
-
-        <div id="tabs-content" class="tab-content" onscroll="scrollup()">
+        <div id="tabs-content" class="tab-content">
         </div>
         <!-- <button class="scroll-to-top rounded" href="#page-top" id="scrollBtn">
           <i class="fas fa-angle-up"></i>
         </button> -->
         <!-- Sticky Footer -->
         <footer class="page-footer font-small blue">
-
           <!-- Copyright -->
           <div class="footer-copyright text-center py-3">© 2019 Copyright:
             <a href="https://sethmarcus.tech"> Seth Marcus</a>
           </div>
           <!-- Copyright -->
-        
         </footer>
-
-      <!-- /.content-wrapper -->
-
+        <!-- /.content-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <!-- Scroll to Top Button-->
     </div>
-    <!-- /#wrapper -->
-
-    <!-- Scroll to Top Button-->
-    
+  </div>
 </body>
-<script type="text/javascript" src="js/main.js">
-// function scrollup() {
-//         if (document.getElementById("content-wrapper").scrollTop > 20 || document.getElementById("content-wrapper").scrollTop > 20) {
-//           document.getElementById("scrollBtn").style.display = "block";
-//         } else {
-//           document.getElementById("scrollBtn").style.display = "none";
-//         }
-//       }
-  
-//       // When the user clicks on the button, scroll to the top of the document
-//       function topFunction() {
-//         document.body.scrollTop = 0; // For Safari
-//         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-//       }
-</script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/Classes.js"></script>
+<script type="text/javascript" src="js/advancedCalculations.js"></script>
+<script type="text/javascript" src="js/setPage.js"></script>
+<script type="text/javascript" src="js/calculations.js"></script>
+<script type="text/javascript" src="js/conversions.js"></script>
+<script type="text/javascript" src="js/getLeague.js"></script>
+<script type="text/javascript" src="js/getDraft.js"></script>
+<script src="js/makeCharts.js"></script>
 
 </html>

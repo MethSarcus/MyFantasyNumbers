@@ -30,7 +30,7 @@ function setPage(myYear) {
     //adds teams to sidebar
     for (i in myYear.members) {
         let a = document.createElement("li");
-        a.classList.add("nav-item", 'align-items-left', 'side-item');
+        a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function() {$(".nav-link").removeClass('active');};
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
@@ -95,16 +95,16 @@ function setPage(myYear) {
     
     var stackedRow = document.createElement('div');
     stackedRow.classList.add('row');
-    var stackSpace = document.createElement('div');
-    stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
-    var stackedCanvas = document.createElement('canvas');
-    stackedCanvas.id = "LEAGUESTACKEDCANVAS";
-    stackSpace.appendChild(stackedCanvas);
+    //var stackSpace = document.createElement('div');
+    //stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
+    //var stackedCanvas = document.createElement('canvas');
+    //stackedCanvas.id = "LEAGUESTACKEDCANVAS";
+    //stackSpace.appendChild(stackedCanvas);
     stackedRow.appendChild(createPwerRankTable(myYear));
-    stackedRow.appendChild(stackSpace);
+    //stackedRow.appendChild(stackSpace);
     q.appendChild(stackedRow);
     tabsList.appendChild(q);
-    createStackedColumns(myYear);
+    //createStackedColumns(myYear);
     
     //where the magic happens, creates each league page
     for (var i = 0; i < myYear.members.length; i++) {
@@ -472,51 +472,74 @@ function createCrossChart(myLeague, divID) {
 
   function createPwerRankTable(myYear){
     var powerRankTable = document.createElement('div');
-    powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
+    powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-12');
     var powerTable = document.createElement('table');
     powerTable.classList.add('table', "hover");
     powerTable.id = "mainPwrTable";
     var tableHead = document.createElement('thead');
     var tableHeader = document.createElement('tr');
-    var tableHeaderElement1 = document.createElement('th');
-    tableHeaderElement1.setAttribute('scope', 'col');
-    tableHeaderElement1.appendChild(document.createTextNode('Power Rank'));
-    var tableHeaderElement2 = document.createElement('th');
-    tableHeaderElement2.setAttribute('scope', 'col');
-    tableHeaderElement2.appendChild(document.createTextNode('Team'));
-    var tableHeaderElement3 = document.createElement('th');
-    tableHeaderElement3.setAttribute('scope', 'col');
-    tableHeaderElement3.appendChild(document.createTextNode('Win %'));
-    tableHeader.appendChild(tableHeaderElement1);
-    tableHeader.appendChild(tableHeaderElement2);
-    tableHeader.appendChild(tableHeaderElement3);
+    var rankCol = document.createElement('th');
+    rankCol.setAttribute('scope', 'col');
+    rankCol.appendChild(document.createTextNode('Rank'));
+    // var powerRankCol = document.createElement('th');
+    // powerRankCol.setAttribute('scope', 'col');
+    // powerRankCol.appendChild(document.createTextNode('Power Rank'));
+    var teamCol = document.createElement('th');
+    teamCol.setAttribute('scope', 'col');
+    teamCol.appendChild(document.createTextNode('Team'));
+    var recordCol = document.createElement('th');
+    recordCol.setAttribute('scope', 'col');
+    recordCol.appendChild(document.createTextNode('Record'));
+    var winPctCol = document.createElement('th');
+    winPctCol.setAttribute('scope', 'col');
+    winPctCol.appendChild(document.createTextNode('Win%'));
+    var pfCol = document.createElement('th');
+    pfCol.setAttribute('scope', 'col');
+    pfCol.appendChild(document.createTextNode('PF'));
+    var ppCol = document.createElement('th');
+    ppCol.setAttribute('scope', 'col');
+    ppCol.appendChild(document.createTextNode('PP'));
+    var paCol = document.createElement('th');
+    paCol.setAttribute('scope', 'col');
+    paCol.appendChild(document.createTextNode('PA'));
+    tableHeader.appendChild(rankCol);
+    tableHeader.appendChild(teamCol);
+    tableHeader.appendChild(recordCol);
+    tableHeader.appendChild(winPctCol);
+    tableHeader.appendChild(pfCol);
+    tableHeader.appendChild(paCol);
+    tableHeader.appendChild(ppCol);
     tableHead.appendChild(tableHeader);
     var tableBody = document.createElement('tbody');
-    //var tempMemberArray = myYear.members;
     for (i = 0; i < myYear.members.length; i++){
-        // let curMember = tempMemberArray[0];
-        // //console.log(tempMemberArray);
-        // for (g = 0; g< tempMemberArray.length; g++){
-        //     //console.log(q);
-        //     console.log(tempMemberArray[g]);
-        //     if (tempMemberArray[g].powerRank > curMember.powerRank){
-        //         curMember = tempMemberArray.splice(g, 1);
-        //         console.log(curMember);
-        //     }
-        // }
         let curMember = myYear.members[i];
         let row = document.createElement('tr');
+        let rankCell = document.createElement('td');
         let pwrRankCell = document.createElement('td');
         let teamNameCell = document.createElement('td');
-        let pwrPctCell = document.createElement('td');
+        let recordCell = document.createElement('td');
+        let pfCell = document.createElement('td');
+        let paCell = document.createElement('td');
+        let ppCell = document.createElement('td');
+        let pctCell = document.createElement('td');
+
         pwrRankCell.appendChild(document.createTextNode(curMember.powerRank));
+        rankCell.appendChild(document.createTextNode(curMember.finalStanding));
+        pfCell.appendChild(document.createTextNode(roundToHundred(curMember.completeSeasonPoints)));
+        paCell.appendChild(document.createTextNode(roundToHundred(curMember.completeSeasonPointsAgainst)));
+        ppCell.appendChild(document.createTextNode(roundToHundred(getPotentialPoints(curMember))));
+        recordCell.appendChild(document.createTextNode(curMember.record.overall.wins + "-" + curMember.record.overall.losses));
         teamNameCell.appendChild(document.createTextNode(curMember.teamLocation + " " + curMember.teamNickname));
-        pwrPctCell.appendChild(document.createTextNode(roundToHundred(curMember.powerPct * 100) + "%"));
-        row.appendChild(pwrRankCell);
+        pctCell.appendChild(document.createTextNode(roundToHundred(curMember.record.overall.percentage * 100) + "%"));
+        row.appendChild(rankCell);
+        //row.appendChild(pwrRankCell);
         row.appendChild(teamNameCell);
-        row.appendChild(pwrPctCell);
+        row.appendChild(recordCell);
+        row.appendChild(pctCell);
+        row.appendChild(pfCell);
+        row.appendChild(paCell);
+        row.appendChild(ppCell);
         tableBody.appendChild(row);
-        
     }
     powerTable.appendChild(tableHead);
     powerTable.appendChild(tableBody);
