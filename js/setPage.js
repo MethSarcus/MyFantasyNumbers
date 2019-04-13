@@ -90,7 +90,9 @@ function setPage(myYear) {
     breadLink.href = "#"
     crumbItem.appendChild(breadLink);
     crumbList.appendChild(crumbItem);
+    console.log(q);
     q.appendChild(crumbList);
+    
     var stackedRow = document.createElement('div');
     stackedRow.classList.add('row');
     var stackSpace = document.createElement('div');
@@ -100,8 +102,6 @@ function setPage(myYear) {
     stackSpace.appendChild(stackedCanvas);
     stackedRow.appendChild(createPwerRankTable(myYear));
     stackedRow.appendChild(stackSpace);
-    console.log("stackedRow");
-    console.log(stackedRow);
     q.appendChild(stackedRow);
     tabsList.appendChild(q);
     createStackedColumns(myYear);
@@ -350,8 +350,13 @@ function setPage(myYear) {
         tabsList.appendChild(a);
         createWeeklyLineChart(myYear.members[i], myYear);
         createDonutChart(myYear.members[i]);
-    }
-    
+    } 
+    $('#mainPwrTable').DataTable({
+        paging: false,
+        searching: false,
+        //stripeClasses: true,
+        // responsive: true
+    });
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
@@ -470,6 +475,7 @@ function createCrossChart(myLeague, divID) {
     powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
     var powerTable = document.createElement('table');
     powerTable.classList.add('table');
+    powerTable.id = "mainPwrTable";
     var tableHead = document.createElement('thead');
     var tableHeader = document.createElement('tr');
     var tableHeaderElement1 = document.createElement('th');
@@ -486,30 +492,31 @@ function createCrossChart(myLeague, divID) {
     tableHeader.appendChild(tableHeaderElement3);
     tableHead.appendChild(tableHeader);
     var tableBody = document.createElement('tbody');
-    var tempMemberArray = myYear.members;
+    //var tempMemberArray = myYear.members;
     for (i = 0; i < myYear.members.length; i++){
-        let curMember = tempMemberArray[0];
-        //console.log(tempMemberArray);
-        for (q = 0; q < tempMemberArray.length; q++){
-            //console.log(q);
-            //console.log(tempMemberArray[1]);
-            if (tempMemberArray[q].powerRank > curMember.powerRank){
-                curMember = tempMemberArray.splice(q, 1);
-            }
-        }
-        //let curMember = myYear.members[i];
-        
+        // let curMember = tempMemberArray[0];
+        // //console.log(tempMemberArray);
+        // for (g = 0; g< tempMemberArray.length; g++){
+        //     //console.log(q);
+        //     console.log(tempMemberArray[g]);
+        //     if (tempMemberArray[g].powerRank > curMember.powerRank){
+        //         curMember = tempMemberArray.splice(g, 1);
+        //         console.log(curMember);
+        //     }
+        // }
+        let curMember = myYear.members[i];
         let row = document.createElement('tr');
         let pwrRankCell = document.createElement('td');
         let teamNameCell = document.createElement('td');
         let pwrPctCell = document.createElement('td');
-        pwrRankCell.innerHTML = curMember.powerRank;
-        teamNameCell.innerHTML = curMember.teamLocation + " " + curMember.teamNickname;
-        pwrPctCell.innerHTML = curMember.powerPct * 100;
+        pwrRankCell.appendChild(document.createTextNode(curMember.powerRank));
+        teamNameCell.appendChild(document.createTextNode(curMember.teamLocation + " " + curMember.teamNickname));
+        pwrPctCell.appendChild(document.createTextNode(roundToHundred(curMember.powerPct * 100)));
         row.appendChild(pwrRankCell);
         row.appendChild(teamNameCell);
         row.appendChild(pwrPctCell);
         tableBody.appendChild(row);
+        
     }
     powerTable.appendChild(tableHead);
     powerTable.appendChild(tableBody);
