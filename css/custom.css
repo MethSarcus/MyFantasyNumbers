@@ -241,7 +241,7 @@ img.resize {
     margin-left: 50px;
 }
 
-#tabs-content {
+#wrapper {
     transition: margin-left .5s;
 }
 
@@ -294,4 +294,5 @@ table.dataTable thead .sorting_desc {
 .sticky-footer {
     background-color: darkgrey;
     color: white;
+    height: 100%;
 }
