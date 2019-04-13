@@ -13,8 +13,8 @@
 
 .dropdown {
     /* width: 400px; */
-      height: auto;
-      
+    height: auto;
+
 }
 
 .dropdown-menu {
@@ -28,19 +28,21 @@
     /*margin: 0;*/
 }
 
-.padMe{
+.padMe {
     padding-left: 3px !important;
 }
 
-@media (max-width: 1199.98px) { 
+@media (max-width: 1199.98px) {
     .profilecard {
         width: 100%;
         float: left;
     }
+
     .profileImage {
         max-height: 10em;
-        max-width: 10em; 
+        max-width: 10em;
     }
+
     .problock {
         float: left;
     }
@@ -175,16 +177,16 @@ img.resize {
 } */
 
 .card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
 }
 
 .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
     filter: brightness(95%);
-  }
+}
 
-  .sidebar-nav {
+.sidebar-nav {
     padding: 9px 0;
 }
 
@@ -204,7 +206,9 @@ img.resize {
     display: block;
 }
 
-.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
+.nav-tabs .dropdown-menu,
+.nav-pills .dropdown-menu,
+.navbar .dropdown-menu {
     margin-top: 0;
 }
 
@@ -229,7 +233,8 @@ img.resize {
     transition: 0.3s
 }
 
-.sidenav a:hover, .offcanvas a:focus{
+.sidenav a:hover,
+.offcanvas a:focus {
     color: blue;
 }
 
@@ -250,18 +255,19 @@ img.resize {
     margin-right: -15px;
 }
 
-#my-navbar-brand{
+#my-navbar-brand {
     width: auto;
     line-height: auto;
 }
 
-#yearSelector{
+#yearSelector {
     color: black;
 }
+
 .navBut {
     text-decoration: none;
     -webkit-appearance: none;
-    color: rgba(255,255,255, 1) !important;
+    color: rgba(255, 255, 255, 1) !important;
 }
 
 .navBut:hover {
@@ -277,22 +283,22 @@ img.resize {
     margin-top: 0px;
 }
 
-.tab-content{
+.tab-content {
     padding-top: 50px;
 }
 
-table.dataTable thead .sorting, 
-table.dataTable thead .sorting_asc, 
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
 table.dataTable thead .sorting_desc {
-    background : none;
+    background: none;
 }
 
-.dataTables_info{
+.dataTables_info {
     visibility: hidden;
 }
 
-.sticky-footer {
+.page-footer {
     background-color: darkgrey;
     color: white;
-    height: 100%;
+    /*height: 100%;*/
 }

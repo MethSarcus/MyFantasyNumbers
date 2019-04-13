@@ -3,6 +3,12 @@ var myYear;
 
 $(document).ready(function () {
     //leagueID = 340734;
+    // document.getElementById("content-wrapper").onscroll = function () {
+    //     console.log("triggered");
+    //     scrollup()
+    //   };
+  
+      
     var input = prompt("Please enter ESPN League ID", "2319896");
     var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
     if (input != null && r == true) {

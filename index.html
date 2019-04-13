@@ -70,6 +70,8 @@
       document.getElementById("mySidenav").style.width = "0";
       document.getElementById("wrapper").style.marginLeft = "0";
     }
+
+    
   </script>
 
 </head>
@@ -107,9 +109,21 @@
 
       <div id="content-wrapper">
 
-        <div id="tabs-content" class="tab-content">
+        <div id="tabs-content" class="tab-content" onscroll="scrollup()">
         </div>
+        <!-- <button class="scroll-to-top rounded" href="#page-top" id="scrollBtn">
+          <i class="fas fa-angle-up"></i>
+        </button> -->
+        <!-- Sticky Footer -->
+        <footer class="page-footer font-small blue">
+
+          <!-- Copyright -->
+          <div class="footer-copyright text-center py-3">© 2019 Copyright:
+            <a href="https://sethmarcus.tech"> Seth Marcus</a>
+          </div>
+          <!-- Copyright -->
         
+        </footer>
 
       </div>
       <!-- /.content-wrapper -->
@@ -120,17 +134,20 @@
     <!-- Scroll to Top Button-->
     
 </body>
-<a class="scroll-to-top rounded" href="#page-top">
-  <i class="fas fa-angle-up"></i>
-</a>
-<!-- Sticky Footer -->
-<footer id="foot" class="sticky-footer">
-  <div class="container my-auto">
-    <div class="copyright text-center my-auto">
-      <span>Copyright Seth Marcus © MyFantasyNumbers.com 2019</span>
-    </div>
-  </div>
-</footer>
-<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/main.js">
+// function scrollup() {
+//         if (document.getElementById("content-wrapper").scrollTop > 20 || document.getElementById("content-wrapper").scrollTop > 20) {
+//           document.getElementById("scrollBtn").style.display = "block";
+//         } else {
+//           document.getElementById("scrollBtn").style.display = "none";
+//         }
+//       }
+  
+//       // When the user clicks on the button, scroll to the top of the document
+//       function topFunction() {
+//         document.body.scrollTop = 0; // For Safari
+//         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+//       }
+</script>
 
 </html>
