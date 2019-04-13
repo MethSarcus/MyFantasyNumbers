@@ -10,6 +10,9 @@
 
 
 @media (max-width: 991.98px) { ... } */
+html, body {
+    height: 100%;
+}
 
 .dropdown {
     /* width: 400px; */
@@ -298,7 +301,10 @@ table.dataTable thead .sorting_desc {
 }
 
 .page-footer {
+    margin-top: 70px;
     background-color: darkgrey;
     color: white;
-    /*height: 100%;*/
+    height: 100%;
+    margin-left: -15px;
+    margin-right: -15px; 
 }
