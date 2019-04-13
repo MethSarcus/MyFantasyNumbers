@@ -474,7 +474,7 @@ function createCrossChart(myLeague, divID) {
     var powerRankTable = document.createElement('div');
     powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
     var powerTable = document.createElement('table');
-    powerTable.classList.add('table');
+    powerTable.classList.add('table', "hover");
     powerTable.id = "mainPwrTable";
     var tableHead = document.createElement('thead');
     var tableHeader = document.createElement('tr');
@@ -511,7 +511,7 @@ function createCrossChart(myLeague, divID) {
         let pwrPctCell = document.createElement('td');
         pwrRankCell.appendChild(document.createTextNode(curMember.powerRank));
         teamNameCell.appendChild(document.createTextNode(curMember.teamLocation + " " + curMember.teamNickname));
-        pwrPctCell.appendChild(document.createTextNode(roundToHundred(curMember.powerPct * 100)));
+        pwrPctCell.appendChild(document.createTextNode(roundToHundred(curMember.powerPct * 100) + "%"));
         row.appendChild(pwrRankCell);
         row.appendChild(teamNameCell);
         row.appendChild(pwrPctCell);

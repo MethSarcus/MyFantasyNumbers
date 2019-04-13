@@ -280,3 +280,18 @@ img.resize {
 .tab-content{
     padding-top: 50px;
 }
+
+table.dataTable thead .sorting, 
+table.dataTable thead .sorting_asc, 
+table.dataTable thead .sorting_desc {
+    background : none;
+}
+
+.dataTables_info{
+    visibility: hidden;
+}
+
+.sticky-footer {
+    background-color: darkgrey;
+    color: white;
+}
