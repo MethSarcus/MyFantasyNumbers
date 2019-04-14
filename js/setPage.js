@@ -94,7 +94,7 @@ function setPage(myYear) {
     q.appendChild(crumbList);
     var cardRow = document.createElement('div');
     cardRow.classList.add('row');
-    cardRow.appendChild(makeLeagueCards('Average Points Per Week', "", getLeagueWeeklyAverage(myYear.members), "points per week"));
+    cardRow.appendChild(makeLeagueStatCards('League Average', getLeagueWeeklyAverage(myYear.members), getLeagueStandardDeviation(myYear)));
     let topWeekMember = getBestWeekMember(myYear)[0];
     let topWeekObject = getBestWeekMember(myYear)[1];
     cardRow.appendChild(makeLeagueCards("Best Week", topWeekMember, roundToHundred(topWeekObject.activeScore) + " points", "Week " + topWeekObject.weekNumber));
@@ -520,8 +520,8 @@ function createPwerRankTable(myYear) {
     tableHeader.appendChild(recordCol);
     tableHeader.appendChild(winPctCol);
     tableHeader.appendChild(pfCol);
-    tableHeader.appendChild(paCol);
     tableHeader.appendChild(ppCol);
+    tableHeader.appendChild(paCol);
     tableHead.appendChild(tableHeader);
     var tableBody = document.createElement('tbody');
     for (i = 0; i < myYear.members.length; i++) {
@@ -588,6 +588,28 @@ function makeLeagueCards(statName, member, subtext, little) {
     return statContainer;
 }
 
+function makeLeagueStatCards(statName, subtext, little) {
+    let statContainer = document.createElement('div');
+    statContainer.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-2', 'col-xl-1', 'my-1');
+    let leagueCard = document.createElement('div');
+    let leagueCardHeader = document.createElement('h2');
+    leagueCard.classList.add('card', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'p-2');
+
+    leagueCardHeader.classList.add('card-title', 'font-weight-bold');
+    leagueCardHeader.innerText = statName;
+    leagueCard.appendChild(leagueCardHeader);
+    let sub = document.createElement('h1');
+    sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
+    sub.innerText = subtext;
+    let mini = document.createElement('h6');
+    mini.setAttribute('style', 'margin-left: auto; margin-right: auto;');
+    mini.innerText = "\nPoints Per Week\nWith a standard deviation of " + little + " Points";
+    leagueCard.appendChild(sub);
+    leagueCard.appendChild(mini);
+    statContainer.appendChild(leagueCard);
+    return statContainer;
+}
+
 function makeHeadToHeadCards(statName, member, member2, little) {
     let statContainer = document.createElement('div');
     statContainer.classList.add('col-12', 'col-sm-12', 'col-md-7', 'col-lg-5', 'col-xl-3', 'my-1');
@@ -635,7 +657,6 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     let sub = document.createElement('h3');
     sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
     let num = roundToHundred(calcMatchupPointDifference(member.pastWeeks[little-1]));
-    console.log(num);
     sub.innerText = num + " Point Difference";
     let mini = document.createElement('h6');
     mini.setAttribute('style', 'margin-left: auto; margin-right: auto;');
