@@ -555,11 +555,10 @@ function getLargestMOV(myYear) {
             let curWeek = curMember.pastWeeks[b];
             if (calcMatchupPointDifference(curWeek) > calcMatchupPointDifference(largestMatch) && curWeek.opponentTeamID != "Bye Week") {
                 largestMatch = curWeek;
-                console.log(largestMatch);
+                
             }
         }
     }
-    console.log(largestMatch);
     return largestMatch;
 }
 

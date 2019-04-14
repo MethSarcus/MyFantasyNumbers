@@ -91,7 +91,6 @@ function setPage(myYear) {
     breadLink.href = "#"
     crumbItem.appendChild(breadLink);
     crumbList.appendChild(crumbItem);
-    console.log(q);
     q.appendChild(crumbList);
     var cardRow = document.createElement('div');
     cardRow.classList.add('row');
@@ -635,7 +634,7 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     h2h.appendChild(cardFig2);
     let sub = document.createElement('h3');
     sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
-    let num = roundToTen(calcMatchupPointDifference(member.pastWeeks[little-1]));
+    let num = roundToHundred(calcMatchupPointDifference(member.pastWeeks[little-1]));
     console.log(num);
     sub.innerText = num + " Point Difference";
     let mini = document.createElement('h6');
