@@ -13,7 +13,7 @@ $(document).ready(function () {
     var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
     if (input != null && r == true) {
         leagueID = input;
-        console.log("triggered");
+        //console.log("triggered");
 
         //localStorage.clear();
         if (localStorage.getItem(leagueID + "2018")) {

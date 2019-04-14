@@ -103,8 +103,8 @@ function setPage(myYear) {
     let worstWeekObject = getWorstWeekMember(myYear)[1];
     cardRow.appendChild(makeLeagueCards("Worst Week", worstWeekMember, roundToHundred(worstWeekObject.activeScore) + " points", "Week " + worstWeekObject.weekNumber));
 
-    let biggestMOV = getLargestMOV(myYear)
-    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(myYear, biggestMOV.teamID), getTeam(myYear, biggestMOV.opponentTeamID), calcMatchupPointDifference(biggestMOV) + " Point Difference", biggestMOV.weekNumber));
+    let biggestMOV = getLargestMOV(myYear);
+    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(myYear, biggestMOV.teamID), getTeam(myYear, biggestMOV.opponentTeamID), biggestMOV.weekNumber));
 
     var tRow = document.createElement('div');
     tRow.classList.add('row');
@@ -589,7 +589,7 @@ function makeLeagueCards(statName, member, subtext, little) {
     return statContainer;
 }
 
-function makeHeadToHeadCards(statName, member, member2, subtext, little) {
+function makeHeadToHeadCards(statName, member, member2, little) {
     let statContainer = document.createElement('div');
     statContainer.classList.add('col-12', 'col-sm-12', 'col-md-7', 'col-lg-5', 'col-xl-3', 'my-1');
     let leagueCard = document.createElement('div');
@@ -635,7 +635,9 @@ function makeHeadToHeadCards(statName, member, member2, subtext, little) {
     h2h.appendChild(cardFig2);
     let sub = document.createElement('h3');
     sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
-    sub.innerText = calcMatchupPointDifference(member.pastWeeks[little-1]) + " Point Difference";
+    let num = roundToTen(calcMatchupPointDifference(member.pastWeeks[little-1]));
+    console.log(num);
+    sub.innerText = num + " Point Difference";
     let mini = document.createElement('h6');
     mini.setAttribute('style', 'margin-left: auto; margin-right: auto;');
     mini.innerText = "week " + little;
