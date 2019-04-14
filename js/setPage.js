@@ -104,7 +104,8 @@ function setPage(myYear) {
 
     let biggestMOV = getLargestMOV(myYear);
     cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(myYear, biggestMOV.teamID), getTeam(myYear, biggestMOV.opponentTeamID), biggestMOV.weekNumber));
-
+    let smallestMOV = getSmallestMOV(myYear);
+    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(myYear, biggestMOV.teamID), getTeam(myYear, biggestMOV.opponentTeamID), biggestMOV.weekNumber));
     var tRow = document.createElement('div');
     tRow.classList.add('row');
     //var stackSpace = document.createElement('div');
@@ -565,18 +566,19 @@ function makeLeagueCards(statName, member, subtext, little) {
     statContainer.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3', 'col-xl-2', 'my-1');
     let leagueCard = document.createElement('div');
     let leagueCardHeader = document.createElement('h2');
-    leagueCard.classList.add('card', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'p-2');
+    leagueCard.classList.add('maincard', 'text-center', 'h-100', 'pb-3');
 
-    leagueCardHeader.classList.add('card-title', 'font-weight-bold');
+    leagueCardHeader.classList.add('card-title', 'font-weight-bold', 'mt-0', 'pt-3');
     leagueCardHeader.innerText = statName;
     leagueCard.appendChild(leagueCardHeader);
-
+    //leagueCard.appendChild(document.createElement('br'));
     let cardImage = document.createElement('img');
-    cardImage.classList.add('resize', 'rounded-circle');
+    cardImage.classList.add('newresize', "mt-3");
     cardImage.src = member.logoURL;
     cardImage.addEventListener("error", fixNoImage);
     leagueCard.appendChild(cardImage);
     let sub = document.createElement('h4');
+    sub.classList.add('mt-3');
     sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
     sub.innerText = member.teamLocation + " " + member.teamNickname;
     let mini = document.createElement('h6');
@@ -590,21 +592,23 @@ function makeLeagueCards(statName, member, subtext, little) {
 
 function makeLeagueStatCards(statName, subtext, little) {
     let statContainer = document.createElement('div');
-    statContainer.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-2', 'col-xl-1', 'my-1');
+    statContainer.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-2', 'col-xl-2', 'my-1');
     let leagueCard = document.createElement('div');
     let leagueCardHeader = document.createElement('h2');
-    leagueCard.classList.add('card', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'p-2');
-
-    leagueCardHeader.classList.add('card-title', 'font-weight-bold');
+    leagueCard.classList.add('maincard', 'text-center', 'h-100', 'pb-3');
+    leagueCardHeader.classList.add('card-title', 'font-weight-bold', 'mt-0', 'pt-3');
     leagueCardHeader.innerText = statName;
     leagueCard.appendChild(leagueCardHeader);
+    leagueCard.appendChild(document.createElement('br'));
+    leagueCard.appendChild(document.createElement('br'));
     let sub = document.createElement('h1');
-    sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
+    sub.setAttribute('style', 'margin-left: auto; margin-right: auto;', 'padding-top: auto;');
     sub.innerText = subtext;
     let mini = document.createElement('h6');
     mini.setAttribute('style', 'margin-left: auto; margin-right: auto;');
-    mini.innerText = "\nPoints Per Week\nWith a standard deviation of " + little + " Points";
+    mini.innerText = "\nStandard Deviation: " + little + " Points";
     leagueCard.appendChild(sub);
+    leagueCard.appendChild(document.createTextNode("Points Per Week"));
     leagueCard.appendChild(mini);
     statContainer.appendChild(leagueCard);
     return statContainer;
@@ -615,21 +619,21 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     statContainer.classList.add('col-12', 'col-sm-12', 'col-md-7', 'col-lg-5', 'col-xl-3', 'my-1');
     let leagueCard = document.createElement('div');
     let leagueCardHeader = document.createElement('h2');
-    leagueCard.classList.add('card', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'py-3', 'px-2');
+    leagueCard.classList.add('maincard', 'text-center', 'h-100', 'pb-3');
 
-    leagueCardHeader.classList.add('card-title', 'font-weight-bold');
+    leagueCardHeader.classList.add('card-title', 'font-weight-bold', 'mt-0', 'pt-3');
     leagueCardHeader.innerText = statName;
     leagueCard.appendChild(leagueCardHeader);
 
     h2h = document.createElement('div');
-    h2h.classList.add('row', 'w-100');
+    h2h.classList.add('row', 'w-100', 'nomarg');
     let cardFig = document.createElement('figure');
     let figCap = document.createElement('figcaption');
     figCap.innerText = member.teamLocation + " " + member.teamNickname + "\n" + roundToTen(member.pastWeeks[little-1].activeScore) + " Points";
     figCap.style.fontSize = '1.1rem';
     cardFig.classList.add('col-5', 'p-0');
     let cardImage = document.createElement('img');
-    cardImage.classList.add('resize', 'rounded-circle');
+    cardImage.classList.add('newresize', 'col-5', 'p-0');
     cardImage.src = member.logoURL;
     cardImage.addEventListener("error", fixNoImage);
     cardFig.appendChild(cardImage);
@@ -641,7 +645,7 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     cardFig2.classList.add('col-5', 'p-0');
     figCap2.style.fontSize = '1.1rem';
     let cardImage2 = document.createElement('img');
-    cardImage2.classList.add('resize', 'rounded-circle', 'col-5', 'p-0');
+    cardImage2.classList.add('newresize', 'col-5', 'p-0');
     cardImage2.src = member2.logoURL;
     cardImage2.addEventListener("error", fixNoImage);
     cardFig2.appendChild(cardImage2);

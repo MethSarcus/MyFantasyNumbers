@@ -531,19 +531,17 @@ function getPPoints(optimalLineup) {
 }
 
 function getSmallestMOV(myYear) {
-    var closestMatch = myYear.members[0].pastWeeks[0];
-
-    for (i = 0; i < myYear.members; i++) {
+    var largestMatch = myYear.members[0].pastWeeks[0];
+    for (i in myYear.members) {
         let curMember = myYear.members[i];
-        for (x = 0; x < curMember.pastWeeks; x++) {
-            let curWeek = curMember.pastWeeks[x];
-            if (calcMatchupPointDifference(curWeek) < calcMatchupPointDifference(closestMatch)) {
-                closestMatch = curWeek;
+        for (b in curMember.pastWeeks) {
+            let curWeek = curMember.pastWeeks[b];
+            if (calcMatchupPointDifference(curWeek) < calcMatchupPointDifference(largestMatch) && curWeek.opponentTeamID != "Bye Week") {
+                largestMatch = curWeek;
             }
         }
     }
-
-    return curWeek;
+    return largestMatch;
 }
 
 function getLargestMOV(myYear) {
