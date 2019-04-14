@@ -1,7 +1,15 @@
+function getTeam(myYear, teamID){
+    for (i = 0; i < myYear.members.length; i++) {
+        if (myYear.members[i].teamID == teamID){
+            return myYear.members[i];
+        }
+    }
+}
+
 //given an array of players it calculates how much they scored that week
-function calcRosterScore(players){
+function calcRosterScore(players) {
     var points = 0;
-    for (i = 0; i < players.length; i++){
+    for (i = 0; i < players.length; i++) {
         points += players[i].actualScore;
     }
 
@@ -9,12 +17,12 @@ function calcRosterScore(players){
 }
 
 //rounds given number to closest hundreth
-function roundToHundred(x){
+function roundToHundred(x) {
     return Math.round(x * 100) / 100
 }
 
 //rounds given number to closest tenth
-function roundToTen(x){
+function roundToTen(x) {
     return Math.round(x * 10) / 10;
 }
 
@@ -22,11 +30,11 @@ function roundToTen(x){
 //Returns: Double, league weekly average to the nearest hundredth
 function getLeagueWeeklyAverage(members) {
     memberPF = 0;
-    for (i = 0; i < members.length; i++){
+    for (i = 0; i < members.length; i++) {
         memberPF += members[i].completeSeasonPoints;
     }
     memberPF = memberPF / members.length;
-    memberPF = memberPF/members[0].pastWeeks.length;
+    memberPF = memberPF / members[0].pastWeeks.length;
     return roundToHundred(memberPF);
 }
 
@@ -118,6 +126,35 @@ function getBestWeekFinish(league, member) {
     return count;
 
 }
+
+//Params: League Object
+//Returns: array with best member and best week
+function getBestWeekMember(league) {
+    var bestMember = league.members[0];
+    var bestWeek = getBestWeek(league.members[0]);
+    for (var i = 0; i < league.members.length; i++) {
+        if (bestWeek.activeScore < getBestWeek(league.members[i]).activeScore) {
+            bestMember = league.members[i];
+            bestWeek = getBestWeek(league.members[i]);
+        }
+    }
+    return [bestMember, bestWeek];
+}
+
+//Params: League Object
+//Returns: array with best member and best week
+function getWorstWeekMember(league) {
+    var bestMember = league.members[0];
+    var bestWeek = getWorstWeek(league.members[0]);
+    for (var i = 0; i < league.members.length; i++) {
+        if (bestWeek.activeScore > getWorstWeek(league.members[i]).activeScore) {
+            bestMember = league.members[i];
+            bestWeek = getWorstWeek(league.members[i]);
+        }
+    }
+    return [bestMember, bestWeek];
+}
+
 
 //Params: League Object
 //Returns: Double, average league total PF
@@ -413,7 +450,7 @@ function getProjectedScore(active) {
     for (i in active) {
         projScore += active[i].projectedScore;
     }
-    
+
     return roundToHundred(projScore);
 }
 
@@ -456,7 +493,7 @@ function getOptimalLineup(week) {
                 eligibleWeekPlayers.push(allWeekPlayers[y]);
             }
         }
-        for (z in eligibleWeekPlayers){
+        for (z in eligibleWeekPlayers) {
             if (eligibleWeekPlayers[z].actualScore > highScore) {
                 highScore = eligibleWeekPlayers[z].actualScore;
                 bestPlayer = eligibleWeekPlayers[z];
@@ -472,9 +509,9 @@ function getOptimalLineup(week) {
     return optimalLineup;
 }
 
-function inLineup(lineup, player){
-    for (v in lineup){
-        if (lineup[v].playerID == player.playerID){
+function inLineup(lineup, player) {
+    for (v in lineup) {
+        if (lineup[v].playerID == player.playerID) {
             return true;
         }
     }
@@ -493,14 +530,14 @@ function getPPoints(optimalLineup) {
     return roundToHundred(score);
 }
 
-function getSmallestMOV(myYear){
+function getSmallestMOV(myYear) {
     var closestMatch = myYear.members[0].pastWeeks[0];
 
-    for (i = 0; i < myYear.members; i++){
+    for (i = 0; i < myYear.members; i++) {
         let curMember = myYear.members[i];
-        for (x = 0; x < curMember.pastWeeks; x++){
+        for (x = 0; x < curMember.pastWeeks; x++) {
             let curWeek = curMember.pastWeeks[x];
-            if (calcMatchupPointDifference(curWeek) < calcMatchupPointDifference(closestMatch)){
+            if (calcMatchupPointDifference(curWeek) < calcMatchupPointDifference(closestMatch)) {
                 closestMatch = curWeek;
             }
         }
@@ -509,15 +546,20 @@ function getSmallestMOV(myYear){
     return curWeek;
 }
 
-function getLargestMOV(myYear){
+function getLargestMOV(myYear) {
     var largestMatch = myYear.members[0].pastWeeks[0];
-    for (i = 0; i < myYear.members; i++){
+    for (i = 0; i < myYear.members; i++) {
         let curMember = myYear.members[i];
-        for (x = 0; x < curMember.pastWeeks; x++){
+        for (x = 0; x < curMember.pastWeeks; x++) {
             let curWeek = curMember.pastWeeks[x];
-            if (calcMatchupPointDifference(curWeek) > calcMatchupPointDifference(largestMatch)){
+            if (calcMatchupPointDifference(curWeek) > calcMatchupPointDifference(largestMatch)) {
                 largestMatch = curWeek;
             }
         }
     }
+    return largestMatch;
+}
+
+function calcMatchupPointDifference(week) {
+    return Math.abs(week.activeScore - week.opponentActiveScore);
 }
