@@ -105,7 +105,7 @@ function setPage(myYear) {
     let biggestMOV = getLargestMOV(myYear);
     cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(myYear, biggestMOV.teamID), getTeam(myYear, biggestMOV.opponentTeamID), biggestMOV.weekNumber));
     let smallestMOV = getSmallestMOV(myYear);
-    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(myYear, biggestMOV.teamID), getTeam(myYear, biggestMOV.opponentTeamID), biggestMOV.weekNumber));
+    cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", getTeam(myYear, smallestMOV.teamID), getTeam(myYear, smallestMOV.opponentTeamID), smallestMOV.weekNumber));
     var tRow = document.createElement('div');
     tRow.classList.add('row');
     //var stackSpace = document.createElement('div');
@@ -244,7 +244,7 @@ function setPage(myYear) {
         let mvpHeader = document.createElement('h1');
         mvpCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center');
 
-        mvpHeader.classList.add('card-title');
+        mvpHeader.classList.add('card-title', 'pt-2');
         mvpHeader.innerText = 'Most Valuable Player';
         mvpCard.appendChild(mvpHeader);
 
@@ -307,11 +307,11 @@ function setPage(myYear) {
         miniColOne.appendChild(worstWeekCard);
 
         let worstContainer = document.createElement('div');
-        worstContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-4', 'mb-0', 'mt-1');
+        worstContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-4', 'mt-0', 'mb-1');
         let worstPlayerCard = document.createElement('div');
         let wvpHeader = document.createElement('h1');
         worstPlayerCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center');
-        wvpHeader.classList.add('card-title');
+        wvpHeader.classList.add('card-title', 'pt-2');
         wvpHeader.innerText = 'Least Valuable Player';
         worstPlayerCard.appendChild(wvpHeader);
 
@@ -326,12 +326,12 @@ function setPage(myYear) {
         worstPlayerCard.appendChild(wvpImage);
         let wvpName;
         if (teamWorstPlayer.position == "D/ST") {
-            wvpName = teamWorstPlayer.firstName + ", ";
+            wvpName = teamWorstPlayer.firstName + " D/ST\n";
         } else {
             wvpName = teamWorstPlayer.firstName + " " + teamWorstPlayer.lastName + "\n";
         }
 
-        let wvpNameElement = document.createElement('h5');
+        let wvpNameElement = document.createElement('h4');
         wvpNameElement.setAttribute('style', 'margin-left: auto; margin-right: auto;');
         wvpNameElement.innerText = wvpName + " " + teamWorstPlayer.actualScore + " Points in Week " + teamWorstPlayer.week;
 
@@ -629,8 +629,8 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     h2h.classList.add('row', 'w-100', 'nomarg');
     let cardFig = document.createElement('figure');
     let figCap = document.createElement('figcaption');
-    figCap.innerText = member.teamLocation + " " + member.teamNickname + "\n" + roundToTen(member.pastWeeks[little-1].activeScore) + " Points";
-    figCap.style.fontSize = '1.1rem';
+    figCap.innerText = member.teamLocation + " " + member.teamNickname + "\n" + roundToHundred(member.pastWeeks[little-1].activeScore) + " Points";
+    figCap.style.fontSize = '.9rem';
     cardFig.classList.add('col-5', 'p-0');
     let cardImage = document.createElement('img');
     cardImage.classList.add('newresize', 'col-5', 'p-0');
@@ -641,9 +641,9 @@ function makeHeadToHeadCards(statName, member, member2, little) {
 
     let cardFig2 = document.createElement('figure');
     let figCap2 = document.createElement('figcaption');
-    figCap2.innerText = member2.teamLocation + " " + member2.teamNickname + "\n" + roundToTen(member2.pastWeeks[little-1].activeScore) + " Points";
+    figCap2.innerText = member2.teamLocation + " " + member2.teamNickname + "\n" + roundToHundred(member2.pastWeeks[little-1].activeScore) + " Points";
     cardFig2.classList.add('col-5', 'p-0');
-    figCap2.style.fontSize = '1.1rem';
+    figCap2.style.fontSize = '.9rem';
     let cardImage2 = document.createElement('img');
     cardImage2.classList.add('newresize', 'col-5', 'p-0');
     cardImage2.src = member2.logoURL;
