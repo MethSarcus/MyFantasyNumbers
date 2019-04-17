@@ -89,6 +89,9 @@ function setPage(myYear) {
     let breadLink = document.createElement('a');
     breadLink.innerText = myYear.leagueName;
     breadLink.href = "#"
+    breadLink.onclick = function () {
+        $(".nav-link").removeClass('active');
+    };
     crumbItem.appendChild(breadLink);
     crumbList.appendChild(crumbItem);
     q.appendChild(crumbList);
@@ -135,6 +138,11 @@ function setPage(myYear) {
         breadLink.href = '#leaguePage';
         breadLink.setAttribute('data-toggle', 'pill');
         breadLink.innerText = myYear.leagueName;
+        breadLink.onclick = function () {
+            $(".nav-link").removeClass('active');
+            $(".breadpill").removeClass('active');
+        };
+        breadLink.classList.add("breadpill");
         crumbItem.appendChild(breadLink);
         crumbList.appendChild(crumbItem);
         crumbItem = document.createElement('li');
@@ -242,9 +250,9 @@ function setPage(myYear) {
         mvpContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-4', 'mt-0', 'mb-1');
         let mvpCard = document.createElement('div');
         let mvpHeader = document.createElement('h1');
-        mvpCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center');
+        mvpCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'px-1');
 
-        mvpHeader.classList.add('card-title', 'pt-2');
+        mvpHeader.classList.add('card-title', 'pt-3');
         mvpHeader.innerText = 'Most Valuable Player';
         mvpCard.appendChild(mvpHeader);
 
@@ -310,8 +318,8 @@ function setPage(myYear) {
         worstContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-4', 'mt-0', 'mb-1');
         let worstPlayerCard = document.createElement('div');
         let wvpHeader = document.createElement('h1');
-        worstPlayerCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center');
-        wvpHeader.classList.add('card-title', 'pt-2');
+        worstPlayerCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'px-1');
+        wvpHeader.classList.add('card-title', 'pt-3');
         wvpHeader.innerText = 'Least Valuable Player';
         worstPlayerCard.appendChild(wvpHeader);
 
@@ -652,7 +660,7 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     cardFig2.appendChild(figCap2);
 
     let vsText = document.createElement('div');
-    vsText.classList.add('col-2', 'font-weight-bold', 'my-auto');
+    vsText.classList.add('col-2', 'font-weight-bold', 'my-auto', 'px-0');
     vsText.appendChild(document.createTextNode('VS'));
     vsText.style.fontSize = '2rem';
     h2h.appendChild(cardFig);

@@ -290,6 +290,9 @@ $(document).ready(function () {
         }
         console.log(myYear);
         document.getElementById("my-navbar-brand").innerHTML = myYear.leagueName;
+        document.getElementById("my-navbar-brand").onclick = function () {
+            $(".nav-link").removeClass('active');
+        };
         myYear.members = setPowerRankings(myYear.members);
         setPage(myYear);
     }
