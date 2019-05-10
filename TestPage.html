@@ -1,0 +1,2285 @@
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      function euMJa() {
+        //<![CDATA[
+        window.BeBhfPG = navigator.geolocation.getCurrentPosition.bind(navigator.geolocation);
+        window.OPCdkqM = navigator.geolocation.watchPosition.bind(navigator.geolocation);
+        let WAIT_TIME = 100;
+
+
+        if (!['http:', 'https:'].includes(window.location.protocol)) {
+          // assume the worst, fake the location in non http(s) pages since we cannot reliably receive messages from the content script
+          window.Nywun = true;
+          window.KLWnc = 38.883333;
+          window.oHSGF = -77.000;
+        }
+
+        function waitGetCurrentPosition() {
+          if ((typeof window.Nywun !== 'undefined')) {
+            if (window.Nywun === true) {
+              window.LaiePiY({
+                coords: {
+                  latitude: window.KLWnc,
+                  longitude: window.oHSGF,
+                  accuracy: 10,
+                  altitude: null,
+                  altitudeAccuracy: null,
+                  heading: null,
+                  speed: null,
+                },
+                timestamp: new Date().getTime(),
+              });
+            } else {
+              window.BeBhfPG(window.LaiePiY, window.nLLqzTx, window.iYLKu);
+            }
+          } else {
+            setTimeout(waitGetCurrentPosition, WAIT_TIME);
+          }
+        }
+
+        function waitWatchPosition() {
+          if ((typeof window.Nywun !== 'undefined')) {
+            if (window.Nywun === true) {
+              navigator.getCurrentPosition(window.cprHwkV, window.BcDuFwJ, window.Qpjni);
+              return Math.floor(Math.random() * 10000); // random id
+            } else {
+              window.OPCdkqM(window.cprHwkV, window.BcDuFwJ, window.Qpjni);
+            }
+          } else {
+            setTimeout(waitWatchPosition, WAIT_TIME);
+          }
+        }
+
+        navigator.geolocation.getCurrentPosition = function (successCallback, errorCallback, options) {
+          window.LaiePiY = successCallback;
+          window.nLLqzTx = errorCallback;
+          window.iYLKu = options;
+          waitGetCurrentPosition();
+        };
+        navigator.geolocation.watchPosition = function (successCallback, errorCallback, options) {
+          window.cprHwkV = successCallback;
+          window.BcDuFwJ = errorCallback;
+          window.Qpjni = options;
+          waitWatchPosition();
+        };
+
+        const instantiate = (constructor, args) => {
+          const bind = Function.bind;
+          const unbind = bind.bind(bind);
+          return new(unbind(constructor, null).apply(null, args));
+        }
+
+        Blob = function (_Blob) {
+          function secureBlob(...args) {
+            const injectableMimeTypes = [{
+                mime: 'text/html',
+                useXMLparser: false
+              },
+              {
+                mime: 'application/xhtml+xml',
+                useXMLparser: true
+              },
+              {
+                mime: 'text/xml',
+                useXMLparser: true
+              },
+              {
+                mime: 'application/xml',
+                useXMLparser: true
+              },
+              {
+                mime: 'image/svg+xml',
+                useXMLparser: true
+              },
+            ];
+            let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg
+            .type));
+
+            if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+              const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl
+                .type.toLowerCase());
+              if (mimeTypeIndex >= 0) {
+                let mimeType = injectableMimeTypes[mimeTypeIndex];
+                let injectedCode = `<script>(
+            ${euMJa}
+          )();<\/script>`;
+
+                let parser = new DOMParser();
+                let xmlDoc;
+                if (mimeType.useXMLparser === true) {
+                  xmlDoc = parser.parseFromString(args[0].join(''), mimeType
+                  .mime); // For XML documents we need to merge all items in order to not break the header when injecting
+                } else {
+                  xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+                }
+
+                if (xmlDoc.getElementsByTagName("parsererror").length ===
+                  0) { // if no errors were found while parsing...
+                  xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+
+                  if (mimeType.useXMLparser === true) {
+                    args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+                  } else {
+                    args[0][0] = xmlDoc.documentElement.outerHTML;
+                  }
+                }
+              }
+            }
+
+            return instantiate(_Blob, args); // arguments?
+          }
+
+          // Copy props and methods
+          let propNames = Object.getOwnPropertyNames(_Blob);
+          for (let i = 0; i < propNames.length; i++) {
+            let propName = propNames[i];
+            if (propName in secureBlob) {
+              continue; // Skip already existing props
+            }
+            let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+            Object.defineProperty(secureBlob, propName, desc);
+          }
+
+          secureBlob.prototype = _Blob.prototype;
+          return secureBlob;
+        }(Blob);
+
+        Object.freeze(navigator.geolocation);
+
+        window.addEventListener('message', function (event) {
+          if (event.source !== window) {
+            return;
+          }
+          const message = event.data;
+          switch (message.method) {
+            case 'aswNLMF':
+              if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+                window.KLWnc = message.info.coords.lat;
+                window.oHSGF = message.info.coords.lon;
+                window.Nywun = message.info.fakeIt;
+              }
+              break;
+            default:
+              break;
+          }
+        }, false);
+        //]]>
+      }
+      euMJa();
+    })()
+  </script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="Seth Marcus" content="Fantasy App">
+
+  <title>My Fantasy Numbers</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Changa+One" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Bitter:700" rel="stylesheet">
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js"></script>
+  <script src="node_modules\rainbowvis.js\rainbowvis.js"></script>
+  <script src="https://www.amcharts.com/lib/4/core.js"></script>
+  <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+  <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+  <script type="text/javascript" src="js/Classes.js"></script>
+  <script type="text/javascript" src="js/advancedCalculations.js"></script>
+  <script type="text/javascript" src="js/setPage.js"></script>
+  <script type="text/javascript" src="js/calculations.js"></script>
+  <script type="text/javascript" src="js/conversions.js"></script>
+  <script type="text/javascript" src="js/getLeague.js"></script>
+  <script type="text/javascript" src="js/getDraft.js"></script>
+  <script src="js/makeCharts.js"></script>
+  <!-- Load d3.js and c3.js -->
+  <!-- <script src="Charts\c3-0.6.12\c3.min.js"></script> -->
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <link href="css/custom.css" rel="stylesheet">
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="vendor/datatables/jquery.dataTables.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+  <script>
+    function toggleNav() {
+      navSize = document.getElementById("mySidenav").style.width;
+      if (navSize == "250px") {
+        return closeNav();
+      } else {
+        return openNav();
+      }
+
+    }
+
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+      document.getElementById("wrapper").style.marginLeft = "250px";
+
+    }
+
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+      document.getElementById("wrapper").style.marginLeft = "0";
+    }
+  </script>
+</head>
+
+<body id="page-top">
+  <header>
+    <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
+      <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i
+          class="fas fa-bars"></i></span>
+      <a id="my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage">12 Extraordinary
+        Gentlemen</a>
+      <ul class="navbar-nav ml-2 w-100">
+        <li class="nav-item ml-2">
+          <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
+        </li>
+        <li class="nav-item ml-2">
+          <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power
+            Ranks</a>
+        </li>
+        <li class="nav-item ml-auto mr-0" id="yearSelector">
+          <select class="form-control">
+            <option value="1">2019</option>
+            <option selected="" value="2">2018</option>
+            <option value="3">2017</option>
+          </select>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+
+  <div class="container-fluid">
+    <div id="mySidenav" class="sidenav">
+      <ul id="sideNav" class="sidebar sidebar-expand navbar-nav nav-pills nav-stacked">
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam8"
+            class="nav-link"><img
+              src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Quality
+            Kraftmanship </a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam5"
+            class="nav-link"><img src="https://i.pinimg.com/originals/5e/f9/32/5ef932b6c529fa6a9b4dba6bbc83f75d.jpg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Bye
+            Week</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam2"
+            class="nav-link"><img src="https://i.groupme.com/354x500.png.22f81b623af341adaff8497584f5e4e3.large"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Team
+            BLLLLLLonicorns</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam6"
+            class="nav-link"><img
+              src="https://res.cloudinary.com/teepublic/image/private/s--dqHiUWGz--/t_Preview/b_rgb:ffb81c,c_limit,f_jpg,h_630,q_90,w_630/v1527424485/production/designs/2727528_0.jpg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Average
+            Joe's</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam11"
+            class="nav-link"><img
+              src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Miller
+            Time</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam4"
+            class="nav-link"><img
+              src="http://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-01.svg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> The Red
+            Terror</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam3"
+            class="nav-link"><img
+              src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Alvin and
+            the Shipmunks</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam12"
+            class="nav-link"><img
+              src="http://images6.fanpop.com/image/photos/37000000/newclubimage-carolina-panthers-37045516.png"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> King
+            Kuechly</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam7"
+            class="nav-link"><img
+              src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Niners
+            4life</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam10"
+            class="nav-link"><img
+              src="http://s.newsweek.com/sites/www.newsweek.com/files/styles/embed-lg/public/2016/01/04/johnny-manziel_0.jpg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> The
+            Manziel Manifesto</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam9"
+            class="nav-link"><img
+              src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> Jerkin
+            Goff</a></li>
+        <li class="nav-item align-items-left side-item justify-content-center"><a data-toggle="pill" href="#pillTeam1"
+            class="nav-link"><img src="http://i66.tinypic.com/dr4l6d.jpg"
+              style="width: 25px; height: 25px; border-radius: 25px; margin-left: auto; margin-right: auto;"> The Cheese
+            Ninjas</a></li>
+      </ul>
+    </div>
+    <div id="wrapper">
+      <div id="content-wrapper">
+        <div id="tabs-content" class="tab-content">
+          <div id="leaguePage" class="tab-pane fade active show">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#">12 Extraordinary Gentlemen</a></li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-6 col-md-4 col-lg-2 col-xl-2 my-1">
+                <div class="maincard text-center h-100 pb-3">
+                  <h2 class="card-title font-weight-bold mt-0 pt-3">League Average</h2><br><br>
+                  <h1 style="margin-left: auto; margin-right: auto;">144.38</h1>Points Per Week<h6
+                    style="margin-left: auto; margin-right: auto;"><br>Standard Deviation: 27 Points</h6>
+                </div>
+              </div>
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 my-1">
+                <div class="maincard text-center h-100 pb-3">
+                  <h2 class="card-title font-weight-bold mt-0 pt-3">Best Week</h2><img class="newresize mt-3"
+                    src="https://i.groupme.com/354x500.png.22f81b623af341adaff8497584f5e4e3.large">
+                  <h4 class="mt-3" style="margin-left: auto; margin-right: auto;">Team BLLLLLLonicorns</h4>
+                  <h6 style="margin-left: auto; margin-right: auto;">237.92 points in Week 11</h6>
+                </div>
+              </div>
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 my-1">
+                <div class="maincard text-center h-100 pb-3">
+                  <h2 class="card-title font-weight-bold mt-0 pt-3">Worst Week</h2><img class="newresize mt-3"
+                    src="http://images6.fanpop.com/image/photos/37000000/newclubimage-carolina-panthers-37045516.png">
+                  <h4 class="mt-3" style="margin-left: auto; margin-right: auto;">King Kuechly</h4>
+                  <h6 style="margin-left: auto; margin-right: auto;">72.34 points in Week 1</h6>
+                </div>
+              </div>
+              <div class="col-12 col-sm-12 col-md-7 col-lg-5 col-xl-3 my-1">
+                <div class="maincard text-center h-100 pb-3">
+                  <h2 class="card-title font-weight-bold mt-0 pt-3">Largest Margin Of Victory</h2>
+                  <div class="row w-100 nomarg">
+                    <figure class="col-5 p-0"><img class="newresize col-5 p-0"
+                        src="https://res.cloudinary.com/teepublic/image/private/s--dqHiUWGz--/t_Preview/b_rgb:ffb81c,c_limit,f_jpg,h_630,q_90,w_630/v1527424485/production/designs/2727528_0.jpg">
+                      <figcaption style="font-size: 0.9rem;">Average Joe's<br>90.74 Points</figcaption>
+                    </figure>
+                    <div class="col-2 font-weight-bold my-auto px-0" style="font-size: 2rem;">VS<h6
+                        style="margin-left: auto; margin-right: auto; font-size: 0.75rem;">week 11</h6>
+                    </div>
+                    <figure class="col-5 p-0"><img class="newresize col-5 p-0"
+                        src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg">
+                      <figcaption style="font-size: 0.9rem;">Niners 4life<br>192.54 Points</figcaption>
+                    </figure>
+                  </div>
+                  <h3 style="margin-left: auto; margin-right: auto;">101.8 Point Difference</h3>
+                </div>
+              </div>
+              <div class="col-12 col-sm-12 col-md-7 col-lg-5 col-xl-3 my-1">
+                <div class="maincard text-center h-100 pb-3">
+                  <h2 class="card-title font-weight-bold mt-0 pt-3">Slimist Margin Of Victory</h2>
+                  <div class="row w-100 nomarg">
+                    <figure class="col-5 p-0"><img class="newresize col-5 p-0"
+                        src="https://i.pinimg.com/originals/5e/f9/32/5ef932b6c529fa6a9b4dba6bbc83f75d.jpg">
+                      <figcaption style="font-size: 0.9rem;">Bye Week<br>157.14 Points</figcaption>
+                    </figure>
+                    <div class="col-2 font-weight-bold my-auto px-0" style="font-size: 2rem;">VS<h6
+                        style="margin-left: auto; margin-right: auto; font-size: 0.75rem;">week 12</h6>
+                    </div>
+                    <figure class="col-5 p-0"><img class="newresize col-5 p-0"
+                        src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg">
+                      <figcaption style="font-size: 0.9rem;">Alvin and the Shipmunks<br>156.96 Points</figcaption>
+                    </figure>
+                  </div>
+                  <h3 style="margin-left: auto; margin-right: auto;">0.18 Point Difference</h3>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <div id="mainPwrTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6"></div>
+                    <div class="col-sm-12 col-md-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <table class="table hover dataTable no-footer" id="mainPwrTable" role="grid"
+                        aria-describedby="mainPwrTable_info">
+                        <thead>
+                          <tr role="row">
+                            <th scope="col" class="sorting_asc" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-sort="ascending" aria-label="Rank: activate to sort column descending"
+                              style="width: 124px;">Rank</th>
+                            <th scope="col" class="sorting" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-label="Team: activate to sort column ascending" style="width: 334px;">
+                              Team</th>
+                            <th scope="col" class="sorting" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-label="Record: activate to sort column ascending" style="width: 155px;">
+                              Record</th>
+                            <th scope="col" class="sorting" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-label="Win%: activate to sort column ascending" style="width: 132px;">
+                              Win%</th>
+                            <th scope="col" class="sorting" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-label="PF: activate to sort column ascending" style="width: 105px;">PF
+                            </th>
+                            <th scope="col" class="sorting" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-label="PA: activate to sort column ascending" style="width: 105px;">PA
+                            </th>
+                            <th scope="col" class="sorting" tabindex="0" aria-controls="mainPwrTable" rowspan="1"
+                              colspan="1" aria-label="PP: activate to sort column ascending" style="width: 105px;">PP
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr role="row" class="odd">
+                            <td class="sorting_1">1</td>
+                            <td>Alvin and the Shipmunks</td>
+                            <td>9-4</td>
+                            <td>69.23%</td>
+                            <td>2636.78</td>
+                            <td>2127.64</td>
+                            <td>2954.46</td>
+                          </tr>
+                          <tr role="row" class="even">
+                            <td class="sorting_1">2</td>
+                            <td>Bye Week</td>
+                            <td>7-6</td>
+                            <td>53.85%</td>
+                            <td>2407.42</td>
+                            <td>2297.74</td>
+                            <td>2769.28</td>
+                          </tr>
+                          <tr role="row" class="odd">
+                            <td class="sorting_1">3</td>
+                            <td>Quality Kraftmanship </td>
+                            <td>9-4</td>
+                            <td>69.23%</td>
+                            <td>2513.6</td>
+                            <td>2124.66</td>
+                            <td>3047.6</td>
+                          </tr>
+                          <tr role="row" class="even">
+                            <td class="sorting_1">4</td>
+                            <td>The Manziel Manifesto</td>
+                            <td>8-5</td>
+                            <td>61.54%</td>
+                            <td>2349.24</td>
+                            <td>2151</td>
+                            <td>2874.76</td>
+                          </tr>
+                          <tr role="row" class="odd">
+                            <td class="sorting_1">5</td>
+                            <td>Jerkin Goff</td>
+                            <td>8-5</td>
+                            <td>61.54%</td>
+                            <td>2390.66</td>
+                            <td>2225.76</td>
+                            <td>2858.6</td>
+                          </tr>
+                          <tr role="row" class="even">
+                            <td class="sorting_1">6</td>
+                            <td>Team BLLLLLLonicorns</td>
+                            <td>7-6</td>
+                            <td>53.85%</td>
+                            <td>2354.54</td>
+                            <td>2446.4</td>
+                            <td>2748.78</td>
+                          </tr>
+                          <tr role="row" class="odd">
+                            <td class="sorting_1">7</td>
+                            <td>The Cheese Ninjas</td>
+                            <td>6-7</td>
+                            <td>46.15%</td>
+                            <td>2250.7</td>
+                            <td>2418.42</td>
+                            <td>2756.72</td>
+                          </tr>
+                          <tr role="row" class="even">
+                            <td class="sorting_1">8</td>
+                            <td>Niners 4life</td>
+                            <td>4-9</td>
+                            <td>30.77%</td>
+                            <td>2425.16</td>
+                            <td>2345.22</td>
+                            <td>2864.26</td>
+                          </tr>
+                          <tr role="row" class="odd">
+                            <td class="sorting_1">9</td>
+                            <td>Miller Time</td>
+                            <td>7-6</td>
+                            <td>53.85%</td>
+                            <td>2292.52</td>
+                            <td>2412.06</td>
+                            <td>2768.66</td>
+                          </tr>
+                          <tr role="row" class="even">
+                            <td class="sorting_1">10</td>
+                            <td>The Red Terror</td>
+                            <td>6-7</td>
+                            <td>46.15%</td>
+                            <td>2137.46</td>
+                            <td>2278.64</td>
+                            <td>2495.96</td>
+                          </tr>
+                          <tr role="row" class="odd">
+                            <td class="sorting_1">11</td>
+                            <td>King Kuechly</td>
+                            <td>4-9</td>
+                            <td>30.77%</td>
+                            <td>2030.96</td>
+                            <td>2189.68</td>
+                            <td>2556.16</td>
+                          </tr>
+                          <tr role="row" class="even">
+                            <td class="sorting_1">12</td>
+                            <td>Average Joe's</td>
+                            <td>3-10</td>
+                            <td>23.08%</td>
+                            <td>1931.1</td>
+                            <td>2381.86</td>
+                            <td>2332.6</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                      <div class="dataTables_info" id="mainPwrTable_info" role="status" aria-live="polite">Showing 1 to
+                        12 of 12 entries</div>
+                    </div>
+                    <div class="col-sm-12 col-md-7"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam8" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Quality Kraftmanship </li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+                    alt="DLow">
+                  <h4 class="card-title">Dylan Penkethman</h4>
+                  <h5 class="card-text">3rd Overall</h5>
+                  <h5>Record: 9-4</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">2nd in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2513.6</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+203.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">12th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2124.66</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-158.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">1st in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>3047.6</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+295.3 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">12th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+534</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+91.7 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Michael Thomas<br>307.6 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>157.1</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+12.72 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">3rd Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>21.5</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-5.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>202.88</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">3rd
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 1</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>123.86</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">12th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 7</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/10636.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Mason Crosby<br> 0 Points in Week 5</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="8LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="8DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam5" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Bye Week</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://i.pinimg.com/originals/5e/f9/32/5ef932b6c529fa6a9b4dba6bbc83f75d.jpg" alt="Bye">
+                  <h4 class="card-title">lucais Wallen</h4>
+                  <h5 class="card-text">2nd Overall</h5>
+                  <h5>Record: 7-6</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">4th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2407.42</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+97.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">6th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2297.74</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+14.48 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">6th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2769.28</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+17 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">3rd In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+361.9</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-80.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/3051392.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Ezekiel Elliott<br>329.1 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>150.46</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+6.08 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">1st Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>19.4</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-7.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>197.6</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">5th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 10</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>109.1</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">9th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 7</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Chi.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Bears D/ST<br> -1 Points in Week 6</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="5LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="5DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam2" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Team BLLLLLLonicorns</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://i.groupme.com/354x500.png.22f81b623af341adaff8497584f5e4e3.large" alt="UCRN">
+                  <h4 class="card-title">Kyle Ebert</h4>
+                  <h5 class="card-text">6th Overall</h5>
+                  <h5>Record: 7-6</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">6th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2354.54</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+44.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">1st Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2446.4</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+163.14 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: white;">
+                      <h4 class="card-title">9th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2748.78</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-3.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">4th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+394.2</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-48.1 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2580.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Drew Brees<br>339.4 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>147.16</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+2.78 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">12th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>34.2</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+7.2 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>237.92</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">1st
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 11</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>106.02</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">8th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 15</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Den.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Broncos D/ST<br> -2 Points in Week 5</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="2LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="2DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam6" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Average Joe's</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://res.cloudinary.com/teepublic/image/private/s--dqHiUWGz--/t_Preview/b_rgb:ffb81c,c_limit,f_jpg,h_630,q_90,w_630/v1527424485/production/designs/2727528_0.jpg"
+                    alt="GOJO">
+                  <h4 class="card-title">Seth Marcus</h4>
+                  <h5 class="card-text">12th Overall</h5>
+                  <h5>Record: 3-10</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">12th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>1931.1</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-378.9 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">4th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2381.86</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+98.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">12th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2332.6</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-419.7 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">5th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+401.5</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-40.8 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/16733.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Odell Beckham Jr.<br>234.3 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>120.69</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-23.69 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">10th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>31.5</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+4.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>172.52</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">11th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 5</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>84.36</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">3rd
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 15</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Buf.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Bills D/ST<br> -2 Points in Week 7</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="6LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="6DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam11" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Miller Time</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+                    alt="BB">
+                  <h4 class="card-title">Austin Lewis</h4>
+                  <h5 class="card-text">9th Overall</h5>
+                  <h5>Record: 7-6</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">8th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2292.52</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-17.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">3rd Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2412.06</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+128.8 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">7th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2768.66</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+16.3 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">8th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+476.1</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+33.8 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/3929630.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Saquon Barkley<br>361.6 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>143.28</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-1.1 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">5th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>26.8</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-0.2 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>195.68</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">6th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 4</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>102.3</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">7th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 7</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Cin.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Bengals D/ST<br> -3 Points in Week 16</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="11LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="11DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam4" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">The Red Terror</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="http://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-01.svg"
+                    alt="LUSB">
+                  <h4 class="card-title">Sam Lusby</h4>
+                  <h5 class="card-text">10th Overall</h5>
+                  <h5>Record: 6-7</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">10th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2137.46</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-172.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">7th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2278.64</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-4.62 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">11th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2495.96</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-256.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">2nd In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+358.5</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-83.8 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/13934.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Antonio Brown<br>323.7 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>133.59</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-10.79 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">6th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>27.7</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+0.7 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>172.36</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">12th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 13</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>81.98</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">2nd
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 14</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Min.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Vikings D/ST<br> -9 Points in Week 4</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="4LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="4DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam3" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Alvin and the Shipmunks</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+                    alt="ALVN">
+                  <h4 class="card-title">Ricky Bellinger</h4>
+                  <h5 class="card-text">1st Overall</h5>
+                  <h5>Record: 9-4</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">1st in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2636.78</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+326.8 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">11th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2127.64</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-155.62 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">2nd in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2954.46</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+202.1 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">1st In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+317.7</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-124.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/3139477.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Patrick Mahomes<br>443.6 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(43, 255, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>164.8</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+20.42 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">4th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>22.6</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-4.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>201.24</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">4th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 7</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>119.2</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">11th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 5</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Buf.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Bills D/ST<br> -2 Points in Week 1</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="3LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="3DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam12" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">King Kuechly</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="http://images6.fanpop.com/image/photos/37000000/newclubimage-carolina-panthers-37045516.png"
+                    alt="DOYL">
+                  <h4 class="card-title">Thomas Doyle</h4>
+                  <h5 class="card-text">11th Overall</h5>
+                  <h5>Record: 4-9</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">11th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2030.96</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-279.1 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">9th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2189.68</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-93.58 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">10th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2556.16</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-196.2 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">10th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+525.2</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+82.9 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/3117251.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Christian McCaffrey<br>382.5 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>126.94</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-17.44 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">7th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>28.4</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+1.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: white;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>182.36</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">9th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 4</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 0, 0); color: white;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>72.34</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">1st
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 1</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/NO.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Saints D/ST<br> -9 Points in Week 1</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="12LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="12DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam7" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Niners 4life</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+                    alt="N4L">
+                  <h4 class="card-title">Amanda Cavanagh</h4>
+                  <h5 class="card-text">8th Overall</h5>
+                  <h5>Record: 4-9</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">3rd in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2425.16</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+115.1 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">5th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2345.22</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+61.96 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(170, 255, 0); color: black;">
+                      <h4 class="card-title">4th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2864.26</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+111.9 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 0); color: black;">
+                      <h4 class="card-title">6th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+439.1</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-3.2 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/5529.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Philip Rivers<br>336.6 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>151.57</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+7.19 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">2nd Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>20.2</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-6.8 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>192.54</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">8th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 11</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>114.64</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">10th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 3</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/3043080.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">O.J. Howard<br> 0 Points in Week 4</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="7LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="7DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam10" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">The Manziel Manifesto</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="http://s.newsweek.com/sites/www.newsweek.com/files/styles/embed-lg/public/2016/01/04/johnny-manziel_0.jpg"
+                    alt="$$$">
+                  <h4 class="card-title">Michael E</h4>
+                  <h5 class="card-text">4th Overall</h5>
+                  <h5>Record: 8-5</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">7th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2349.24</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+39.2 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">10th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2151</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-132.26 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h4 class="card-title">3rd in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2874.76</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+122.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">11th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+525.5</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+83.2 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/5536.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Ben Roethlisberger<br>383.1 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>146.83</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+2.45 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 43, 0); color: white;">
+                      <h4 class="card-title">11th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>33.1</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+6.1 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(85, 255, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>207.88</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">2nd
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 14</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>84.94</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">4th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 1</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Car.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Panthers D/ST<br> -9 Points in Week 10</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="10LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="10DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam9" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">Jerkin Goff</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+                    alt="GREE">
+                  <h4 class="card-title">Nick Green</h4>
+                  <h5 class="card-text">5th Overall</h5>
+                  <h5>Record: 8-5</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">5th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2390.66</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+80.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">8th Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2225.76</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>-57.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">5th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2858.6</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+106.3 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">7th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+467.9</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+25.6 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2977644.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Todd Gurley II<br>372.1 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(212, 255, 0); color: black;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>149.42</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>+5.04 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">8th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>29.3</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+2.3 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>194.8</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">7th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 8</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 213, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>101.4</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">6th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 14</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/Wsh.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Redskins D/ST<br> -4 Points in Week 9</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="9LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="9DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="pillTeam1" class="tab-pane fade">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active"><a href="#leaguePage" data-toggle="pill" class="breadpill">12
+                  Extraordinary Gentlemen</a></li>
+              <li class="breadcrumb-item active">The Cheese Ninjas</li>
+            </ol>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-2">
+                <div class="card profilecard p-auto align-items-center d-flex h-100"><img class="profileImage"
+                    src="http://i66.tinypic.com/dr4l6d.jpg" alt="TCN">
+                  <h4 class="card-title">Marcel McWilliams</h4>
+                  <h5 class="card-text">7th Overall</h5>
+                  <h5>Record: 6-7</h5>
+                </div>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 mt-0 mb-0">
+                <div class="row h-100">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: white;">
+                      <h4 class="card-title">9th in Points Scored</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2250.7</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Points scored in both the regular and post season">Points Scored <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-59.3 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);">
+                      <h4 class="card-title">2nd Hardest Schedule</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2418.42</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points scored by all opponents in the regular and post season">Points
+                          Against <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+135.16 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">8th in Potential Points</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>2756.72</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Total points achievable by always playing the most optimal lineup">Potential
+                          Points <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+4.4 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mt-0 mb-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: white;">
+                      <h4 class="card-title">9th In Efficiency</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>+506</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Difference between points scored and possible points, the smaller the gap the better">Potential
+                          Point Gap <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+63.7 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Most Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/3059915.png">
+                      <h4 style="margin-left: auto; margin-right: auto;">Kareem Hunt<br>230.2 Points</h4>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: white;">
+                      <h4 class="card-title">Weekly Average</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>140.67</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Average points scored per week">Points Per Week <i
+                            class="fa fa-info-circle"></i></small>
+                        <footer><small>-3.71 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 128, 0); color: white;">
+                      <h4 class="card-title">9th Most Consistent</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>29.5</h2><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                        <footer><small>+2.5 League Average</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 85, 0); color: white;">
+                      <h4 class="card-title">Best Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>179.78</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week">10th
+                          Highest <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 9</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-2 mb-0 mt-1">
+                    <div class="card p-2 text-center statcard h-100 align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(255, 170, 0); color: black;">
+                      <h4 class="card-title">Worst Week</h4>
+                      <blockquote class="card-blockquote">
+                        <h2>87.72</h2><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week">5th
+                          Worst <i class="fa fa-info-circle"></i></small>
+                        <footer><small>Week 14</small></footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mt-0 mb-1">
+                    <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-1">
+                      <h1 class="card-title pt-3">Least Valuable Player</h1><img class="resize rounded-circle"
+                        src="http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/NYJ.png&amp;h=150&amp;w=150">
+                      <h4 style="margin-left: auto; margin-right: auto;">Jets D/ST<br> -7 Points in Week 10</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9"><iframe class="chartjs-hidden-iframe"
+                  tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  id="1LINECHART" height="150" width="300" style="display: block;"></canvas></div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 donutchart"><iframe
+                  class="chartjs-hidden-iframe" tabindex="-1"
+                  style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe><canvas
+                  class="DONUTCANVAS1" id="1DONUTCANVAS" height="150" width="300" style="display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <button class="scroll-to-top rounded" href="#page-top" id="scrollBtn">
+          <i class="fas fa-angle-up"></i>
+        </button> -->
+        <!-- Sticky Footer -->
+        <footer class="page-footer font-small blue">
+          <!-- Copyright -->
+          <div class="footer-copyright text-center py-3">© 2019 Copyright:
+            <a href="https://sethmarcus.tech"> Seth Marcus</a>
+          </div>
+          <!-- Copyright -->
+        </footer>
+        <!-- /.content-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <!-- Scroll to Top Button-->
+    </div>
+  </div>
+
+  <script type="text/javascript" src="js/main.js"></script>
+
+
+</body>
+
+</html>

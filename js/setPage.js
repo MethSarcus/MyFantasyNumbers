@@ -111,17 +111,90 @@ function setPage(myYear) {
     cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", getTeam(myYear, smallestMOV.teamID), getTeam(myYear, smallestMOV.opponentTeamID), smallestMOV.weekNumber));
     var tRow = document.createElement('div');
     tRow.classList.add('row');
-    //var stackSpace = document.createElement('div');
-    //stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
-    //var stackedCanvas = document.createElement('canvas');
-    //stackedCanvas.id = "LEAGUESTACKEDCANVAS";
-    //stackSpace.appendChild(stackedCanvas);
+    
     tRow.appendChild(createPwerRankTable(myYear));
     //stackedRow.appendChild(stackSpace);
     q.appendChild(cardRow);
     q.appendChild(tRow);
-    tabsList.appendChild(q);
-    //createStackedColumns(myYear);
+    tabsList.appendChild(q); //adds main league page
+
+
+
+    //create graph page
+    graphPage = document.createElement("div");
+    graphPage.id = "graphPage";
+    graphPage.classList.add("tab-pane", "fade");
+    var crumbLis = document.createElement('ol');
+    crumbLis.classList.add('breadcrumb');
+    var crumbIte = document.createElement('li');
+    crumbIte.classList.add('breadcrumb-item', 'active');
+    breadLink = document.createElement('a');
+    breadLink.innerText = "Graphs";
+    breadLink.href = "#"
+    breadLink.onclick = function () {
+        $(".nav-link").removeClass('active');
+    };
+    crumbIte.appendChild(breadLink);
+    crumbLis.appendChild(crumbIte);
+    graphPage.appendChild(crumbLis);
+    //graphpage contents
+    var selectRow = document.createElement('div');
+    selectRow.classList.add('row');
+
+    var pieButton = document.createElement('button');
+    pieButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    pieButton.onclick = drawPieChart(myYear.members);
+    pieButton.innerHTML = "Position Breakdown"
+
+    var barButton = document.createElement('button');
+    barButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    barButton.onclick = drawBarGraph(myYear.members);
+    barButton.innerHTML = "PF Breakdown"
+
+    var lineButton = document.createElement('button');
+    lineButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    lineButton.onclick = drawLineGraph(myYear.members);
+    lineButton.innerHTML = "Weekly Points";
+
+    var tradeButton = document.createElement('button');
+    tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    tradeButton.onclick = drawLineGraph(myYear.members);
+    tradeButton.innerHTML = "Trade Web";
+
+    var topGuys = document.createElement('button');
+    topGuys.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    topGuys.onclick = drawLineGraph(myYear.members);
+    topGuys.innerHTML = "Top Players";
+    
+    var graphRow = document.createElement('div');
+    graphRow.classList.add('row');
+    //var stackSpace = document.createElement('div');
+    //stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
+    
+
+    var graphContainer = document.createElement('div');
+    graphContainer.classList.add('col-12', 'col-sm-10', 'col-md-10', 'col-lg-10', 'col-xl-10');
+    var stackedCanvas = document.createElement('canvas');
+    stackedCanvas.id = "LEAGUESTACKEDCANVAS";
+    graphContainer.appendChild(stackedCanvas);
+    var graphOptions = document.createElement('div');
+    graphOptions.classList.add('col-12', 'col-sm-2', 'col-md-2', 'col-lg-2', 'col-xl-2');
+
+    selectRow.appendChild(pieButton);
+    selectRow.appendChild(barButton);
+    selectRow.appendChild(lineButton);
+    selectRow.appendChild(tradeButton);
+    graphPage.appendChild(selectRow);
+    graphRow.appendChild(graphContainer);
+    graphRow.appendChild(graphOptions);
+
+    graphPage.appendChild(graphRow)
+
+    tabsList.appendChild(graphPage); //adds Graph Page
+
+
+
+    createStackedColumns(myYear);
 
     //where the magic happens, creates each league page
     for (var i = 0; i < myYear.members.length; i++) {
@@ -520,10 +593,10 @@ function createPwerRankTable(myYear) {
     pfCol.appendChild(document.createTextNode('PF'));
     var ppCol = document.createElement('th');
     ppCol.setAttribute('scope', 'col');
-    ppCol.appendChild(document.createTextNode('PP'));
+    ppCol.appendChild(document.createTextNode('PA'));
     var paCol = document.createElement('th');
     paCol.setAttribute('scope', 'col');
-    paCol.appendChild(document.createTextNode('PA'));
+    paCol.appendChild(document.createTextNode('PP'));
     tableHeader.appendChild(rankCol);
     tableHeader.appendChild(teamCol);
     tableHeader.appendChild(recordCol);
@@ -620,6 +693,17 @@ function makeLeagueStatCards(statName, subtext, little) {
     leagueCard.appendChild(mini);
     statContainer.appendChild(leagueCard);
     return statContainer;
+}
+
+function drawPieChart(members){
+
+}
+
+function drawBarGraph(members){
+}
+
+function drawLineGraph(members){
+        
 }
 
 function makeHeadToHeadCards(statName, member, member2, little) {

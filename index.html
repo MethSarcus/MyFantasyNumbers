@@ -70,24 +70,35 @@
 </head>
 <header>
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-    <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i class="fas fa-bars"></i></span>
+    <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i
+        class="fas fa-bars"></i></span>
     <a id="my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
-        <ul class="navbar-nav ml-2 w-100">
-          <li class="nav-item ml-2">
-            <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
-          </li>
-          <li class="nav-item ml-2">
-            <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power
-              Ranks</a>
-          </li>
-          <li class="nav-item ml-auto mr-0" id="yearSelector">
-            <select class="form-control">
-              <option value="1">2019</option>
-              <option selected value="2">2018</option>
-              <option value="3">2017</option>
-            </select>
-          </li>
-        </ul>
+    <ul class="navbar-nav ml-2 w-100">
+      <li class="nav-item ml-2">
+        <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
+      </li>
+      <li class="nav-item ml-2">
+        <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power
+          Ranks</a>
+      </li>
+      <li class="nav-item ml-auto mr-0 my-auto" id="yearSelector">
+        <select class="form-control form-control-sm ">
+          <option value="1">2019</option>
+          <option selected value="2">2018</option>
+          <option value="3">2017</option>
+        </select>
+      </li>
+      <li class="my-auto mx-3">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-primary btn-sm">
+                <input type="radio" name="options" autocomplete="off"> Regular Season</label>
+              <label class="btn btn-primary btn-sm">
+                <input type="radio" name="options" autocomplete="off" checked> Post Season</label>
+              <label class="btn btn-primary active btn-sm">
+                <input type="radio" name="options" autocomplete="off"> All</label>
+            </div>
+      </li>
+    </ul>
   </nav>
 </header>
 
@@ -100,6 +111,7 @@
     <div id="wrapper">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
+
         </div>
         <!-- <button class="scroll-to-top rounded" href="#page-top" id="scrollBtn">
           <i class="fas fa-angle-up"></i>
