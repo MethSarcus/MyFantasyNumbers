@@ -6,12 +6,15 @@
 function createWeeklyLineCharts(leagueMembers) {
     //Chart.defaults.global.legend.labels.usePointStyle = true;
     //let colors = ['red', 'green', 'blue', 'orange', 'lime', 'magenta', 'teal', 'yellow'];
-    var ctx = document.getElementById("LINECANVAS");
+    window.myChart.destroy();
+    var ctx = document.getElementById("GRAPHCANVAS");
+    ctx.classList.toggle('mainDonut', false);
+    ctx.classList.toggle('mainChart', true);
     var myWeekLabels = createWeekLabels(leagueMembers[0].pastWeeks.length);
     var datasets = [];
     for (x in leagueMembers) {
         let curTeam = leagueMembers[x];
-        var myColor = getLineColor(x);
+        var myColor = getMemberColor(x);
         datasets.push({
             label: curTeam.teamLocation + " " + curTeam.teamNickname,
             data: getWeekArray(curTeam.pastWeeks),
@@ -24,13 +27,13 @@ function createWeeklyLineCharts(leagueMembers) {
 
     datasets.push({
         label: "League Average",
-        data: getLeagueAvgWeeksArray(),
+        data: getLeagueAvgWeeksArray(leagueMembers),
         borderColor: 'black',
         backGroundColor: 'black',
         fill: false,
         lineTension: 0,
     });
-    var myChart = new Chart(ctx, {
+    window.myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: createWeekLabels(leagueMembers[0].pastWeeks.length),
@@ -38,19 +41,19 @@ function createWeeklyLineCharts(leagueMembers) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
             title: {
                 display: true,
                 position: "top",
                 text: "Points Scored By Week",
-                fontSize: 40,
+                fontSize: 20,
                 fontColor: "#111",
 
             },
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: false,
+                        beginAtZero: true,
                     }
                 }]
             },
@@ -82,10 +85,37 @@ function createWeeklyLineCharts(leagueMembers) {
         }
     });
 
-    myChart.render();
+    //myChart.render();
 }
 
+function createLeagueDonutChart(members) {
+    var ctx = document.getElementById("GRAPHCANVAS");
+    ctx.classList.toggle('mainDonut', true);
+    ctx.classList.toggle('mainChart', false);
+    window.myChart.destroy();
+    var data = {
+        datasets: [{
+            data: getLeagueDonutData(members),
+            backgroundColor: ["blue", "green", "orange", "purple", "red", "magenta"],
+        }],
 
+        // These labels appear in the legend and in the tooltips when hovering different arcs
+        labels: getDonutLabels()
+    };
+    window.myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            title: {
+                display: true,
+                text: 'Biggest Positional Contributor of Points'
+            },
+            legend: {
+                position: 'top'
+            }
+        }
+    });
+}
 
 function createDonutChart(leagueMember) {
     var ctx = document.getElementById(leagueMember.teamID + "DONUTCANVAS");
@@ -105,13 +135,75 @@ function createDonutChart(leagueMember) {
         options: {
             title: {
                 display: true,
-                text: 'Biggest Positional Contributor of Points'
+                text: 'Average Weekly Score by Position'
             },
             legend: {
-                position: 'bottom'
+                position: 'top'
             }
         }
     });
+}
+
+function getLeagueDonutData(members) {
+    //console.log(leagueMember);
+    var qbScore = 0;
+    var rbScore = 0;
+    var wrScore = 0;
+    var teScore = 0;
+    var defenseScore = 0;
+    var kScore = 0;
+    var qbNum = 0;
+    var rbNum = 0;
+    var wrNum = 0;
+    var teNum = 0;
+    var defenseNum = 0;
+    var kNum = 0;
+    for (q in members) {
+        let curMember = members[q];
+        for (x in curMember.pastWeeks) {
+
+            for (y in curMember.pastWeeks[x].activePlayers) {
+                curPlayer = curMember.pastWeeks[x].activePlayers[y];
+                //console.log(curPlayer);
+                if (curPlayer.actualScore) {
+                    //console.log(curPlayer.actualScore);
+                    switch (curPlayer.position) {
+                        case "QB":
+                            qbScore += parseFloat(curPlayer.actualScore);
+                            qbNum += 1;
+                            break;
+
+                        case "RB":
+                            rbScore += parseFloat(curPlayer.actualScore);
+                            rbNum += 1;
+                            break;
+
+                        case "WR":
+                            wrScore += parseFloat(curPlayer.actualScore);
+                            wrNum += 1;
+                            break;
+
+                        case "TE":
+                            teScore += parseFloat(curPlayer.actualScore);
+                            teNum += 1;
+                            break;
+
+                        case "D/ST":
+                            defenseScore += parseFloat(curPlayer.actualScore);
+                            defenseNum += 1;
+                            break;
+
+                        case "K":
+                            kScore += parseFloat(curPlayer.actualScore);
+                            kNum += 1;
+                            break;
+                    }
+                }
+
+            }
+        }
+    }
+    return [Math.round((qbScore / qbNum) * 100) / 100, Math.round((rbScore / rbNum) * 100) / 100, Math.round((wrScore / wrNum) * 100) / 100, Math.round((teScore / teNum) * 100) / 100, Math.round((defenseScore / defenseNum) * 100) / 100, Math.round((kScore / kNum) * 100) / 100];
 }
 
 function getDonutData(leagueMember) {
@@ -250,7 +342,7 @@ function createWeeklyLineChart(leagueMember, league) {
                 }, {
                     label: 'League Average',
                     fill: false,
-                    data: getLeagueAvgWeeksArray(league),
+                    data: getLeagueAvgWeeksArray(league.members),
                     lineTension: 0,
                     backgroundColor: "black",
                     borderColor: "grey",
@@ -300,8 +392,11 @@ function createWeeklyLineChart(leagueMember, league) {
 }
 
 function createStackedColumns(myYear) {
-    var ctx = document.getElementById("LEAGUESTACKEDCANVAS");
-    var myChart = new Chart(ctx, {
+    var ctx = document.getElementById("GRAPHCANVAS");
+    ctx.classList.toggle('mainDonut', false);
+    ctx.classList.toggle('mainChart', true);
+    //window.myChart.destroy();
+    window.myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: createTeamLabels(myYear.members),
@@ -351,17 +446,16 @@ function createStackedColumns(myYear) {
     myChart.render();
 }
 
-function getLeagueAvgWeeksArray(myLeague) {
+function getLeagueAvgWeeksArray(members) {
     //console.log(myLeague);
-    var myMembers = myLeague.members;
     var leagueWeeksArray = [];
-    for (let i = 0; i < myMembers[0].pastWeeks.length; i++) {
+    for (let i = 0; i < members[0].pastWeeks.length; i++) {
         let weekTotalPoints = 0.00;
         let weekAverage = 0.00
-        for (x in myMembers) {
-            weekTotalPoints += parseFloat(myMembers[x].pastWeeks[i].activeScore);
+        for (x in members) {
+            weekTotalPoints += parseFloat(members[x].pastWeeks[i].activeScore);
         }
-        weekAverage = (weekTotalPoints / myMembers.length);
+        weekAverage = (weekTotalPoints / members.length);
         leagueWeeksArray.push(weekAverage);
     }
     return leagueWeeksArray;
@@ -430,6 +524,16 @@ function extractMemberData(memberData, pos) {
         data.push(memberData[i][pos]);
     }
     return data;
+}
+
+function getMemberColor(memberID) {
+    var colorCode = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4',
+        '#42d4f4', '#f032e6', '#bfef45', '#fabebe', '#469990', '#e6beff',
+        '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
+        '#000075', '#a9a9a9', '#ffffff'
+    ];
+
+    return colorCode[memberID];
 }
 
 

@@ -14,6 +14,16 @@ html, body {
     height: 100%;
 }
 
+.mainDonut {
+    max-height: 75vh;
+    max-width: 75vh;
+}
+
+.mainChart {
+    max-height: 100vh;
+    max-width: 100vw;
+}
+
 .wrapper {
     margin-top: 0 !important;
     }

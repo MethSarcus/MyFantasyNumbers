@@ -139,32 +139,24 @@ function setPage(myYear) {
     graphPage.appendChild(crumbLis);
     //graphpage contents
     var selectRow = document.createElement('div');
-    selectRow.classList.add('row');
+    selectRow.classList.add('row', 'mb-4');
 
     var pieButton = document.createElement('button');
     pieButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    pieButton.onclick = drawPieChart(myYear.members);
-    pieButton.innerHTML = "Position Breakdown"
 
     var barButton = document.createElement('button');
-    barButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    barButton.onclick = drawBarGraph(myYear.members);
-    barButton.innerHTML = "PF Breakdown"
+    
 
     var lineButton = document.createElement('button');
-    lineButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    lineButton.onclick = drawLineGraph(myYear.members);
-    lineButton.innerHTML = "Weekly Points";
+    
 
     var tradeButton = document.createElement('button');
-    tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    tradeButton.onclick = drawLineGraph(myYear.members);
-    tradeButton.innerHTML = "Trade Web";
+    
 
-    var topGuys = document.createElement('button');
-    topGuys.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    topGuys.onclick = drawLineGraph(myYear.members);
-    topGuys.innerHTML = "Top Players";
+    // var topGuys = document.createElement('button');
+    // topGuys.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    // topGuys.onclick = drawLineGraph(myYear.members);
+    // topGuys.innerHTML = "Top Players";
     
     var graphRow = document.createElement('div');
     graphRow.classList.add('row');
@@ -173,28 +165,43 @@ function setPage(myYear) {
     
 
     var graphContainer = document.createElement('div');
-    graphContainer.classList.add('col-12', 'col-sm-10', 'col-md-10', 'col-lg-10', 'col-xl-10');
+    graphContainer.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9', 'graphContainer');
     var stackedCanvas = document.createElement('canvas');
-    stackedCanvas.id = "LEAGUESTACKEDCANVAS";
+    stackedCanvas.id = "GRAPHCANVAS";
     graphContainer.appendChild(stackedCanvas);
-    var graphOptions = document.createElement('div');
-    graphOptions.classList.add('col-12', 'col-sm-2', 'col-md-2', 'col-lg-2', 'col-xl-2');
-
-    selectRow.appendChild(pieButton);
+    //var graphOptions = document.createElement('div');
+    //graphOptions.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
+    //var graphOptions = createMainGraphOptions();
+    
     selectRow.appendChild(barButton);
+    selectRow.appendChild(pieButton);
     selectRow.appendChild(lineButton);
     selectRow.appendChild(tradeButton);
     graphPage.appendChild(selectRow);
     graphRow.appendChild(graphContainer);
-    graphRow.appendChild(graphOptions);
+    //graphRow.appendChild(graphOptions);
 
-    graphPage.appendChild(graphRow)
+    graphPage.appendChild(graphRow);
 
     tabsList.appendChild(graphPage); //adds Graph Page
-
-
-
     createStackedColumns(myYear);
+    pieButton.onclick = drawPieChart;
+    pieButton.innerHTML = "Position Breakdown";
+
+    barButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    barButton.onclick = drawBarGraph;
+    barButton.innerHTML = "PF Breakdown";
+
+    lineButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    lineButton.onclick = drawLineGraph;
+    lineButton.innerHTML = "Weekly Points";
+    
+    tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    tradeButton.onclick = drawTradeWeb;
+    tradeButton.innerHTML = "Trade Web";
+
+
+    
 
     //where the magic happens, creates each league page
     for (var i = 0; i < myYear.members.length; i++) {
@@ -695,15 +702,21 @@ function makeLeagueStatCards(statName, subtext, little) {
     return statContainer;
 }
 
-function drawPieChart(members){
+function drawTradeWeb(members){
 
 }
 
-function drawBarGraph(members){
+function drawPieChart(){
+    createLeagueDonutChart(myYear.members)
 }
 
-function drawLineGraph(members){
-        
+function drawBarGraph(){
+    window.myChart.destroy();
+    createStackedColumns(myYear);
+}
+
+function drawLineGraph(){
+    createWeeklyLineCharts(myYear.members);
 }
 
 function makeHeadToHeadCards(statName, member, member2, little) {
@@ -763,4 +776,23 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     leagueCard.appendChild(sub);
     statContainer.appendChild(leagueCard);
     return statContainer;
+}
+
+function createMainGraphOptions(){
+    var containment = document.createElement('div');
+    containment.style.backgroundColor = 'lightgrey';
+    containment.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3')
+    for (var i = 0; i < myYear.members.length; i++){
+        let teamRow  = document.createElement('div');
+        teamRow.classList.add('row');
+        let teamCheckBox = document.createElement('input');
+        checkbox.type = "checkbox";
+checkbox.name = "name";
+checkbox.value = "value";
+checkbox.id = "id";
+
+        let teamName = myLeague.members[i].teamName;
+        let teamID = myLeague.members[i].teamID;
+        
+    }
 }
