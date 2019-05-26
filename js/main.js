@@ -11,19 +11,17 @@ $(document).ready(function () {
       
     var input = prompt("Please enter ESPN League ID", "2319896");
     var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
+
     if (input != null && r == true) {
         leagueID = input;
-        //console.log("triggered");
-
-        //localStorage.clear();
         if (localStorage.getItem(leagueID + "2018")) {
             myYear = JSON.parse(localStorage.getItem(leagueID + "2018"));
         } else {
+            localStorage.clear();
             var league = new League();
             var year = new Year();
             year.seasonID = "2018";
             year.leagueID = leagueID;
-            var seasonLength = 16;
             myXhr('get', {
                 path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mTeam'
             }, '').done(function (json) {
