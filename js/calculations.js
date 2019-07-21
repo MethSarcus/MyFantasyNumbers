@@ -475,12 +475,11 @@ function getMember(season, teamID) {
     }
 }
 
-function getOptimalLineup(week) {
-    var allWeekPlayers = week.activePlayers.concat(week.benchPlayers, week.irPlayers);
+function getOptimalLineup(players) {
     var rosterSlots = [];
-    for (i in week.activeLineupSlots) {
-        for (let w = 0; w < week.activeLineupSlots[i][1]; w++) {
-            rosterSlots.push(week.activeLineupSlots[i][0]);
+    for (i in myYear.activeLineupSlots) {
+        for (let w = 0; w < myYear.activeLineupSlots[i][1]; w++) {
+            rosterSlots.push(myYear.activeLineupSlots[i][0]);
         }
     }
     var optimalLineup = [];
@@ -488,9 +487,9 @@ function getOptimalLineup(week) {
         let highScore = 0;
         let bestPlayer = null;
         let eligibleWeekPlayers = [];
-        for (y in allWeekPlayers) {
-            if (allWeekPlayers[y].eligibleSlots.includes(parseInt(rosterSlots[x])) && inLineup(optimalLineup, allWeekPlayers[y]) == false) {
-                eligibleWeekPlayers.push(allWeekPlayers[y]);
+        for (y in players) {
+            if (players[y].eligibleSlots.includes(parseInt(rosterSlots[x])) && inLineup(optimalLineup, players[y]) == false) {
+                eligibleWeekPlayers.push(players[y]);
             }
         }
         for (z in eligibleWeekPlayers) {
