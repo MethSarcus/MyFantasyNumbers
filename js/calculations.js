@@ -454,15 +454,13 @@ function getProjectedScore(active) {
     return roundToHundred(projScore);
 }
 
-function getWeekScore(active) {
+function getWeekScore(players) {
     var score = 0;
-    for (i in active) {
-        if (active[i].actualScore != null || active[i].actualScore != 'undefined') {
-            score += active[i].actualScore;
+    for (i in players) {
+        if (players[i].actualScore != null || players[i].actualScore != 'undefined') {
+            score += players[i].actualScore;
         }
-
     }
-
     return roundToHundred(score);
 }
 
