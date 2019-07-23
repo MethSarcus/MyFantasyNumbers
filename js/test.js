@@ -121,19 +121,11 @@ class StartSit {
     }
 }
 
-class seasonMatchups {
-    constructor() {
-        this.regularSeasonNumWeeks = 0;
-        this.totalNumWeeks = 0;
-        this.matchups = [];
-    }
-}
-
 class Matchup {
-    constructor(home, away, weekNumber) {
+    constructor(home, away, weekNumber, isPlayoff) {
         this.home = home;
         this.weekNumber = weekNumber;
-        this.playoffMatchup = false;
+        this.isPlayoffs = isPlayoff;
         if (away == undefined){
             this.byeWeek = true;
             this.isUpset = false;
@@ -163,7 +155,7 @@ class Matchup {
 
 
 class Team {
-    constructor(teamID, players) {
+    constructor(teamID, players, activeLineupSlots) {
         this.lineup = [];
         this.bench = [];
         this.IR = [];
@@ -177,7 +169,7 @@ class Team {
             }
         }
         this.teamID = teamID;
-        this.potentialPoints = getWeekScore(getPotentialPoints(players));
+        this.potentialPoints = getWeekScore(getPotentialPoints(players, activeLineupSlots));
         this.score = getWeekScore(this.lineup);
         this.projectedScore = getProjectedScore(this.lineup);
     }

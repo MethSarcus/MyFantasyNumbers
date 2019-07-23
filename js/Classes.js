@@ -12,7 +12,7 @@ class Season {
         this.seasonID = "";
         this.members = [];
         this.lineupSlotCount = [];
-        this.matchups = []
+        this.matchups = [];
     }
 }
 
@@ -95,15 +95,17 @@ class LeagueMember {
 }
 
 class Player {
-    constructor(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID) {
+    constructor(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.eligibleSlots = eligibleSlots
         this.score = score;
         this.projectedScore = projectedScore;
         this.position = position;
         this.realTeamID = realTeamID;
         this.playerID = playerID;
         this.lineupSlotID = lineupSlotID;
+        this.weekNumber = weekNumber;
     }
 }
 
@@ -122,15 +124,14 @@ class EmptySlot {
 }
 
 class Matchup {
-    constructor(home, away, weekNumber, isPlayoffs) {
+    constructor(home, away, weekNumber, isPlayoff) {
         this.home = home;
         this.weekNumber = weekNumber;
-        this.playoffMatchup = isPlayoffs;
+        this.isPlayoffs = isPlayoff;
         if (away == undefined){
             this.byeWeek = true;
             this.isUpset = false;
         } else{
-            this.byeWeek = false;
             this.away = away;
             if (home.projectedScore > away.projectedScore) {
                 this.projectedWinner = home.teamID;
@@ -144,7 +145,7 @@ class Matchup {
                 this.winner = away.teamID
             }
             this.marginOfVictory = (Math.abs(home.score - away.score));
-            
+            this.byeWeek = false;
             if (this.projectedWinner != this.winner) {
                 this.isUpset = true;
             } else {
@@ -156,22 +157,23 @@ class Matchup {
 
 
 class Team {
-    constructor(teamID, players) {
+    constructor(teamID, players, activeLineupSlots) {
         this.lineup = [];
         this.bench = [];
         this.IR = [];
-        for (player in players){
+        for (var i = 0; i < players.length; i++){
+            let player = players[i];
             if (player.lineupSlotID == 21) {
                 this.IR.push(player);
             } else if (player.lineupSlotID == 20) {
                 this.bench.push(player);
             } else {
-                week.lineup.push(player);
+                this.lineup.push(player);
             }
         }
         this.teamID = teamID;
-        this.potentialPoints = getWeekScore(getPotentialPoints(players));
         this.score = getWeekScore(this.lineup);
+        this.potentialPoints = getWeekScore(getPotentialPoints(players, activeLineupSlots));
         this.projectedScore = getProjectedScore(this.lineup);
     }
 }

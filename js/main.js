@@ -22,6 +22,7 @@ $(document).ready(function () {
             var season = new Season();
             season.seasonID = "2018";
             season.leagueID = leagueID;
+            season.matchups = [];
             myXhr('get', {
                 path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mTeam'
             }, '').done(function (json) {
@@ -99,7 +100,6 @@ $(document).ready(function () {
                 }
             }
             for (q = 1; q <= 16; q++) {
-
                 myXhr('get', {
                     path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q
                 }, '').done(function (json) {
@@ -107,120 +107,69 @@ $(document).ready(function () {
                     for (i in json.schedule) { //increments through each matchup
                         let curWeek = json.schedule[i];
                         if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod != undefined) { //checks if the roster data is available for scraping
-                            let week = new Week(activeLineupSlots); //creates a new week object to store stats
-                            week.leagueID = 340734;
-                            week.teamID = curWeek.home.teamId;
-                            week.weekNumber = q;
-                            week.teamSlots = season.lineupSlotCount;
-                            let weekTotalScore = 0;
-
+                            var homeTeamID = curWeek.home.teamId;
+                            var homePlayers = [];
                             for (z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
-
+                                //(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
                                 let curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
-                                let player = new Player();
                                 
-                                player.firstName = curPlayer.playerPoolEntry.player.firstName;
-                                player.lastName = curPlayer.playerPoolEntry.player.lastName;
-                                player.fullName = curPlayer.playerPoolEntry.player.fullName;
-                                player.actualScore = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
-                                weekTotalScore += player.actualScore;
+                                let firstName = curPlayer.playerPoolEntry.player.firstName;
+                                let lastName = curPlayer.playerPoolEntry.player.lastName;
+                                let score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
                                 //console.log(curPlayer);
+                                let projectedScore = 0;
                                 if (curPlayer.playerPoolEntry.player.stats.length == 0) {
-                                    player.projectedScore = 0;
+                                    projectedScore = 0;
                                 } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
-                                    player.projectedScore = 0;
+                                    projectedScore = 0;
                                 } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
-                                    player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
+                                    projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
                                 } else {
-                                    player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
+                                    projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
                                 }
 
-                                player.eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                                player.position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
-                                player.realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
-                                player.jerseyNumber = curPlayer.playerPoolEntry.player.jersey;
-                                player.playerID = curPlayer.playerId;
-                                player.lineupSlotID = curPlayer.lineupSlotId;
-                                player.lineupSlot = getLineupSlot(player.lineupSlotID);
-                                if (player.lineupSlotID == 21) {
-                                    week.irPlayers.push(player);
-                                } else if (player.lineupSlotID == 20) {
-                                    week.benchPlayers.push(player);
-                                } else {
-                                    week.activePlayers.push(player);
-                                }
-                            }
-                            week.activeScore = weekTotalScore;
-                            week.projectedScore = getProjectedScore(week.activePlayers);
-
-                            if (curWeek.away != null || curWeek.away != undefined) { //sets opponent stats if there is an opponent
-                                week.opponentTeamID = curWeek.away.teamId;
-                                week.opponentActiveScore = curWeek.away.totalPoints;
-
-                            } else {
-                                week.opponentTeamID = "Bye Week";
-                                week.opponentActiveScore = null;
+                                let eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
+                                let position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                                let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
+                                let playerID = curPlayer.playerId;
+                                let lineupSlotID = curPlayer.lineupSlotId;
+                                homePlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                             }
 
-                            for (h in season.members) {
-                                if (season.members[h].teamID == week.teamID) {
-                                    season.members[h].pastWeeks.push(week);
-                                }
-                            }
-
+                            var homeTeam = new Team(homeTeamID, homePlayers, activeLineupSlots);
+                            var awayTeam = undefined;
                             if (curWeek.away != null && curWeek.away != undefined) {
-                                let weekTotalScore = 0
-                                week = new Week(activeLineupSlots);
-                                week.leagueID = 340734;
-                                week.weekNumber = q;
-                                week.teamID = curWeek.away.teamId;
+                                var awayTeamID = curWeek.away.teamId;
+                                var awayPlayers = [];
                                 for (l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
+                                    //(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
                                     let curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
-                                    let player = new Player();
-                                    player.firstName = curPlayer.playerPoolEntry.player.firstName;
-                                    player.lastName = curPlayer.playerPoolEntry.player.lastName;
-                                    player.fullName = curPlayer.playerPoolEntry.player.fullName;
-                                    
-                                    player.actualScore = Math.round((curPlayer.playerPoolEntry.appliedStatTotal) * 100) / 100;
-                                    weekTotalScore += player.actualScore;
+                                    let firstName = curPlayer.playerPoolEntry.player.firstName;
+                                    let lastName = curPlayer.playerPoolEntry.player.lastName;
+                                    let score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
+                                    //console.log(curPlayer);
+                                    let projectedScore = 0;
                                     if (curPlayer.playerPoolEntry.player.stats.length == 0) {
-                                        player.projectedScore = 0;
+                                        projectedScore = 0;
                                     } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
-                                        player.projectedScore = 0;
+                                        projectedScore = 0;
                                     } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
-                                        player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
+                                        projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
                                     } else {
-                                        player.projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
+                                        projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
                                     }
 
-                                    player.eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                                    player.position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
-                                    player.realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
-                                    player.jerseyNumber = curPlayer.playerPoolEntry.player.jersey;
-                                    player.playerID = curPlayer.playerId;
-                                    player.lineupSlotID = curPlayer.lineupSlotId;
-                                    player.lineupSlot = getLineupSlot(player.lineupSlotID);
-                                    if (player.lineupSlotID == 21) {
-                                        week.irPlayers.push(player);
-                                    } else if (player.lineupSlotID == 20) {
-                                        week.benchPlayers.push(player);
-                                    } else {
-                                        week.activePlayers.push(player);
-                                    }
+                                    let eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
+                                    let position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                                    let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
+                                    let playerID = curPlayer.playerId;
+                                    let lineupSlotID = curPlayer.lineupSlotId;
+                                    awayPlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                                 }
-                                week.activeScore = weekTotalScore;
-                                week.projectedScore = getProjectedScore(week.activePlayers);
-                                week.opponentTeamID = curWeek.home.teamId;
-                                week.opponentActiveScore = curWeek.home.totalPoints;
-
-                                for (h in season.members) {
-                                    if (season.members[h].teamID == week.teamID) {
-                                        season.members[h].pastWeeks.push(week);
-                                    }
-                                }
+                                awayTeam = new Team(awayTeamID, awayPlayers, activeLineupSlots);
                             }
-
-                        } else {
+                            let isPlayoff = (q > season.regularSeasonMatchupCount);
+                            season.matchups.push(new Matchup(homeTeam, awayTeam, q, isPlayoff));
                         }
                     }
                     myYear = season;
