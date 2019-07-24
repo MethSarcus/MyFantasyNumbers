@@ -83,7 +83,6 @@ class LeagueMember {
         this.division = "";
         this.teamID = "";
         this.logoURL = "";
-        this.pastWeeks = [];
         this.leagueName = "";
         this.finalStanding = 0;
         this.transactions;
@@ -173,7 +172,7 @@ class Team {
         }
         this.teamID = teamID;
         this.score = getWeekScore(this.lineup);
-        this.potentialPoints = getWeekScore(getPotentialPoints(players, activeLineupSlots));
+        this.potentialPoints = getWeekScore(getOptimalLineup(players, activeLineupSlots));
         this.projectedScore = getProjectedScore(this.lineup);
     }
 }

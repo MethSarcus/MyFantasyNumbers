@@ -97,7 +97,7 @@ function setPage(myYear) {
     q.appendChild(crumbList);
     var cardRow = document.createElement('div');
     cardRow.classList.add('row');
-    cardRow.appendChild(makeLeagueStatCards('League Average', getLeagueWeeklyAverage(myYear.members), getLeagueStandardDeviation(myYear)));
+    cardRow.appendChild(makeLeagueStatCards('League Average', getLeagueWeeklyAverage(myYear.matchups), getLeagueStandardDeviation(myYear.matchups)));
     let topWeekMember = getBestWeekMember(myYear)[0];
     let topWeekObject = getBestWeekMember(myYear)[1];
     cardRow.appendChild(makeLeagueCards("Best Week", topWeekMember, roundToHundred(topWeekObject.activeScore) + " points", "Week " + topWeekObject.weekNumber));

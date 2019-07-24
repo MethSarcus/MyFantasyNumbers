@@ -28,19 +28,18 @@ function roundToTen(x) {
 
 //Params: Array containing Member Objects, 
 //Returns: Double, league weekly average to the nearest hundredth
-function getLeagueWeeklyAverage(members) {
-    memberPF = 0;
-    for (i = 0; i < members.length; i++) {
-        memberPF += members[i].completeSeasonPoints;
+function getLeagueWeeklyAverage(matchups) {
+    pf = 0;
+    for (i = 0; i < matchups.length; i++) {
+        pf += matchups[i].score;
     }
-    memberPF = memberPF / members.length;
-    memberPF = memberPF / members[0].pastWeeks.length;
-    return roundToHundred(memberPF);
+    pf = pf / matchups.length;
+    return roundToHundred(pf);
 }
 
 //Params: League Object, Member Object
 //Returns: Int, what place their worst week was compared to every other teams worst week
-function getWorstWeekFinish(league, member) {
+function getWorstWeekFinish(matchups, memberID) {
     var worstWeeks = [];
     var memberWorst = getWorstWeek(member);
     var count = 1;
@@ -331,24 +330,36 @@ function getWVPWeek(leagueMember) {
     return lowestScoring;
 }
 
-//Params: Member Object
-//Returns: Double, what the members standard deviation was
-function getStandardDeviation(member) {
-    var dev = math.std(getWeekArray(member.pastWeeks));
-    dev = Math.round(dev * 10) / 10;
+//Params: Matchups Object
+//Returns: Double, what the league standard deviation was
+function getLeagueStandardDeviation(matchups) {
+    var scores = [];
+    for (var i = 0; i < matchups.length; i++){
+        scores.push(matchups[i].home.score);
+        if (matchups[i].isBye == false){
+            scores.push(matchups[i].away.score);
+        }
+    }
+    var dev = math.std(scores);
+    dev = roundToHundred(dev);
     return dev;
 }
 
 //Params: League Object
 //Returns: Double, standard deviation of the entire league
-function getLeagueStandardDeviation(league) {
-    var members = league.members;
-    var memberSTDTotal = 0;
-    for (var i = 0; i < members.length; i++) {
-        members[i].stdDev = getStandardDeviation(league.members[i])
-        memberSTDTotal += members[i].stdDev;
+function getMemberStandardDeviation(matchups, teamID) {
+    var scores = [];
+    for (var i = 0; i < matchups.length; i++){
+        if (matchups[i].home.teamID == teamID){
+            scores.push(matchups[i].home.score);
+        } 
+        
+        else if (matchups[i].away.teamID == teamID){
+            scores.push(matchups[i].away.score);
+        }
     }
-    dev = roundToTen(memberSTDTotal / members.length);
+    var dev = math.std(scores);
+    dev = roundToHundred(dev);
     return dev;
 }
 
@@ -473,11 +484,11 @@ function getMember(season, teamID) {
     }
 }
 
-function getOptimalLineup(players) {
+function getOptimalLineup(players, activeLineupSlots) {
     var rosterSlots = [];
-    for (i in myYear.activeLineupSlots) {
-        for (let w = 0; w < myYear.activeLineupSlots[i][1]; w++) {
-            rosterSlots.push(myYear.activeLineupSlots[i][0]);
+    for (i in activeLineupSlots) {
+        for (let w = 0; w < activeLineupSlots[i][1]; w++) {
+            rosterSlots.push(activeLineupSlots[i][0]);
         }
     }
     var optimalLineup = [];
@@ -491,8 +502,8 @@ function getOptimalLineup(players) {
             }
         }
         for (z in eligibleWeekPlayers) {
-            if (eligibleWeekPlayers[z].actualScore > highScore) {
-                highScore = eligibleWeekPlayers[z].actualScore;
+            if (eligibleWeekPlayers[z].score > highScore) {
+                highScore = eligibleWeekPlayers[z].score;
                 bestPlayer = eligibleWeekPlayers[z];
             }
         }
@@ -520,7 +531,7 @@ function getPPoints(optimalLineup) {
     var score = 0;
     for (i in optimalLineup) {
         if (optimalLineup[i] != null || optimalLineup[i] != 'undefined') {
-            score += optimalLineup[i].actualScore;
+            score += optimalLineup[i].score;
         }
     }
 

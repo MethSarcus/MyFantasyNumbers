@@ -142,7 +142,6 @@ $(document).ready(function () {
                                 var awayTeamID = curWeek.away.teamId;
                                 var awayPlayers = [];
                                 for (l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
-                                    //(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
                                     let curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
                                     let firstName = curPlayer.playerPoolEntry.player.firstName;
                                     let lastName = curPlayer.playerPoolEntry.player.lastName;
@@ -178,60 +177,61 @@ $(document).ready(function () {
             }
             myYear = season;
 
-            for (j in myYear.members) {
-                var totalPF = 0;
-                var totalPA = 0;
-                let curMember = myYear.members[j];
-                //console.log(curMember);
-                for (y in curMember.pastWeeks) {
-                    myYear.members[j].pastWeeks[y].memberID = curMember.memberID;
-                    let opID = myYear.members[j].pastWeeks[y].opponentTeamID;
-                    totalPF += calcRosterScore(myYear.members[j].pastWeeks[y].activePlayers);
-                    myYear.members[j].pastWeeks[y].activeScore = calcRosterScore(myYear.members[j].pastWeeks[y].activePlayers);
+            // for (var j = 0; j < myYear.matchups.length; j++) {
+            //     var totalPF = 0;
+            //     var totalPA = 0;
+            //     let curMember = myYear.members[j];
+            //     //console.log(curMember);
+            //     for (var y = 0; y < myYear.matchups.length; y++) {
+            //         myYear.members[j].pastWeeks[y].memberID = curMember.memberID;
+            //         let opID = myYear.members[j].pastWeeks[y].opponentTeamID;
+            //         totalPF += calcRosterScore(myYear.members[j].pastWeeks[y].activePlayers);
+            //         myYear.members[j].pastWeeks[y].activeScore = calcRosterScore(myYear.members[j].pastWeeks[y].activePlayers);
 
-                    if (opID == "Bye Week") {
-                        myYear.members[j].pastWeeks[y].opponentProjectedScore = null;
-                        myYear.members[j].pastWeeks[y].opponentActivePlayers = null;
-                        myYear.members[j].pastWeeks[y].opponentBenchPlayers = null;
-                    } else {
+            //         if (opID == "Bye Week") {
+            //             myYear.members[j].pastWeeks[y].opponentProjectedScore = null;
+            //             myYear.members[j].pastWeeks[y].opponentActivePlayers = null;
+            //             myYear.members[j].pastWeeks[y].opponentBenchPlayers = null;
+            //         } else {
                         
-                        let op = getMember(myYear, opID);
-                        opProjScore = getProjectedScore(op.pastWeeks[y].activePlayers);
-                        opActivePlayers = op.pastWeeks[y].activePlayers;
-                        opBenchPlayers = op.pastWeeks[y].benchPlayers;
-                        opIRPlayers = op.pastWeeks[y].irPlayers;
-                        myYear.members[j].pastWeeks[y].opponentProjectedScore = opProjScore;
-                        myYear.members[j].pastWeeks[y].opponentActivePlayers = opActivePlayers;
-                        myYear.members[j].pastWeeks[y].opponentBenchPlayers = opBenchPlayers;
-                        myYear.members[j].pastWeeks[y].opponentIRPlayers = opIRPlayers;
-                        myYear.members[j].pastWeeks[y].opponentActiveScore =  calcRosterScore(myYear.members[j].pastWeeks[y].opponentActivePlayers);
-                        totalPA += calcRosterScore(myYear.members[j].pastWeeks[y].opponentActivePlayers);
-                    }
+            //             let op = getMember(myYear, opID);
+            //             opProjScore = getProjectedScore(op.pastWeeks[y].activePlayers);
+            //             opActivePlayers = op.pastWeeks[y].activePlayers;
+            //             opBenchPlayers = op.pastWeeks[y].benchPlayers;
+            //             opIRPlayers = op.pastWeeks[y].irPlayers;
+            //             myYear.members[j].pastWeeks[y].opponentProjectedScore = opProjScore;
+            //             myYear.members[j].pastWeeks[y].opponentActivePlayers = opActivePlayers;
+            //             myYear.members[j].pastWeeks[y].opponentBenchPlayers = opBenchPlayers;
+            //             myYear.members[j].pastWeeks[y].opponentIRPlayers = opIRPlayers;
+            //             myYear.members[j].pastWeeks[y].opponentActiveScore =  calcRosterScore(myYear.members[j].pastWeeks[y].opponentActivePlayers);
+            //             totalPA += calcRosterScore(myYear.members[j].pastWeeks[y].opponentActivePlayers);
+            //         }
 
-                    for (var n = 0; n < myYear.regularSeasonMatchupCount; n++) {
-                        myYear.members[j].pastWeeks[n].regularSeason = true;
-                    }
+            //         for (var n = 0; n < myYear.regularSeasonMatchupCount; n++) {
+            //             myYear.members[j].pastWeeks[n].regularSeason = true;
+            //         }
 
-                }
-                myYear.members[j].completeSeasonPoints = totalPF;
-                myYear.members[j].completeSeasonPointsAgainst = totalPA;
-                myYear.members[j].postSeasonPF = roundToHundred(myYear.members[j].completeSeasonPoints - myYear.members[j].record.overall.pointsFor);
+            //     }
+            //     myYear.members[j].completeSeasonPoints = totalPF;
+            //     myYear.members[j].completeSeasonPointsAgainst = totalPA;
+            //     myYear.members[j].postSeasonPF = roundToHundred(myYear.members[j].completeSeasonPoints - myYear.members[j].record.overall.pointsFor);
 
 
-            }
+            //}
 
-            for (s in myYear.members) {
+            // for (s in myYear.members) {
 
-                for (e in myYear.members[s].pastWeeks) {
-                    myYear.members[s].pastWeeks[e].optimalLineup = getOptimalLineup(myYear.members[s].pastWeeks[e]);
-                    if (getOptimalLineup(myYear.members[s].pastWeeks[e]).length == 0) {
+            //     for (e in myYear.members[s].pastWeeks) {
+            //         myYear.members[s].pastWeeks[e].optimalLineup = getOptimalLineup(myYear.members[s].pastWeeks[e]);
+            //         if (getOptimalLineup(myYear.members[s].pastWeeks[e]).length == 0) {
 
-                    }
-                    myYear.members[s].pastWeeks[e].potentialPoints = getPPoints(myYear.members[s].pastWeeks[e].optimalLineup);
+            //         }
+            //         myYear.members[s].pastWeeks[e].potentialPoints = getPPoints(myYear.members[s].pastWeeks[e].optimalLineup);
 
-                    myYear.members[s].pastWeeks[e].potentialPointsDifference = myYear.members[s].pastWeeks[e].potentialPoints - myYear.members[s].pastWeeks[e].activeScore;
-                }
-            }
+            //         myYear.members[s].pastWeeks[e].potentialPointsDifference = myYear.members[s].pastWeeks[e].potentialPoints - myYear.members[s].pastWeeks[e].activeScore;
+            //     }
+            // }
+            
             localStorage.setItem(myYear.leagueID + "" + myYear.seasonID, JSON.stringify(myYear));
 
         }
