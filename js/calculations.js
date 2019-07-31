@@ -484,39 +484,6 @@ function getMember(season, teamID) {
     }
 }
 
-function getOptimalLineup(players, activeLineupSlots) {
-    var rosterSlots = [];
-    for (i in activeLineupSlots) {
-        for (let w = 0; w < activeLineupSlots[i][1]; w++) {
-            rosterSlots.push(activeLineupSlots[i][0]);
-        }
-    }
-    var optimalLineup = [];
-    for (x in rosterSlots) {
-        let highScore = 0;
-        let bestPlayer = null;
-        let eligibleWeekPlayers = [];
-        for (y in players) {
-            if (players[y].eligibleSlots.includes(parseInt(rosterSlots[x])) && inLineup(optimalLineup, players[y]) == false) {
-                eligibleWeekPlayers.push(players[y]);
-            }
-        }
-        for (z in eligibleWeekPlayers) {
-            if (eligibleWeekPlayers[z].score > highScore) {
-                highScore = eligibleWeekPlayers[z].score;
-                bestPlayer = eligibleWeekPlayers[z];
-            }
-        }
-
-        if (bestPlayer != null) {
-            optimalLineup.push(bestPlayer);
-            highScore = 0;
-        }
-    }
-
-    return optimalLineup;
-}
-
 function inLineup(lineup, player) {
     for (v in lineup) {
         if (lineup[v].playerID == player.playerID) {

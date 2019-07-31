@@ -18,7 +18,6 @@ function getSmallestMOV(myYear) {
             }
         }
     }
-
     return curWeek;
 }
 
@@ -121,56 +120,56 @@ class StartSit {
     }
 }
 
-class Matchup {
-    constructor(home, away, weekNumber, isPlayoff) {
-        this.home = home;
-        this.weekNumber = weekNumber;
-        this.isPlayoffs = isPlayoff;
-        if (away == undefined){
-            this.byeWeek = true;
-            this.isUpset = false;
-        } else{
-            this.away = away;
-            if (home.projectedScore > away.projectedScore) {
-                this.projectedWinner = home.teamID;
-            } else {
-                this.projectedWinner = away.teamID
-            }
-            this.projectedMOV = (Math.abs(home.projectedScore - away.projectedScore));
-            if (home.score > away.score) {
-                this.winner = home.teamID;
-            } else {
-                this.winner = away.teamID
-            }
-            this.marginOfVictory = (Math.abs(home.score - away.score));
-            this.byeWeek = false;
-            if (this.projectedWinner != this.winner) {
-                this.isUpset = true;
-            } else {
-                this.isUpset = false;
-            }
-        }
-    }
-}
+// class Matchup {
+//     constructor(home, away, weekNumber, isPlayoff) {
+//         this.home = home;
+//         this.weekNumber = weekNumber;
+//         this.isPlayoffs = isPlayoff;
+//         if (away == undefined){
+//             this.byeWeek = true;
+//             this.isUpset = false;
+//         } else{
+//             this.away = away;
+//             if (home.projectedScore > away.projectedScore) {
+//                 this.projectedWinner = home.teamID;
+//             } else {
+//                 this.projectedWinner = away.teamID
+//             }
+//             this.projectedMOV = (Math.abs(home.projectedScore - away.projectedScore));
+//             if (home.score > away.score) {
+//                 this.winner = home.teamID;
+//             } else {
+//                 this.winner = away.teamID
+//             }
+//             this.marginOfVictory = (Math.abs(home.score - away.score));
+//             this.byeWeek = false;
+//             if (this.projectedWinner != this.winner) {
+//                 this.isUpset = true;
+//             } else {
+//                 this.isUpset = false;
+//             }
+//         }
+//     }
+// }
 
 
-class Team {
-    constructor(teamID, players, activeLineupSlots) {
-        this.lineup = [];
-        this.bench = [];
-        this.IR = [];
-        for (player in players){
-            if (player.lineupSlotID == 21) {
-                this.IR.push(player);
-            } else if (player.lineupSlotID == 20) {
-                this.bench.push(player);
-            } else {
-                week.lineup.push(player);
-            }
-        }
-        this.teamID = teamID;
-        this.potentialPoints = getWeekScore(getPotentialPoints(players, activeLineupSlots));
-        this.score = getWeekScore(this.lineup);
-        this.projectedScore = getProjectedScore(this.lineup);
-    }
-}
+// class Team {
+//     constructor(teamID, players, activeLineupSlots) {
+//         this.lineup = [];
+//         this.bench = [];
+//         this.IR = [];
+//         for (player in players){
+//             if (player.lineupSlotID == 21) {
+//                 this.IR.push(player);
+//             } else if (player.lineupSlotID == 20) {
+//                 this.bench.push(player);
+//             } else {
+//                 week.lineup.push(player);
+//             }
+//         }
+//         this.teamID = teamID;
+//         this.potentialPoints = getWeekScore(getPotentialPoints(players, activeLineupSlots));
+//         this.score = getWeekScore(this.lineup);
+//         this.projectedScore = getProjectedScore(this.lineup);
+//     }
+// }

@@ -99,82 +99,7 @@ $(document).ready(function () {
                     activeLineupSlots.push(season.lineupSlotCount[a]);
                 }
             }
-            for (q = 1; q <= 16; q++) {
-                myXhr('get', {
-                    path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q
-                }, '').done(function (json) {
-
-                    for (i in json.schedule) { //increments through each matchup
-                        let curWeek = json.schedule[i];
-                        if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod != undefined) { //checks if the roster data is available for scraping
-                            var homeTeamID = curWeek.home.teamId;
-                            var homePlayers = [];
-                            for (z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
-                                //(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
-                                let curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
-                                
-                                let firstName = curPlayer.playerPoolEntry.player.firstName;
-                                let lastName = curPlayer.playerPoolEntry.player.lastName;
-                                let score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
-                                //console.log(curPlayer);
-                                let projectedScore = 0;
-                                if (curPlayer.playerPoolEntry.player.stats.length == 0) {
-                                    projectedScore = 0;
-                                } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
-                                    projectedScore = 0;
-                                } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
-                                    projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
-                                } else {
-                                    projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
-                                }
-
-                                let eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                                let position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
-                                let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
-                                let playerID = curPlayer.playerId;
-                                let lineupSlotID = curPlayer.lineupSlotId;
-                                homePlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
-                            }
-
-                            var homeTeam = new Team(homeTeamID, homePlayers, activeLineupSlots);
-                            var awayTeam = undefined;
-                            if (curWeek.away != null && curWeek.away != undefined) {
-                                var awayTeamID = curWeek.away.teamId;
-                                var awayPlayers = [];
-                                for (l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
-                                    let curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
-                                    let firstName = curPlayer.playerPoolEntry.player.firstName;
-                                    let lastName = curPlayer.playerPoolEntry.player.lastName;
-                                    let score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
-                                    //console.log(curPlayer);
-                                    let projectedScore = 0;
-                                    if (curPlayer.playerPoolEntry.player.stats.length == 0) {
-                                        projectedScore = 0;
-                                    } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
-                                        projectedScore = 0;
-                                    } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
-                                        projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
-                                    } else {
-                                        projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
-                                    }
-
-                                    let eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                                    let position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
-                                    let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
-                                    let playerID = curPlayer.playerId;
-                                    let lineupSlotID = curPlayer.lineupSlotId;
-                                    awayPlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
-                                }
-                                awayTeam = new Team(awayTeamID, awayPlayers, activeLineupSlots);
-                            }
-                            let isPlayoff = (q > season.regularSeasonMatchupCount);
-                            season.matchups.push(new Matchup(homeTeam, awayTeam, q, isPlayoff));
-                        }
-                    }
-                    myYear = season;
-                });
-                myYear = season;
-            }
+            
             myYear = season;
 
             // for (var j = 0; j < myYear.matchups.length; j++) {
@@ -245,6 +170,97 @@ $(document).ready(function () {
     }
 
 });
+
+function getMatchups(league){
+
+    for (q = 1; q <= 16; q++) {
+        myXhr('get', {
+            path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + league.leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q
+        }, '').done(function (json) {
+
+            for (i in json.schedule) { //increments through each matchup
+                let curWeek = json.schedule[i];
+                if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod != undefined) { //checks if the roster data is available for scraping
+                    var homeTeamID = curWeek.home.teamId;
+                    var homePlayers = [];
+                    for (z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
+                        //(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
+                        let curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
+                        
+                        let firstName = curPlayer.playerPoolEntry.player.firstName;
+                        let lastName = curPlayer.playerPoolEntry.player.lastName;
+                        let score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
+                        //console.log(curPlayer);
+                        let projectedScore = 0;
+                        if (curPlayer.playerPoolEntry.player.stats.length == 0) {
+                            projectedScore = 0;
+                        } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
+                            projectedScore = 0;
+                        } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
+                            projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
+                        } else {
+                            projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
+                        }
+
+                        let eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
+                        let position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                        let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
+                        let playerID = curPlayer.playerId;
+                        let lineupSlotID = curPlayer.lineupSlotId;
+                        homePlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                    }
+
+                    var homeTeam = new Team(homeTeamID, homePlayers, activeLineupSlots);
+                    var awayTeam = undefined;
+                    if (curWeek.away != null && curWeek.away != undefined) {
+                        var awayTeamID = curWeek.away.teamId;
+                        var awayPlayers = [];
+                        for (l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
+                            let curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
+                            let firstName = curPlayer.playerPoolEntry.player.firstName;
+                            let lastName = curPlayer.playerPoolEntry.player.lastName;
+                            let score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
+                            //console.log(curPlayer);
+                            let projectedScore = 0;
+                            if (curPlayer.playerPoolEntry.player.stats.length == 0) {
+                                projectedScore = 0;
+                            } else if (curPlayer.playerPoolEntry.player.stats[1] == undefined) {
+                                projectedScore = 0;
+                            } else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId == 1) {
+                                projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
+                            } else {
+                                projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
+                            }
+
+                            let eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
+                            let position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                            let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
+                            let playerID = curPlayer.playerId;
+                            let lineupSlotID = curPlayer.lineupSlotId;
+                            awayPlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        }
+                        awayTeam = new Team(awayTeamID, awayPlayers, activeLineupSlots);
+                    }
+                    let isPlayoff = (q > league.regularSeasonMatchupCount);
+                    league.matchups.push(new Matchup(homeTeam, awayTeam, q, isPlayoff));
+                }
+            }
+            
+        });
+    }
+}
+
+function getMembers(){
+
+}
+
+function getLeague(){
+
+}
+
+function getDraft(){
+
+}
 
 function myXhr(t, d, id) {
     return $.ajax({
