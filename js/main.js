@@ -1,5 +1,4 @@
 var myLeague;
-var myYear;
 
 $(document).ready(function () {
     //leagueID = 340734;
@@ -13,16 +12,14 @@ $(document).ready(function () {
     var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
 
     if (input != null && r == true) {
-        leagueID = input;
+        var leagueID = input;
         if (localStorage.getItem(leagueID + "2018")) {
             myYear = JSON.parse(localStorage.getItem(leagueID + "2018"));
         } else {
             localStorage.clear();
-            var league = new League();
-            var season = new Season();
-            season.seasonID = "2018";
-            season.leagueID = leagueID;
-            season.matchups = [];
+            //var league = new League();
+            var seasonID = "2018";
+            var matchups = [];
             myXhr('get', {
                 path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mTeam'
             }, '').done(function (json) {
@@ -100,7 +97,7 @@ $(document).ready(function () {
                 }
             }
             
-            myYear = season;
+            myLeague = season;
 
             // for (var j = 0; j < myYear.matchups.length; j++) {
             //     var totalPF = 0;
