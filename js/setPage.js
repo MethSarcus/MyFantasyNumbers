@@ -1,4 +1,9 @@
 function setPage(myYear) {
+    document.getElementById("my-navbar-brand").innerHTML = myYear.leagueName;
+        document.getElementById("my-navbar-brand").onclick = function () {
+            $(".nav-link").removeClass('active');
+        };
+    localStorage.setItem(myYear.leagueID + "" + myYear.seasonID, JSON.stringify(myYear));
     //console.log("Running setpage");
     console.log(myYear);
     var l = new Color("#FF0000");
