@@ -105,8 +105,19 @@ function getESPNMatchups(settings, members, leagueID, seasonID) {
             let isPlayoff = (q > settings.regularSeasonLength);
             weeks.push(new Week(q, isPlayoff, matchups));
             if (weeks.length == totalMatchupCount) {
+                weeks.sort(function (x, y) {
+                    if (x.weekNumber < y.weekNumber) {
+                        return -1;
+                    }
+                    if (x.weekNumber > y.weekNumber) {
+                        return 1;
+                    }
+                    return 0;
+                });
                 var league = new League(leagueID, seasonID, weeks, members, settings);
-                setPage(league)
+                league.setMemberStats();
+                localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
+                setPage(league);
             }
         });
     }
@@ -188,7 +199,6 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
                 }
             }
         }
-        console.log(members);
         getESPNMatchups(settings, members, leagueID, seasonID)
     });
 }

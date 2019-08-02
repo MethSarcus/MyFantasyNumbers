@@ -48,7 +48,7 @@ var League = /** @class */ (function () {
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
         });
-        this.setWinStreaks();
+        //this.setWinStreaks();
     };
     League.prototype.setWinStreaks = function () {
         var _this = this;
@@ -71,15 +71,23 @@ var League = /** @class */ (function () {
             member.stats.longestWinStreak = highest;
         });
     };
+    League.prototype.getWeeklyAverage = function () {
+        totalWeekScore = 0;
+        this.weeks.forEach(function (week) {
+            totalWeekScore += week.weekAverage;
+        });
+    };
     League.prototype.getMember = function (_teamID) {
         var found;
         this.members.forEach(function (member) {
-            if (_teamID = member.teamID) {
+            if (_teamID == member.teamID) {
                 found = member;
             }
         });
+        //console.log(found);
         return found;
     };
+    
     return League;
 }());
 var Settings = /** @class */ (function () {
@@ -195,6 +203,7 @@ var Week = /** @class */ (function () {
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoffs;
         this.matchups = matchups;
+        this.weekAverage = this.getWeekAverage();
     }
     Week.prototype.getTeam = function (teamID) {
         var team;
@@ -204,6 +213,20 @@ var Week = /** @class */ (function () {
             }
         });
         return team;
+    };
+    Week.prototype.getWeekAverage = function () {
+        var weekScore = 0;
+        var numGames = 0;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.byeWeek == false) {
+                weekScore += matchup.home.score + matchup.away.score;
+                numGames += 2;
+            } else {
+                weekScore += matchup.home.score;
+                numGames += 1;
+            }
+        });
+        return weekScore/numGames;
     };
     Week.prototype.getTeamMatchup = function (teamID) {
         var match;
@@ -256,8 +279,10 @@ var Matchup = /** @class */ (function () {
         }
     }
     Matchup.prototype.hasTeam = function (teamID) {
-        if (this.home.teamID == teamID || this.away.teamID == teamID) {
-            return true;
+        if (this.byeWeek != true){
+            if (this.home.teamID == teamID || teamID == this.away.teamID) {
+                return true;
+            }
         }
     };
     Matchup.prototype.getTeam = function (teamID) {
@@ -318,7 +343,7 @@ var Team = /** @class */ (function () {
             var eligibleWeekPlayers = [];
             var players = this.lineup.concat(this.bench, this.IR);
             for (var y in players) {
-                if (players[y].isEligible(parseInt(rosterSlots[x])) && includesPlayer(players[y], optimalLineup)) {
+                if (players[y].isEligible(parseInt(rosterSlots[x])) && !includesPlayer(players[y], optimalLineup)) {
                     eligibleWeekPlayers.push(players[y]);
                 }
             }
@@ -347,8 +372,9 @@ var Team = /** @class */ (function () {
     Team.prototype.getProjectedScore = function (players) {
         var projectedScore = 0;
         for (var i in players) {
-            if (players[i].projectedScore != null || players[i].projectedScore != 'undefined') {
+            if (players[i].projectedScore != null && players[i].projectedScore != 'undefined') {
                 this.projectedScore += players[i].projectedScore;
+                projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;
