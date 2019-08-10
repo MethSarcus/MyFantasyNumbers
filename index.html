@@ -89,14 +89,14 @@
         </select>
       </li>
       <li class="my-auto mx-3">
-          <div class="btn-group btn-group-toggle" data-toggle="buttons" id = "SeasonSegment">
-              <label class="btn btn-primary btn-sm"  id="regularSeason">
-                <input type="radio" autocomplete="off" checked>Regular Season</label>
-              <label class="btn btn-primary btn-sm"  id="postSeason">
-                <input type="radio" autocomplete="off">Post Season</label>
-              <label class="btn btn-primary active btn-sm" id = "completeSeason">
-                <input type="radio" autocomplete="off" >All</label>
-            </div>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons" id="SeasonSegment">
+          <label class="btn btn-primary btn-sm" id="regularSeason">
+            <input type="radio" autocomplete="off" checked>Regular Season</label>
+          <label class="btn btn-primary btn-sm" id="postSeason">
+            <input type="radio" autocomplete="off">Post Season</label>
+          <label class="btn btn-primary active btn-sm" id="completeSeason">
+            <input type="radio" autocomplete="off">All</label>
+        </div>
       </li>
     </ul>
   </nav>
@@ -111,6 +111,199 @@
     <div id="wrapper">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
+          <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3">
+              <div class="d-flex">
+                <img id="teamCardImage"
+                  src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
+                  alt="DLow" style="width: 200px; height: 200px;">
+                <div class="pl-2">
+                  <h4 class="card-title px-auto" id="teamCardName">Quality Kraftmanship</h4>
+                  <i>Owner</i>
+                  <h5 class="card-title" id="teamCardOwnerName">Dylan Penkethman</h5>
+                  <p class="card-text" id="teamCardFinish">Finished 3rd Overall</p>
+                  <p id="teamCardRecord">Record: 9-4</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-9">
+              <div class="row py-1">
+                <div class="card-deck col-12">
+                  <div class="col-4 card statcard">
+                    <div class="statWidget">
+                      <div class="statwidgetcatagory">
+                        <h5>1st</h5>
+                        <h4>PF</h4>
+                      </div>
+                      <div class="statwidgetcontent">
+                        <h5>1500 <small>Points Scored</small></h5>
+                        <p>+150 League Average</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4 card statcard">
+                    <div class="statWidget">
+                      <div class="statwidgetcatagory">
+                        <h5>1st</h5>
+                        <h4>PA</h4>
+                      </div>
+                      <div class="statwidgetcontent">
+                        <h5>1700 Points Against</h5>
+                        <p>-150 League Average</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4 card statcard">
+                    <div class="statWidget">
+                      <div class="statwidgetcatagory">
+                        <h5>1st</h5>
+                        <h4>PF</h4>
+                      </div>
+                      <div class="statwidgetcontent">
+                        <h5>1356 <small>Potential Points</small></h5>
+                        <p>+342 League Average</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 card-deck">
+                  <div class="card text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(85, 255, 0); color: black;">
+                    <h4 class="card-title">Weekly Average</h4>
+                    <blockquote class="card-blockquote">
+                      <h3>157.1</h3><small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Average points scored per week">Points Per Week <i
+                          class="fa fa-info-circle"></i></small>
+                      <footer><small>+12.72 League Average</small></footer>
+                    </blockquote>
+                  </div>
+                  <div class="card text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(128, 255, 0); color: black;">
+                    <h4 class="card-title">3rd Most Consistent</h4>
+                    <blockquote class="card-blockquote">
+                      <h3>21.5</h3><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+                              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                      <footer><small>-5.5 League Average</small></footer>
+                    </blockquote>
+                  </div>
+                  <div class="card text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(128, 255, 0); color: black;">
+                    <h4 class="card-title">Best Week</h4>
+                    <blockquote class="card-blockquote">
+                      <h3>202.88</h3><small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Only represents the comparison against every other teams single highest week">3rd
+                        Highest <i class="fa fa-info-circle"></i></small>
+                      <footer><small>Week 1</small></footer>
+                    </blockquote>
+                  </div>
+                  <div class="card text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(43, 255, 0); color: black;">
+                    <h3 class="card-title">Worst Week</h3>
+                    <blockquote class="card-blockquote">
+                      <h3>123.86</h3><small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Only represents the comparison against every other teams single lowest week">12th
+                        Worst <i class="fa fa-info-circle"></i></small>
+                      <footer><small>Week 7</small></footer>
+                    </blockquote>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row py-1">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
+              <div class="pl-4 pr-4">Average Point Per Position</div>
+              <div class="px-4">
+                <canvas id="radar-chart"></canvas>
+              </div>
+            </div>
+            <div class="col-9">
+              <div class="row py-1">
+                <div class="col-12 card-deck">
+                  <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-0">
+                    <h1 class="card-title pt-3">MVP</h1><img class="resize rounded-circle"
+                      src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                    <h4 style="margin-left: auto; margin-right: auto;">Michael Thomas<br>307.6 Points</h4>
+                  </div>
+                  <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-0">
+                    <h1 class="card-title pt-3">Biggest Boom</h1><img class="resize rounded-circle"
+                      src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                    <h4 style="margin-left: auto; margin-right: auto;">Michael Thomas<br>307.6 Points</h4>
+                  </div>
+                  <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-0">
+                    <h1 class="card-title pt-3">Most Consistent</h1><img class="resize rounded-circle"
+                      src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                    <h4 style="margin-left: auto; margin-right: auto;">Devante Adams<br>Average 16PPG</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="row py-1">
+                <div class="col-12 card-deck">
+                  <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(43, 255, 0); color: black;">
+                    <blockquote class="card-blockquote">
+                      <h5>64% Gut Success Rate</h5>
+                      <footer><small>+210 difference from projected</small></footer>
+                    </blockquote>
+                  </div>
+                  <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(43, 255, 0); color: black;">
+                    <blockquote class="card-blockquote">
+                      <h5>6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Only represents the comparison against every other teams single lowest week">12th
+                        Worst <i class="fa fa-info-circle"></i></small>
+                      <footer><small>+210 difference from projected</small></footer>
+                    </blockquote>
+                  </div>
+                  <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(128, 255, 0); color: black;">
+                    <h5 class="card-title">7 Upsets</h5>
+                    <blockquote class="card-blockquote">
+                      <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                      <footer><small>-5.5 League Average</small></footer>
+                    </blockquote>
+                  </div>
+
+                  <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(128, 255, 0); color: black;">
+                    <h5 class="card-title">Highest weekly scorer 4 times</h5>
+                    <blockquote class="card-blockquote">
+                      <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                      <footer><small>-5.5 League Average</small></footer>
+                    </blockquote>
+                  </div>
+                  <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    style="background-color: rgb(128, 255, 0); color: black;">
+                    <h5 class="card-title">3 Games within 5 Points</h5>
+                    <blockquote class="card-blockquote">
+                      <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
+              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
+                      <footer><small>-5.5 League Average</small></footer>
+                    </blockquote>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row py-1">
+            <div class="col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
+              <table class="table table-sm" id="memberWeekTable">
+              </table>
+            </div>
+            <div class="row col-9">
+              <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                <div id="barchart"></div>
+              </div>
+              <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-12">
+                <div id="chart">
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
         <!-- <button class="scroll-to-top rounded" href="#page-top" id="scrollBtn">
