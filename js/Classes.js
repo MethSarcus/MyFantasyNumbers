@@ -6,10 +6,44 @@ var League = /** @class */ (function () {
         this.season = season;
         this.members = members;
         this.settings = settings;
+        this.seasonPortion = SEASON_PORTION.REGULAR_SEASON;
     }
-    League.prototype.setMemberStats = function () {
-        var _this = this;
+    League.prototype.getMemberBestWeek = function (_teamID) {
+        var highScore = 0;
+        var highTeam;
         this.weeks.forEach(function (week) {
+            if (week.getTeam(_teamID).score > highScore) {
+                highScore = week.getTeam(_teamID).score;
+                highTeam = week.getTeam(_teamID);
+            }
+        });
+        return highTeam;
+    };
+    League.prototype.resetMemberStats = function () {
+        this.members.forEach(function (member) {
+            member.stats = new Stats(member.stats.finalStanding);
+        });
+    };
+    League.prototype.getSeasonPortionWeeks = function () {
+        var _this = this;
+        let filteredWeeks = _this.weeks.slice(0);
+        if (_this.seasonPortion == SEASON_PORTION.REGULAR_SEASON) {
+            filteredWeeks = filteredWeeks.filter(function(it) {
+                return it.isPlayoffs == false;
+            });
+        } else if (_this.seasonPortion == SEASON_PORTION.POST_SEASON){
+            filteredWeeks = filteredWeeks.filter(function(it) {
+                return it.isPlayoffs == true;
+            });
+        }
+        return filteredWeeks;
+    };
+    League.prototype.setMemberStats = function (weeks) {
+        console.log("Setting Stats");
+        var _this = this;
+        console.log(weeks);
+        
+        weeks.forEach(function (week) {
             var weekMatches = [];
             week.matchups.forEach(function (matchup) {
                 if (matchup.byeWeek != true) {
@@ -381,6 +415,12 @@ var Team = /** @class */ (function () {
     };
     return Team;
 }());
+const SEASON_PORTION = {
+    REGULAR_SEASON: 'regularSeason',
+    POST_SEASON: 'postSeason',
+    COMPLETE_SEASON: 'completeSeason'
+}
+
 var DRAFT_TYPE;
 (function (DRAFT_TYPE) {
     DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";

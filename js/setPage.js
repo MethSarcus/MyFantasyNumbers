@@ -6,6 +6,23 @@ function setPage(league) {
     localStorage.setItem(league.leagueID + "" + league.seasonID, JSON.stringify(league));
     console.log("Running setpage");
     console.log(league);
+    document.getElementById(SEASON_PORTION.REGULAR_SEASON).onclick = function(){
+        league.seasonPortion = SEASON_PORTION.REGULAR_SEASON;
+        league.resetMemberStats();
+        league.setMemberStats(league.getSeasonPortionWeeks());
+    };
+        
+    document.getElementById(SEASON_PORTION.POST_SEASON).onclick = function(){
+        league.seasonPortion = SEASON_PORTION.POST_SEASON;
+        league.resetMemberStats();
+        league.setMemberStats(league.getSeasonPortionWeeks());
+    };
+        
+    document.getElementById(SEASON_PORTION.COMPLETE_SEASON).onclick = function(){
+        league.seasonPortion = SEASON_PORTION.COMPLETE_SEASON;
+        league.resetMemberStats();
+        league.setMemberStats(league.getSeasonPortionWeeks());
+    };
     var l = new Color("#FF0000");
     var r = new Color("#00FF00");
     var nav = document.getElementById("sideNav");

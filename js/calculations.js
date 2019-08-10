@@ -51,9 +51,7 @@ function getWorstWeekFinish(matchups, memberID) {
             count += 1;
         }
     }
-
     return count;
-
 }
 
 //Params: League Object
