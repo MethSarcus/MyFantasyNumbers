@@ -1,3 +1,4 @@
+import { sqrt } from 'node_modules/mathjs'
 class League {
     id: number;
     weeks: Week[];
@@ -106,6 +107,24 @@ class League {
         
         return totalPoints/this.weeks.length;
     }
+
+    getStandardDeviation(weeks) {
+        var scores = [];
+        this.weeks.forEach(week => {
+            week.matchups.forEach(matchup => {
+                if (matchup.byeWeek != true) {
+                    scores.push(matchup.home.score);
+                    scores.push(matchup.away.score);
+                } else {
+                    scores.push(matchup.home.score);
+                }
+            });
+        });
+        
+        var dev = math.std(scores);
+        dev = roundToHundred(dev);
+        return dev;
+    }
 }
 
 class Settings {
@@ -166,8 +185,6 @@ class DraftPick {
         this.autoDraftTeamID = autoDraftTeamID;
     }
 }
-
-
 
 class Member {
     ID: number;
