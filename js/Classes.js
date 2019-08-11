@@ -1,4 +1,3 @@
-//Class for containing a members week data
 var League = /** @class */ (function () {
     function League(id, season, weeks, members, settings) {
         this.id = id;
@@ -6,43 +5,10 @@ var League = /** @class */ (function () {
         this.season = season;
         this.members = members;
         this.settings = settings;
-        this.seasonPortion = SEASON_PORTION.REGULAR_SEASON;
+        this.seasonPortion = SEASON_PORTION.REGULAR;
     }
-    League.prototype.getMemberBestWeek = function (_teamID) {
-        var highScore = 0;
-        var highTeam;
-        this.weeks.forEach(function (week) {
-            if (week.getTeam(_teamID).score > highScore) {
-                highScore = week.getTeam(_teamID).score;
-                highTeam = week.getTeam(_teamID);
-            }
-        });
-        return highTeam;
-    };
-    League.prototype.resetMemberStats = function () {
-        this.members.forEach(function (member) {
-            member.stats = new Stats(member.stats.finalStanding);
-        });
-    };
-    League.prototype.getSeasonPortionWeeks = function () {
-        var _this = this;
-        let filteredWeeks = _this.weeks.slice(0);
-        if (_this.seasonPortion == SEASON_PORTION.REGULAR_SEASON) {
-            filteredWeeks = filteredWeeks.filter(function(it) {
-                return it.isPlayoffs == false;
-            });
-        } else if (_this.seasonPortion == SEASON_PORTION.POST_SEASON){
-            filteredWeeks = filteredWeeks.filter(function(it) {
-                return it.isPlayoffs == true;
-            });
-        }
-        return filteredWeeks;
-    };
     League.prototype.setMemberStats = function (weeks) {
-        console.log("Setting Stats");
         var _this = this;
-        console.log(weeks);
-        
         weeks.forEach(function (week) {
             var weekMatches = [];
             week.matchups.forEach(function (matchup) {
@@ -82,46 +48,53 @@ var League = /** @class */ (function () {
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
         });
-        //this.setWinStreaks();
     };
-    League.prototype.setWinStreaks = function () {
-        var _this = this;
+    League.prototype.resetStats = function () {
         this.members.forEach(function (member) {
-            var highest = 0;
-            var currentStreak = 0;
-            _this.weeks.forEach(function (week) {
-                var currentMatchup = week.getTeamMatchup(member.teamID);
-                if (currentMatchup.byeWeek == false && currentMatchup.isTie == false) {
-                    if (currentMatchup.winner == member.teamID) {
-                        currentStreak += 1;
-                    }
-                    else {
-                        if (currentStreak > highest) {
-                            highest = currentStreak;
-                        }
-                    }
-                }
+            member.stats = new Stats(member.stats.finalStanding);
+        });
+    };
+    League.prototype.getSeasonPortionWeeks = function () {
+        var weekPortion = this.weeks;
+        if (this.seasonPortion == SEASON_PORTION.REGULAR) {
+            weekPortion = this.weeks.filter(function (it) {
+                return it.isPlayoffs == false;
             });
-            member.stats.longestWinStreak = highest;
-        });
+        }
+        else if (this.seasonPortion == SEASON_PORTION.POST) {
+            weekPortion = this.weeks.filter(function (it) {
+                return it.isPlayoffs == true;
+            });
+        }
+        return weekPortion;
     };
-    League.prototype.getWeeklyAverage = function () {
-        totalWeekScore = 0;
-        this.weeks.forEach(function (week) {
-            totalWeekScore += week.weekAverage;
-        });
-    };
-    League.prototype.getMember = function (_teamID) {
+    League.prototype.getMember = function (teamID) {
         var found;
         this.members.forEach(function (member) {
-            if (_teamID == member.teamID) {
+            if (teamID == member.teamID) {
                 found = member;
             }
         });
-        //console.log(found);
         return found;
     };
-    
+    League.prototype.getMemberBestWeek = function (teamID) {
+        var highScore = 0;
+        var highTeam;
+        this.weeks.forEach(function (week) {
+            if (week.getTeam(teamID).score > highScore) {
+                highScore = week.getTeam(teamID).score;
+                highTeam = week.getTeam(teamID);
+            }
+        });
+        return highTeam;
+    };
+    League.prototype.getLeagueWeeklyAverage = function () {
+        var totalPoints = 0;
+        this.weeks.forEach(function (week) {
+            totalPoints += week.getWeekAverage();
+        });
+        return totalPoints / this.weeks.length;
+    };
     return League;
 }());
 var Settings = /** @class */ (function () {
@@ -237,7 +210,6 @@ var Week = /** @class */ (function () {
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoffs;
         this.matchups = matchups;
-        this.weekAverage = this.getWeekAverage();
     }
     Week.prototype.getTeam = function (teamID) {
         var team;
@@ -248,20 +220,6 @@ var Week = /** @class */ (function () {
         });
         return team;
     };
-    Week.prototype.getWeekAverage = function () {
-        var weekScore = 0;
-        var numGames = 0;
-        this.matchups.forEach(function (matchup) {
-            if (matchup.byeWeek == false) {
-                weekScore += matchup.home.score + matchup.away.score;
-                numGames += 2;
-            } else {
-                weekScore += matchup.home.score;
-                numGames += 1;
-            }
-        });
-        return weekScore/numGames;
-    };
     Week.prototype.getTeamMatchup = function (teamID) {
         var match;
         this.matchups.forEach(function (matchup) {
@@ -270,6 +228,21 @@ var Week = /** @class */ (function () {
             }
         });
         return match;
+    };
+    Week.prototype.getWeekAverage = function () {
+        var weekScore = 0;
+        var numMatches = 0;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.byeWeek) {
+                weekScore += matchup.home.score;
+                numMatches += 1;
+            }
+            else {
+                weekScore += matchup.home.score + matchup.away.score;
+                numMatches += 2;
+            }
+        });
+        return weekScore / numMatches;
     };
     return Week;
 }());
@@ -313,9 +286,14 @@ var Matchup = /** @class */ (function () {
         }
     }
     Matchup.prototype.hasTeam = function (teamID) {
-        if (this.byeWeek != true){
-            if (this.home.teamID == teamID || teamID == this.away.teamID) {
+        if (this.byeWeek != true) {
+            if (this.home.teamID == teamID || this.away.teamID == teamID) {
                 return true;
+            }
+            else {
+                if (this.home.teamID == teamID) {
+                    return true;
+                }
             }
         }
     };
@@ -397,7 +375,7 @@ var Team = /** @class */ (function () {
     Team.prototype.getTeamScore = function (players) {
         var score = 0;
         for (var i in players) {
-            if (players[i].score != null || players[i].score != 'undefined') {
+            if (players[i].score != null && players[i].score != 'undefined') {
                 score += players[i].score;
             }
         }
@@ -408,19 +386,18 @@ var Team = /** @class */ (function () {
         for (var i in players) {
             if (players[i].projectedScore != null && players[i].projectedScore != 'undefined') {
                 this.projectedScore += players[i].projectedScore;
-                projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;
     };
     return Team;
 }());
-const SEASON_PORTION = {
-    REGULAR_SEASON: 'regularSeason',
-    POST_SEASON: 'postSeason',
-    COMPLETE_SEASON: 'completeSeason'
-}
-
+var SEASON_PORTION;
+(function (SEASON_PORTION) {
+    SEASON_PORTION["REGULAR"] = "Regular Season";
+    SEASON_PORTION["POST"] = "Post-Season";
+    SEASON_PORTION["ALL"] = "Complete Season";
+})(SEASON_PORTION || (SEASON_PORTION = {}));
 var DRAFT_TYPE;
 (function (DRAFT_TYPE) {
     DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";

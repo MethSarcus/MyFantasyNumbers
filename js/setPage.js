@@ -4,23 +4,23 @@ function setPage(league) {
             $(".nav-link").removeClass('active');
         };
     localStorage.setItem(league.leagueID + "" + league.seasonID, JSON.stringify(league));
-    console.log("Running setpage");
     console.log(league);
-    document.getElementById(SEASON_PORTION.REGULAR_SEASON).onclick = function(){
-        league.seasonPortion = SEASON_PORTION.REGULAR_SEASON;
-        league.resetMemberStats();
+    console.log("Running setpage");
+    document.getElementById(SEASON_PORTION.REGULAR).onclick = function(){
+        league.seasonPortion = SEASON_PORTION.REGULAR;
+        league.resetStats();
         league.setMemberStats(league.getSeasonPortionWeeks());
     };
         
-    document.getElementById(SEASON_PORTION.POST_SEASON).onclick = function(){
-        league.seasonPortion = SEASON_PORTION.POST_SEASON;
-        league.resetMemberStats();
+    document.getElementById(SEASON_PORTION.POST).onclick = function(){
+        league.seasonPortion = SEASON_PORTION.POST;
+        league.resetStats();
         league.setMemberStats(league.getSeasonPortionWeeks());
     };
         
-    document.getElementById(SEASON_PORTION.COMPLETE_SEASON).onclick = function(){
-        league.seasonPortion = SEASON_PORTION.COMPLETE_SEASON;
-        league.resetMemberStats();
+    document.getElementById(SEASON_PORTION.ALL).onclick = function(){
+        league.seasonPortion = SEASON_PORTION.ALL;
+        league.resetStats();
         league.setMemberStats(league.getSeasonPortionWeeks());
     };
     var l = new Color("#FF0000");

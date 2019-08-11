@@ -1,20 +1,21 @@
-//Class for containing a members week data
 class League {
     id: number;
     weeks: Week[];
     season: number;
     members: Member[];
     settings: Settings;
+    seasonPortion: SEASON_PORTION;
     constructor(id, season, weeks, members, settings) {
         this.id = id;
         this.weeks = weeks;
         this.season = season;
         this.members = members;
         this.settings = settings;
+        this.seasonPortion = SEASON_PORTION.REGULAR;
     }
 
-    setMemberStats() : void {
-        this.weeks.forEach( week => {
+    setMemberStats(weeks) : void {
+        weeks.forEach( week => {
             let weekMatches = [];
             week.matchups.forEach(matchup => {
                 if (matchup.byeWeek != true) {
@@ -51,42 +52,59 @@ class League {
                 curMember.stats.pp += curMemberTeam.potentialPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
-
             }
        });
-
-       this.setWinStreaks();
-       
     }
 
-    setWinStreaks() : void {
-        this.members.forEach(member => {
-            var highest = 0;
-            var currentStreak = 0;
-            this.weeks.forEach(week => {
-                let currentMatchup = week.getTeamMatchup(member.teamID)
-                if (currentMatchup.byeWeek == false && currentMatchup.isTie == false){
-                    if (currentMatchup.winner == member.teamID){
-                        currentStreak += 1;
-                    } else {
-                        if (currentStreak > highest){
-                            highest = currentStreak;
-                        }
-                    }
-                }
-            });
-            member.stats.longestWinStreak = highest;
+    resetStats() : void {
+        this.members.forEach(function (member) {
+            member.stats = new Stats(member.stats.finalStanding);
         });
     }
 
-    getMember(_teamID: number) : Member {
+    getSeasonPortionWeeks() : Week[] {
+        var weekPortion = this.weeks;
+        if (this.seasonPortion == SEASON_PORTION.REGULAR) {
+            weekPortion = this.weeks.filter(function(it) {
+                return it.isPlayoffs == false;
+            });
+        } else if (this.seasonPortion == SEASON_PORTION.POST){
+            weekPortion = this.weeks.filter(function(it) {
+                return it.isPlayoffs == true;
+            });
+        }
+        return weekPortion;
+    }
+
+    getMember(teamID: number) : Member {
         var found;
         this.members.forEach(member => {
-            if (_teamID = member.teamID) {
+            if (teamID == member.teamID) {
                 found = member;
             }
         });
         return found;
+    }
+
+    getMemberBestWeek(teamID) : Team {
+        var highScore = 0;
+        var highTeam;
+        this.weeks.forEach(function (week) {
+            if (week.getTeam(teamID).score > highScore) {
+                highScore = week.getTeam(teamID).score;
+                highTeam = week.getTeam(teamID);
+            }
+        });
+        return highTeam;
+    }
+
+    getLeagueWeeklyAverage() : number {
+        var totalPoints = 0;
+        this.weeks.forEach(week => {
+            totalPoints += week.getWeekAverage();
+        });
+        
+        return totalPoints/this.weeks.length;
     }
 }
 
@@ -208,7 +226,6 @@ class Stats {
         } else {
             return this.wins/(this.wins + this.losses);
         }
-        
     }
 }
 
@@ -296,6 +313,21 @@ class Week {
         });
         return match;
     }
+
+    getWeekAverage() : number {
+        var weekScore = 0;
+        var numMatches = 0;
+        this.matchups.forEach(matchup => {
+            if (matchup.byeWeek) {
+                weekScore += matchup.home.score;
+                numMatches += 1;
+            } else {
+                weekScore += matchup.home.score + matchup.away.score;
+                numMatches += 2;
+            }
+        });
+        return weekScore/numMatches;
+    }
 }
 
 class Matchup {
@@ -345,8 +377,14 @@ class Matchup {
     }
 
     hasTeam(teamID: number): boolean {
-        if (this.home.teamID == teamID || this.away.teamID == teamID) {
-            return true;
+        if (this.byeWeek != true) {
+            if (this.home.teamID == teamID || this.away.teamID == teamID){
+                return true;
+            } else {
+                if (this.home.teamID == teamID) {
+                    return true;
+                }
+            }
         }
     }
 
@@ -413,7 +451,7 @@ class Team {
             let eligibleWeekPlayers = [];
             let players = this.lineup.concat(this.bench, this.IR);
             for (let y in players) {
-                if (players[y].isEligible(parseInt(rosterSlots[x])) && includesPlayer(players[y], optimalLineup)) {
+                if (players[y].isEligible(parseInt(rosterSlots[x])) && !includesPlayer(players[y], optimalLineup)) {
                     eligibleWeekPlayers.push(players[y]);
                 }
             }
@@ -435,7 +473,7 @@ class Team {
     getTeamScore(players: Player[]): number {
         var score = 0;
         for (let i in players) {
-            if (players[i].score != null || players[i].score != 'undefined') {
+            if (players[i].score != null && players[i].score != 'undefined') {
                 score += players[i].score;
             }
         }
@@ -445,12 +483,18 @@ class Team {
     getProjectedScore(players: Player[]): number {
         var projectedScore = 0;
         for (let i in players) {
-            if (players[i].projectedScore != null || players[i].projectedScore != 'undefined') {
+            if (players[i].projectedScore != null && players[i].projectedScore != 'undefined') {
                 this.projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;
     }
+}
+
+enum SEASON_PORTION {
+    REGULAR = "Regular Season",
+    POST = "Post-Season",
+    ALL = "Complete Season"
 }
 
 enum DRAFT_TYPE {
