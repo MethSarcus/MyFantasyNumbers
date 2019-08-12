@@ -1,5 +1,6 @@
-var League = /** @class */ (function () {
-    function League(id, season, weeks, members, settings) {
+import { std, mean } from 'mathjs';
+class League {
+    constructor(id, season, weeks, members, settings) {
         this.id = id;
         this.weeks = weeks;
         this.season = season;
@@ -7,22 +8,21 @@ var League = /** @class */ (function () {
         this.settings = settings;
         this.seasonPortion = SEASON_PORTION.REGULAR;
     }
-    League.prototype.setMemberStats = function (weeks) {
-        var _this = this;
-        weeks.forEach(function (week) {
-            var weekMatches = [];
-            week.matchups.forEach(function (matchup) {
+    setMemberStats(weeks) {
+        weeks.forEach(week => {
+            let weekMatches = [];
+            week.matchups.forEach(matchup => {
                 if (matchup.byeWeek != true) {
                     if (matchup.isTie != true) {
-                        _this.getMember(matchup.winner).stats.wins += 1;
-                        _this.getMember(matchup.getOpponent(matchup.winner).teamID).stats.losses += 1;
+                        this.getMember(matchup.winner).stats.wins += 1;
+                        this.getMember(matchup.getOpponent(matchup.winner).teamID).stats.losses += 1;
                     }
                     else {
-                        _this.getMember(matchup.home.teamID).stats.ties += 1;
-                        _this.getMember(matchup.away.teamID).stats.ties += 1;
+                        this.getMember(matchup.home.teamID).stats.ties += 1;
+                        this.getMember(matchup.away.teamID).stats.ties += 1;
                     }
-                    _this.getMember(matchup.home.teamID).stats.pa += matchup.away.score;
-                    _this.getMember(matchup.away.teamID).stats.pa += matchup.home.score;
+                    this.getMember(matchup.home.teamID).stats.pa += matchup.away.score;
+                    this.getMember(matchup.away.teamID).stats.pa += matchup.home.score;
                     weekMatches.push(matchup.home);
                     weekMatches.push(matchup.away);
                 }
@@ -40,21 +40,24 @@ var League = /** @class */ (function () {
                 return 0;
             });
             for (var i = 0; i < weekMatches.length; i++) {
-                var curMember = _this.getMember(weekMatches[i].teamID);
-                var curMemberTeam = weekMatches[i];
+                let curMember = this.getMember(weekMatches[i].teamID);
+                let curMemberTeam = weekMatches[i];
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
         });
-    };
-    League.prototype.resetStats = function () {
+        this.members.forEach(member => {
+            member.setAdvancedStats(weeks);
+        });
+    }
+    resetStats() {
         this.members.forEach(function (member) {
             member.stats = new Stats(member.stats.finalStanding);
         });
-    };
-    League.prototype.getSeasonPortionWeeks = function () {
+    }
+    getSeasonPortionWeeks() {
         var weekPortion = this.weeks;
         if (this.seasonPortion == SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter(function (it) {
@@ -67,17 +70,17 @@ var League = /** @class */ (function () {
             });
         }
         return weekPortion;
-    };
-    League.prototype.getMember = function (teamID) {
+    }
+    getMember(teamID) {
         var found;
-        this.members.forEach(function (member) {
+        this.members.forEach(member => {
             if (teamID == member.teamID) {
                 found = member;
             }
         });
         return found;
-    };
-    League.prototype.getMemberBestWeek = function (teamID) {
+    }
+    getMemberBestWeek(teamID) {
         var highScore = 0;
         var highTeam;
         this.weeks.forEach(function (week) {
@@ -87,28 +90,110 @@ var League = /** @class */ (function () {
             }
         });
         return highTeam;
-    };
-    League.prototype.getLeagueWeeklyAverage = function () {
+    }
+    getLeagueWeeklyAverage() {
         var totalPoints = 0;
-        this.weeks.forEach(function (week) {
+        this.weeks.forEach(week => {
             totalPoints += week.getWeekAverage();
         });
         return totalPoints / this.weeks.length;
-    };
-    return League;
-}());
-var Settings = /** @class */ (function () {
-    function Settings(activeLineupSlots, lineupSlots, regularSeasonLength, playoffLength, draftType) {
+    }
+    getStandardDeviation(weeks) {
+        var scores = [];
+        this.weeks.forEach(week => {
+            week.matchups.forEach(matchup => {
+                if (matchup.byeWeek != true) {
+                    scores.push(matchup.home.score);
+                    scores.push(matchup.away.score);
+                }
+                else {
+                    scores.push(matchup.home.score);
+                }
+            });
+        });
+        var dev = std(scores);
+        dev = roundToHundred(dev);
+        return dev;
+    }
+    getPointsAgainstFinish(teamID) {
+        var finish = 1;
+        var pa = this.getMember(teamID).stats.pa;
+        this.members.forEach(member => {
+            if (pa > member.stats.pa && member.teamID != teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    }
+    getPointsScoredFinish(teamID) {
+        var finish = 1;
+        var pf = this.getMember(teamID).stats.pf;
+        this.members.forEach(member => {
+            if (pf < member.stats.pf && member.teamID != teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    }
+    getPotentialPointsFinish(teamID) {
+        var finish = 1;
+        var pp = this.getMember(teamID).stats.pp;
+        this.members.forEach(member => {
+            if (pp < member.stats.pp && member.teamID != teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    }
+    getBestWeek(teamID) {
+        var bestWeekMatchup = this.weeks[0].getTeamMatchup(teamID);
+        var highestScore = this.weeks[0].getTeam(teamID).score;
+        this.weeks.forEach(week => {
+            if (week.getTeam(teamID).score > highestScore) {
+                highestScore = week.getTeam(teamID).score;
+                bestWeekMatchup = week.getTeamMatchup(teamID);
+            }
+        });
+        return bestWeekMatchup;
+    }
+    getLargestMarginOfVictory() {
+        var highestMOV = 0;
+        var highestMOVMatchup;
+        this.weeks.forEach(week => {
+            week.matchups.forEach(matchup => {
+                if (matchup.marginOfVictory > highestMOV && !matchup.byeWeek) {
+                    highestMOV = matchup.marginOfVictory;
+                    highestMOVMatchup = matchup;
+                }
+            });
+        });
+        return highestMOVMatchup;
+    }
+    getSmallestMarginOfVictory() {
+        var smallestMOV = this.weeks[0].matchups[0].marginOfVictory;
+        var smallestMOVMatchup;
+        this.weeks.forEach(week => {
+            week.matchups.forEach(matchup => {
+                if (matchup.marginOfVictory < smallestMOV && !matchup.byeWeek) {
+                    smallestMOV = matchup.marginOfVictory;
+                    smallestMOVMatchup = matchup;
+                }
+            });
+        });
+        return smallestMOVMatchup;
+    }
+}
+class Settings {
+    constructor(activeLineupSlots, lineupSlots, regularSeasonLength, playoffLength, draftType) {
         this.activeLineupSlots = activeLineupSlots;
         this.lineupSlots = lineupSlots;
         this.regularSeasonLength = regularSeasonLength;
         this.playoffLength = playoffLength;
         this.draftType = draftType;
     }
-    return Settings;
-}());
-var Draft = /** @class */ (function () {
-    function Draft(leagueID, year, draftType, pickOrder, draftPicks, auctionBudget) {
+}
+class Draft {
+    constructor(leagueID, year, draftType, pickOrder, draftPicks, auctionBudget) {
         this.leagueID = leagueID;
         this.year = year;
         this.draftType = draftType;
@@ -116,10 +201,9 @@ var Draft = /** @class */ (function () {
         this.pickOrder = pickOrder;
         this.draftPicks = draftPicks;
     }
-    return Draft;
-}());
-var DraftPick = /** @class */ (function () {
-    function DraftPick(teamID, overrallPickNumber, roundID, roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
+}
+class DraftPick {
+    constructor(teamID, overrallPickNumber, roundID, roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
         this.teamID = teamID;
         this.overallPickNumber = overrallPickNumber;
         this.roundID = roundID;
@@ -130,10 +214,9 @@ var DraftPick = /** @class */ (function () {
         this.nominatingTeamID = nominatingTeamID; //used to see what team id nominated the player
         this.autoDraftTeamID = autoDraftTeamID;
     }
-    return DraftPick;
-}());
-var Member = /** @class */ (function () {
-    function Member(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
+}
+class Member {
+    constructor(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
         this.ID = memberID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -146,10 +229,17 @@ var Member = /** @class */ (function () {
         this.transactions = transactions;
         this.stats = stats;
     }
-    return Member;
-}());
-var Stats = /** @class */ (function () {
-    function Stats(finalStanding) {
+    setAdvancedStats(weeks) {
+        var scores = [];
+        weeks.forEach(week => {
+            scores.push(week.getTeam(this.ID).score);
+        });
+        this.stats.standardDeviation = std(scores);
+        this.stats.weeklyAverage = mean(scores);
+    }
+}
+class Stats {
+    constructor(finalStanding) {
         this.finalStanding = finalStanding;
         this.wins = 0;
         this.losses = 0;
@@ -160,18 +250,17 @@ var Stats = /** @class */ (function () {
         this.pa = 0;
         this.pp = 0;
     }
-    Stats.prototype.getWinPct = function () {
+    getWinPct() {
         if (this.wins == 0) {
             return 0.00;
         }
         else {
             return this.wins / (this.wins + this.losses);
         }
-    };
-    return Stats;
-}());
-var Player = /** @class */ (function () {
-    function Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
+    }
+}
+class Player {
+    constructor(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eligibleSlots = eligibleSlots;
@@ -183,17 +272,16 @@ var Player = /** @class */ (function () {
         this.lineupSlotID = lineupSlotID;
         this.weekNumber = weekNumber;
     }
-    Player.prototype.isEligible = function (slot) {
+    isEligible(slot) {
         for (var i = 0; i < this.eligibleSlots.length; i++) {
             if (this.eligibleSlots[i] == slot) {
                 return true;
             }
         }
-    };
-    return Player;
-}());
-var EmptySlot = /** @class */ (function () {
-    function EmptySlot() {
+    }
+}
+class EmptySlot {
+    constructor() {
         this.firstName = "Empty";
         this.lastName = "Slot";
         this.actualScore = 0;
@@ -203,36 +291,35 @@ var EmptySlot = /** @class */ (function () {
         this.jerseyNumber = -1;
         this.playerID = -1;
     }
-    return EmptySlot;
-}());
-var Week = /** @class */ (function () {
-    function Week(weekNumber, isPlayoffs, matchups) {
+}
+class Week {
+    constructor(weekNumber, isPlayoffs, matchups) {
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoffs;
         this.matchups = matchups;
     }
-    Week.prototype.getTeam = function (teamID) {
+    getTeam(teamID) {
         var team;
-        this.matchups.forEach(function (matchup) {
+        this.matchups.forEach(matchup => {
             if (matchup.hasTeam(teamID)) {
                 team = matchup.getTeam(teamID);
             }
         });
         return team;
-    };
-    Week.prototype.getTeamMatchup = function (teamID) {
+    }
+    getTeamMatchup(teamID) {
         var match;
-        this.matchups.forEach(function (matchup) {
+        this.matchups.forEach(matchup => {
             if (matchup.hasTeam(teamID)) {
                 match = matchup;
             }
         });
         return match;
-    };
-    Week.prototype.getWeekAverage = function () {
+    }
+    getWeekAverage() {
         var weekScore = 0;
         var numMatches = 0;
-        this.matchups.forEach(function (matchup) {
+        this.matchups.forEach(matchup => {
             if (matchup.byeWeek) {
                 weekScore += matchup.home.score;
                 numMatches += 1;
@@ -243,11 +330,10 @@ var Week = /** @class */ (function () {
             }
         });
         return weekScore / numMatches;
-    };
-    return Week;
-}());
-var Matchup = /** @class */ (function () {
-    function Matchup(home, away, weekNumber, isPlayoff) {
+    }
+}
+class Matchup {
+    constructor(home, away, weekNumber, isPlayoff) {
         this.home = home;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
@@ -285,7 +371,7 @@ var Matchup = /** @class */ (function () {
             }
         }
     }
-    Matchup.prototype.hasTeam = function (teamID) {
+    hasTeam(teamID) {
         if (this.byeWeek != true) {
             if (this.home.teamID == teamID || this.away.teamID == teamID) {
                 return true;
@@ -296,16 +382,16 @@ var Matchup = /** @class */ (function () {
                 }
             }
         }
-    };
-    Matchup.prototype.getTeam = function (teamID) {
+    }
+    getTeam(teamID) {
         if (this.home.teamID == teamID) {
             return this.home;
         }
         else if (this.away.teamID == teamID) {
             return this.away;
         }
-    };
-    Matchup.prototype.getOpponent = function (teamID) {
+    }
+    getOpponent(teamID) {
         if (this.home.teamID == teamID && this.byeWeek == false) {
             return this.away;
         }
@@ -315,17 +401,16 @@ var Matchup = /** @class */ (function () {
         else {
             return null;
         }
-    };
-    return Matchup;
-}());
-var Team = /** @class */ (function () {
-    function Team(teamID, players, activeLineupSlots, opponentID) {
+    }
+}
+class Team {
+    constructor(teamID, players, activeLineupSlots, opponentID) {
         this.lineup = [];
         this.bench = [];
         this.IR = [];
         this.opponentID = opponentID;
         for (var i = 0; i < players.length; i++) {
-            var player = players[i];
+            let player = players[i];
             if (player.lineupSlotID == 21) {
                 this.IR.push(player);
             }
@@ -341,25 +426,25 @@ var Team = /** @class */ (function () {
         this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
         this.projectedScore = this.getProjectedScore(this.lineup);
     }
-    Team.prototype.getOptimalLineup = function (activeLineupSlots) {
+    getOptimalLineup(activeLineupSlots) {
         var rosterSlots = [];
-        for (var i in activeLineupSlots) {
-            for (var w = 0; w < activeLineupSlots[i][1]; w++) {
+        for (let i in activeLineupSlots) {
+            for (let w = 0; w < activeLineupSlots[i][1]; w++) {
                 rosterSlots.push(activeLineupSlots[i][0]);
             }
         }
         var optimalLineup = new Array();
-        for (var x in rosterSlots) {
-            var highScore = 0;
-            var bestPlayer = null;
-            var eligibleWeekPlayers = [];
-            var players = this.lineup.concat(this.bench, this.IR);
-            for (var y in players) {
+        for (let x in rosterSlots) {
+            let highScore = 0;
+            let bestPlayer = null;
+            let eligibleWeekPlayers = [];
+            let players = this.lineup.concat(this.bench, this.IR);
+            for (let y in players) {
                 if (players[y].isEligible(parseInt(rosterSlots[x])) && !includesPlayer(players[y], optimalLineup)) {
                     eligibleWeekPlayers.push(players[y]);
                 }
             }
-            for (var z in eligibleWeekPlayers) {
+            for (let z in eligibleWeekPlayers) {
                 if (eligibleWeekPlayers[z].score > highScore) {
                     highScore = eligibleWeekPlayers[z].score;
                     bestPlayer = eligibleWeekPlayers[z];
@@ -371,27 +456,26 @@ var Team = /** @class */ (function () {
             }
         }
         return optimalLineup;
-    };
-    Team.prototype.getTeamScore = function (players) {
+    }
+    getTeamScore(players) {
         var score = 0;
-        for (var i in players) {
+        for (let i in players) {
             if (players[i].score != null && players[i].score != 'undefined') {
                 score += players[i].score;
             }
         }
         return score;
-    };
-    Team.prototype.getProjectedScore = function (players) {
+    }
+    getProjectedScore(players) {
         var projectedScore = 0;
-        for (var i in players) {
+        for (let i in players) {
             if (players[i].projectedScore != null && players[i].projectedScore != 'undefined') {
                 this.projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;
-    };
-    return Team;
-}());
+    }
+}
 var SEASON_PORTION;
 (function (SEASON_PORTION) {
     SEASON_PORTION["REGULAR"] = "Regular Season";
@@ -478,7 +562,7 @@ function getLineupSlot(lineupSlotID) {
 }
 function includesPlayer(player, lineup) {
     var includes = false;
-    lineup.forEach(function (element) {
+    lineup.forEach(element => {
         if (player.playerID == element.playerID) {
             includes = true;
         }

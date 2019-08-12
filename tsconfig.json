@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "outDir": "./js",
+        "outDir": "./js/classes",
         "allowJs": true,
-        "target": "es5"
+        "target": "es6",
+        "sourceMap": true
     },
     "include": [
         "./ts/**/*"
