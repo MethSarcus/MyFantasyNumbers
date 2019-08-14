@@ -1,5 +1,5 @@
-class EmptySlot {
-    constructor() {
+var EmptySlot = /** @class */ (function () {
+    function EmptySlot() {
         this.firstName = "Empty";
         this.lastName = "Slot";
         this.actualScore = 0;
@@ -9,5 +9,6 @@ class EmptySlot {
         this.jerseyNumber = -1;
         this.playerID = -1;
     }
-}
+    return EmptySlot;
+}());
 //# sourceMappingURL=EmptySlot.js.map

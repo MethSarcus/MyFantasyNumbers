@@ -28,10 +28,10 @@ class Member {
     public setAdvancedStats(weeks: Week[]): void {
         const scores = [];
         weeks.forEach((week) => {
-            scores.push(week.getTeam(this.ID).score);
+            scores.push(week.getTeam(this.teamID).score);
         });
 
-        this.stats.standardDeviation = math.std(scores);
-        this.stats.weeklyAverage = math.mean(scores);
+        this.stats.standardDeviation = calcStandardDeviation(scores);
+        this.stats.weeklyAverage = getMean(scores);
     }
 }

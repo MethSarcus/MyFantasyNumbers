@@ -44,6 +44,16 @@ class Matchup {
         }
     }
 
+    public getWinningTeam(): any {
+        if (this.byeWeek) {
+            return null;
+        } else if (this.home.score > this.away.score) {
+            return this.home;
+        } else {
+            return this.away;
+        }
+    }
+
     public hasTeam(teamID: number): boolean {
         if (this.byeWeek !== true) {
             if (this.home.teamID === teamID || this.away.teamID === teamID) {

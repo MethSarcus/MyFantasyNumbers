@@ -80,3 +80,22 @@ function includesPlayer(player: Player, lineup: Player[]): boolean {
     });
     return includes;
 }
+
+function calcStandardDeviation (scores: number[]): number {
+    var modified = [];
+    var mean = getMean(scores);
+    scores.forEach((score) =>{
+        modified.push(Math.pow(score - mean, 2));
+    });
+
+    return roundToHundred(Math.sqrt(getMean(modified)));
+}
+
+function getMean(numbers: number[]): number {
+    var sum = 0;
+    numbers.forEach(num => {
+        sum += num;
+    });
+
+    return sum/numbers.length;
+}

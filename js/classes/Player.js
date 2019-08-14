@@ -1,5 +1,5 @@
-class Player {
-    constructor(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
+var Player = /** @class */ (function () {
+    function Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eligibleSlots = eligibleSlots;
@@ -11,13 +11,14 @@ class Player {
         this.lineupSlotID = lineupSlotID;
         this.weekNumber = weekNumber;
     }
-    isEligible(slot) {
-        this.eligibleSlots.forEach((eligibleSlot) => {
+    Player.prototype.isEligible = function (slot) {
+        this.eligibleSlots.forEach(function (eligibleSlot) {
             if (eligibleSlot === slot) {
                 return true;
             }
         });
         return false;
-    }
-}
+    };
+    return Player;
+}());
 //# sourceMappingURL=Player.js.map

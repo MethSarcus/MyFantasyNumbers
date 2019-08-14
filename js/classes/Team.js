@@ -1,18 +1,19 @@
-class Team {
-    constructor(teamID, players, activeLineupSlots, opponentID) {
+var Team = /** @class */ (function () {
+    function Team(teamID, players, activeLineupSlots, opponentID) {
+        var _this = this;
         this.lineup = [];
         this.bench = [];
         this.IR = [];
         this.opponentID = opponentID;
-        players.forEach((player) => {
+        players.forEach(function (player) {
             if (player.lineupSlotID === 21) {
-                this.IR.push(player);
+                _this.IR.push(player);
             }
             else if (player.lineupSlotID === 20) {
-                this.bench.push(player);
+                _this.bench.push(player);
             }
             else {
-                this.lineup.push(player);
+                _this.lineup.push(player);
             }
         });
         this.teamID = teamID;
@@ -20,27 +21,27 @@ class Team {
         this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
         this.projectedScore = this.getProjectedScore(this.lineup);
     }
-    getOptimalLineup(activeLineupSlots) {
-        const rosterSlots = [];
+    Team.prototype.getOptimalLineup = function (activeLineupSlots) {
+        var rosterSlots = [];
         // tslint:disable-next-line: forin
-        for (const i in activeLineupSlots) {
-            for (let w = 0; w < activeLineupSlots[i][1]; w++) {
+        for (var i in activeLineupSlots) {
+            for (var w = 0; w < activeLineupSlots[i][1]; w++) {
                 rosterSlots.push(activeLineupSlots[i][0]);
             }
         }
-        const optimalLineup = new Array();
+        var optimalLineup = new Array();
         // tslint:disable-next-line: forin
-        for (const x in rosterSlots) {
-            let highScore = 0;
-            let bestPlayer = null;
-            const eligibleWeekPlayers = [];
-            const players = this.lineup.concat(this.bench, this.IR);
-            for (const y in players) {
+        for (var x in rosterSlots) {
+            var highScore = 0;
+            var bestPlayer = null;
+            var eligibleWeekPlayers = [];
+            var players = this.lineup.concat(this.bench, this.IR);
+            for (var y in players) {
                 if (players[y].isEligible(parseInt(rosterSlots[x], 10)) && !includesPlayer(players[y], optimalLineup)) {
                     eligibleWeekPlayers.push(players[y]);
                 }
             }
-            for (const z in eligibleWeekPlayers) {
+            for (var z in eligibleWeekPlayers) {
                 if (eligibleWeekPlayers[z].score > highScore) {
                     highScore = eligibleWeekPlayers[z].score;
                     bestPlayer = eligibleWeekPlayers[z];
@@ -52,24 +53,25 @@ class Team {
             }
         }
         return optimalLineup;
-    }
-    getTeamScore(players) {
-        let score = 0;
-        for (const i in players) {
+    };
+    Team.prototype.getTeamScore = function (players) {
+        var score = 0;
+        for (var i in players) {
             if (players[i].score != null && players[i].score !== "undefined") {
                 score += players[i].score;
             }
         }
         return score;
-    }
-    getProjectedScore(players) {
-        const projectedScore = 0;
-        for (const i in players) {
+    };
+    Team.prototype.getProjectedScore = function (players) {
+        var projectedScore = 0;
+        for (var i in players) {
             if (players[i].projectedScore != null && players[i].projectedScore !== "undefined") {
                 this.projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;
-    }
-}
+    };
+    return Team;
+}());
 //# sourceMappingURL=Team.js.map

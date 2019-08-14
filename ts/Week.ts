@@ -10,7 +10,7 @@ class Week {
     }
 
     public getTeam(teamID: number): Team {
-        let team: Team;
+        var team: Team;
         this.matchups.forEach( (matchup) => {
             if (matchup.hasTeam(teamID)) {
                 team = matchup.getTeam(teamID);

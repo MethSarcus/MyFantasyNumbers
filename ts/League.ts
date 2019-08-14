@@ -1,5 +1,4 @@
-import {std} from "mathjs";
-export class League {
+class League {
     public id: number;
     public weeks: Week[];
     public season: number;
@@ -54,7 +53,6 @@ export class League {
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
        });
-
         this.members.forEach((member) => {
            member.setAdvancedStats(weeks);
        });
@@ -100,33 +98,6 @@ export class League {
             }
         });
         return highTeam;
-    }
-
-    public getLeagueWeeklyAverage(): number {
-        let totalPoints = 0;
-        this.weeks.forEach((week) => {
-            totalPoints += week.getWeekAverage();
-        });
-
-        return totalPoints / this.weeks.length;
-    }
-
-    public getStandardDeviation(weeks) {
-        const scores = [];
-        weeks.forEach((week) => {
-            week.matchups.forEach((matchup) => {
-                if (matchup.byeWeek !== true) {
-                    scores.push(matchup.home.score);
-                    scores.push(matchup.away.score);
-                } else {
-                    scores.push(matchup.home.score);
-                }
-            });
-        });
-
-        let dev = std(scores);
-        dev = roundToHundred(dev);
-        return dev;
     }
 
     public getPointsAgainstFinish(teamID: number): number {
@@ -206,5 +177,53 @@ export class League {
 
         });
         return smallestMOVMatchup;
+    }
+
+    public getLeagueWeeklyAverage(): number {
+        var scores = [];
+        this.getSeasonPortionWeeks().forEach((week) => {
+            week.matchups.forEach((matchup) => {
+                scores.push(matchup.home.score);
+                if (!matchup.byeWeek) {
+                    scores.push(matchup.away.score);
+                }
+            });
+        });
+
+        return getMean(scores);
+    }
+
+    public getLeagueStandardDeviation(): number {
+        var scores = [];
+        this.getSeasonPortionWeeks().forEach((week) => {
+            week.matchups.forEach((matchup) => {
+                scores.push(matchup.home.score);
+                if (!matchup.byeWeek) {
+                    scores.push(matchup.away.score);
+                }
+            });
+        });
+
+        return calcStandardDeviation(scores);
+    }
+
+    public getOverallBestWeek(): Matchup {
+        var bestWeekMatchup;
+        var highestScore = 0;
+        this.weeks.forEach((week) => {
+            week.matchups.forEach(matchup => {
+                if (matchup.home.score > highestScore) {
+                     bestWeekMatchup = matchup;
+                     highestScore = matchup.home.score;
+                } else if (!matchup.byeWeek){
+                    if (matchup.away.score > highestScore) {
+                        bestWeekMatchup = matchup;
+                        highestScore = matchup.away.score;
+                   }
+                }
+            });
+        });
+        
+        return bestWeekMatchup;
     }
 }

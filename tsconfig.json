@@ -2,7 +2,7 @@
     "compilerOptions": {
         "outDir": "./js/classes",
         "allowJs": true,
-        "target": "es6",
+        "target": "es5",
         "sourceMap": true
     },
     "include": [

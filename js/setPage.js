@@ -110,7 +110,7 @@ function setPage(league) {
     crumbItem.classList.add('breadcrumb-item', 'active');
     let breadLink = document.createElement('a');
     breadLink.innerText = league.leagueName;
-    breadLink.href = "#"
+    breadLink.href = "#";
     breadLink.onclick = function () {
         $(".nav-link").removeClass('active');
     };
@@ -119,18 +119,18 @@ function setPage(league) {
     q.appendChild(crumbList);
     var cardRow = document.createElement('div');
     cardRow.classList.add('row');
-    cardRow.appendChild(makeLeagueStatCards('League Average',league.getLeagueWeeklyAverage(), getLeagueStandardDeviation(league.matchups)));
-    let topWeekMember = getBestWeekMember(league)[0];
-    let topWeekObject = getBestWeekMember(league)[1];
-    cardRow.appendChild(makeLeagueCards("Best Week", topWeekMember, roundToHundred(topWeekObject.activeScore) + " points", "Week " + topWeekObject.weekNumber));
-    let worstWeekMember = getWorstWeekMember(league)[0];
-    let worstWeekObject = getWorstWeekMember(league)[1];
-    cardRow.appendChild(makeLeagueCards("Worst Week", worstWeekMember, roundToHundred(worstWeekObject.activeScore) + " points", "Week " + worstWeekObject.weekNumber));
+    cardRow.appendChild(makeLeagueStatCards('League Average', league.getLeagueWeeklyAverage(), league.getLeagueStandardDeviation()));
+    let topMatchup = league.getOverallBestWeek();
+    let topTeam = topMatchup.getWinningTeam();
+    cardRow.appendChild(makeLeagueCards("Best Week", topTeam.teamID, roundToHundred(topTeam.score) + " points", "Week " + topMatchup.weekNumber));
+    // let worstWeekMember = getWorstWeekMember(league)[0];
+    // let worstWeekObject = getWorstWeekMember(league)[1];
+    // cardRow.appendChild(makeLeagueCards("Worst Week", worstWeekMember, roundToHundred(worstWeekObject.activeScore) + " points", "Week " + worstWeekObject.weekNumber));
 
-    let biggestMOV = getLargestMOV(league);
-    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", getTeam(league, biggestMOV.teamID), getTeam(league, biggestMOV.opponentTeamID), biggestMOV.weekNumber));
-    let smallestMOV = getSmallestMOV(league);
-    cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", getTeam(league, smallestMOV.teamID), getTeam(league, smallestMOV.opponentTeamID), smallestMOV.weekNumber));
+    let biggestMOV = league.getLargestMarginOfVictory();
+    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", league.getMember(biggestMOV.getWinningTeam().teamID), league.getMember(biggestMOV.getWinningTeam().teamID), biggestMOV.weekNumber));
+    let smallestMOV = league.getSmallestMarginOfVictory();
+    cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", league.getMember(smallestMOV.getWinningTeam().teamID), league.getMember(smallestMOV.getWinningTeam().opponentTeamID), smallestMOV.weekNumber));
     var tRow = document.createElement('div');
     tRow.classList.add('row');
     
@@ -647,14 +647,14 @@ function createPwerRankTable(myYear) {
         let ppCell = document.createElement('td');
         let pctCell = document.createElement('td');
 
-        pwrRankCell.appendChild(document.createTextNode(curMember.powerRank));
-        rankCell.appendChild(document.createTextNode(curMember.finalStanding));
-        pfCell.appendChild(document.createTextNode(roundToHundred(curMember.completeSeasonPoints)));
-        paCell.appendChild(document.createTextNode(roundToHundred(curMember.completeSeasonPointsAgainst)));
-        ppCell.appendChild(document.createTextNode(roundToHundred(getPotentialPoints(curMember))));
-        recordCell.appendChild(document.createTextNode(curMember.record.overall.wins + "-" + curMember.record.overall.losses));
+        pwrRankCell.appendChild(document.createTextNode(curMember.stats.powerRank));
+        rankCell.appendChild(document.createTextNode(curMember.stats.finalStanding));
+        pfCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.pf)));
+        paCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.pa)));
+        ppCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.pp)));
+        recordCell.appendChild(document.createTextNode(curMember.stats.wins + "-" + curMember.stats.losses));
         teamNameCell.appendChild(document.createTextNode(curMember.teamLocation + " " + curMember.teamNickname));
-        pctCell.appendChild(document.createTextNode(roundToHundred(curMember.record.overall.percentage * 100) + "%"));
+        pctCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.wins/curMember.stats.losses * 100) + "%"));
         row.appendChild(rankCell);
         //row.appendChild(pwrRankCell);
         row.appendChild(teamNameCell);
@@ -742,6 +742,8 @@ function drawLineGraph(){
 }
 
 function makeHeadToHeadCards(statName, member, member2, little) {
+    console.log(member);
+    console.log(member2);
     let statContainer = document.createElement('div');
     statContainer.classList.add('col-12', 'col-sm-12', 'col-md-7', 'col-lg-5', 'col-xl-3', 'my-1');
     let leagueCard = document.createElement('div');
@@ -756,7 +758,7 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     h2h.classList.add('row', 'w-100', 'nomarg');
     let cardFig = document.createElement('figure');
     let figCap = document.createElement('figcaption');
-    figCap.innerText = member.teamLocation + " " + member.teamNickname + "\n" + roundToHundred(member.pastWeeks[little-1].activeScore) + " Points";
+    //figCap.innerText = member.teamLocation + " " + member.teamNickname + "\n" + roundToHundred(member.pastWeeks[little-1].activeScore) + " Points";
     figCap.style.fontSize = '.9rem';
     cardFig.classList.add('col-5', 'p-0');
     let cardImage = document.createElement('img');
@@ -768,15 +770,15 @@ function makeHeadToHeadCards(statName, member, member2, little) {
 
     let cardFig2 = document.createElement('figure');
     let figCap2 = document.createElement('figcaption');
-    figCap2.innerText = member2.teamLocation + " " + member2.teamNickname + "\n" + roundToHundred(member2.pastWeeks[little-1].activeScore) + " Points";
+    //figCap2.innerText = member2.teamLocation + " " + member2.teamNickname + "\n" + roundToHundred(member2.pastWeeks[little-1].activeScore) + " Points";
     cardFig2.classList.add('col-5', 'p-0');
     figCap2.style.fontSize = '.9rem';
     let cardImage2 = document.createElement('img');
     cardImage2.classList.add('newresize', 'col-5', 'p-0');
-    cardImage2.src = member2.logoURL;
-    cardImage2.addEventListener("error", fixNoImage);
-    cardFig2.appendChild(cardImage2);
-    cardFig2.appendChild(figCap2);
+    // cardImage2.src = member2.logoURL;
+    // cardImage2.addEventListener("error", fixNoImage);
+    // cardFig2.appendChild(cardImage2);
+    // cardFig2.appendChild(figCap2);
 
     let vsText = document.createElement('div');
     vsText.classList.add('col-2', 'font-weight-bold', 'my-auto', 'px-0');
@@ -787,8 +789,8 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     h2h.appendChild(cardFig2);
     let sub = document.createElement('h3');
     sub.setAttribute('style', 'margin-left: auto; margin-right: auto;');
-    let num = roundToHundred(calcMatchupPointDifference(member.pastWeeks[little-1]));
-    sub.innerText = num + " Point Difference";
+    //let num = roundToHundred(calcMatchupPointDifference(member.pastWeeks[little-1]));
+    sub.innerText = 100 + " Point Difference";
     let mini = document.createElement('h6');
     mini.setAttribute('style', 'margin-left: auto; margin-right: auto;');
     mini.innerText = "week " + little;

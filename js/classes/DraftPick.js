@@ -1,5 +1,5 @@
-class DraftPick {
-    constructor(teamID, overrallPickNumber, roundID, roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
+var DraftPick = /** @class */ (function () {
+    function DraftPick(teamID, overrallPickNumber, roundID, roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
         this.teamID = teamID;
         this.overallPickNumber = overrallPickNumber;
         this.roundID = roundID;
@@ -10,5 +10,6 @@ class DraftPick {
         this.nominatingTeamID = nominatingTeamID; // used to see what team id nominated the player
         this.autoDraftTeamID = autoDraftTeamID;
     }
-}
+    return DraftPick;
+}());
 //# sourceMappingURL=DraftPick.js.map

@@ -10,7 +10,7 @@ function roundToTen(x) {
 // Returns: Hex, Color for card
 function getColor(value) {
     // value from 0 to 1
-    const hue = ((1 - value) * 120).toString(10);
+    var hue = ((1 - value) * 120).toString(10);
     return ["hsl(", hue, ",100%,50%)"].join("");
 }
 function getCardColor(rank, outOf) {
@@ -20,7 +20,7 @@ function getInverseCardColor(rank, outOf) {
     return getColor((1 + (outOf - rank)) / outOf);
 }
 function getTextColor(rank, outOf) {
-    const o = rank / outOf;
+    var o = rank / outOf;
     if (o < .75) {
         return "black";
     }
@@ -30,8 +30,8 @@ function getTextColor(rank, outOf) {
 }
 // Returns the suffix of whatever number is input
 function ordinal_suffix_of(i) {
-    const j = i % 10;
-    const k = i % 100;
+    var j = i % 10;
+    var k = i % 100;
     if (j === 1 && k !== 11) {
         return i + "st";
     }

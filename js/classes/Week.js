@@ -1,31 +1,31 @@
-class Week {
-    constructor(weekNumber, isPlayoffs, matchups) {
+var Week = /** @class */ (function () {
+    function Week(weekNumber, isPlayoffs, matchups) {
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoffs;
         this.matchups = matchups;
     }
-    getTeam(teamID) {
-        let team;
-        this.matchups.forEach((matchup) => {
+    Week.prototype.getTeam = function (teamID) {
+        var team;
+        this.matchups.forEach(function (matchup) {
             if (matchup.hasTeam(teamID)) {
                 team = matchup.getTeam(teamID);
             }
         });
         return team;
-    }
-    getTeamMatchup(teamID) {
-        let match;
-        this.matchups.forEach((matchup) => {
+    };
+    Week.prototype.getTeamMatchup = function (teamID) {
+        var match;
+        this.matchups.forEach(function (matchup) {
             if (matchup.hasTeam(teamID)) {
                 match = matchup;
             }
         });
         return match;
-    }
-    getWeekAverage() {
-        let weekScore = 0;
-        let numMatches = 0;
-        this.matchups.forEach((matchup) => {
+    };
+    Week.prototype.getWeekAverage = function () {
+        var weekScore = 0;
+        var numMatches = 0;
+        this.matchups.forEach(function (matchup) {
             if (matchup.byeWeek) {
                 weekScore += matchup.home.score;
                 numMatches += 1;
@@ -36,6 +36,7 @@ class Week {
             }
         });
         return weekScore / numMatches;
-    }
-}
+    };
+    return Week;
+}());
 //# sourceMappingURL=Week.js.map

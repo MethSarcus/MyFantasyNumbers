@@ -1,5 +1,5 @@
-class Stats {
-    constructor(finalStanding) {
+var Stats = /** @class */ (function () {
+    function Stats(finalStanding) {
         this.finalStanding = finalStanding;
         this.wins = 0;
         this.losses = 0;
@@ -10,13 +10,14 @@ class Stats {
         this.pa = 0;
         this.pp = 0;
     }
-    getWinPct() {
+    Stats.prototype.getWinPct = function () {
         if (this.wins === 0) {
             return 0.00;
         }
         else {
             return this.wins / (this.wins + this.losses);
         }
-    }
-}
+    };
+    return Stats;
+}());
 //# sourceMappingURL=Stats.js.map

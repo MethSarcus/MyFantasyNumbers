@@ -1,5 +1,5 @@
-class Matchup {
-    constructor(home, away, weekNumber, isPlayoff) {
+var Matchup = /** @class */ (function () {
+    function Matchup(home, away, weekNumber, isPlayoff) {
         this.home = home;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
@@ -37,7 +37,18 @@ class Matchup {
             }
         }
     }
-    hasTeam(teamID) {
+    Matchup.prototype.getWinningTeam = function () {
+        if (this.byeWeek) {
+            return null;
+        }
+        else if (this.home.score > this.away.score) {
+            return this.home;
+        }
+        else {
+            return this.away;
+        }
+    };
+    Matchup.prototype.hasTeam = function (teamID) {
         if (this.byeWeek !== true) {
             if (this.home.teamID === teamID || this.away.teamID === teamID) {
                 return true;
@@ -48,16 +59,16 @@ class Matchup {
                 }
             }
         }
-    }
-    getTeam(teamID) {
+    };
+    Matchup.prototype.getTeam = function (teamID) {
         if (this.home.teamID === teamID) {
             return this.home;
         }
         else if (this.away.teamID === teamID) {
             return this.away;
         }
-    }
-    getOpponent(teamID) {
+    };
+    Matchup.prototype.getOpponent = function (teamID) {
         if (this.home.teamID === teamID && this.byeWeek === false) {
             return this.away;
         }
@@ -67,6 +78,7 @@ class Matchup {
         else {
             return null;
         }
-    }
-}
+    };
+    return Matchup;
+}());
 //# sourceMappingURL=Matchup.js.map

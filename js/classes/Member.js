@@ -1,5 +1,5 @@
-class Member {
-    constructor(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
+var Member = /** @class */ (function () {
+    function Member(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
         this.ID = memberID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -12,13 +12,15 @@ class Member {
         this.transactions = transactions;
         this.stats = stats;
     }
-    setAdvancedStats(weeks) {
-        const scores = [];
-        weeks.forEach((week) => {
-            scores.push(week.getTeam(this.ID).score);
+    Member.prototype.setAdvancedStats = function (weeks) {
+        var _this = this;
+        var scores = [];
+        weeks.forEach(function (week) {
+            scores.push(week.getTeam(_this.teamID).score);
         });
-        this.stats.standardDeviation = math.std(scores);
-        this.stats.weeklyAverage = math.mean(scores);
-    }
-}
+        this.stats.standardDeviation = calcStandardDeviation(scores);
+        this.stats.weeklyAverage = getMean(scores);
+    };
+    return Member;
+}());
 //# sourceMappingURL=Member.js.map

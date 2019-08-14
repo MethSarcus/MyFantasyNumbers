@@ -1,6 +1,5 @@
-import { std } from "mathjs";
-export class League {
-    constructor(id, season, weeks, members, settings) {
+var League = /** @class */ (function () {
+    function League(id, season, weeks, members, settings) {
         this.id = id;
         this.weeks = weeks;
         this.season = season;
@@ -8,21 +7,22 @@ export class League {
         this.settings = settings;
         this.seasonPortion = SEASON_PORTION.REGULAR;
     }
-    setMemberStats(weeks) {
-        weeks.forEach((week) => {
-            const weekMatches = [];
-            week.matchups.forEach((matchup) => {
+    League.prototype.setMemberStats = function (weeks) {
+        var _this = this;
+        weeks.forEach(function (week) {
+            var weekMatches = [];
+            week.matchups.forEach(function (matchup) {
                 if (matchup.byeWeek !== true) {
                     if (matchup.isTie !== true) {
-                        this.getMember(matchup.winner).stats.wins += 1;
-                        this.getMember(matchup.getOpponent(matchup.winner).teamID).stats.losses += 1;
+                        _this.getMember(matchup.winner).stats.wins += 1;
+                        _this.getMember(matchup.getOpponent(matchup.winner).teamID).stats.losses += 1;
                     }
                     else {
-                        this.getMember(matchup.home.teamID).stats.ties += 1;
-                        this.getMember(matchup.away.teamID).stats.ties += 1;
+                        _this.getMember(matchup.home.teamID).stats.ties += 1;
+                        _this.getMember(matchup.away.teamID).stats.ties += 1;
                     }
-                    this.getMember(matchup.home.teamID).stats.pa += matchup.away.score;
-                    this.getMember(matchup.away.teamID).stats.pa += matchup.home.score;
+                    _this.getMember(matchup.home.teamID).stats.pa += matchup.away.score;
+                    _this.getMember(matchup.away.teamID).stats.pa += matchup.home.score;
                     weekMatches.push(matchup.home);
                     weekMatches.push(matchup.away);
                 }
@@ -30,7 +30,7 @@ export class League {
                     weekMatches.push(matchup.home);
                 }
             });
-            weekMatches.sort((x, y) => {
+            weekMatches.sort(function (x, y) {
                 if (x.score < y.score) {
                     return -1;
                 }
@@ -39,128 +39,104 @@ export class League {
                 }
                 return 0;
             });
-            for (let i = 0; i < weekMatches.length; i++) {
-                const curMember = this.getMember(weekMatches[i].teamID);
-                const curMemberTeam = weekMatches[i];
+            for (var i = 0; i < weekMatches.length; i++) {
+                var curMember = _this.getMember(weekMatches[i].teamID);
+                var curMemberTeam = weekMatches[i];
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
         });
-        this.members.forEach((member) => {
+        this.members.forEach(function (member) {
             member.setAdvancedStats(weeks);
         });
-    }
-    resetStats() {
-        this.members.forEach((member) => {
+    };
+    League.prototype.resetStats = function () {
+        this.members.forEach(function (member) {
             member.stats = new Stats(member.stats.finalStanding);
         });
-    }
-    getSeasonPortionWeeks() {
-        let weekPortion = this.weeks;
+    };
+    League.prototype.getSeasonPortionWeeks = function () {
+        var weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
-            weekPortion = this.weeks.filter((it) => {
+            weekPortion = this.weeks.filter(function (it) {
                 return it.isPlayoffs === false;
             });
         }
         else if (this.seasonPortion === SEASON_PORTION.POST) {
-            weekPortion = this.weeks.filter((it) => {
+            weekPortion = this.weeks.filter(function (it) {
                 return it.isPlayoffs === true;
             });
         }
         return weekPortion;
-    }
-    getMember(teamID) {
-        let found;
-        this.members.forEach((member) => {
+    };
+    League.prototype.getMember = function (teamID) {
+        var found;
+        this.members.forEach(function (member) {
             if (teamID === member.teamID) {
                 found = member;
             }
         });
         return found;
-    }
-    getMemberBestWeek(teamID) {
-        let highScore = 0;
-        let highTeam;
-        this.weeks.forEach((week) => {
+    };
+    League.prototype.getMemberBestWeek = function (teamID) {
+        var highScore = 0;
+        var highTeam;
+        this.weeks.forEach(function (week) {
             if (week.getTeam(teamID).score > highScore) {
                 highScore = week.getTeam(teamID).score;
                 highTeam = week.getTeam(teamID);
             }
         });
         return highTeam;
-    }
-    getLeagueWeeklyAverage() {
-        let totalPoints = 0;
-        this.weeks.forEach((week) => {
-            totalPoints += week.getWeekAverage();
-        });
-        return totalPoints / this.weeks.length;
-    }
-    getStandardDeviation(weeks) {
-        const scores = [];
-        weeks.forEach((week) => {
-            week.matchups.forEach((matchup) => {
-                if (matchup.byeWeek !== true) {
-                    scores.push(matchup.home.score);
-                    scores.push(matchup.away.score);
-                }
-                else {
-                    scores.push(matchup.home.score);
-                }
-            });
-        });
-        let dev = std(scores);
-        dev = roundToHundred(dev);
-        return dev;
-    }
-    getPointsAgainstFinish(teamID) {
-        let finish = 1;
-        const pa = this.getMember(teamID).stats.pa;
-        this.members.forEach((member) => {
+    };
+    League.prototype.getPointsAgainstFinish = function (teamID) {
+        var finish = 1;
+        var pa = this.getMember(teamID).stats.pa;
+        this.members.forEach(function (member) {
             if (pa > member.stats.pa && member.teamID !== teamID) {
                 finish += 1;
             }
         });
         return finish;
-    }
-    getPointsScoredFinish(teamID) {
-        let finish = 1;
-        const pf = this.getMember(teamID).stats.pf;
-        this.members.forEach((member) => {
+    };
+    League.prototype.getPointsScoredFinish = function (teamID) {
+        var finish = 1;
+        var pf = this.getMember(teamID).stats.pf;
+        this.members.forEach(function (member) {
             if (pf < member.stats.pf && member.teamID !== teamID) {
                 finish += 1;
             }
         });
         return finish;
-    }
-    getPotentialPointsFinish(teamID) {
-        let finish = 1;
-        const pp = this.getMember(teamID).stats.pp;
-        this.members.forEach((member) => {
+    };
+    League.prototype.getPotentialPointsFinish = function (teamID) {
+        var finish = 1;
+        var pp = this.getMember(teamID).stats.pp;
+        this.members.forEach(function (member) {
             if (pp < member.stats.pp && member.teamID !== teamID) {
                 finish += 1;
             }
         });
         return finish;
-    }
-    getBestWeek(teamID) {
-        let bestWeekMatchup = this.weeks[0].getTeamMatchup(teamID);
-        let highestScore = this.weeks[0].getTeam(teamID).score;
-        this.weeks.forEach((week) => {
+    };
+    League.prototype.getBestWeek = function (teamID) {
+        var bestWeekMatchup = this.weeks[0].getTeamMatchup(teamID);
+        var highestScore = this.weeks[0].getTeam(teamID).score;
+        this.weeks.forEach(function (week) {
             if (week.getTeam(teamID).score > highestScore) {
                 highestScore = week.getTeam(teamID).score;
                 bestWeekMatchup = week.getTeamMatchup(teamID);
             }
         });
         return bestWeekMatchup;
-    }
-    getLargestMarginOfVictory() {
-        let highestMOV = 0;
-        let highestMOVMatchup;
-        this.weeks.forEach((week) => {
-            week.matchups.forEach((matchup) => {
+    };
+    League.prototype.getLargestMarginOfVictory = function () {
+        var highestMOV = 0;
+        var highestMOVMatchup;
+        this.weeks.forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
                 if (matchup.marginOfVictory > highestMOV && !matchup.byeWeek) {
                     highestMOV = matchup.marginOfVictory;
                     highestMOVMatchup = matchup;
@@ -168,12 +144,12 @@ export class League {
             });
         });
         return highestMOVMatchup;
-    }
-    getSmallestMarginOfVictory() {
-        let smallestMOV = this.weeks[0].matchups[0].marginOfVictory;
-        let smallestMOVMatchup;
-        this.weeks.forEach((week) => {
-            week.matchups.forEach((matchup) => {
+    };
+    League.prototype.getSmallestMarginOfVictory = function () {
+        var smallestMOV = this.weeks[0].matchups[0].marginOfVictory;
+        var smallestMOVMatchup;
+        this.weeks.forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
                 if (matchup.marginOfVictory < smallestMOV && !matchup.byeWeek) {
                     smallestMOV = matchup.marginOfVictory;
                     smallestMOVMatchup = matchup;
@@ -181,6 +157,50 @@ export class League {
             });
         });
         return smallestMOVMatchup;
-    }
-}
+    };
+    League.prototype.getLeagueWeeklyAverage = function () {
+        var scores = [];
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
+                scores.push(matchup.home.score);
+                if (!matchup.byeWeek) {
+                    scores.push(matchup.away.score);
+                }
+            });
+        });
+        return getMean(scores);
+    };
+    League.prototype.getLeagueStandardDeviation = function () {
+        var scores = [];
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
+                scores.push(matchup.home.score);
+                if (!matchup.byeWeek) {
+                    scores.push(matchup.away.score);
+                }
+            });
+        });
+        return calcStandardDeviation(scores);
+    };
+    League.prototype.getOverallBestWeek = function () {
+        var bestWeekMatchup;
+        var highestScore = 0;
+        this.weeks.forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
+                if (matchup.home.score > highestScore) {
+                    bestWeekMatchup = matchup;
+                    highestScore = matchup.home.score;
+                }
+                else if (!matchup.byeWeek) {
+                    if (matchup.away.score > highestScore) {
+                        bestWeekMatchup = matchup;
+                        highestScore = matchup.away.score;
+                    }
+                }
+            });
+        });
+        return bestWeekMatchup;
+    };
+    return League;
+}());
 //# sourceMappingURL=League.js.map

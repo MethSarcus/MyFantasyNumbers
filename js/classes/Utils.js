@@ -83,12 +83,27 @@ function getLineupSlot(lineupSlotID) {
     }
 }
 function includesPlayer(player, lineup) {
-    let includes = false;
-    lineup.forEach((element) => {
+    var includes = false;
+    lineup.forEach(function (element) {
         if (player.playerID === element.playerID) {
             includes = true;
         }
     });
     return includes;
+}
+function calcStandardDeviation(scores) {
+    var modified = [];
+    var mean = getMean(scores);
+    scores.forEach(function (score) {
+        modified.push(Math.pow(score - mean, 2));
+    });
+    return roundToHundred(Math.sqrt(getMean(modified)));
+}
+function getMean(numbers) {
+    var sum = 0;
+    numbers.forEach(function (num) {
+        sum += num;
+    });
+    return sum / numbers.length;
 }
 //# sourceMappingURL=Utils.js.map
