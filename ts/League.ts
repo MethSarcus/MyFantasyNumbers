@@ -1,17 +1,19 @@
 class League {
     public id: number;
+    public leagueName: string;
     public weeks: Week[];
     public season: number;
     public members: Member[];
     public settings: Settings;
     public seasonPortion: SEASON_PORTION;
-    constructor(id, season, weeks, members, settings) {
+    constructor(id, season, weeks, members, settings, leagueName) {
         this.id = id;
         this.weeks = weeks;
         this.season = season;
         this.members = members;
         this.settings = settings; 
         this.seasonPortion = SEASON_PORTION.REGULAR;
+        this.leagueName = leagueName;
     }
 
     public setMemberStats(weeks): void {
@@ -285,7 +287,7 @@ class League {
                 new Stats(member.stats.finalStanding)
             ));
         });
-        var league = new League(object.id, object.season, weeks, members, settings);
+        var league = new League(object.id, object.season, weeks, members, settings, object.leagueName);
         league.setMemberStats(league.getSeasonPortionWeeks());
         return league;
     }

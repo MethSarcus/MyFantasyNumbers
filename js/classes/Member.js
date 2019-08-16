@@ -21,6 +21,23 @@ var Member = /** @class */ (function () {
         this.stats.standardDeviation = calcStandardDeviation(scores);
         this.stats.weeklyAverage = getMean(scores);
     };
+    Member.prototype.nameToString = function () {
+        return this.teamLocation + " " + this.teamNickname;
+    };
+    Member.prototype.ownerToString = function () {
+        return this.firstName + " " + this.lastName;
+    };
+    Member.prototype.recordToString = function () {
+        if (this.stats.ties != 0) {
+            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
+        }
+        else {
+            return this.stats.wins + "-" + this.stats.losses;
+        }
+    };
+    Member.prototype.finishToString = function () {
+        return ordinal_suffix_of(this.stats.finalStanding);
+    };
     return Member;
 }());
 //# sourceMappingURL=Member.js.map

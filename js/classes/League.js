@@ -1,11 +1,12 @@
 var League = /** @class */ (function () {
-    function League(id, season, weeks, members, settings) {
+    function League(id, season, weeks, members, settings, leagueName) {
         this.id = id;
         this.weeks = weeks;
         this.season = season;
         this.members = members;
         this.settings = settings;
         this.seasonPortion = SEASON_PORTION.REGULAR;
+        this.leagueName = leagueName;
     }
     League.prototype.setMemberStats = function (weeks) {
         var _this = this;
@@ -232,7 +233,7 @@ var League = /** @class */ (function () {
         object.members.forEach(function (member) {
             members.push(new Member(member.ID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
         });
-        var league = new League(object.id, object.season, weeks, members, settings);
+        var league = new League(object.id, object.season, weeks, members, settings, object.leagueName);
         league.setMemberStats(league.getSeasonPortionWeeks());
         return league;
     };

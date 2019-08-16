@@ -51,13 +51,15 @@ function setPage(league) {
     //adds teams to sidebar
     for (i in league.members) {
         let a = document.createElement("li");
+        a.id = league.members[i].teamID;
         a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass('active');
+            updateTeamPill(league, this.id);
         };
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');
-        b.href = "#pillTeam" + league.members[i].teamID;
+        b.href = "#teamPill";
         b.classList.add('nav-link');
         b.style.paddingLeft = "3px;"
         let c = document.createElement('img');

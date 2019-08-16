@@ -34,4 +34,24 @@ class Member {
         this.stats.standardDeviation = calcStandardDeviation(scores);
         this.stats.weeklyAverage = getMean(scores);
     }
+
+    public nameToString(): string {
+        return this.teamLocation + " " + this.teamNickname;
+    }
+
+    public ownerToString(): string {
+        return this.firstName + " " + this.lastName;
+    }
+
+    public recordToString(): string {
+        if (this.stats.ties != 0) {
+            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
+        } else {
+            return this.stats.wins + "-" + this.stats.losses;
+        }
+    }
+
+    public finishToString(): string {
+        return ordinal_suffix_of(this.stats.finalStanding);
+    }
 }

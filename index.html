@@ -21,6 +21,7 @@
   <script src="https://www.amcharts.com/lib/4/core.js"></script>
   <script src="https://www.amcharts.com/lib/4/charts.js"></script>
   <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+  <script type="text/javascript" src="js/classes/Page_Updates.js"></script>
   <script type="text/javascript" src="js/classes/Stats.js"></script>
   <script type="text/javascript" src="js/classes/Settings.js"></script>
   <script type="text/javascript" src="js/classes/Team.js"></script>
@@ -118,19 +119,19 @@
     <div id="wrapper">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
-          <div id="pillTeam8" class="tab-pane fade">
+          <div id="teamPill" class="tab-pane fade">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3">
                 <div class="d-flex">
-                  <img id="teamCardImage"
+                  <img id="team_image"
                     src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
                     alt="DLow" style="width: 200px; height: 200px;">
                   <div class="pl-2">
-                    <h4 class="card-title px-auto" id="teamCardName">Quality Kraftmanship</h4>
+                    <h4 class="card-title px-auto" id="team_name">Quality Kraftmanship</h4>
                     <i>Owner</i>
-                    <h5 class="card-title" id="teamCardOwnerName">Dylan Penkethman</h5>
-                    <p class="card-text" id="teamCardFinish">Finished 3rd Overall</p>
-                    <p id="teamCardRecord">Record: 9-4</p>
+                    <h5 class="card-title" id="team_owner">Dylan Penkethman</h5>
+                    <p class="card-text" id="team_finish">Finished 3rd Overall</p>
+                    <p id="team_record">Record: 9-4</p>
                   </div>
                 </div>
               </div>
@@ -140,24 +141,30 @@
                     <div class="col-4 card statcard">
                       <div class="statWidget">
                         <div class="statwidgetcatagory">
-                          <h5>1st</h5>
+                          <h5 id="team_pf_finish">1st</h5>
                           <h4>PF</h4>
                         </div>
                         <div class="statwidgetcontent">
-                          <h5>1500 <small>Points Scored</small></h5>
-                          <p>+150 League Average</p>
+                          <h5 id>
+                            <div id="team_pf_points">1500</div>
+                            <small> Points Scored</small>
+                          </h5>
+                          <p id="team_pf_vs_league_average">+150 League Average</p>
                         </div>
                       </div>
                     </div>
                     <div class="col-4 card statcard">
                       <div class="statWidget">
                         <div class="statwidgetcatagory">
-                          <h5>1st</h5>
+                          <h5 id="team_pa_finish">1st</h5>
                           <h4>PA</h4>
                         </div>
                         <div class="statwidgetcontent">
-                          <h5>1700 Points Against</h5>
-                          <p>-150 League Average</p>
+                          <h5>
+                            <div id="team_pa_points">1700</div>
+                            <small> Points Against</small>
+                          </h5>
+                          <p id="team_pa_vs_league_average">-150 League Average</p>
                         </div>
                       </div>
                     </div>
@@ -168,8 +175,13 @@
                           <h4>PF</h4>
                         </div>
                         <div class="statwidgetcontent">
-                          <h5>1356 <small>Potential Points</small></h5>
-                          <p>+342 League Average</p>
+                          <h5>
+                            <div id="team_pp_points">1356</div>
+                            <small>Potential Points</small>
+                          </h5>
+                          <p>
+                            <div id="team_pp_vs_league_average">+342</div>
+                              League Average</p>
                         </div>
                       </div>
                     </div>
@@ -184,7 +196,7 @@
                         <h3>157.1</h3><small data-toggle="tooltip" data-placement="right" title=""
                           data-original-title="Average points scored per week">Points Per Week <i
                             class="fa fa-info-circle"></i></small>
-                        <footer><small>+12.72 League Average</small></footer>
+                        <footer><small id="team_weekly_average_vs_league">+12.72 League Average</small></footer>
                       </blockquote>
                     </div>
                     <div class="card text-center statcard align-items-center d-flex justify-content-center"
@@ -193,27 +205,28 @@
                       <blockquote class="card-blockquote">
                         <h3>21.5</h3><small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
                               Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
-                        <footer><small>-5.5 League Average</small></footer>
+                        <footer><small id="team_standard_deviation_vs_league">-5.5 League Average</small></footer>
                       </blockquote>
                     </div>
                     <div class="card text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(128, 255, 0); color: black;">
                       <h4 class="card-title">Best Week</h4>
                       <blockquote class="card-blockquote">
-                        <h3>202.88</h3><small data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Only represents the comparison against every other teams single highest week">3rd
+                        <h3 id="team_best_week_score">202.88</h3>
+                        <small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single highest week" id="team_best_week_finish">3rd
                           Highest <i class="fa fa-info-circle"></i></small>
-                        <footer><small>Week 1</small></footer>
+                        <footer><small id="team_best_finish_week_number">Week 1</small></footer>
                       </blockquote>
                     </div>
                     <div class="card text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <h3 class="card-title">Worst Week</h3>
                       <blockquote class="card-blockquote">
-                        <h3>123.86</h3><small data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Only represents the comparison against every other teams single lowest week">12th
+                        <h3 id="team_worst_week_score">123.86</h3><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Only represents the comparison against every other teams single lowest week" id="team_worst_week_finish">12th
                           Worst <i class="fa fa-info-circle"></i></small>
-                        <footer><small>Week 7</small></footer>
+                        <footer><small id="team_worst_finish_week_number">Week 7</small></footer>
                       </blockquote>
                     </div>
                   </div>
@@ -224,7 +237,7 @@
               <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <div class="pl-4 pr-4">Average Point Per Position</div>
                 <div class="px-4">
-                  <canvas id="radar-chart"></canvas>
+                  <canvas id="team_radar_chart"></canvas>
                 </div>
               </div>
               <div class="col-9">
@@ -233,7 +246,7 @@
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-0">
                       <h1 class="card-title pt-3">MVP</h1><img class="resize rounded-circle"
                         src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
-                      <h4 style="margin-left: auto; margin-right: auto;">Michael Thomas<br>307.6 Points</h4>
+                      <h4 style="margin-left: auto; margin-right: auto;" id="team_mvp_name">Michael Thomas<br><div id="team_mvvp_points">307.6 Points</div></h4>
                     </div>
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center px-0">
                       <h1 class="card-title pt-3">Biggest Boom</h1><img class="resize rounded-circle"

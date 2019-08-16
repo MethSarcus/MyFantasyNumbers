@@ -28,7 +28,7 @@ $(document).ready(function () {
 
 });
 
-function getESPNMatchups(settings, members, leagueID, seasonID) {
+function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
     var weeks = [];
     console.log("getting matchups");
     var totalMatchupCount = settings.regularSeasonLength + settings.playoffLength;
@@ -116,7 +116,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID) {
                     }
                     return 0;
                 });
-                var league = new League(leagueID, seasonID, weeks, members, settings);
+                var league = new League(leagueID, seasonID, weeks, members, settings, leagueName);
                 league.setMemberStats(league.getSeasonPortionWeeks());
                 localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
                 setPage(league);
@@ -201,7 +201,7 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
                 }
             }
         }
-        getESPNMatchups(settings, members, leagueID, seasonID)
+        getESPNMatchups(settings, members, leagueID, seasonID, leagueName)
     });
 }
 
