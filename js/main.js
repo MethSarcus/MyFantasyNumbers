@@ -12,8 +12,10 @@ $(document).ready(function () {
     if (input != null && r == true) {
         var leagueID = input;
         if (localStorage.getItem(leagueID + "2018")) {
-            myYear = JSON.parse(localStorage.getItem(leagueID + "2018"));
-            setPage(myYear);
+            var year = JSON.parse(localStorage.getItem(leagueID + "2018"));
+            var restoredLeague = League.convertFromJson(year);
+            console.log(restoredLeague);
+            setPage(restoredLeague);
         } else {
             console.log("running");
             localStorage.clear();

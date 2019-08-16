@@ -201,6 +201,41 @@ var League = /** @class */ (function () {
         });
         return bestWeekMatchup;
     };
+    League.convertFromJson = function (object) {
+        var members = [];
+        var weeks = [];
+        var jsonSettings = object.settings;
+        var settings = new Settings(jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType);
+        object.weeks.forEach(function (week) {
+            var matchups = [];
+            week.matchups.forEach(function (matchup) {
+                var homeRoster = [];
+                matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(function (player) {
+                    homeRoster.push(new Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                });
+                var away;
+                if (!matchup.byeWeek) {
+                    var awayRoster = [];
+                    matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(function (player) {
+                        awayRoster.push(new Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                    });
+                    away = new Team(matchup.away.teamID, awayRoster, object.settings.activeLineupSlots, matchup.away.teamID);
+                }
+                else {
+                    var awayTeamId = -1;
+                }
+                var home = new Team(matchup.home.teamID, homeRoster, object.settings.activeLineupSlots, awayTeamId);
+                matchups.push(new Matchup(home, away, week.weekNumber, week.isPlayoffs));
+            });
+            weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
+        });
+        object.members.forEach(function (member) {
+            members.push(new Member(member.ID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
+        });
+        var league = new League(object.id, object.season, weeks, members, settings);
+        league.setMemberStats(league.getSeasonPortionWeeks());
+        return league;
+    };
     return League;
 }());
 //# sourceMappingURL=League.js.map
