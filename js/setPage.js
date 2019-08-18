@@ -5,6 +5,8 @@ function setPage(league) {
         };
     localStorage.setItem(league.leagueID + "" + league.seasonID, JSON.stringify(league));
     console.log(league);
+    profileImage = document.getElementById('team_image');
+    profileImage.addEventListener("error", fixNoImage);
     console.log("Running setpage");
     document.getElementById(SEASON_PORTION.REGULAR).onclick = function(){
         league.seasonPortion = SEASON_PORTION.REGULAR;
@@ -55,7 +57,8 @@ function setPage(league) {
         a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass('active');
-            updateTeamPill(league, this.id);
+            fadeTeam(document.getElementById('teamPill'), league, this.id);
+            //updateTeamPill(league, this.id);
         };
         let b = document.createElement("a");
         b.setAttribute('data-toggle', 'pill');

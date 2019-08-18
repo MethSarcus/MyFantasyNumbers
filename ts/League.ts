@@ -83,7 +83,7 @@ class League {
     public getMember(teamID: number): Member {
         let found;
         this.members.forEach((member) => {
-            if (teamID === member.teamID) {
+            if (teamID == member.teamID) {
                 found = member;
             }
         });

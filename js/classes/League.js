@@ -75,7 +75,7 @@ var League = /** @class */ (function () {
     League.prototype.getMember = function (teamID) {
         var found;
         this.members.forEach(function (member) {
-            if (teamID === member.teamID) {
+            if (teamID == member.teamID) {
                 found = member;
             }
         });
