@@ -37,8 +37,10 @@ var Team = /** @class */ (function () {
             var eligibleWeekPlayers = [];
             var players = this.lineup.concat(this.bench, this.IR);
             for (var y in players) {
-                if (players[y].isEligible(parseInt(rosterSlots[x], 10)) && !includesPlayer(players[y], optimalLineup)) {
-                    eligibleWeekPlayers.push(players[y]);
+                if (!includesPlayer(players[y], optimalLineup)) {
+                    if (players[y].isEligible(rosterSlots[x])) {
+                        eligibleWeekPlayers.push(players[y]);
+                    }
                 }
             }
             for (var z in eligibleWeekPlayers) {

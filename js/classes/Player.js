@@ -12,12 +12,13 @@ var Player = /** @class */ (function () {
         this.weekNumber = weekNumber;
     }
     Player.prototype.isEligible = function (slot) {
+        var isEligible = false;
         this.eligibleSlots.forEach(function (eligibleSlot) {
-            if (eligibleSlot === slot) {
-                return true;
+            if (eligibleSlot == slot) {
+                isEligible = true;
             }
         });
-        return false;
+        return isEligible;
     };
     return Player;
 }());

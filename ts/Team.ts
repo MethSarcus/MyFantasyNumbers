@@ -35,16 +35,18 @@ class Team {
                 rosterSlots.push(activeLineupSlots[i][0]);
             }
         }
-        const optimalLineup = new Array<Player>();
+        var optimalLineup = new Array<Player>();
         // tslint:disable-next-line: forin
         for (const x in rosterSlots) {
             let highScore = 0;
             let bestPlayer = null;
-            const eligibleWeekPlayers = [];
+            var eligibleWeekPlayers = [];
             const players = this.lineup.concat(this.bench, this.IR);
             for (const y in players) {
-                if (players[y].isEligible(parseInt(rosterSlots[x], 10)) && !includesPlayer(players[y], optimalLineup)) {
-                    eligibleWeekPlayers.push(players[y]);
+                if (!includesPlayer(players[y], optimalLineup)) {
+                    if (players[y].isEligible(rosterSlots[x])) {
+                        eligibleWeekPlayers.push(players[y]);
+                    }
                 }
             }
             for (const z in eligibleWeekPlayers) {

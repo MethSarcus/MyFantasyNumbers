@@ -58,6 +58,27 @@ var League = /** @class */ (function () {
             member.stats = new Stats(member.stats.finalStanding);
         });
     };
+    League.prototype.getLeaguePF = function () {
+        var pf = 0;
+        this.members.forEach(function (member) {
+            pf += member.stats.pf;
+        });
+        return pf / this.members.length;
+    };
+    League.prototype.getLeaguePA = function () {
+        var pa = 0;
+        this.members.forEach(function (member) {
+            pa += member.stats.pa;
+        });
+        return pa / this.members.length;
+    };
+    League.prototype.getLeaguePP = function () {
+        var pp = 0;
+        this.members.forEach(function (member) {
+            pp += member.stats.pp;
+        });
+        return pp / this.members.length;
+    };
     League.prototype.getSeasonPortionWeeks = function () {
         var weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {

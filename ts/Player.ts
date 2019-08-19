@@ -24,11 +24,12 @@ class Player {
     }
 
     public isEligible(slot: number): boolean {
+        var isEligible = false;
         this.eligibleSlots.forEach((eligibleSlot) => {
-            if (eligibleSlot === slot) {
-                return true;
+            if (eligibleSlot == slot) {
+                isEligible = true;
             }
         });
-        return false;
+        return isEligible;
     }
 }

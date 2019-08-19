@@ -21,12 +21,12 @@
   <script src="https://www.amcharts.com/lib/4/core.js"></script>
   <script src="https://www.amcharts.com/lib/4/charts.js"></script>
   <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+  <script type="text/javascript" src="js/classes/Utils.js"></script>
   <script type="text/javascript" src="js/classes/Page_Updates.js"></script>
   <script type="text/javascript" src="js/classes/Stats.js"></script>
   <script type="text/javascript" src="js/classes/Settings.js"></script>
   <script type="text/javascript" src="js/classes/Team.js"></script>
   <script type="text/javascript" src="js/classes/Member.js"></script>
-  <script type="text/javascript" src="js/classes/Utils.js"></script>
   <script type="text/javascript" src="js/classes/Week.js"></script>
   <script type="text/javascript" src="js/classes/Matchup.js"></script>
   <script type="text/javascript" src="js/classes/calculations.js"></script>
@@ -138,7 +138,7 @@
               <div class="col-9">
                 <div class="row py-1">
                   <div class="card-deck col-12">
-                    <div class="col-4 card statcard">
+                    <div class="col-4 card statcard" id="team_pf_statcard">
                       <div class="statWidget">
                         <div class="statwidgetcatagory">
                           <h5 id="team_pf_finish">1st</h5>
@@ -153,7 +153,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-4 card statcard">
+                    <div class="col-4 card statcard" id="team_pa_statcard">
                       <div class="statWidget">
                         <div class="statwidgetcatagory">
                           <h5 id="team_pa_finish">1st</h5>
@@ -168,11 +168,11 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-4 card statcard">
+                    <div class="col-4 card statcard" id="team_pp_statcard">
                       <div class="statWidget">
                         <div class="statwidgetcatagory">
-                          <h5>1st</h5>
-                          <h4>PF</h4>
+                          <h5 id="team_pp_finish">1st</h5>
+                          <h4>PP</h4>
                         </div>
                         <div class="statwidgetcontent">
                           <h5>
@@ -193,7 +193,7 @@
                       style="background-color: rgb(85, 255, 0); color: black;">
                       <h4 class="card-title">Weekly Average</h4>
                       <blockquote class="card-blockquote">
-                        <h3>157.1</h3><small data-toggle="tooltip" data-placement="right" title=""
+                        <h3 id="team_weekly_average">157.1</h3><small data-toggle="tooltip" data-placement="right" title=""
                           data-original-title="Average points scored per week">Points Per Week <i
                             class="fa fa-info-circle"></i></small>
                         <footer><small id="team_weekly_average_vs_league">+12.72 League Average</small></footer>

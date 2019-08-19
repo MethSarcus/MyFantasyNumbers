@@ -52,29 +52,29 @@ function getPosition(eligibleSlots: number[]): POSITION {
 function getLineupSlot(lineupSlotID: number): string {
     if (lineupSlotID === 0) {
         return "QB";
-    } else if (lineupSlotID === 2) {
+    } else if (lineupSlotID == 2) {
         return "RB";
-    } else if (lineupSlotID === 23) {
+    } else if (lineupSlotID == 23) {
         return "FLEX";
-    } else if (lineupSlotID === 20) {
+    } else if (lineupSlotID == 20) {
         return "BENCH";
-    } else if (lineupSlotID === 21) {
+    } else if (lineupSlotID == 21) {
         return "IR";
-    } else if (lineupSlotID === 4) {
+    } else if (lineupSlotID == 4) {
         return "WR";
-    } else if (lineupSlotID === 16) {
+    } else if (lineupSlotID == 16) {
         return "D/ST";
-    } else if (lineupSlotID === 17) {
+    } else if (lineupSlotID == 17) {
         return "K";
-    } else if (lineupSlotID === 6) {
+    } else if (lineupSlotID == 6) {
         return "TE";
     }
 }
 
 function includesPlayer(player: Player, lineup: Player[]): boolean {
-    let includes = false;
+    var includes = false;
     lineup.forEach((element) => {
-        if (player.playerID === element.playerID) {
+        if (player.playerID == element.playerID) {
             includes = true;
         }
     });

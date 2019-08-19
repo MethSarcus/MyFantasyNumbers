@@ -66,6 +66,33 @@ class League {
         });
     }
 
+    public getLeaguePF(): number {
+        var pf = 0;
+        this.members.forEach(member => {
+            pf += member.stats.pf;
+        });
+
+        return pf/this.members.length;
+    }
+
+    public getLeaguePA(): number {
+        var pa = 0;
+        this.members.forEach(member => {
+            pa += member.stats.pa;
+        });
+
+        return pa/this.members.length;
+    }
+
+    public getLeaguePP(): number {
+        var pp = 0;
+        this.members.forEach(member => {
+            pp += member.stats.pp;
+        });
+
+        return pp/this.members.length;
+    }
+
     public getSeasonPortionWeeks(): Week[] {
         let weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {

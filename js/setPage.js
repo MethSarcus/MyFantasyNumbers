@@ -747,8 +747,6 @@ function drawLineGraph(){
 }
 
 function makeHeadToHeadCards(statName, member, member2, little) {
-    console.log(member);
-    console.log(member2);
     let statContainer = document.createElement('div');
     statContainer.classList.add('col-12', 'col-sm-12', 'col-md-7', 'col-lg-5', 'col-xl-3', 'my-1');
     let leagueCard = document.createElement('div');
