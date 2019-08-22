@@ -83,4 +83,28 @@ class Team {
         }
         return projectedScore;
     }
+
+    public getMVP(): Player {
+        var mvp = this.lineup[0];
+        var mvpScore = 0;
+        this.lineup.forEach(player => {
+            if (player.score > mvpScore) {
+                mvpScore = player.score;
+                mvp = player;
+            }
+        });
+        return mvp;
+    }
+
+    public getLVP(): Player {
+        var lvp = this.lineup[0];
+        var lvpScore = this.lineup[0].score;
+        this.lineup.forEach(player => {
+            if (player.score > lvpScore) {
+                lvpScore = player.score;
+                lvp = player;
+            }
+        });
+        return lvp;
+    }
 }

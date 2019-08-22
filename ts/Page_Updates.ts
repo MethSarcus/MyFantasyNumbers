@@ -7,6 +7,7 @@ function updateTeamPill(league: League, teamID: number): void {
     updateTeamStandardDeviation(league, member);
     updateBestWeek(league, member);
     updateWorstWeek(league, member);
+    updateMVP(league, member);
 
     unfade(document.getElementById('teamPill'));
 }
@@ -139,9 +140,13 @@ function updateMiniStatCards(league: League, member: Member): void {
         league.getPotentialPointsFinish(member.teamID), league.members.length)
 }
 
-function updateWeeklyStatCards(league: League, member: Member): void {
-    var weeklyAverage = document.getElementById("team_weekly_average");
-    var weekAverageDiff = document.getElementById("team_weekly_average_vs_league");
+function updateMVP(league: League, member: Member) {
+    var mvp = league.weeks[0].getTeam(member.teamID).lineup[0];
+    var mvpScore = 0;
+    league.weeks.forEach(week => {
+        
+    });
+    
 }
 
 function fadeTeam(element, league, teamID) {
