@@ -2,6 +2,7 @@ function setPage(league) {
     document.getElementById("my-navbar-brand").innerHTML = league.leagueName;
         document.getElementById("my-navbar-brand").onclick = function () {
             $(".nav-link").removeClass('active');
+            document.getElementById('teamPill').style.display = 'none';
         };
     localStorage.setItem(league.leagueID + "" + league.seasonID, JSON.stringify(league));
     console.log(league);
@@ -126,9 +127,8 @@ function setPage(league) {
     }*/
 
     //make league main page
-    q = document.createElement("div");
-    q.id = "leaguePage";
-    q.classList.add("tab-pane", "fade", "active", "show");
+    q = document.getElementById("leaguePage");
+    //q.classList.add("tab-pane", "fade", "active", "show");
 
     var crumbList = document.createElement('ol');
     crumbList.classList.add('breadcrumb');

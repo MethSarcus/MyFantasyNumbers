@@ -10,14 +10,17 @@
 
 
 @media (max-width: 991.98px) { ... } */
-html,
-body {
-    height: 100%;
-}
+
 
 .season-portion-button {
     outline: none !important;
     box-shadow: none !important;
+}
+
+
+
+#content-wrapper {
+    margin-top: 56px;
 }
 
 .mainDonut {
@@ -319,10 +322,6 @@ img.resize {
     margin-top: 0px;
 }
 
-.tab-content {
-    padding-top: 50px;
-}
-
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
 table.dataTable thead .sorting_desc {
@@ -358,6 +357,10 @@ th {
     height: 30px;
     transition: all 0.3s;
     /* Simple transition for hover effect */
+}
+
+header {
+    overflow: auto;
 }
 
 th {
