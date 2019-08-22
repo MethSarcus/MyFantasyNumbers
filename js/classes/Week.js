@@ -35,7 +35,7 @@ var Week = /** @class */ (function () {
                 numMatches += 2;
             }
         });
-        return weekScore / numMatches;
+        return roundToHundred(weekScore / numMatches);
     };
     return Week;
 }());

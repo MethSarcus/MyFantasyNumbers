@@ -104,6 +104,6 @@ function getMean(numbers) {
     numbers.forEach(function (num) {
         sum += num;
     });
-    return sum / numbers.length;
+    return roundToHundred(sum / numbers.length);
 }
 //# sourceMappingURL=Utils.js.map

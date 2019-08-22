@@ -97,5 +97,5 @@ function getMean(numbers: number[]): number {
         sum += num;
     });
 
-    return sum/numbers.length;
+    return roundToHundred(sum/numbers.length);
 }

@@ -57,6 +57,7 @@ class League {
        });
         this.members.forEach((member) => {
            member.setAdvancedStats(weeks);
+           member.stats.roundStats();
        });
     }
 
@@ -72,7 +73,7 @@ class League {
             pf += member.stats.pf;
         });
 
-        return pf/this.members.length;
+        return roundToHundred(pf/this.members.length);
     }
 
     public getLeaguePA(): number {
@@ -81,7 +82,7 @@ class League {
             pa += member.stats.pa;
         });
 
-        return pa/this.members.length;
+        return roundToHundred(pa/this.members.length);
     }
 
     public getLeaguePP(): number {
@@ -90,7 +91,7 @@ class League {
             pp += member.stats.pp;
         });
 
-        return pp/this.members.length;
+        return roundToHundred(pp/this.members.length);
     }
 
     public getSeasonPortionWeeks(): Week[] {
@@ -117,16 +118,54 @@ class League {
         return found;
     }
 
-    public getMemberBestWeek(teamID): Team {
-        let highScore = 0;
-        let highTeam;
-        this.weeks.forEach((week) => {
-            if (week.getTeam(teamID).score > highScore) {
-                highScore = week.getTeam(teamID).score;
-                highTeam = week.getTeam(teamID);
+    public getMemberWorstTeam(teamID): Team {
+        var lowestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        var worstTeam = this.getSeasonPortionWeeks()[0].getTeam(teamID);
+        this.getSeasonPortionWeeks().forEach((week) => {
+            if (week.getTeam(teamID).score < lowestScore) {
+                lowestScore = week.getTeam(teamID).score;
+                worstTeam = week.getTeam(teamID);
             }
         });
-        return highTeam;
+
+        return worstTeam;
+    }
+
+    public getMemberBestTeam(teamID): Team {
+        var highestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        var bestTeam = this.getSeasonPortionWeeks()[0].getTeam(teamID);
+        this.getSeasonPortionWeeks().forEach((week) => {
+            if (week.getTeam(teamID).score > highestScore) {
+                highestScore = week.getTeam(teamID).score;
+                bestTeam = week.getTeam(teamID);
+            }
+        });
+
+        return bestTeam;
+    }
+
+    public getBestWeekFinish(teamID: number): number {
+        let finish = 1;
+        const bestWeekScore = this.getMemberBestTeam(teamID).score;
+        this.members.forEach((member) => {
+            if (bestWeekScore < this.getMemberBestTeam(member.teamID).score && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+
+    public getWorstWeekFinish(teamID: number): number {
+        let finish = 1;
+        const worstWeekScore = this.getMemberWorstTeam(teamID).score;
+        this.members.forEach((member) => {
+            if (worstWeekScore > this.getMemberWorstTeam(member.teamID).score && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
     }
 
     public getPointsAgainstFinish(teamID: number): number {
@@ -166,9 +205,9 @@ class League {
     }
 
     public getBestWeek(teamID: number): Matchup {
-        let bestWeekMatchup = this.weeks[0].getTeamMatchup(teamID);
-        let highestScore = this.weeks[0].getTeam(teamID).score;
-        this.weeks.forEach((week) => {
+        let bestWeekMatchup = this.getSeasonPortionWeeks()[0].getTeamMatchup(teamID);
+        let highestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        this.getSeasonPortionWeeks().forEach((week) => {
             if (week.getTeam(teamID).score > highestScore) {
                 highestScore = week.getTeam(teamID).score;
                 bestWeekMatchup = week.getTeamMatchup(teamID);
@@ -178,10 +217,23 @@ class League {
         return bestWeekMatchup;
     }
 
+    public getWorstWeek(teamID: number): Matchup {
+        let worstWeekMatchup = this.getSeasonPortionWeeks()[0].getTeamMatchup(teamID);
+        let lowestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        this.getSeasonPortionWeeks().forEach((week) => {
+            if (week.getTeam(teamID).score < lowestScore) {
+                lowestScore = week.getTeam(teamID).score;
+                worstWeekMatchup = week.getTeamMatchup(teamID);
+            }
+        });
+
+        return worstWeekMatchup;
+    }
+
     public getLargestMarginOfVictory(): Matchup {
         let highestMOV = 0;
         let highestMOVMatchup;
-        this.weeks.forEach((week) => {
+        this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach((matchup) => {
                 if (matchup.marginOfVictory > highestMOV && !matchup.byeWeek) {
                     highestMOV = matchup.marginOfVictory;
@@ -194,9 +246,9 @@ class League {
     }
 
     public getSmallestMarginOfVictory(): Matchup {
-        let smallestMOV = this.weeks[0].matchups[0].marginOfVictory;
+        let smallestMOV = this.getSeasonPortionWeeks()[0].matchups[0].marginOfVictory;
         let smallestMOVMatchup;
-        this.weeks.forEach((week) => {
+        this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach((matchup) => {
                 if (matchup.marginOfVictory < smallestMOV && !matchup.byeWeek) {
                     smallestMOV = matchup.marginOfVictory;
@@ -236,10 +288,22 @@ class League {
         return calcStandardDeviation(scores);
     }
 
+    public getStandardDeviationFinish(teamID: number): number {
+        let finish = 1;
+        const std = this.getMember(teamID).stats.standardDeviation;
+        this.members.forEach((member) => {
+            if (std > member.stats.standardDeviation && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+
     public getOverallBestWeek(): Matchup {
         var bestWeekMatchup;
         var highestScore = 0;
-        this.weeks.forEach((week) => {
+        this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach(matchup => {
                 if (matchup.home.score > highestScore) {
                      bestWeekMatchup = matchup;

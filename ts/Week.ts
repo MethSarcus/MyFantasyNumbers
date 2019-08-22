@@ -41,6 +41,6 @@ class Week {
                 numMatches += 2;
             }
         });
-        return weekScore / numMatches;
+        return roundToHundred(weekScore / numMatches);
     }
 }

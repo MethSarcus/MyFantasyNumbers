@@ -25,10 +25,16 @@ class Stats {
     }
 
     public getWinPct(): number {
-        if (this.wins === 0) {
+        if (this.wins == 0) {
             return 0.00;
         } else {
-            return this.wins / (this.wins + this.losses);
+            return roundToHundred(this.wins / (this.wins + this.losses));
         }
+    }
+
+    public roundStats(): void {
+        this.pf = roundToHundred(this.pf);
+        this.pa = roundToHundred(this.pa);
+        this.pp = roundToHundred(this.pp);
     }
 }

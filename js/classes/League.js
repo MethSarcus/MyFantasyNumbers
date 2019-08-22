@@ -51,6 +51,7 @@ var League = /** @class */ (function () {
         });
         this.members.forEach(function (member) {
             member.setAdvancedStats(weeks);
+            member.stats.roundStats();
         });
     };
     League.prototype.resetStats = function () {
@@ -63,21 +64,21 @@ var League = /** @class */ (function () {
         this.members.forEach(function (member) {
             pf += member.stats.pf;
         });
-        return pf / this.members.length;
+        return roundToHundred(pf / this.members.length);
     };
     League.prototype.getLeaguePA = function () {
         var pa = 0;
         this.members.forEach(function (member) {
             pa += member.stats.pa;
         });
-        return pa / this.members.length;
+        return roundToHundred(pa / this.members.length);
     };
     League.prototype.getLeaguePP = function () {
         var pp = 0;
         this.members.forEach(function (member) {
             pp += member.stats.pp;
         });
-        return pp / this.members.length;
+        return roundToHundred(pp / this.members.length);
     };
     League.prototype.getSeasonPortionWeeks = function () {
         var weekPortion = this.weeks;
@@ -102,16 +103,49 @@ var League = /** @class */ (function () {
         });
         return found;
     };
-    League.prototype.getMemberBestWeek = function (teamID) {
-        var highScore = 0;
-        var highTeam;
-        this.weeks.forEach(function (week) {
-            if (week.getTeam(teamID).score > highScore) {
-                highScore = week.getTeam(teamID).score;
-                highTeam = week.getTeam(teamID);
+    League.prototype.getMemberWorstTeam = function (teamID) {
+        var lowestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        var worstTeam = this.getSeasonPortionWeeks()[0].getTeam(teamID);
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            if (week.getTeam(teamID).score < lowestScore) {
+                lowestScore = week.getTeam(teamID).score;
+                worstTeam = week.getTeam(teamID);
             }
         });
-        return highTeam;
+        return worstTeam;
+    };
+    League.prototype.getMemberBestTeam = function (teamID) {
+        var highestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        var bestTeam = this.getSeasonPortionWeeks()[0].getTeam(teamID);
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            if (week.getTeam(teamID).score > highestScore) {
+                highestScore = week.getTeam(teamID).score;
+                bestTeam = week.getTeam(teamID);
+            }
+        });
+        return bestTeam;
+    };
+    League.prototype.getBestWeekFinish = function (teamID) {
+        var _this = this;
+        var finish = 1;
+        var bestWeekScore = this.getMemberBestTeam(teamID).score;
+        this.members.forEach(function (member) {
+            if (bestWeekScore < _this.getMemberBestTeam(member.teamID).score && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
+    League.prototype.getWorstWeekFinish = function (teamID) {
+        var _this = this;
+        var finish = 1;
+        var worstWeekScore = this.getMemberWorstTeam(teamID).score;
+        this.members.forEach(function (member) {
+            if (worstWeekScore > _this.getMemberWorstTeam(member.teamID).score && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
     };
     League.prototype.getPointsAgainstFinish = function (teamID) {
         var finish = 1;
@@ -144,9 +178,9 @@ var League = /** @class */ (function () {
         return finish;
     };
     League.prototype.getBestWeek = function (teamID) {
-        var bestWeekMatchup = this.weeks[0].getTeamMatchup(teamID);
-        var highestScore = this.weeks[0].getTeam(teamID).score;
-        this.weeks.forEach(function (week) {
+        var bestWeekMatchup = this.getSeasonPortionWeeks()[0].getTeamMatchup(teamID);
+        var highestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        this.getSeasonPortionWeeks().forEach(function (week) {
             if (week.getTeam(teamID).score > highestScore) {
                 highestScore = week.getTeam(teamID).score;
                 bestWeekMatchup = week.getTeamMatchup(teamID);
@@ -154,10 +188,21 @@ var League = /** @class */ (function () {
         });
         return bestWeekMatchup;
     };
+    League.prototype.getWorstWeek = function (teamID) {
+        var worstWeekMatchup = this.getSeasonPortionWeeks()[0].getTeamMatchup(teamID);
+        var lowestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            if (week.getTeam(teamID).score < lowestScore) {
+                lowestScore = week.getTeam(teamID).score;
+                worstWeekMatchup = week.getTeamMatchup(teamID);
+            }
+        });
+        return worstWeekMatchup;
+    };
     League.prototype.getLargestMarginOfVictory = function () {
         var highestMOV = 0;
         var highestMOVMatchup;
-        this.weeks.forEach(function (week) {
+        this.getSeasonPortionWeeks().forEach(function (week) {
             week.matchups.forEach(function (matchup) {
                 if (matchup.marginOfVictory > highestMOV && !matchup.byeWeek) {
                     highestMOV = matchup.marginOfVictory;
@@ -168,9 +213,9 @@ var League = /** @class */ (function () {
         return highestMOVMatchup;
     };
     League.prototype.getSmallestMarginOfVictory = function () {
-        var smallestMOV = this.weeks[0].matchups[0].marginOfVictory;
+        var smallestMOV = this.getSeasonPortionWeeks()[0].matchups[0].marginOfVictory;
         var smallestMOVMatchup;
-        this.weeks.forEach(function (week) {
+        this.getSeasonPortionWeeks().forEach(function (week) {
             week.matchups.forEach(function (matchup) {
                 if (matchup.marginOfVictory < smallestMOV && !matchup.byeWeek) {
                     smallestMOV = matchup.marginOfVictory;
@@ -204,10 +249,20 @@ var League = /** @class */ (function () {
         });
         return calcStandardDeviation(scores);
     };
+    League.prototype.getStandardDeviationFinish = function (teamID) {
+        var finish = 1;
+        var std = this.getMember(teamID).stats.standardDeviation;
+        this.members.forEach(function (member) {
+            if (std > member.stats.standardDeviation && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
     League.prototype.getOverallBestWeek = function () {
         var bestWeekMatchup;
         var highestScore = 0;
-        this.weeks.forEach(function (week) {
+        this.getSeasonPortionWeeks().forEach(function (week) {
             week.matchups.forEach(function (matchup) {
                 if (matchup.home.score > highestScore) {
                     bestWeekMatchup = matchup;

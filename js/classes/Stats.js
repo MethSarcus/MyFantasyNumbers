@@ -11,12 +11,17 @@ var Stats = /** @class */ (function () {
         this.pp = 0;
     }
     Stats.prototype.getWinPct = function () {
-        if (this.wins === 0) {
+        if (this.wins == 0) {
             return 0.00;
         }
         else {
-            return this.wins / (this.wins + this.losses);
+            return roundToHundred(this.wins / (this.wins + this.losses));
         }
+    };
+    Stats.prototype.roundStats = function () {
+        this.pf = roundToHundred(this.pf);
+        this.pa = roundToHundred(this.pa);
+        this.pp = roundToHundred(this.pp);
     };
     return Stats;
 }());
