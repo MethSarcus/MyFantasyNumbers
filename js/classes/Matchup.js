@@ -53,10 +53,10 @@ var Matchup = /** @class */ (function () {
             if (this.home.teamID === teamID || this.away.teamID === teamID) {
                 return true;
             }
-            else {
-                if (this.home.teamID === teamID) {
-                    return true;
-                }
+        }
+        else {
+            if (this.home.teamID === teamID) {
+                return true;
             }
         }
     };

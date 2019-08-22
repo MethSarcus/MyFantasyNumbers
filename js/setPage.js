@@ -12,18 +12,39 @@ function setPage(league) {
         league.seasonPortion = SEASON_PORTION.REGULAR;
         league.resetStats();
         league.setMemberStats(league.getSeasonPortionWeeks());
+        for (var i = 1; i <= league.members.length; i++) {
+            if($('#' + i).find('a.active').length !== 0) {
+                fadeTeam(document.getElementById('teamPill'), league, i);
+            } else {
+                
+            }
+        }
     };
         
     document.getElementById(SEASON_PORTION.POST).onclick = function(){
         league.seasonPortion = SEASON_PORTION.POST;
         league.resetStats();
         league.setMemberStats(league.getSeasonPortionWeeks());
+        for (var i = 1; i <= league.members.length; i++) {
+            if($('#' + i).find('a.active').length !== 0) {
+                fadeTeam(document.getElementById('teamPill'), league, i);
+            } else {
+                
+            }
+        }
     };
         
     document.getElementById(SEASON_PORTION.ALL).onclick = function(){
         league.seasonPortion = SEASON_PORTION.ALL;
         league.resetStats();
         league.setMemberStats(league.getSeasonPortionWeeks());
+        for (var i = 1; i <= league.members.length; i++) {
+            if($('#' + i).find('a.active').length !== 0) {
+                fadeTeam(document.getElementById('teamPill'), league, i);
+            } else {
+                
+            }
+        }
     };
     var l = new Color("#FF0000");
     var r = new Color("#00FF00");

@@ -15,6 +15,11 @@ body {
     height: 100%;
 }
 
+.season-portion-button {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .mainDonut {
     max-height: 75vh;
     max-width: 75vh;
