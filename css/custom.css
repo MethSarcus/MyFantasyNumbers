@@ -17,7 +17,9 @@
     box-shadow: none !important;
 }
 
-
+.container-fluid {
+    height: 100%;
+}
 
 #content-wrapper {
     margin-top: 56px;
@@ -270,7 +272,9 @@ img.resize {
     margin-top: 0;
 }
 
-
+#tabs-content {
+    padding-top: 16px;
+}
 
 .sidenav a:hover,
 .offcanvas a:focus {

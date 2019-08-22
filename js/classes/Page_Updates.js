@@ -138,6 +138,19 @@ function fadeTeam(element, league, teamID) {
         op -= op * 0.1;
     }, 5);
 }
+function fadeToLeaguePage() {
+    var element = document.getElementById('teamPill');
+    var op = 1; // initial opacity
+    var timer = setInterval(function () {
+        if (op <= 0.1) {
+            clearInterval(timer);
+            document.getElementById('teamPill').style.display = 'none';
+        }
+        element.style.opacity = op + "";
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+        op -= op * 0.1;
+    }, 5);
+}
 function unfade(element) {
     var op = 0.1; // initial opacity
     element.style.display = 'block';

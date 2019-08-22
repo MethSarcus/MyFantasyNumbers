@@ -2,7 +2,7 @@ function setPage(league) {
     document.getElementById("my-navbar-brand").innerHTML = league.leagueName;
         document.getElementById("my-navbar-brand").onclick = function () {
             $(".nav-link").removeClass('active');
-            document.getElementById('teamPill').style.display = 'none';
+            fadeToLeaguePage();
         };
     localStorage.setItem(league.leagueID + "" + league.seasonID, JSON.stringify(league));
     console.log(league);
@@ -93,7 +93,7 @@ function setPage(league) {
         c.style.height = "25px";
         c.style.borderRadius = "25px";
         c.addEventListener("error", fixNoImage);
-        c.style.marginLeft = "auto";
+        c.style.marginLeft = "8px";
         c.style.marginRight = "auto";
         b.appendChild(c);
         //b.appendChild(document.createElement('br'));
@@ -129,20 +129,6 @@ function setPage(league) {
     //make league main page
     q = document.getElementById("leaguePage");
     //q.classList.add("tab-pane", "fade", "active", "show");
-
-    var crumbList = document.createElement('ol');
-    crumbList.classList.add('breadcrumb');
-    var crumbItem = document.createElement('li');
-    crumbItem.classList.add('breadcrumb-item', 'active');
-    let breadLink = document.createElement('a');
-    breadLink.innerText = league.leagueName;
-    breadLink.href = "#";
-    breadLink.onclick = function () {
-        $(".nav-link").removeClass('active');
-    };
-    crumbItem.appendChild(breadLink);
-    crumbList.appendChild(crumbItem);
-    q.appendChild(crumbList);
     var cardRow = document.createElement('div');
     cardRow.classList.add('row');
     cardRow.appendChild(makeLeagueStatCards('League Average', league.getLeagueWeeklyAverage(), league.getLeagueStandardDeviation()));
