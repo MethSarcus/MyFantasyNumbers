@@ -200,15 +200,21 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
         biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.playerID + ".png";
     }
     var outcomeText = "";
-    if (league.weeks[biggestBoom.weekNumber].getTeamMatchup(teamID).getWinningTeam().teamID == teamID) {
-        outcomeText = "\n Won match by ";
+    var boomMatchup = league.weeks[biggestBoom.weekNumber - 1].getTeamMatchup(teamID);
+    if (boomMatchup.byeWeek) {
+        outcomeText = ",\nwhich was a byeweek!";
     }
     else {
-        outcomeText = "\n Lost match by ";
+        if (boomMatchup.getWinningTeam().teamID == teamID) {
+            outcomeText = "\n Won match by ";
+        }
+        else {
+            outcomeText = "\n Lost match by ";
+        }
+        outcomeText = outcomeText + " " + roundToHundred(boomMatchup.marginOfVictory) + " points";
     }
-    var mov = outcomeText + " " + roundToHundred(league.weeks[biggestBoom.weekNumber].getTeamMatchup(teamID).marginOfVictory) + " points";
     biggestBoomName.innerText = biggestBoom.firstName + " " + biggestBoom.lastName;
-    biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + mov;
+    biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
 }
 function fadeTeam(element, league, teamID) {
     var op = 1; // initial opacity
