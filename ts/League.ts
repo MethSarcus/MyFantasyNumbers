@@ -131,6 +131,18 @@ class League {
         return worstTeam;
     }
 
+    public getBiggestBoom(teamID: number): Player {
+        let boomPlayer = this.getSeasonPortionWeeks()[0].getTeam(teamID).lineup[0];
+        this.getSeasonPortionWeeks().forEach(week => {
+            week.getTeam(teamID).lineup.forEach(player => {
+                if (player.score > boomPlayer.score) {
+                    boomPlayer = player;
+                }
+            }); 
+        });
+        return boomPlayer;
+    }
+
     public getMemberBestTeam(teamID): Team {
         var highestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
         var bestTeam = this.getSeasonPortionWeeks()[0].getTeam(teamID);

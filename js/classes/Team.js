@@ -74,6 +74,28 @@ var Team = /** @class */ (function () {
         }
         return projectedScore;
     };
+    Team.prototype.getMVP = function () {
+        var mvp = this.lineup[0];
+        var mvpScore = 0;
+        this.lineup.forEach(function (player) {
+            if (player.score > mvpScore) {
+                mvpScore = player.score;
+                mvp = player;
+            }
+        });
+        return mvp;
+    };
+    Team.prototype.getLVP = function () {
+        var lvp = this.lineup[0];
+        var lvpScore = this.lineup[0].score;
+        this.lineup.forEach(function (player) {
+            if (player.score > lvpScore) {
+                lvpScore = player.score;
+                lvp = player;
+            }
+        });
+        return lvp;
+    };
     return Team;
 }());
 //# sourceMappingURL=Team.js.map

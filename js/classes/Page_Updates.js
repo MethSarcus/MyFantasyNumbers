@@ -6,7 +6,19 @@ function updateTeamPill(league, teamID) {
     updateTeamStandardDeviation(league, member);
     updateBestWeek(league, member);
     updateWorstWeek(league, member);
+    updateBestWorstConsistent(league, member);
     unfade(document.getElementById('teamPill'));
+}
+function updateBestWorstConsistent(league, member) {
+    var arr = getBestLeastConsistent(league, member.teamID);
+    updateMVP(arr[0]);
+    updateLVP(arr[1]);
+    if (league.seasonPortion == SEASON_PORTION.POST) {
+        updateBiggestBoom(league, league.getBiggestBoom(member.teamID), member.teamID);
+    }
+    else {
+        updateMostConsistent(arr[2]);
+    }
 }
 function updateWeekAverage(league, member) {
     var weeklyAverage = document.getElementById("team_weekly_average");
@@ -95,36 +107,108 @@ function updateMiniStatCards(league, member) {
     pfScore.innerHTML = member.stats.pf.toString();
     var pfDiff = roundToHundred(member.stats.pf - league.getLeaguePF());
     if (pfDiff > 0) {
-        pfLeagueDiff.innerHTML = "+ " + pfDiff + " Average";
+        pfLeagueDiff.innerHTML = "+" + pfDiff + " League Average";
     }
     else {
-        pfLeagueDiff.innerHTML = pfDiff + " Average";
+        pfLeagueDiff.innerHTML = pfDiff + " League Average";
     }
     pfBackground.style.backgroundColor = getCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
     paFinish.innerHTML = ordinal_suffix_of(league.getPointsAgainstFinish(member.teamID));
     paScore.innerHTML = member.stats.pa.toString();
     var paDiff = roundToHundred(member.stats.pa - league.getLeaguePA());
     if (paDiff > 0) {
-        paLeagueDiff.innerHTML = "+ " + paDiff + " Average";
+        paLeagueDiff.innerHTML = "+" + paDiff + " League Average";
     }
     else {
-        paLeagueDiff.innerHTML = paDiff + " Average";
+        paLeagueDiff.innerHTML = paDiff + " League Average";
     }
     paBackground.style.backgroundColor = getCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
     ppFinish.innerHTML = ordinal_suffix_of(league.getPotentialPointsFinish(member.teamID));
     ppScore.innerHTML = member.stats.pp.toString();
     var ppDiff = roundToHundred(member.stats.pp - league.getLeaguePP());
     if (ppDiff > 0) {
-        ppLeagueDiff.innerHTML = "+ " + ppDiff + " Average";
+        ppLeagueDiff.innerHTML = "+" + ppDiff + " League Average";
     }
     else {
-        ppLeagueDiff.innerHTML = ppDiff + " Average";
+        ppLeagueDiff.innerHTML = ppDiff + " League Average";
     }
     ppBackground.style.backgroundColor = getCardColor(league.getPotentialPointsFinish(member.teamID), league.members.length);
 }
-function updateWeeklyStatCards(league, member) {
-    var weeklyAverage = document.getElementById("team_weekly_average");
-    var weekAverageDiff = document.getElementById("team_weekly_average_vs_league");
+function updateMVP(teamMVP) {
+    var mvpImage = document.getElementById('mvp_image');
+    var mvpName = document.getElementById('team_mvp_name');
+    var mvpPoints = document.getElementById('team_mvp_points');
+    if (teamMVP.position == "D/ST") {
+        mvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamMVP.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        mvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamMVP.playerID + ".png";
+    }
+    var startsText = " starts";
+    if (teamMVP.weeksPlayed == 1) {
+        startsText = " start";
+    }
+    mvpName.innerText = teamMVP.firstName + " " + teamMVP.lastName;
+    mvpPoints.innerText = roundToHundred(teamMVP.seasonScore) + " Points earned in lineup\n" + teamMVP.averageScore + " points per game, " + teamMVP.weeksPlayed + startsText;
+}
+function updateLVP(teamLVP) {
+    var lvpImage = document.getElementById('lvp_image');
+    var lvpName = document.getElementById('team_lvp_name');
+    var lvpPoints = document.getElementById('team_lvp_points');
+    if (teamLVP.position == "D/ST") {
+        lvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamLVP.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        lvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamLVP.playerID + ".png";
+    }
+    lvpName.innerText = teamLVP.firstName + " " + teamLVP.lastName;
+    var startsText = " starts";
+    if (teamLVP.weeksPlayed == 1) {
+        startsText = " start";
+    }
+    lvpPoints.innerText = roundToHundred(teamLVP.seasonScore) + " Points earned in lineup\n" + teamLVP.averageScore + " points per game, " + teamLVP.weeksPlayed + startsText;
+}
+function updateMostConsistent(mostConsistent) {
+    var mostConsistentTitle = document.getElementById('consistent_or_boom');
+    var mostConsistentImage = document.getElementById('team_most_consistent_image');
+    var mostConsistentName = document.getElementById('team_most_consistent_name');
+    var mostConsistentPoints = document.getElementById('team_most_consistent_points');
+    mostConsistentTitle.innerText = "Most Consistent";
+    if (mostConsistent.position == "D/ST") {
+        mostConsistentImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(mostConsistent.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        mostConsistentImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + mostConsistent.playerID + ".png";
+    }
+    var startsText = " starts";
+    if (mostConsistent.weeksPlayed == 1) {
+        startsText = " start";
+    }
+    mostConsistentName.innerText = mostConsistent.firstName + " " + mostConsistent.lastName;
+    mostConsistentPoints.innerText = "Standard Deviation: " + calcStandardDeviation(mostConsistent.getScores()) + "\n" + mostConsistent.averageScore + " points per game, " + mostConsistent.weeksPlayed + startsText;
+}
+function updateBiggestBoom(league, biggestBoom, teamID) {
+    var biggestBoomTitle = document.getElementById('consistent_or_boom');
+    var biggestBoomImage = document.getElementById('team_most_consistent_image');
+    var biggestBoomName = document.getElementById('team_most_consistent_name');
+    var biggestBoomPoints = document.getElementById('team_most_consistent_points');
+    biggestBoomTitle.innerText = "Biggest Boom";
+    if (biggestBoom.position == "D/ST") {
+        biggestBoomImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(biggestBoom.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.playerID + ".png";
+    }
+    var outcomeText = "";
+    if (league.weeks[biggestBoom.weekNumber].getTeamMatchup(teamID).getWinningTeam().teamID == teamID) {
+        outcomeText = "\n Won match by ";
+    }
+    else {
+        outcomeText = "\n Lost match by ";
+    }
+    var mov = outcomeText + " " + roundToHundred(league.weeks[biggestBoom.weekNumber].getTeamMatchup(teamID).marginOfVictory) + " points";
+    biggestBoomName.innerText = biggestBoom.firstName + " " + biggestBoom.lastName;
+    biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + mov;
 }
 function fadeTeam(element, league, teamID) {
     var op = 1; // initial opacity
@@ -149,7 +233,7 @@ function fadeToLeaguePage() {
         element.style.opacity = op + "";
         element.style.filter = 'alpha(opacity=' + op * 100 + ")";
         op -= op * 0.1;
-    }, 5);
+    }, 8);
 }
 function unfade(element) {
     var op = 0.1; // initial opacity
@@ -161,6 +245,6 @@ function unfade(element) {
         element.style.opacity = op;
         element.style.filter = 'alpha(opacity=' + op * 100 + ")";
         op += op * 0.1;
-    }, 5);
+    }, 8);
 }
 //# sourceMappingURL=Page_Updates.js.map

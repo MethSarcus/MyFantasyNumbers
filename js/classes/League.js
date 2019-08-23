@@ -114,6 +114,17 @@ var League = /** @class */ (function () {
         });
         return worstTeam;
     };
+    League.prototype.getBiggestBoom = function (teamID) {
+        var boomPlayer = this.getSeasonPortionWeeks()[0].getTeam(teamID).lineup[0];
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            week.getTeam(teamID).lineup.forEach(function (player) {
+                if (player.score > boomPlayer.score) {
+                    boomPlayer = player;
+                }
+            });
+        });
+        return boomPlayer;
+    };
     League.prototype.getMemberBestTeam = function (teamID) {
         var highestScore = this.getSeasonPortionWeeks()[0].getTeam(teamID).score;
         var bestTeam = this.getSeasonPortionWeeks()[0].getTeam(teamID);
