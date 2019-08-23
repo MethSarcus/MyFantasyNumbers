@@ -139,7 +139,11 @@ function getLVP(league: League, teamID: number): SeasonPlayer {
     var players = getSeasonPlayers(league, teamID);
     var lvp = players[0];
     players.forEach((seasonPlayer) => {
-        if (seasonPlayer.seasonScore < lvp.seasonScore) {
+        if (seasonPlayer.seasonScore == lvp.seasonScore) {
+            if (seasonPlayer.weeksPlayed > lvp.weeksPlayed) {
+                lvp = seasonPlayer;
+            }
+        } else if (seasonPlayer.seasonScore < lvp.seasonScore) {
             lvp = seasonPlayer;
         }
     });
