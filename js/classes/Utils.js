@@ -108,9 +108,13 @@ function getMean(numbers) {
 }
 function getBestLeastConsistent(league, teamID) {
     var players = getSeasonPlayers(league, teamID);
+    var mostConsistentPlayers = players.filter(function (player) {
+        return (player.weeksPlayed > 5);
+    });
+    console.log(players);
     var mvp = players[0];
     var lvp = players[0];
-    var mostConsistent = players[0];
+    var mostConsistent = mostConsistentPlayers[0];
     players.forEach(function (seasonPlayer) {
         if (seasonPlayer.seasonScore > mvp.seasonScore) {
             mvp = seasonPlayer;
@@ -118,8 +122,11 @@ function getBestLeastConsistent(league, teamID) {
         if (seasonPlayer.seasonScore < lvp.seasonScore) {
             lvp = seasonPlayer;
         }
+    });
+    mostConsistentPlayers.forEach(function (seasonPlayer) {
         if (calcStandardDeviation(seasonPlayer.getScores()) < calcStandardDeviation(mostConsistent.getScores()) &&
             seasonPlayer.weeksPlayed > 5 && seasonPlayer.seasonScore != 0) {
+            console.log(seasonPlayer);
             mostConsistent = seasonPlayer;
         }
     });

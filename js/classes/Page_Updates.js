@@ -105,7 +105,7 @@ function updateMiniStatCards(league, member) {
     var ppBackground = document.getElementById("team_pp_statcard");
     pfFinish.innerHTML = ordinal_suffix_of(league.getPointsScoredFinish(member.teamID));
     pfScore.innerHTML = member.stats.pf.toString();
-    var pfDiff = roundToHundred(member.stats.pf - league.getLeaguePF());
+    var pfDiff = roundToTen(member.stats.pf - league.getLeaguePF());
     if (pfDiff > 0) {
         pfLeagueDiff.innerHTML = "+" + pfDiff + " League Average";
     }
@@ -115,7 +115,7 @@ function updateMiniStatCards(league, member) {
     pfBackground.style.backgroundColor = getCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
     paFinish.innerHTML = ordinal_suffix_of(league.getPointsAgainstFinish(member.teamID));
     paScore.innerHTML = member.stats.pa.toString();
-    var paDiff = roundToHundred(member.stats.pa - league.getLeaguePA());
+    var paDiff = roundToTen(member.stats.pa - league.getLeaguePA());
     if (paDiff > 0) {
         paLeagueDiff.innerHTML = "+" + paDiff + " League Average";
     }
@@ -125,7 +125,7 @@ function updateMiniStatCards(league, member) {
     paBackground.style.backgroundColor = getCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
     ppFinish.innerHTML = ordinal_suffix_of(league.getPotentialPointsFinish(member.teamID));
     ppScore.innerHTML = member.stats.pp.toString();
-    var ppDiff = roundToHundred(member.stats.pp - league.getLeaguePP());
+    var ppDiff = roundToTen(member.stats.pp - league.getLeaguePP());
     if (ppDiff > 0) {
         ppLeagueDiff.innerHTML = "+" + ppDiff + " League Average";
     }

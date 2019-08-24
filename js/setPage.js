@@ -500,7 +500,8 @@ function setPage(league) {
 
 
 function fixNoImage() {
-    this.src = 'https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg';
+    this.src = "../assets/user1.png";
+    this.style.backgroundColor = "white";
     this.onerror = null;
 
 }
