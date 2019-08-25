@@ -54,7 +54,7 @@ function getPosition(eligibleSlots) {
     }
 }
 function getLineupSlot(lineupSlotID) {
-    if (lineupSlotID === 0) {
+    if (lineupSlotID == 0) {
         return "QB";
     }
     else if (lineupSlotID == 2) {
@@ -111,7 +111,6 @@ function getBestLeastConsistent(league, teamID) {
     var mostConsistentPlayers = players.filter(function (player) {
         return (player.weeksPlayed > 5);
     });
-    console.log(players);
     var mvp = players[0];
     var lvp = players[0];
     var mostConsistent = mostConsistentPlayers[0];
@@ -126,7 +125,6 @@ function getBestLeastConsistent(league, teamID) {
     mostConsistentPlayers.forEach(function (seasonPlayer) {
         if (calcStandardDeviation(seasonPlayer.getScores()) < calcStandardDeviation(mostConsistent.getScores()) &&
             seasonPlayer.weeksPlayed > 5 && seasonPlayer.seasonScore != 0) {
-            console.log(seasonPlayer);
             mostConsistent = seasonPlayer;
         }
     });
@@ -173,6 +171,49 @@ function getSeasonPlayers(league, teamID) {
         });
     });
     return players;
+}
+function getAllSeasonPlayers(league) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        week.matchups.forEach(function (matchup) {
+            matchup.home.lineup.forEach(function (player) {
+                var index = players.findIndex(function (existingPlayer) {
+                    return existingPlayer.playerID == player.playerID;
+                });
+                if (index > -1) {
+                    players[index].addPerformance(player);
+                }
+                else {
+                    players.push(new SeasonPlayer(player));
+                }
+            });
+            if (!matchup.byeWeek) {
+                matchup.away.lineup.forEach(function (player) {
+                    var index = players.findIndex(function (existingPlayer) {
+                        return existingPlayer.playerID == player.playerID;
+                    });
+                    if (index > -1) {
+                        players[index].addPerformance(player);
+                    }
+                    else {
+                        players.push(new SeasonPlayer(player));
+                    }
+                });
+            }
+        });
+    });
+    return players;
+}
+function getBestPositionPlayerAverageScore(league, position) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        players.push(week.getBestPositionPlayer(position));
+    });
+    var totalScore = 0;
+    players.forEach(function (player) {
+        totalScore += player.score;
+    });
+    return roundToTen(totalScore / players.length);
 }
 //Params: Int, team ID
 //Returns: String, Team Abbreviation

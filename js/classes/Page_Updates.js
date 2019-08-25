@@ -7,6 +7,7 @@ function updateTeamPill(league, teamID) {
     updateBestWeek(league, member);
     updateWorstWeek(league, member);
     updateBestWorstConsistent(league, member);
+    createTeamRadarChart(league, member);
     unfade(document.getElementById('teamPill'));
 }
 function updateBestWorstConsistent(league, member) {

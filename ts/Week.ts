@@ -43,4 +43,21 @@ class Week {
         });
         return roundToHundred(weekScore / numMatches);
     }
+
+    public getBestPositionPlayer(position: string): Player {
+        var positionPlayers = [];
+        this.matchups.forEach((matchup) => {
+            positionPlayers = positionPlayers.concat(matchup.home.getPositionalPlayers(position));
+            if (!matchup.byeWeek) {
+                positionPlayers = positionPlayers.concat(matchup.away.getPositionalPlayers(position));
+            }
+        });
+        var bestPlayer = positionPlayers[0];
+        positionPlayers.forEach((player) => {
+            if (player.score > bestPlayer.score) {
+                bestPlayer = player;
+            }
+        });
+        return bestPlayer;
+    }
 }

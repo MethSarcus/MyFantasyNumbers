@@ -107,4 +107,15 @@ class Team {
         });
         return lvp;
     }
+
+    public getPositionalPlayers(position: string): Player[] {
+        const players = this.lineup;
+        var positionPlayers = [];
+        players.forEach((player) => {
+            if (player.position == position) {
+                positionPlayers.push(player);
+            }
+        });
+        return positionPlayers;
+    }
 }

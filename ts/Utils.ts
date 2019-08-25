@@ -50,7 +50,7 @@ function getPosition(eligibleSlots: number[]): POSITION {
 }
 
 function getLineupSlot(lineupSlotID: number): string {
-    if (lineupSlotID === 0) {
+    if (lineupSlotID == 0) {
         return "QB";
     } else if (lineupSlotID == 2) {
         return "RB";
@@ -171,6 +171,51 @@ function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
     });
 
     return players;
+}
+
+function getAllSeasonPlayers(league: League): SeasonPlayer[] {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach((week) => {
+        week.matchups.forEach(matchup => {
+            matchup.home.lineup.forEach((player) => {
+                var index = players.findIndex((existingPlayer) => 
+                    existingPlayer.playerID == player.playerID
+                );
+                if (index > -1) {
+                    players[index].addPerformance(player);
+                    } else {
+                        players.push(new SeasonPlayer(player));
+                }
+            });
+            if (!matchup.byeWeek) {
+                matchup.away.lineup.forEach((player) => {
+                    var index = players.findIndex((existingPlayer) => 
+                        existingPlayer.playerID == player.playerID
+                    );
+                    if (index > -1) {
+                        players[index].addPerformance(player);
+                        } else {
+                            players.push(new SeasonPlayer(player));
+                    }
+                });
+            }
+        });
+    });
+
+    return players;
+}
+
+function getBestPositionPlayerAverageScore(league: League, position: any): number {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach((week) => {
+        players.push(week.getBestPositionPlayer(position));
+    });
+    var totalScore = 0;
+    players.forEach(player => {
+        totalScore += player.score;
+    });
+
+    return roundToTen(totalScore/players.length);
 }
 
 //Params: Int, team ID

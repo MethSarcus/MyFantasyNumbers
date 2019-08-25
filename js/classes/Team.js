@@ -96,6 +96,16 @@ var Team = /** @class */ (function () {
         });
         return lvp;
     };
+    Team.prototype.getPositionalPlayers = function (position) {
+        var players = this.lineup;
+        var positionPlayers = [];
+        players.forEach(function (player) {
+            if (player.position == position) {
+                positionPlayers.push(player);
+            }
+        });
+        return positionPlayers;
+    };
     return Team;
 }());
 //# sourceMappingURL=Team.js.map

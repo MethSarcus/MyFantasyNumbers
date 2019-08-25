@@ -37,6 +37,22 @@ var Week = /** @class */ (function () {
         });
         return roundToHundred(weekScore / numMatches);
     };
+    Week.prototype.getBestPositionPlayer = function (position) {
+        var positionPlayers = [];
+        this.matchups.forEach(function (matchup) {
+            positionPlayers = positionPlayers.concat(matchup.home.getPositionalPlayers(position));
+            if (!matchup.byeWeek) {
+                positionPlayers = positionPlayers.concat(matchup.away.getPositionalPlayers(position));
+            }
+        });
+        var bestPlayer = positionPlayers[0];
+        positionPlayers.forEach(function (player) {
+            if (player.score > bestPlayer.score) {
+                bestPlayer = player;
+            }
+        });
+        return bestPlayer;
+    };
     return Week;
 }());
 //# sourceMappingURL=Week.js.map

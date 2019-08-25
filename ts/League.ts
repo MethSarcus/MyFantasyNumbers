@@ -394,4 +394,46 @@ class League {
         league.setMemberStats(league.getSeasonPortionWeeks());
         return league;
     }
+
+    public getTeamAveragePointsPerPosition(teamID): number[] {
+        var allPlayers = getSeasonPlayers(this, teamID);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var timesPlayedDict = new Map();
+        var scores = [];
+        positions.forEach(position => {
+            scoreDict.set(position, 0);
+            timesPlayedDict.set(position, 0);
+        });
+        allPlayers.forEach(player => {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+            timesPlayedDict.set(player.position, player.weeksPlayed + timesPlayedDict.get(player.position));
+        });
+        positions.forEach(position => {
+            scores.push(roundToHundred(scoreDict.get(position)/timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(this, position)));
+        });
+       
+        return scores;
+    }
+
+    public getLeagueAveragePointsPerPosition(): number[] {
+        var allPlayers = getAllSeasonPlayers(this);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var timesPlayedDict = new Map();
+        var scores = [];
+        positions.forEach(position => {
+            scoreDict.set(position, 0);
+            timesPlayedDict.set(position, 0);
+        });
+        allPlayers.forEach(player => {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+            timesPlayedDict.set(player.position, player.weeksPlayed + timesPlayedDict.get(player.position));
+        });
+        positions.forEach(position => {
+            scores.push(roundToHundred(scoreDict.get(position)/timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(this, position)));
+        });
+       
+        return scores;
+    }
 }

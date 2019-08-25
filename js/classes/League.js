@@ -324,6 +324,46 @@ var League = /** @class */ (function () {
         league.setMemberStats(league.getSeasonPortionWeeks());
         return league;
     };
+    League.prototype.getTeamAveragePointsPerPosition = function (teamID) {
+        var _this = this;
+        var allPlayers = getSeasonPlayers(this, teamID);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var timesPlayedDict = new Map();
+        var scores = [];
+        positions.forEach(function (position) {
+            scoreDict.set(position, 0);
+            timesPlayedDict.set(position, 0);
+        });
+        allPlayers.forEach(function (player) {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+            timesPlayedDict.set(player.position, player.weeksPlayed + timesPlayedDict.get(player.position));
+        });
+        positions.forEach(function (position) {
+            scores.push(roundToHundred(scoreDict.get(position) / timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(_this, position)));
+        });
+        return scores;
+    };
+    League.prototype.getLeagueAveragePointsPerPosition = function () {
+        var _this = this;
+        var allPlayers = getAllSeasonPlayers(this);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var timesPlayedDict = new Map();
+        var scores = [];
+        positions.forEach(function (position) {
+            scoreDict.set(position, 0);
+            timesPlayedDict.set(position, 0);
+        });
+        allPlayers.forEach(function (player) {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+            timesPlayedDict.set(player.position, player.weeksPlayed + timesPlayedDict.get(player.position));
+        });
+        positions.forEach(function (position) {
+            scores.push(roundToHundred(scoreDict.get(position) / timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(_this, position)));
+        });
+        return scores;
+    };
     return League;
 }());
 //# sourceMappingURL=League.js.map

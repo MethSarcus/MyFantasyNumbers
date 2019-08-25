@@ -1,3 +1,5 @@
+declare var createTeamRadarChart: any;
+
 function updateTeamPill(league: League, teamID: number): void {
     var member = league.getMember(teamID);
 
@@ -8,7 +10,7 @@ function updateTeamPill(league: League, teamID: number): void {
     updateBestWeek(league, member);
     updateWorstWeek(league, member);
     updateBestWorstConsistent(league, member);
-    
+    createTeamRadarChart(league, member);
 
     unfade(document.getElementById('teamPill'));
 }
