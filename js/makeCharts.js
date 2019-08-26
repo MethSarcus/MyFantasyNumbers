@@ -31,7 +31,7 @@ function createTeamRadarChart(league, member) {
         },
         options: {
           title: {
-            display: true,
+            display: false,
             text: 'Point Per Position',
             position: 'bottom'
           },

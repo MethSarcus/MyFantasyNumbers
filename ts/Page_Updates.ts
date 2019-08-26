@@ -1,4 +1,6 @@
 declare var createTeamRadarChart: any;
+declare var $: any;
+declare var ajax: any;
 
 function updateTeamPill(league: League, teamID: number): void {
     var member = league.getMember(teamID);
@@ -11,6 +13,7 @@ function updateTeamPill(league: League, teamID: number): void {
     updateWorstWeek(league, member);
     updateBestWorstConsistent(league, member);
     createTeamRadarChart(league, member);
+    updateMemberWeekTable(league, member);
 
     unfade(document.getElementById('teamPill'));
 }
@@ -272,4 +275,72 @@ function unfade(element) {
         element.style.filter = 'alpha(opacity=' + op * 100 + ")";
         op += op * 0.1;
     }, 8);
+}
+
+function updateMemberWeekTable(league: League, member: Member): void {
+    $('#member_week_table_body').empty();
+    var weekTable = document.getElementById('memberWeekTable');
+    // weekTable.classList.add("hover");
+    // var tableHead = document.createElement('thead');
+    // var tableHeader = document.createElement('tr');
+    // var weeknumcol = document.createElement('th');
+    // weeknumcol.setAttribute('scope', 'col');
+    // weeknumcol.appendChild(document.createTextNode('Week'));
+    // var scorecol = document.createElement('th');
+    // scorecol.setAttribute('scope', 'col');
+    // scorecol.appendChild(document.createTextNode('Score'));
+    // var vscol = document.createElement('th');
+    // vscol.setAttribute('scope', 'col');
+    // vscol.appendChild(document.createTextNode('VS'));
+    // var margincol = document.createElement('th');
+    // margincol.setAttribute('scope', 'col');
+    // margincol.appendChild(document.createTextNode('Margin'));
+    // var outcomecol = document.createElement('th');
+    // outcomecol.setAttribute('scope', 'col');
+    // outcomecol.appendChild(document.createTextNode('Outcome'));
+    
+    // tableHeader.appendChild(weeknumcol);
+    // tableHeader.appendChild(scorecol);
+    // tableHeader.appendChild(vscol);
+    // tableHeader.appendChild(margincol);
+    // tableHeader.appendChild(outcomecol);
+    // tableHead.appendChild(tableHeader);
+
+    var tableBody = document.getElementById('member_week_table_body');
+    league.getSeasonPortionWeeks().forEach((week) => {
+        let curMatchup = week.getTeamMatchup(member.teamID);
+        let curTeam = week.getTeam(member.teamID);
+        let row = document.createElement('tr');
+        let weekCell = document.createElement('td');
+        let scoreCell = document.createElement('td');
+        let vsCell = document.createElement('td');
+        let marginCell = document.createElement('td');
+        let outcomeCell = document.createElement('td');
+
+        weekCell.appendChild(document.createTextNode(week.weekNumber.toString()));
+        scoreCell.appendChild(document.createTextNode(roundToHundred(curTeam.score).toString()));
+        if (!curMatchup.byeWeek) {
+            vsCell.appendChild(document.createTextNode(league.getMember(curMatchup.getOpponent(member.teamID).teamID).teamAbbrev));
+            marginCell.appendChild(document.createTextNode(roundToHundred(curTeam.score - curMatchup.getOpponent(member.teamID).score).toString()));
+            if (curMatchup.getWinningTeam().teamID == member.teamID){
+                outcomeCell.appendChild(document.createTextNode("Win"));
+            } else {
+                outcomeCell.appendChild(document.createTextNode("Loss"));
+            }
+        } else {
+            vsCell.appendChild(document.createTextNode("N/A"));
+            marginCell.appendChild(document.createTextNode("N/A"));
+            outcomeCell.appendChild(document.createTextNode("N/A"));
+        }
+        
+        row.appendChild(weekCell);
+        row.appendChild(scoreCell);
+        row.appendChild(vsCell);
+        row.appendChild(marginCell);
+        row.appendChild(outcomeCell);
+        //console.log(tableBody);
+        tableBody.appendChild(row);
+    });
+    //weekTable.appendChild(tableHead);
+    weekTable.appendChild(tableBody);
 }

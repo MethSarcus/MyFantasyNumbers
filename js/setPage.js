@@ -234,9 +234,6 @@ function setPage(league) {
     tradeButton.onclick = drawTradeWeb;
     tradeButton.innerHTML = "Trade Web";
 
-
-    
-
     //where the magic happens, creates each league page
     // for (var i = 0; i < league.members.length; i++) {
     //     //console.log(myYear.members[i]);
