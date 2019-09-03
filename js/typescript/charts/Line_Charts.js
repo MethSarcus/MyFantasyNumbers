@@ -97,6 +97,8 @@ function createMainWeeklyLineChart(league) {
 }
 function createMemberWeeklyLineChart(league, member) {
     //(window as any).myChart.destroy();
+    $('#TEAM_LINE_CANVAS').remove();
+    $('#team_line_graph_container').append('<canvas id="TEAM_LINE_CANVAS"><canvas>');
     var ctx = document.getElementById("TEAM_LINE_CANVAS");
     ctx.classList.toggle('team_weekly_line_chart', true);
     var myWeekLabels = [];
@@ -105,10 +107,17 @@ function createMemberWeeklyLineChart(league, member) {
     }
     var weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
+    weeklyScoreMap.set(-2, []);
     weeklyScoreMap.set(member.teamID, []);
     league.getSeasonPortionWeeks().forEach(function (week) {
-        weeklyScoreMap.get(-1).push(week.getWeekAverage());
+        if (!week.getTeamMatchup(member.teamID).byeWeek) {
+            weeklyScoreMap.get(-2).push(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score);
+        }
+        else {
+            weeklyScoreMap.get(-2).push(null);
+        }
         weeklyScoreMap.get(member.teamID).push(week.getTeam(member.teamID).score);
+        weeklyScoreMap.get(-1).push(week.getWeekAverage());
     });
     var datasets = [];
     weeklyScoreMap.forEach(function (value, key) {
@@ -118,19 +127,31 @@ function createMemberWeeklyLineChart(league, member) {
                 data: value,
                 borderColor: 'black',
                 backGroundColor: 'black',
+                pointBackgroundColor: 'black',
+                fill: false,
+                lineTension: 0,
+            });
+        }
+        else if (key == -2) {
+            datasets.push({
+                label: "Opponent",
+                data: value,
+                borderColor: 'orange',
+                backGroundColor: 'orange',
+                pointBackgroundColor: 'orange',
                 fill: false,
                 lineTension: 0,
             });
         }
         else {
             var curTeam = league.getMember(key);
-            var myColor = getMemberColor(key);
             datasets.push({
                 label: curTeam.nameToString(),
                 data: value,
-                borderColor: myColor,
-                backGroundColor: myColor,
-                fill: false,
+                borderColor: 'blue',
+                backGroundColor: 'blue',
+                pointBackgroundColor: 'blue',
+                fill: true,
                 lineTension: 0,
             });
         }
@@ -163,11 +184,6 @@ function createMemberWeeklyLineChart(league, member) {
                     xOffset: 150,
                     yOffset: '50%',
                     delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
-                },
-                datalabels: {
-                    formatter: function (value, ctx) {
-                        return "";
-                    },
                 }
             },
             legend: {

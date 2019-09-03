@@ -268,29 +268,20 @@ function updateMemberWeekTable(league, member) {
         var scoreCell = document.createElement('td');
         var vsCell = document.createElement('td');
         var marginCell = document.createElement('td');
-        var outcomeCell = document.createElement('td');
         weekCell.appendChild(document.createTextNode(week.weekNumber.toString()));
         scoreCell.appendChild(document.createTextNode(roundToHundred(curTeam.score).toString()));
         if (!curMatchup.byeWeek) {
             vsCell.appendChild(document.createTextNode(league.getMember(curMatchup.getOpponent(member.teamID).teamID).teamAbbrev));
             marginCell.appendChild(document.createTextNode(roundToHundred(curTeam.score - curMatchup.getOpponent(member.teamID).score).toString()));
-            if (curMatchup.getWinningTeam().teamID == member.teamID) {
-                outcomeCell.appendChild(document.createTextNode("Win"));
-            }
-            else {
-                outcomeCell.appendChild(document.createTextNode("Loss"));
-            }
         }
         else {
             vsCell.appendChild(document.createTextNode("N/A"));
             marginCell.appendChild(document.createTextNode("N/A"));
-            outcomeCell.appendChild(document.createTextNode("N/A"));
         }
         row.appendChild(weekCell);
         row.appendChild(scoreCell);
         row.appendChild(vsCell);
         row.appendChild(marginCell);
-        row.appendChild(outcomeCell);
         //console.log(tableBody);
         tableBody.appendChild(row);
     });

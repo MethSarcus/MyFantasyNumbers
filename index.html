@@ -21,23 +21,23 @@
   <script src="https://www.amcharts.com/lib/4/core.js"></script>
   <script src="https://www.amcharts.com/lib/4/charts.js"></script>
   <script src="https://www.amcharts.com/lib/4/maps.js"></script>
-  <script type="text/javascript" src="js/classes/Utils.js"></script>
-  <script type="text/javascript" src="js/classes/Page_Updates.js"></script>
-  <script type="text/javascript" src="js/classes/Stats.js"></script>
-  <script type="text/javascript" src="js/classes/Settings.js"></script>
-  <script type="text/javascript" src="js/classes/Team.js"></script>
-  <script type="text/javascript" src="js/classes/Member.js"></script>
-  <script type="text/javascript" src="js/classes/Week.js"></script>
-  <script type="text/javascript" src="js/classes/Matchup.js"></script>
-  <script type="text/javascript" src="js/classes/calculations.js"></script>
+  <script type="text/javascript" src="js/typescript/utilities/Utils.js"></script>
+  <script type="text/javascript" src="js/typescript/view/Page_Updates.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Stats.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Settings.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Team.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Member.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Week.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Matchup.js"></script>
+  <script type="text/javascript" src="js/typescript/utilities/calculations.js"></script>
   <script type="text/javascript" src="js/advancedCalculations.js"></script>
-  <script type="text/javascript" src="js/classes/Player.js"></script>
-  <script type="text/javascript" src="js/classes/SeasonPlayer.js"></script>
-  <script type="text/javascript" src="js/classes/Line_Charts.js"></script>
-  <script type="text/javascript" src="js/classes/League.js"></script>
+  <script type="text/javascript" src="js/typescript/model/Player.js"></script>
+  <script type="text/javascript" src="js/typescript/model/SeasonPlayer.js"></script>
+  <script type="text/javascript" src="js/typescript/charts/Line_Charts.js"></script>
+  <script type="text/javascript" src="js/typescript/model/League.js"></script>
   <script type="text/javascript" src="js/setPage.js"></script>
   <script type="text/javascript" src="js/conversions.js"></script>
-  <script type="text/javascript" src="js/getLeague.js"></script>
+  <script type="text/javascript" src="js/typescript/getLeague.js"></script>
   <script src="js/makeCharts.js"></script>
   <!-- Load d3.js and c3.js -->
   <!-- <script src="Charts\c3-0.6.12\c3.min.js"></script> -->
@@ -330,7 +330,7 @@
               </div>
             </div>
             <div class="row py-1">
-              <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+              <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <table class="table table-sm hover" id="memberWeekTable">
                     <thead>
                       <tr id="member_week_table_head_row">
@@ -338,7 +338,6 @@
                         <th scope="col">Score</th>
                         <th scope="col">VS</th>
                         <th scope="col">Margin</th>
-                        <th scope="col"></th>
                       </tr>
                     </thead>
                     <tbody id="member_week_table_body">
@@ -346,11 +345,11 @@
                     </tbody>
                 </table>
               </div>
-              <div class="row col-9">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-9">
-                  <div id="barchart"></div>
+              <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
+                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                  <div id="team_points_scored_barchart"></div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12">
                   <canvas id="TEAM_LINE_CANVAS">
                   </canvas>
                 </div>

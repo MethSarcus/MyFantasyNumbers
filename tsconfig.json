@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./js/classes",
+        "outDir": "js/typescript",
         "allowJs": true,
         "target": "es5",
         "sourceMap": true
