@@ -52,7 +52,7 @@ function createTeamRadarChart(league, member) {
     
 }
 
-function createWeeklyLineCharts(leagueMembers) {
+function createWeeklyLineCharts(league) {
     //Chart.defaults.global.legend.labels.usePointStyle = true;
     //let colors = ['red', 'green', 'blue', 'orange', 'lime', 'magenta', 'teal', 'yellow'];
     window.myChart.destroy();

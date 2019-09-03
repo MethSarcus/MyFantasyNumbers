@@ -14,6 +14,7 @@ function updateTeamPill(league: League, teamID: number): void {
     updateBestWorstConsistent(league, member);
     createTeamRadarChart(league, member);
     updateMemberWeekTable(league, member);
+    createMemberWeeklyLineChart(league, member);
 
     unfade(document.getElementById('teamPill'));
 }
@@ -280,32 +281,6 @@ function unfade(element) {
 function updateMemberWeekTable(league: League, member: Member): void {
     $('#member_week_table_body').empty();
     var weekTable = document.getElementById('memberWeekTable');
-    // weekTable.classList.add("hover");
-    // var tableHead = document.createElement('thead');
-    // var tableHeader = document.createElement('tr');
-    // var weeknumcol = document.createElement('th');
-    // weeknumcol.setAttribute('scope', 'col');
-    // weeknumcol.appendChild(document.createTextNode('Week'));
-    // var scorecol = document.createElement('th');
-    // scorecol.setAttribute('scope', 'col');
-    // scorecol.appendChild(document.createTextNode('Score'));
-    // var vscol = document.createElement('th');
-    // vscol.setAttribute('scope', 'col');
-    // vscol.appendChild(document.createTextNode('VS'));
-    // var margincol = document.createElement('th');
-    // margincol.setAttribute('scope', 'col');
-    // margincol.appendChild(document.createTextNode('Margin'));
-    // var outcomecol = document.createElement('th');
-    // outcomecol.setAttribute('scope', 'col');
-    // outcomecol.appendChild(document.createTextNode('Outcome'));
-    
-    // tableHeader.appendChild(weeknumcol);
-    // tableHeader.appendChild(scorecol);
-    // tableHeader.appendChild(vscol);
-    // tableHeader.appendChild(margincol);
-    // tableHeader.appendChild(outcomecol);
-    // tableHead.appendChild(tableHeader);
-
     var tableBody = document.getElementById('member_week_table_body');
     league.getSeasonPortionWeeks().forEach((week) => {
         let curMatchup = week.getTeamMatchup(member.teamID);

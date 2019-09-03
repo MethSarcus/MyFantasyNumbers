@@ -33,6 +33,7 @@
   <script type="text/javascript" src="js/advancedCalculations.js"></script>
   <script type="text/javascript" src="js/classes/Player.js"></script>
   <script type="text/javascript" src="js/classes/SeasonPlayer.js"></script>
+  <script type="text/javascript" src="js/classes/Line_Charts.js"></script>
   <script type="text/javascript" src="js/classes/League.js"></script>
   <script type="text/javascript" src="js/setPage.js"></script>
   <script type="text/javascript" src="js/conversions.js"></script>
@@ -127,15 +128,16 @@
                 <div class="d-flex">
                   <img id="team_image"
                     src="https://pbs.twimg.com/profile_images/378800000727004025/8d72d52ef9a33058eb34b31c3a97560e_400x400.jpeg"
-                    alt="DLow" style="width: 200px; height: 200px;">
+                    alt="DLow" style="width: 150px; height: 150px;">
                   <div class="pl-2">
+                    <i>Team</i>
                     <h5 class="card-title px-auto" id="team_name">Quality Kraftmanship</h5>
                     <i>Owner</i>
                     <h5 class="card-title" id="team_owner">Dylan Penkethman</h5>
-                    <p class="card-text" id="team_finish">Finished 3rd Overall</p>
-                    <p id="team_record">Record: 9-4</p>
                   </div>
                 </div>
+                <p class="card-text" id="team_finish">Finished 3rd Overall</p>
+                    <p id="team_record">Record: 9-4</p>
               </div>
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row pb-1">
@@ -328,15 +330,15 @@
               </div>
             </div>
             <div class="row py-1">
-              <div class="col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
-                <table class="table table-sm dataTable hover" id="memberWeekTable">
+              <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                <table class="table table-sm hover" id="memberWeekTable">
                     <thead>
                       <tr id="member_week_table_head_row">
                         <th scope="col">Week</th>
                         <th scope="col">Score</th>
                         <th scope="col">VS</th>
                         <th scope="col">Margin</th>
-                        <th scope="col">Outcome</th>
+                        <th scope="col"></th>
                       </tr>
                     </thead>
                     <tbody id="member_week_table_body">
@@ -345,12 +347,12 @@
                 </table>
               </div>
               <div class="row col-9">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-9">
                   <div id="barchart"></div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-12">
-                  <div id="chart">
-                  </div>
+                <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                  <canvas id="TEAM_LINE_CANVAS">
+                  </canvas>
                 </div>
               </div>
             </div>

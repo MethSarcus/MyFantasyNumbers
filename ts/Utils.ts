@@ -218,6 +218,15 @@ function getBestPositionPlayerAverageScore(league: League, position: any): numbe
     return roundToTen(totalScore/players.length);
 }
 
+function getMemberColor(memberID: number): string {
+    var colorCode = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4',
+        '#42d4f4', '#f032e6', '#bfef45', '#fabebe', '#469990', '#e6beff',
+        '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
+        '#000075', '#a9a9a9', '#ffffff'];
+
+    return colorCode[memberID];
+}
+
 //Params: Int, team ID
 //Returns: String, Team Abbreviation
 function getRealTeamInitials(realteamID) {

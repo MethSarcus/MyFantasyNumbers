@@ -193,7 +193,10 @@ img.resize {
     text-align: center;
 }
 
-
+#memberWeekTable {
+    table-layout: fixed !important;
+    width: 100% !important;
+}
 
 .donutchart {
     max-height: 16em;
