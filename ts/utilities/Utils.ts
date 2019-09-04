@@ -173,6 +173,26 @@ function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
     return players;
 }
 
+function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[] {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach((week) => {
+        if (!week.getTeamMatchup(teamID).byeWeek) {
+            week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach((player) => {
+                var index = players.findIndex((existingPlayer) => 
+                    existingPlayer.playerID == player.playerID
+                );
+                if (index > -1) {
+                    players[index].addPerformance(player);
+                    } else {
+                        players.push(new SeasonPlayer(player));
+                }
+            });
+        }
+    });
+
+    return players;
+}
+
 function getAllSeasonPlayers(league: League): SeasonPlayer[] {
     var players = [];
     league.getSeasonPortionWeeks().forEach((week) => {

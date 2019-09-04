@@ -344,6 +344,55 @@ var League = /** @class */ (function () {
         });
         return scores;
     };
+    League.prototype.getLeaguePointsPerPosition = function () {
+        var _this = this;
+        var allPlayers = getAllSeasonPlayers(this);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var scores = [];
+        positions.forEach(function (position) {
+            scoreDict.set(position, 0);
+        });
+        allPlayers.forEach(function (player) {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+        });
+        positions.forEach(function (position) {
+            scores.push(roundToHundred(scoreDict.get(position) / _this.members.length));
+        });
+        return scores;
+    };
+    League.prototype.getMemberTotalPointsPerPosition = function (teamID) {
+        var allPlayers = getSeasonPlayers(this, teamID);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var scores = [];
+        positions.forEach(function (position) {
+            scoreDict.set(position, 0);
+        });
+        allPlayers.forEach(function (player) {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+        });
+        positions.forEach(function (position) {
+            scores.push(roundToHundred(scoreDict.get(position)));
+        });
+        return scores;
+    };
+    League.prototype.getMemberOpponentTotalPointsPerPosition = function (teamID) {
+        var allPlayers = getSeasonOpponentPlayers(this, teamID);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var scores = [];
+        positions.forEach(function (position) {
+            scoreDict.set(position, 0);
+        });
+        allPlayers.forEach(function (player) {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+        });
+        positions.forEach(function (position) {
+            scores.push(roundToHundred(scoreDict.get(position)));
+        });
+        return scores;
+    };
     League.prototype.getLeagueAveragePointsPerPosition = function () {
         var _this = this;
         var allPlayers = getAllSeasonPlayers(this);

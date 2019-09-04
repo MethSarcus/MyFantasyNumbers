@@ -416,6 +416,61 @@ class League {
         return scores;
     }
 
+    public getLeaguePointsPerPosition(): number[] {
+        var allPlayers = getAllSeasonPlayers(this);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var scores = [];
+        positions.forEach(position => {
+            scoreDict.set(position, 0);
+        });
+        allPlayers.forEach(player => {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+        });
+
+        positions.forEach(position => {
+            scores.push(roundToHundred(scoreDict.get(position) / this.members.length));
+        });
+
+        return scores;
+    }
+
+    public getMemberTotalPointsPerPosition(teamID: number): number[] {
+        var allPlayers = getSeasonPlayers(this, teamID);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var scores = [];
+        positions.forEach(position => {
+            scoreDict.set(position, 0);
+        });
+        allPlayers.forEach(player => {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+        });
+        positions.forEach(position => {
+            scores.push(roundToHundred(scoreDict.get(position)));
+        });
+       
+        return scores;
+    }
+
+    public getMemberOpponentTotalPointsPerPosition(teamID: number): number[] {
+        var allPlayers = getSeasonOpponentPlayers(this, teamID);
+        var positions = this.settings.getPositions();
+        var scoreDict = new Map();
+        var scores = [];
+        positions.forEach(position => {
+            scoreDict.set(position, 0);
+        });
+        allPlayers.forEach(player => {
+            scoreDict.set(player.position, player.seasonScore + scoreDict.get(player.position));
+        });
+        positions.forEach(position => {
+            scores.push(roundToHundred(scoreDict.get(position)));
+        });
+       
+        return scores;
+    }
+
     public getLeagueAveragePointsPerPosition(): number[] {
         var allPlayers = getAllSeasonPlayers(this);
         var positions = this.settings.getPositions();

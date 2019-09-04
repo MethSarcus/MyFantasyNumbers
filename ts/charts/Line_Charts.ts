@@ -1,8 +1,6 @@
 declare var myChart: any;
 declare var Chart: any;
 function createMainWeeklyLineChart(league: League) {
-    //Chart.defaults.global.legend.labels.usePointStyle = true;
-    //let colors = ['red', 'green', 'blue', 'orange', 'lime', 'magenta', 'teal', 'yellow'];
     (window as any).myChart.destroy();
     var ctx = document.getElementById("GRAPHCANVAS");
     ctx.classList.toggle('mainDonut', false);
@@ -103,8 +101,6 @@ function createMainWeeklyLineChart(league: League) {
             }
         }
     });
-
-    //myChart.render();
 }
 
 function createMemberWeeklyLineChart(league: League, member: Member) {
@@ -176,7 +172,7 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
 
             title: {
                 display: true,

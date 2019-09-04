@@ -15,6 +15,7 @@ function updateTeamPill(league: League, teamID: number): void {
     createTeamRadarChart(league, member);
     updateMemberWeekTable(league, member);
     createMemberWeeklyLineChart(league, member);
+    createTeamBarChart(league, member);
 
     unfade(document.getElementById('teamPill'));
 }

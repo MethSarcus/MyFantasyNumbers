@@ -1,6 +1,4 @@
 function createMainWeeklyLineChart(league) {
-    //Chart.defaults.global.legend.labels.usePointStyle = true;
-    //let colors = ['red', 'green', 'blue', 'orange', 'lime', 'magenta', 'teal', 'yellow'];
     window.myChart.destroy();
     var ctx = document.getElementById("GRAPHCANVAS");
     ctx.classList.toggle('mainDonut', false);
@@ -93,7 +91,6 @@ function createMainWeeklyLineChart(league) {
             }
         }
     });
-    //myChart.render();
 }
 function createMemberWeeklyLineChart(league, member) {
     //(window as any).myChart.destroy();
@@ -164,7 +161,7 @@ function createMemberWeeklyLineChart(league, member) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 position: "top",

@@ -172,6 +172,25 @@ function getSeasonPlayers(league, teamID) {
     });
     return players;
 }
+function getSeasonOpponentPlayers(league, teamID) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        if (!week.getTeamMatchup(teamID).byeWeek) {
+            week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach(function (player) {
+                var index = players.findIndex(function (existingPlayer) {
+                    return existingPlayer.playerID == player.playerID;
+                });
+                if (index > -1) {
+                    players[index].addPerformance(player);
+                }
+                else {
+                    players.push(new SeasonPlayer(player));
+                }
+            });
+        }
+    });
+    return players;
+}
 function getAllSeasonPlayers(league) {
     var players = [];
     league.getSeasonPortionWeeks().forEach(function (week) {
