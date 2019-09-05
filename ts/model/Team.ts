@@ -118,4 +118,22 @@ class Team {
         });
         return positionPlayers;
     }
+
+    public getEligibleSlotPlayers(slot: number): Player[] {
+        var players = this.lineup.concat(this.bench, this.IR);
+        var eligiblePlayers = players.filter(function (it) {
+            return it.isEligible(slot) === true;
+        });
+
+        return eligiblePlayers;
+    }
+
+    public getEligibleSlotBenchPlayers(slot: number): Player[] {
+        var players = this.bench.concat(this.IR);
+        var eligiblePlayers = players.filter(function (it) {
+            return it.isEligible(slot) === true;
+        });
+
+        return eligiblePlayers;
+    }
 }

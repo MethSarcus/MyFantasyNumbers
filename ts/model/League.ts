@@ -58,6 +58,8 @@ class League {
         this.members.forEach((member) => {
            member.setAdvancedStats(weeks);
            member.stats.roundStats();
+           member.stats.choicesThatCouldHaveWonMatchup = this.getLosingDecisionAmount(member.teamID);
+           member.stats.gameLostDueToSingleChoice = this.getGamesLostDueToSingleChoice(member.teamID);
        });
     }
 
@@ -453,6 +455,26 @@ class League {
         return scores;
     }
 
+    public getAverageEfficiency(): number {
+        var totalEfficiency = 0.00;
+        this.members.forEach(member => {
+            totalEfficiency += member.stats.getEfficiency();
+        });
+        return totalEfficiency/this.members.length;
+    }
+
+    public getEfficiencyFinish(teamID: number): number {
+        let finish = 1;
+        const efficiency = this.getMember(teamID).stats.getEfficiency();
+        this.members.forEach((member) => {
+            if (efficiency < member.stats.getEfficiency() && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+    
     public getMemberOpponentTotalPointsPerPosition(teamID: number): number[] {
         var allPlayers = getSeasonOpponentPlayers(this, teamID);
         var positions = this.settings.getPositions();
@@ -490,5 +512,29 @@ class League {
         });
        
         return scores;
+    }
+
+    public getLosingDecisionAmount(teamID: number): number {
+        var totalLosingDecisions = 0;
+        this.getSeasonPortionWeeks().forEach(week => {
+            let matchup = week.getTeamMatchup(teamID);
+            if (matchup.winner != teamID && !matchup.byeWeek) {
+                totalLosingDecisions += matchup.loserPotentialWinningSingleMoves;
+            }
+        });
+
+        return totalLosingDecisions;
+    }
+
+    public getGamesLostDueToSingleChoice(teamID: number): number {
+        var winnableLosses = 0;
+        this.getSeasonPortionWeeks().forEach(week => {
+            let matchup = week.getTeamMatchup(teamID);
+            if (matchup.winner != teamID && !matchup.byeWeek && matchup.withinSingleMoveOfWinning) {
+                winnableLosses += 1;
+            }
+        });
+
+        return winnableLosses;
     }
 }

@@ -35,6 +35,13 @@ var Matchup = /** @class */ (function () {
             else {
                 this.isUpset = false;
             }
+            this.loserPotentialWinningSingleMoves = this.getPoorLineupDecisions();
+            if (this.loserPotentialWinningSingleMoves > 0) {
+                this.withinSingleMoveOfWinning = true;
+            }
+            else {
+                this.withinSingleMoveOfWinning = false;
+            }
         }
     }
     Matchup.prototype.getWinningTeam = function () {
@@ -78,6 +85,23 @@ var Matchup = /** @class */ (function () {
         else {
             return null;
         }
+    };
+    Matchup.prototype.getPoorLineupDecisions = function () {
+        var _this = this;
+        var whiffedChoices = 0;
+        var team = this.home;
+        if (this.home.score > this.away.score) {
+            team = this.away;
+        }
+        team.lineup.forEach(function (startingPlayer) {
+            team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(function (benchedPlayer) {
+                var diff = benchedPlayer.score - startingPlayer.score;
+                if (diff > _this.marginOfVictory) {
+                    whiffedChoices += 1;
+                }
+            });
+        });
+        return whiffedChoices;
     };
     return Matchup;
 }());

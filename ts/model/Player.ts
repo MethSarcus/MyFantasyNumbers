@@ -1,6 +1,6 @@
 class Player {
-    public firstName: any;
-    public lastName: any;
+    public firstName: string;
+    public lastName: string;
     public eligibleSlots: any;
     public score: any;
     public projectedScore: any;

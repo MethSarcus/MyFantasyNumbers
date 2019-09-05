@@ -5,7 +5,7 @@ function updateTeamPill(league, teamID) {
     updateWeekAverage(league, member);
     updateTeamStandardDeviation(league, member);
     updateBestWeek(league, member);
-    updateWorstWeek(league, member);
+    updateEfficiency(league, member);
     updateBestWorstConsistent(league, member);
     createTeamRadarChart(league, member);
     updateMemberWeekTable(league, member);
@@ -52,17 +52,25 @@ function updateBestWeek(league, member) {
     bestWeekCard.style.backgroundColor = getCardColor(finish, league.members.length);
     bestWeekNumber.innerText = "Week " + league.getBestWeek(member.teamID).weekNumber;
 }
-function updateWorstWeek(league, member) {
-    var worstWeekScore = document.getElementById("team_worst_week_score");
-    var worstWeekFinish = document.getElementById('team_worst_week_finish');
-    var worstWeekNumber = document.getElementById('team_worst_finish_week_number');
-    var worstWeekCard = document.getElementById('team_worst_week_card');
-    var worstWeek = league.getMemberWorstTeam(member.teamID);
-    var finish = league.getWorstWeekFinish(member.teamID);
-    worstWeekScore.innerText = roundToHundred(worstWeek.score) + " Points";
-    worstWeekFinish.innerText = ordinal_suffix_of(finish) + " Lowest";
-    worstWeekCard.style.backgroundColor = getCardColor(league.members.length - finish, league.members.length);
-    worstWeekNumber.innerText = "Week " + league.getWorstWeek(member.teamID).weekNumber;
+function updateEfficiency(league, member) {
+    var efficiencyVsLeague = document.getElementById("team_efficiency_vs_league");
+    var efficiencyFinish = document.getElementById('team_efficiency_rank');
+    var efficiencyPercentage = document.getElementById('team_efficiency_percentage');
+    var efficiencyCard = document.getElementById('team_efficiency_card');
+    var efficiency = member.stats.getEfficiency();
+    var leagueEfficiency = league.getAverageEfficiency();
+    var finish = league.getEfficiencyFinish(member.teamID);
+    var diff;
+    if (efficiency > leagueEfficiency) {
+        diff = "+" + roundToHundred((efficiency - leagueEfficiency) * 100) + "% League Average";
+    }
+    else {
+        diff = roundToHundred((efficiency - leagueEfficiency) * 100) + "% League Average";
+    }
+    efficiencyVsLeague.innerText = diff;
+    efficiencyFinish.innerText = ordinal_suffix_of(finish) + " Most Efficient";
+    efficiencyCard.style.backgroundColor = getCardColor(finish, league.members.length);
+    efficiencyPercentage.innerText = roundToHundred(efficiency * 100) + "%";
 }
 function updateTeamStandardDeviation(league, member) {
     var stdRank = document.getElementById('team_consistency_rank');

@@ -30,6 +30,7 @@
   <script type="text/javascript" src="js/typescript/model/Week.js"></script>
   <script type="text/javascript" src="js/typescript/model/Matchup.js"></script>
   <script type="text/javascript" src="js/typescript/utilities/calculations.js"></script>
+  <script type="text/javascript" src="js/typescript/tables/League_Stats_Table.js"></script>
   <script type="text/javascript" src="js/advancedCalculations.js"></script>
   <script type="text/javascript" src="js/typescript/model/Player.js"></script>
   <script type="text/javascript" src="js/typescript/model/SeasonPlayer.js"></script>
@@ -122,7 +123,27 @@
     <div id="wrapper">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
-          <div id="leaguePage" class="tab-pane fade active show"></div>
+          <div id="leaguePage" class="tab-pane fade active show">
+            <div class="row">
+              <div class="col-6">
+                <table class="table table-sm hover" id="league_stats_table">
+                  <thead>
+                    <tr role="row">
+                      <th scope="col">Rank</th>
+                      <th scope="col">Team</th>
+                      <th scope="col">Record</th>
+                      <th scope="col">Win Pct</th>
+                      <th scope="col">PF</th>
+                      <th scope="col">PA</th>
+                      <th scope="col">PP</th>
+                    </tr>
+                  </thead>
+                  <tbody id="league_stats_table_body">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
           <div id="teamPill" class="tab-pane">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
@@ -138,7 +159,7 @@
                   </div>
                 </div>
                 <p class="card-text" id="team_finish">Finished 3rd Overall</p>
-                    <p id="team_record">Record: 9-4</p>
+                <p id="team_record">Record: 9-4</p>
               </div>
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row pb-1">
@@ -169,7 +190,6 @@
                         <div class="statwidgetcontent">
                           <h4>
                             <div id="team_pa_points">1700</div>
-                            
                           </h4>
                           <small>Points Against</small>
                           <small style="margin-top: -5px;">
@@ -222,30 +242,28 @@
                         <footer><small id="team_standard_deviation_vs_league">-5.5 League Average</small></footer>
                       </blockquote>
                     </div>
-                    <div 
-                    id="team_best_week_card" class="card text-center statcard p-2 align-items-center d-flex justify-content-center"
+                    <div id="team_efficiency_card"
+                      class="card text-center p-2 statcard align-items-center d-flex justify-content-center"
+                      style="background-color: rgb(128, 255, 0); color: black;">
+                      <h5 id="team_efficiency_rank" class="card-title">5th Most Efficient</h5>
+                      <blockquote class="card-blockquote">
+                        <h4 id="team_efficiency_percentage">92%</h4>
+                        <small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Efficiency = (PF/PA) * 100">
+                          Of Potential Points Scored<i class="fa fa-info-circle"></i></small>
+                        <footer><small id="team_efficiency_vs_league">+8% league average</small></footer>
+                      </blockquote>
+                    </div>
+                    <div id="team_best_week_card"
+                      class="card text-center statcard p-2 align-items-center d-flex justify-content-center"
                       style="background-color: rgb(128, 255, 0); color: black;">
                       <h5 class="card-title">Best Week</h5>
                       <blockquote class="card-blockquote">
                         <h4 id="team_best_week_score">202.88</h4>
                         <small data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Compared to every other team's best week"
-                          id="team_best_week_finish">3rd
+                          data-original-title="Compared to every other team's best week" id="team_best_week_finish">3rd
                           Highest <i class="fa fa-info-circle"></i></small>
                         <footer><small id="team_best_finish_week_number">Week 1</small></footer>
-                      </blockquote>
-                    </div>
-                    <div 
-                    id="team_worst_week_card" class="card text-center p-2 statcard align-items-center d-flex justify-content-center"
-                      style="background-color: rgb(128, 255, 0); color: black;">
-                      <h5 class="card-title">Worst Week</h5>
-                      <blockquote class="card-blockquote">
-                        <h4 id="team_worst_week_score">202.88</h4>
-                        <small data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Compared to every other team's worst week"
-                          id="team_worst_week_finish">3rd
-                          Highest <i class="fa fa-info-circle"></i></small>
-                        <footer><small id="team_worst_finish_week_number">Week 1</small></footer>
                       </blockquote>
                     </div>
                   </div>
@@ -264,38 +282,41 @@
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center p-2">
                       <h2 class="card-title">Best Player</h2><img id="mvp_image" class="resize"
                         src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
-                      <h4 style="margin-left: auto; margin-right: auto;" id="team_mvp_name">Michael Thomas 
+                      <h4 style="margin-left: auto; margin-right: auto;" id="team_mvp_name">Michael Thomas
                       </h4>
                       <div id="team_mvp_points">307.6 Points Scored</div>
                     </div>
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center p-2">
                       <h2 class="card-title">Worst Player</h2><img id="lvp_image" class="resize"
                         src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
-                      <h4 style="margin-left: auto; margin-right: auto;" id="team_lvp_name">Michael Thomas</h4><div id="team_lvp_points">307.6 Points</div>
+                      <h4 style="margin-left: auto; margin-right: auto;" id="team_lvp_name">Michael Thomas</h4>
+                      <div id="team_lvp_points">307.6 Points</div>
                     </div>
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center p-2">
                       <h2 class="card-title" id="consistent_or_boom">Most Consistent</h2><img class="resize"
-                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png" id="team_most_consistent_image">
-                      <h4 style="margin-left: auto; margin-right: auto;" id="team_most_consistent_name">Devante Adams</h4><div id="team_most_consistent_points">Average 16PPG</div>
+                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png"
+                        id="team_most_consistent_image">
+                      <h4 style="margin-left: auto; margin-right: auto;" id="team_most_consistent_name">Devante Adams
+                      </h4>
+                      <div id="team_most_consistent_points">Average 16PPG</div>
                     </div>
                   </div>
                 </div>
                 <div class="row py-1">
                   <div class="col-12 card-deck">
-                    <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    <div id="winnable_games_lost_card" class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <blockquote class="card-blockquote">
-                        <h5>64% Gut Success Rate</h5>
-                        <footer><small>+210 difference from projected</small></footer>
+                        <h5 id="winnable_games_lost_number">5 winnable games lost</h5>
+                        <footer><small id="winnable_games_lost_choices">14 player decisions resulted in those losses</small></footer>
                       </blockquote>
                     </div>
-                    <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    <div id="gut_wins_card" class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <blockquote class="card-blockquote">
-                        <h5>6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Only represents the comparison against every other teams single lowest week">12th
-                          Worst <i class="fa fa-info-circle"></i></small>
-                        <footer><small>+210 difference from projected</small></footer>
+                        <h5 id="gut_wins_number">6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Wins where a player was put in despite a lower projection and went on to score enough to win the matchup"></i></small>
+                        <footer><small id="gut_wins_projected_difference">12 players scored 146 more points than the projected optimal </small></footer>
                       </blockquote>
                     </div>
                     <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
@@ -333,17 +354,17 @@
             <div class="row py-1">
               <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
                 <table class="table table-sm hover" id="memberWeekTable">
-                    <thead>
-                      <tr id="member_week_table_head_row">
-                        <th scope="col">Week</th>
-                        <th scope="col">Score</th>
-                        <th scope="col">VS</th>
-                        <th scope="col">Margin</th>
-                      </tr>
-                    </thead>
-                    <tbody id="member_week_table_body">
+                  <thead>
+                    <tr id="member_week_table_head_row">
+                      <th scope="col">Week</th>
+                      <th scope="col">Score</th>
+                      <th scope="col">VS</th>
+                      <th scope="col">Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody id="member_week_table_body">
 
-                    </tbody>
+                  </tbody>
                 </table>
               </div>
               <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
@@ -361,10 +382,10 @@
           <i class="fas fa-angle-up"></i>
         </button> -->
           <!-- Sticky Footer -->
-          
+
           <!-- /.content-wrapper -->
         </div>
-<!--         
+        <!--         
         <footer class="page-footer font-small blue">
             <div class="footer-copyright text-center py-3">© 2019 Copyright:
               <a href="https://sethmarcus.tech"> Seth Marcus</a>
@@ -376,6 +397,5 @@
     </div>
 </body>
 <script type="text/javascript" src="js/main.js"></script>
-
 
 </html>

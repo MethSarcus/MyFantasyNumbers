@@ -52,6 +52,8 @@ var League = /** @class */ (function () {
         this.members.forEach(function (member) {
             member.setAdvancedStats(weeks);
             member.stats.roundStats();
+            member.stats.choicesThatCouldHaveWonMatchup = _this.getLosingDecisionAmount(member.teamID);
+            member.stats.gameLostDueToSingleChoice = _this.getGamesLostDueToSingleChoice(member.teamID);
         });
     };
     League.prototype.resetStats = function () {
@@ -377,6 +379,23 @@ var League = /** @class */ (function () {
         });
         return scores;
     };
+    League.prototype.getAverageEfficiency = function () {
+        var totalEfficiency = 0.00;
+        this.members.forEach(function (member) {
+            totalEfficiency += member.stats.getEfficiency();
+        });
+        return totalEfficiency / this.members.length;
+    };
+    League.prototype.getEfficiencyFinish = function (teamID) {
+        var finish = 1;
+        var efficiency = this.getMember(teamID).stats.getEfficiency();
+        this.members.forEach(function (member) {
+            if (efficiency < member.stats.getEfficiency() && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
     League.prototype.getMemberOpponentTotalPointsPerPosition = function (teamID) {
         var allPlayers = getSeasonOpponentPlayers(this, teamID);
         var positions = this.settings.getPositions();
@@ -412,6 +431,26 @@ var League = /** @class */ (function () {
             scores.push(roundToHundred(scoreDict.get(position) / timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(_this, position)));
         });
         return scores;
+    };
+    League.prototype.getLosingDecisionAmount = function (teamID) {
+        var totalLosingDecisions = 0;
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            var matchup = week.getTeamMatchup(teamID);
+            if (matchup.winner != teamID && !matchup.byeWeek) {
+                totalLosingDecisions += matchup.loserPotentialWinningSingleMoves;
+            }
+        });
+        return totalLosingDecisions;
+    };
+    League.prototype.getGamesLostDueToSingleChoice = function (teamID) {
+        var winnableLosses = 0;
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            var matchup = week.getTeamMatchup(teamID);
+            if (matchup.winner != teamID && !matchup.byeWeek && matchup.withinSingleMoveOfWinning) {
+                winnableLosses += 1;
+            }
+        });
+        return winnableLosses;
     };
     return League;
 }());

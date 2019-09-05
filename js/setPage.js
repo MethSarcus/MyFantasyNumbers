@@ -51,27 +51,7 @@ function setPage(league) {
     var r = new Color("#00FF00");
     var nav = document.getElementById("sideNav");
     var tabsList = document.getElementById('tabs-content');
-    //<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#menu1"><img src="https://i.imgur.com/bpdH6p4.png" width="25px" height="25px" style = "border-radius:90px;"/></img> Menu 1</a></li>
-
-    //adds league to sidebar
-    /*
-    let a = document.createElement("li");
-    a.classList.add("nav-item", 'align-items-left');
-    let b = document.createElement("a");
-    b.setAttribute('data-toggle', 'pill');
-    b.href = "#leaguePage";
-    b.classList.add('nav-link');
-    let dash = document.createElement('i');
-    dash.classList.add('fas', 'fa-fw', 'fa-tachometer-alt', 'mx-auto');
-    b.classList.add('nav-link', "show", 'active')
-    b.appendChild(dash);
-    //b.appendChild(document.createElement('br'));
-    let d = document.createTextNode(" " + myYear.leagueName);
-    b.appendChild(d);
-    a.appendChild(b);
-    nav.appendChild(a);
-    */
-
+    
     //adds teams to sidebar
     for (i in league.members) {
         let a = document.createElement("li");
@@ -143,13 +123,8 @@ function setPage(league) {
     cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", league.getMember(biggestMOV.getWinningTeam().teamID), league.getMember(biggestMOV.getWinningTeam().teamID), biggestMOV.weekNumber));
     let smallestMOV = league.getSmallestMarginOfVictory();
     cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", league.getMember(smallestMOV.getWinningTeam().teamID), league.getMember(smallestMOV.getWinningTeam().opponentTeamID), smallestMOV.weekNumber));
-    var tRow = document.createElement('div');
-    tRow.classList.add('row');
-    
-    tRow.appendChild(createPwerRankTable(league));
     //stackedRow.appendChild(stackSpace);
-    q.appendChild(cardRow);
-    q.appendChild(tRow);
+    q.insertBefore(cardRow, q.childNodes[0]);
     tabsList.appendChild(q); //adds main league page
 
 
@@ -233,258 +208,8 @@ function setPage(league) {
     tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
     tradeButton.onclick = drawTradeWeb;
     tradeButton.innerHTML = "Trade Web";
-
-    //where the magic happens, creates each league page
-    // for (var i = 0; i < league.members.length; i++) {
-    //     //console.log(myYear.members[i]);
-    //     a = document.createElement("div");
-    //     a.id = "pillTeam" + league.members[i].teamID;
-    //     a.classList.add("tab-pane", "fade");
-
-    //     let crumbList = document.createElement('ol');
-    //     crumbList.classList.add('breadcrumb');
-    //     let crumbItem = document.createElement('li');
-    //     crumbItem.classList.add('breadcrumb-item', 'active');
-    //     let breadLink = document.createElement('a');
-    //     breadLink.href = '#leaguePage';
-    //     breadLink.setAttribute('data-toggle', 'pill');
-    //     breadLink.innerText = league.leagueName;
-    //     breadLink.onclick = function () {
-    //         $(".nav-link").removeClass('active');
-    //         $(".breadpill").removeClass('active');
-    //     };
-    //     breadLink.classList.add("breadpill");
-    //     crumbItem.appendChild(breadLink);
-    //     crumbList.appendChild(crumbItem);
-    //     crumbItem = document.createElement('li');
-    //     crumbItem.classList.add('breadcrumb-item', 'active');
-    //     crumbItem.innerText = league.members[i].teamLocation + " " + league.members[i].teamNickname;
-    //     crumbList.appendChild(crumbItem);
-    //     a.appendChild(crumbList);
-
-    //     let mainRow = document.createElement("div");
-    //     mainRow.classList.add('row');
-
-    //     let profileContainer = document.createElement('div');
-    //     profileContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-2');
-    //     let profileCard = document.createElement('div');
-    //     profileCard.classList.add('card', 'profilecard', 'p-auto', 'align-items-center', 'd-flex', 'h-100');
-    //     let profileImage = document.createElement('img');
-    //     profileImage.classList.add('profileImage');
-    //     profileImage.src = league.members[i].logoURL;
-    //     profileImage.addEventListener("error", fixNoImage);
-    //     profileImage.alt = league.members[i].teamAbbrev;
-    //     profileCard.appendChild(profileImage);
-
-    //     let profileCardBlock = document.createElement('div');
-    //     profileCardBlock.classList.add('card-block', 'problock');
-
-    //     let profileOwnerHeader = document.createElement('h4');
-    //     profileOwnerHeader.classList.add('card-title');
-    //     profileOwnerHeader.appendChild(document.createTextNode(league.members[i].memberFirstName + " " + league.members[i].memberLastName));
-    //     profileCard.appendChild(profileOwnerHeader);
-
-    //     let profileMinorText = document.createElement('h5');
-    //     profileMinorText.classList.add('card-text');
-    //     profileMinorText.innerText = ordinal_suffix_of(league.members[i].finalStanding) + " Overall";
-    //     profileCard.appendChild(profileMinorText);
-
-    //     profileText = document.createElement('h5');
-    //     profileText.innerText = "Record: " + league.members[i].record.overall.wins + "-" + league.members[i].record.overall.losses;
-    //     profileCard.appendChild(profileText);
-    //     profileContainer.appendChild(profileCard);
-    //     mainRow.appendChild(profileContainer); //profile card added
-
-    //     let miniMainCol = document.createElement("div");
-    //     miniMainCol.classList.add('col-12', 'col-xs-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-10', 'mt-0', "mb-0");
-
-    //     let miniColOne = document.createElement("div");
-    //     miniColOne.classList.add('row', 'h-100');
-
-    //     let memberPF = roundToHundred(league.members[i].completeSeasonPoints);
-    //     let leaguePF = getLeaguePF(league);
-    //     let difference = roundToTen(memberPF - leaguePF);
-    //     if (difference > 0) {
-    //         difference = "+" + difference;
-    //     }
-
-
-
-    //     let cardColor = getCardColor(getPFFinish(league, league.members[i]), league.members.length);
-    //     let textColor = getTextColor(getPFFinish(league, league.members[i]), league.members.length);
-    //     let statCardPF = makeStatCard((ordinal_suffix_of(getPFFinish(league, league.members[i])) + " in Points Scored"), memberPF, "Points Scored", difference, false, cardColor, textColor, "Points scored in both the regular and post season");
-    //     miniColOne.appendChild(statCardPF);
-
-    //     let memberPA = roundToHundred(league.members[i].completeSeasonPointsAgainst);
-    //     let leaguePA = getLeaguePA(league);
-    //     difference = roundToHundred(memberPA - leaguePA);
-    //     if (difference > 0) {
-    //         difference = "+" + difference;
-    //     }
-
-
-
-    //     cardColor = getCardColor(getPAFinish(league, league.members[i]), league.members.length);
-    //     textColor = getTextColor(getPAFinish(league, league.members[i]), league.members.length);
-    //     let statCardPA = makeStatCard((ordinal_suffix_of(getPAFinish(league, league.members[i])) + " Hardest Schedule"), memberPA, "Points Against", difference, false, "#ffffff", "#000000", "Total points scored by all opponents in the regular and post season");
-    //     miniColOne.appendChild(statCardPA);
-
-    //     let memberPP = getPotentialPoints(league.members[i]);
-    //     let leaguePP = getLeaguePP(league);
-    //     difference = roundToTen(memberPP - leaguePP);
-    //     if (difference > 0) {
-    //         difference = "+" + difference;
-    //     }
-
-
-    //     cardColor = getCardColor(getPPFinish(league, league.members[i]), league.members.length);
-    //     textColor = getTextColor(getPPFinish(league, league.members[i]), league.members.length);
-    //     let statCardPP = makeStatCard((ordinal_suffix_of(getPPFinish(league, league.members[i])) + " in Potential Points"), roundToHundred(getPotentialPoints(league.members[i])), "Potential Points", difference, false, cardColor, textColor, "Total points achievable by always playing the most optimal lineup");
-    //     miniColOne.appendChild(statCardPP);
-
-    //     difference = roundToTen(memberPP - memberPF);
-    //     if (difference > 0) {
-    //         difference = "+" + difference;
-    //     }
-    //     let ldifference = roundToTen(difference - getPPDifferenceFinishLeague(league));
-    //     if (ldifference > 0) {
-    //         ldifference = "+" + ldifference;
-    //     }
-
-
-    //     cardColor = getCardColor(getPPDifferenceFinish(league, league.members[i]), league.members.length);
-    //     textColor = getTextColor(getPPDifferenceFinish(league, league.members[i]), league.members.length);
-    //     let statCardPPDifference = makeStatCard((ordinal_suffix_of(getPPDifferenceFinish(league, league.members[i])) + " In Efficiency"), difference, "Potential Point Gap", ldifference, false, cardColor, textColor, "Difference between points scored and possible points, the smaller the gap the better");
-    //     miniColOne.appendChild(statCardPPDifference);
-
-    //     let mvpContainer = document.createElement('div');
-    //     mvpContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-4', 'mt-0', 'mb-1');
-    //     let mvpCard = document.createElement('div');
-    //     let mvpHeader = document.createElement('h1');
-    //     mvpCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'px-1');
-
-    //     mvpHeader.classList.add('card-title', 'pt-3');
-    //     mvpHeader.innerText = 'Most Valuable Player';
-    //     mvpCard.appendChild(mvpHeader);
-
-    //     let mvpImage = document.createElement('img');
-    //     mvpImage.classList.add('resize', 'rounded-circle');
-    //     let teamMVP = getMVP(league.members[i]);
-    //     if (teamMVP.position == "D/ST") {
-
-    //         mvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamMVP.realTeamID) + ".png&h=150&w=150";
-    //     } else {
-    //         mvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamMVP.playerId + ".png";
-    //     }
-    //     mvpCard.appendChild(mvpImage);
-
-    //     let mvpName = teamMVP.firstName + " " + teamMVP.lastName;
-    //     let mvpNameElement = document.createElement('h4');
-    //     mvpNameElement.setAttribute('style', 'margin-left: auto; margin-right: auto;');
-    //     mvpNameElement.innerText = mvpName + "\n" + teamMVP.totalSeasonScore + " Points";
-    //     mvpCard.appendChild(mvpNameElement);
-    //     mvpContainer.appendChild(mvpCard);
-
-    //     miniColOne.appendChild(mvpContainer);
-
-
-    //     let weekAvg = memberPF / league.members[i].pastWeeks.length;
-    //     difference = roundToHundred(weekAvg - getLeagueWeeklyAverage(league.members));
-    //     if (difference > 0) {
-    //         difference = "+" + difference;
-    //     }
-
-    //     cardColor = getCardColor(getPFFinish(league, league.members[i]), league.members.length);
-    //     // weeklyAverageCard.style.color = getTextColor(getCardColor(getPFFinish(myYear, myYear.members[i]), myYear.members.length));
-    //     textColor = getTextColor(getPFFinish(league, league.members[i]), league.members.length);
-    //     let weeklyAverageCard = makeStatCard("Weekly Average", roundToHundred(weekAvg), "Points Per Week", difference, true, cardColor, textColor, "Average points scored per week");
-    //     miniColOne.appendChild(weeklyAverageCard);
-
-    //     let memberSTD = getStandardDeviation(league.members[i]);
-    //     let leagueSTD = getLeagueStandardDeviation(league);
-    //     difference = roundToTen(memberSTD - leagueSTD);
-    //     if (difference > 0) {
-    //         difference = "+" + difference;
-    //     }
-
-    //     cardColor = getCardColor(getStandardDeviationFinish(league, league.members[i]), league.members.length);
-    //     // stdCard.style.color = getTextColor(getCardColor(getStandardDeviationFinish(myYear, myYear.members[i]), myYear.members.length));
-    //     textColor = getTextColor(getStandardDeviationFinish(league, league.members[i]), league.members.length);
-    //     let stdCard = makeStatCard((ordinal_suffix_of(getStandardDeviationFinish(league, league.members[i])) + " Most Consistent"), roundToHundred(getStandardDeviation(league.members[i])), "Standard Deviation", difference, true, cardColor, textColor, "Indicates weekly variation of points a team had from their average \nLower is better");
-    //     miniColOne.appendChild(stdCard);
-
-    //     cardColor = getCardColor(getBestWeekFinish(league, league.members[i]), league.members.length);
-    //     // bestWeekCard.style.color = getTextColor(getCardColor(getBestWeekFinish(myYear, myYear.members[i]), getTotalWeeks(myYear)));
-    //     textColor = getTextColor(getBestWeekFinish(league, league.members[i]), league.members.length);
-    //     let bestWeekCard = makeStatCard("Best Week", roundToHundred(getBestWeek(league.members[i]).activeScore), ordinal_suffix_of(getBestWeekFinish(league, league.members[i])) + " Highest", getBestWeek(league.members[i]).weekNumber, true, cardColor, textColor, "Only represents the comparison against every other teams single highest week");
-    //     miniColOne.appendChild(bestWeekCard);
-
-    //     cardColor = getInverseCardColor(getWorstWeekFinish(league, league.members[i]), league.members.length);
-    //     // worstWeekCard.style.color = getTextColor(getInverseCardColor(getWorstWeekFinish(myYear, myYear.members[i]), getTotalWeeks(myYear)));
-    //     textColor = getTextColor(league.members.length - getWorstWeekFinish(league, league.members[i]), league.members.length);
-    //     let worstWeekCard = makeStatCard("Worst Week", roundToHundred(getWorstWeek(league.members[i]).activeScore), ordinal_suffix_of(getWorstWeekFinish(league, league.members[i])) + " Worst", getWorstWeek(league.members[i]).weekNumber, true, cardColor, textColor, "Only represents the comparison against every other teams single lowest week");
-    //     miniColOne.appendChild(worstWeekCard);
-
-    //     let worstContainer = document.createElement('div');
-    //     worstContainer.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-4', 'mt-0', 'mb-1');
-    //     let worstPlayerCard = document.createElement('div');
-    //     let wvpHeader = document.createElement('h1');
-    //     worstPlayerCard.classList.add('card', 'mvpcard', 'text-center', 'h-100', 'justify-content-center', 'align-items-center', 'px-1');
-    //     wvpHeader.classList.add('card-title', 'pt-3');
-    //     wvpHeader.innerText = 'Least Valuable Player';
-    //     worstPlayerCard.appendChild(wvpHeader);
-
-    //     let wvpImage = document.createElement('img');
-    //     wvpImage.classList.add('resize', 'rounded-circle');
-    //     let teamWorstPlayer = getWVPWeek(league.members[i]);
-    //     if (teamWorstPlayer.position == "D/ST") {
-    //         wvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamWorstPlayer.realTeamID) + ".png&h=150&w=150";
-    //     } else {
-    //         wvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamWorstPlayer.playerID + ".png";
-    //     }
-    //     worstPlayerCard.appendChild(wvpImage);
-    //     let wvpName;
-    //     if (teamWorstPlayer.position == "D/ST") {
-    //         wvpName = teamWorstPlayer.firstName + " D/ST\n";
-    //     } else {
-    //         wvpName = teamWorstPlayer.firstName + " " + teamWorstPlayer.lastName + "\n";
-    //     }
-
-    //     let wvpNameElement = document.createElement('h4');
-    //     wvpNameElement.setAttribute('style', 'margin-left: auto; margin-right: auto;');
-    //     wvpNameElement.innerText = wvpName + " " + teamWorstPlayer.actualScore + " Points in Week " + teamWorstPlayer.week;
-
-    //     worstPlayerCard.appendChild(wvpNameElement);
-    //     worstContainer.appendChild(worstPlayerCard);
-    //     miniColOne.appendChild(worstContainer);
-
-    //     //add all
-    //     miniMainCol.appendChild(miniColOne);
-    //     mainRow.appendChild(miniMainCol);
-    //     a.appendChild(mainRow);
-    //     let chartsRow = document.createElement('div');
-    //     chartsRow.classList.add('row');
-    //     let lineSpace = document.createElement('div');
-    //     lineSpace.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-9');
-    //     linecan = document.createElement('canvas');
-    //     linecan.id = league.members[i].teamID + "LINECHART";
-    //     lineSpace.appendChild(linecan);
-    //     chartsRow.appendChild(lineSpace);
-
-    //     let donutSpace = document.createElement('div');
-    //     donutSpace.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-3', 'donutchart');
-    //     donutcan = document.createElement('canvas');
-    //     donutcan.classList.add('DONUTCANVAS1');
-    //     donutcan.id = league.members[i].teamID + "DONUTCANVAS";
-    //     donutSpace.appendChild(donutcan);
-    //     chartsRow.appendChild(donutSpace);
-    //     a.appendChild(chartsRow);
-
-    //     tabsList.appendChild(a);
-    //     createWeeklyLineChart(league.members[i], league);
-    //     createDonutChart(league.members[i]);
-    // }
-    $('#mainPwrTable').DataTable({
+    createLeagueStatsTable(league);
+    $('#league_stats_table').DataTable({
         paging: false,
         searching: false,
         //stripeClasses: true,
@@ -604,7 +329,7 @@ function createCrossChart(myLeague, divID) {
 
 }
 
-function createPwerRankTable(myYear) {
+function createPwerRankTable(league) {
     var powerRankTable = document.createElement('div');
     powerRankTable.classList.add('col-12', 'col-sm-12', 'col-md-12', 'col-lg-12', 'col-xl-12');
     var powerTable = document.createElement('table');
@@ -645,8 +370,8 @@ function createPwerRankTable(myYear) {
     tableHeader.appendChild(paCol);
     tableHead.appendChild(tableHeader);
     var tableBody = document.createElement('tbody');
-    for (i = 0; i < myYear.members.length; i++) {
-        let curMember = myYear.members[i];
+    for (i = 0; i < league.members.length; i++) {
+        let curMember = league.members[i];
         let row = document.createElement('tr');
         let rankCell = document.createElement('td');
         let pwrRankCell = document.createElement('td');

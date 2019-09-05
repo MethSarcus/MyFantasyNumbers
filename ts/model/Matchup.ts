@@ -10,6 +10,8 @@ class Matchup {
     public projectedMOV: number;
     public winner: number;
     public marginOfVictory: number;
+    public loserPotentialWinningSingleMoves: number;
+    public withinSingleMoveOfWinning: boolean;
     constructor(home, away, weekNumber, isPlayoff) {
         this.home = home;
         this.weekNumber = weekNumber;
@@ -40,6 +42,13 @@ class Matchup {
                 this.isUpset = true;
             } else {
                 this.isUpset = false;
+            }
+
+            this.loserPotentialWinningSingleMoves = this.getPoorLineupDecisions();
+            if (this.loserPotentialWinningSingleMoves > 0) {
+                this.withinSingleMoveOfWinning = true;
+            } else {
+                this.withinSingleMoveOfWinning = false;
             }
         }
     }
@@ -82,5 +91,23 @@ class Matchup {
         } else {
             return null;
         }
+    }
+
+    public getPoorLineupDecisions(): number {
+        var whiffedChoices = 0;
+        var team = this.home;
+        if (this.home.score > this.away.score) {
+            team = this.away;
+        }
+        team.lineup.forEach(startingPlayer => {
+            team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(benchedPlayer => {
+                let diff = benchedPlayer.score - startingPlayer.score
+                if (diff > this.marginOfVictory) {
+                    whiffedChoices += 1;
+                }
+            });
+        });
+
+        return whiffedChoices;
     }
 }

@@ -106,6 +106,20 @@ var Team = /** @class */ (function () {
         });
         return positionPlayers;
     };
+    Team.prototype.getEligibleSlotPlayers = function (slot) {
+        var players = this.lineup.concat(this.bench, this.IR);
+        var eligiblePlayers = players.filter(function (it) {
+            return it.isEligible(slot) === true;
+        });
+        return eligiblePlayers;
+    };
+    Team.prototype.getEligibleSlotBenchPlayers = function (slot) {
+        var players = this.bench.concat(this.IR);
+        var eligiblePlayers = players.filter(function (it) {
+            return it.isEligible(slot) === true;
+        });
+        return eligiblePlayers;
+    };
     return Team;
 }());
 //# sourceMappingURL=Team.js.map
