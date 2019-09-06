@@ -12,8 +12,9 @@ class Stats {
     public longestWinStreak: number;
     public standardDeviation: number;
     public weeklyAverage: number;
-    public gameLostDueToSingleChoice;
-    public choicesThatCouldHaveWonMatchup;
+    public gameLostDueToSingleChoice: number;
+    public choicesThatCouldHaveWonMatchup: number;
+    public positionalStats: PositionalStats;
     constructor(finalStanding) {
         this.finalStanding = finalStanding;
         this.wins = 0;

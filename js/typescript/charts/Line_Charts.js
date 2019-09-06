@@ -1,7 +1,6 @@
 function createMainWeeklyLineChart(league) {
     window.myChart.destroy();
     var ctx = document.getElementById("GRAPHCANVAS");
-    ctx.classList.toggle('mainDonut', false);
     ctx.classList.toggle('mainChart', true);
     var myWeekLabels = [];
     for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {

@@ -31,11 +31,15 @@
   <script type="text/javascript" src="js/typescript/model/Matchup.js"></script>
   <script type="text/javascript" src="js/typescript/utilities/calculations.js"></script>
   <script type="text/javascript" src="js/typescript/tables/League_Stats_Table.js"></script>
+  <script type="text/javascript" src="js/typescript/model/power_rank/PowerStats.js"></script>
+  <script type="text/javascript" src="js/typescript/model/power_rank/WeeklyPowerRanks.js"></script>
+  <script type="text/javascript" src="js/typescript/tables/Member_Week_Table.js"></script>
   <script type="text/javascript" src="js/advancedCalculations.js"></script>
   <script type="text/javascript" src="js/typescript/model/Player.js"></script>
   <script type="text/javascript" src="js/typescript/model/SeasonPlayer.js"></script>
   <script type="text/javascript" src="js/typescript/charts/Line_Charts.js"></script>
   <script type="text/javascript" src="js/typescript/charts/Bar_Charts.js"></script>
+  <script type="text/javascript" src="js/typescript/charts/Radar_Charts.js"></script>
   <script type="text/javascript" src="js/typescript/model/League.js"></script>
   <script type="text/javascript" src="js/setPage.js"></script>
   <script type="text/javascript" src="js/conversions.js"></script>
@@ -141,6 +145,9 @@
                   <tbody id="league_stats_table_body">
                   </tbody>
                 </table>
+              </div>
+              <div class="col-6" id="league_stacked_graph_container">
+                <canvas id="league_stacked_graph_canvas"></canvas>
               </div>
             </div>
           </div>

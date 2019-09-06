@@ -6,6 +6,7 @@ class League {
     public members: Member[];
     public settings: Settings;
     public seasonPortion: SEASON_PORTION;
+    public weeklyPowerRanks: Map<number, WeeklyPowerRanks>;
     constructor(id, season, weeks, members, settings, leagueName) {
         this.id = id;
         this.weeks = weeks;
@@ -14,6 +15,22 @@ class League {
         this.settings = settings; 
         this.seasonPortion = SEASON_PORTION.REGULAR;
         this.leagueName = leagueName;
+    }
+
+    public setPowerRanks(): void {
+        this.weeklyPowerRanks = new Map();
+        this.getSeasonPortionWeeks().forEach(week => {
+            this.addPowerWeek(week);
+        });
+    }
+
+    public addPowerWeek(week: Week): void {
+        var weeklyPowerRanks = new WeeklyPowerRanks(week.weekNumber, week.isPlayoffs);
+        week.matchups.forEach(matchup => {
+            weeklyPowerRanks.addMatchup(matchup);
+        });
+        weeklyPowerRanks.setRanks();
+        this.weeklyPowerRanks.set(week.weekNumber, weeklyPowerRanks);
     }
 
     public setMemberStats(weeks): void {
@@ -394,6 +411,7 @@ class League {
         });
         var league = new League(object.id, object.season, weeks, members, settings, object.leagueName);
         league.setMemberStats(league.getSeasonPortionWeeks());
+        league.setPowerRanks();
         return league;
     }
 

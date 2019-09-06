@@ -8,6 +8,21 @@ var League = /** @class */ (function () {
         this.seasonPortion = SEASON_PORTION.REGULAR;
         this.leagueName = leagueName;
     }
+    League.prototype.setPowerRanks = function () {
+        var _this = this;
+        this.weeklyPowerRanks = new Map();
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            _this.addPowerWeek(week);
+        });
+    };
+    League.prototype.addPowerWeek = function (week) {
+        var weeklyPowerRanks = new WeeklyPowerRanks(week.weekNumber, week.isPlayoffs);
+        week.matchups.forEach(function (matchup) {
+            weeklyPowerRanks.addMatchup(matchup);
+        });
+        weeklyPowerRanks.setRanks();
+        this.weeklyPowerRanks.set(week.weekNumber, weeklyPowerRanks);
+    };
     League.prototype.setMemberStats = function (weeks) {
         var _this = this;
         weeks.forEach(function (week) {
@@ -324,6 +339,7 @@ var League = /** @class */ (function () {
         });
         var league = new League(object.id, object.season, weeks, members, settings, object.leagueName);
         league.setMemberStats(league.getSeasonPortionWeeks());
+        league.setPowerRanks();
         return league;
     };
     League.prototype.getTeamAveragePointsPerPosition = function (teamID) {
