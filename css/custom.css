@@ -338,6 +338,9 @@ table.dataTable thead .sorting_desc {
 .dataTables_info {
     visibility: hidden;
 }
+#power_rank_table {
+    align-content: left;
+}
 
 .page-footer {
     margin-top: 70px;
@@ -374,12 +377,12 @@ th {
     background: #DFDFDF;
     /* Darken header a bit */
     font-weight: bold;
-    text-align: center;
+    text-align: left;
 }
 
 td {
     background: #FAFAFA;
-    text-align: center;
+    text-align: left;
 }
 
 .thead {

@@ -34,6 +34,7 @@
   <script type="text/javascript" src="js/typescript/model/power_rank/PowerStats.js"></script>
   <script type="text/javascript" src="js/typescript/model/power_rank/WeeklyPowerRanks.js"></script>
   <script type="text/javascript" src="js/typescript/tables/Member_Week_Table.js"></script>
+  <script type="text/javascript" src="js/typescript/tables/Power_Rank_Table.js"></script>
   <script type="text/javascript" src="js/advancedCalculations.js"></script>
   <script type="text/javascript" src="js/typescript/model/Player.js"></script>
   <script type="text/javascript" src="js/typescript/model/SeasonPlayer.js"></script>
@@ -94,7 +95,7 @@
         <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
       </li>
       <li class="nav-item ml-2">
-        <a id="powrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#powerRankPage">Power
+        <a id="pwrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#power_ranks_page">Power
           Ranks</a>
       </li>
       <li class="nav-item ml-auto mr-0 my-auto" id="yearSelector">
@@ -148,6 +149,27 @@
               </div>
               <div class="col-6" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas"></canvas>
+              </div>
+            </div>
+          </div>
+          <div id="power_ranks_page" class="tab-pane">
+            <div class="row">
+              <div class="col-7">
+                  <table class="table table-sm hover" id="power_rank_table">
+                      <thead>
+                          <tr id="power_rank_table_head">
+                            <th scope="col">Power Rank</th>
+                            <th scope="col">Team</th>
+                            <th scope="col">Power Record</th>
+                            <th scope="col">Win %</th>
+                            <th scope="col">Potential Record</th>
+                            <th scope="col">Potential Win %</th>
+                          </tr>
+                        </thead>
+                        <tbody id="power_rank_table_body">
+                          
+                        </tbody>
+                  </table>
               </div>
             </div>
           </div>

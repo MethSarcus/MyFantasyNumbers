@@ -6,6 +6,10 @@ var Stats = /** @class */ (function () {
         this.ties = 0;
         this.powerWins = 0;
         this.powerLosses = 0;
+        this.powerTies = 0;
+        this.potentialPowerWins = 0;
+        this.potentialPowerLosses = 0;
+        this.potentialPowerTies = 0;
         this.pf = 0;
         this.pa = 0;
         this.pp = 0;
@@ -18,6 +22,22 @@ var Stats = /** @class */ (function () {
         }
         else {
             return roundToHundred(this.wins / (this.wins + this.losses + this.ties));
+        }
+    };
+    Stats.prototype.getPowerWinPct = function () {
+        if (this.powerWins == 0) {
+            return 0.00;
+        }
+        else {
+            return roundToHundred(this.powerWins / (this.powerWins + this.powerLosses + this.powerTies));
+        }
+    };
+    Stats.prototype.getPotentialPowerWinPct = function () {
+        if (this.potentialPowerWins == 0) {
+            return 0.00;
+        }
+        else {
+            return roundToHundred(this.potentialPowerWins / (this.potentialPowerWins + this.potentialPowerLosses + this.potentialPowerTies));
         }
     };
     Stats.prototype.roundStats = function () {

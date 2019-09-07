@@ -63,12 +63,27 @@ var League = /** @class */ (function () {
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
+            weekMatches.sort(function (x, y) {
+                if (x.potentialPoints < y.potentialPoints) {
+                    return -1;
+                }
+                if (x.potentialPoints > y.potentialPoints) {
+                    return 1;
+                }
+                return 0;
+            });
+            for (var i = 0; i < weekMatches.length; i++) {
+                var curMember = _this.getMember(weekMatches[i].teamID);
+                curMember.stats.potentialPowerWins += i;
+                curMember.stats.potentialPowerLosses += (weekMatches.length - 1 - i);
+            }
         });
         this.members.forEach(function (member) {
             member.setAdvancedStats(weeks);
             member.stats.roundStats();
             member.stats.choicesThatCouldHaveWonMatchup = _this.getLosingDecisionAmount(member.teamID);
             member.stats.gameLostDueToSingleChoice = _this.getGamesLostDueToSingleChoice(member.teamID);
+            member.stats.powerRank = _this.getPowerRankFinish(member.teamID);
         });
     };
     League.prototype.resetStats = function () {
@@ -318,16 +333,15 @@ var League = /** @class */ (function () {
                 matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(function (player) {
                     homeRoster.push(new Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
+                var awayTeamId = -1;
                 var away;
                 if (!matchup.byeWeek) {
                     var awayRoster = [];
+                    awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(function (player) {
                         awayRoster.push(new Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                     });
-                    away = new Team(matchup.away.teamID, awayRoster, object.settings.activeLineupSlots, matchup.away.teamID);
-                }
-                else {
-                    var awayTeamId = -1;
+                    away = new Team(matchup.away.teamID, awayRoster, object.settings.activeLineupSlots, matchup.home.teamID);
                 }
                 var home = new Team(matchup.home.teamID, homeRoster, object.settings.activeLineupSlots, awayTeamId);
                 matchups.push(new Matchup(home, away, week.weekNumber, week.isPlayoffs));
@@ -467,6 +481,16 @@ var League = /** @class */ (function () {
             }
         });
         return winnableLosses;
+    };
+    League.prototype.getPowerRankFinish = function (teamID) {
+        var finish = 1;
+        var wins = this.getMember(teamID).stats.powerWins;
+        this.members.forEach(function (member) {
+            if (wins < member.stats.powerWins && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
     };
     return League;
 }());

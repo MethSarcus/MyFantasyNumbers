@@ -16,7 +16,7 @@ class Matchup {
         this.home = home;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
-        if (away === undefined) {
+        if (away == undefined || away == null) {
             this.byeWeek = true;
             this.isUpset = false;
             this.isTie = false;

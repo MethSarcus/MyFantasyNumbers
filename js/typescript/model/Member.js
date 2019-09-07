@@ -38,6 +38,12 @@ var Member = /** @class */ (function () {
     Member.prototype.finishToString = function () {
         return ordinal_suffix_of(this.stats.finalStanding);
     };
+    Member.prototype.powerRecordToString = function () {
+        return this.stats.powerWins + "-" + this.stats.powerLosses;
+    };
+    Member.prototype.potentialPowerRecordToString = function () {
+        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
+    };
     return Member;
 }());
 //# sourceMappingURL=Member.js.map

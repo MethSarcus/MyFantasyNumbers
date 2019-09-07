@@ -54,4 +54,12 @@ class Member {
     public finishToString(): string {
         return ordinal_suffix_of(this.stats.finalStanding);
     }
+
+    public powerRecordToString(): string {
+        return this.stats.powerWins + "-" + this.stats.powerLosses;
+    }
+
+    public potentialPowerRecordToString(): string {
+        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
+    }
 }

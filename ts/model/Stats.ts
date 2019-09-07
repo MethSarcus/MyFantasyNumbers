@@ -5,6 +5,11 @@ class Stats {
     public powerRank: number;
     public powerWins: number;
     public powerLosses: number;
+    public powerTies: number;
+    public potentialPowerWins: number;
+    public potentialPowerLosses: number;
+    public potentialPowerTies: number;
+    public potentialPowerRank: number;
     public finalStanding: number;
     public pf: number;
     public pa: number;
@@ -22,6 +27,10 @@ class Stats {
         this.ties = 0;
         this.powerWins = 0;
         this.powerLosses = 0;
+        this.powerTies = 0;
+        this.potentialPowerWins = 0;
+        this.potentialPowerLosses = 0;
+        this.potentialPowerTies = 0;
         this.pf = 0;
         this.pa = 0;
         this.pp = 0;
@@ -34,6 +43,21 @@ class Stats {
             return 0.00;
         } else {
             return roundToHundred(this.wins / (this.wins + this.losses + this.ties));
+        }
+    }
+    public getPowerWinPct(): number {
+        if (this.powerWins == 0) {
+            return 0.00;
+        } else {
+            return roundToHundred(this.powerWins / (this.powerWins + this.powerLosses + this.powerTies));
+        }
+    }
+
+    public getPotentialPowerWinPct(): number {
+        if (this.potentialPowerWins == 0) {
+            return 0.00;
+        } else {
+            return roundToHundred(this.potentialPowerWins / (this.potentialPowerWins + this.potentialPowerLosses + this.potentialPowerTies));
         }
     }
 

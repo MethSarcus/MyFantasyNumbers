@@ -69,7 +69,7 @@ var Team = /** @class */ (function () {
         var projectedScore = 0;
         for (var i in players) {
             if (players[i].projectedScore != null && players[i].projectedScore !== "undefined") {
-                this.projectedScore += players[i].projectedScore;
+                projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;

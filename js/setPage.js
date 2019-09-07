@@ -126,7 +126,7 @@ function setPage(league) {
     //stackedRow.appendChild(stackSpace);
     q.insertBefore(cardRow, q.childNodes[0]);
     tabsList.appendChild(q); //adds main league page
-
+    createPowerRankTable(league);
 
 
     //create graph page
@@ -210,6 +210,12 @@ function setPage(league) {
     tradeButton.innerHTML = "Trade Web";
     createLeagueStatsTable(league);
     $('#league_stats_table').DataTable({
+        paging: false,
+        searching: false,
+        //stripeClasses: true,
+        // responsive: true
+    });
+    $('#power_rank_table').DataTable({
         paging: false,
         searching: false,
         //stripeClasses: true,

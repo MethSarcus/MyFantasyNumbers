@@ -75,10 +75,10 @@ class Team {
     }
 
     public getProjectedScore(players: Player[]): number {
-        const projectedScore = 0;
+        var projectedScore = 0;
         for (const i in players) {
             if (players[i].projectedScore != null && players[i].projectedScore !== "undefined") {
-                this.projectedScore += players[i].projectedScore;
+                projectedScore += players[i].projectedScore;
             }
         }
         return projectedScore;

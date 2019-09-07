@@ -230,7 +230,9 @@ function getBestPositionPlayerAverageScore(league, position) {
     });
     var totalScore = 0;
     players.forEach(function (player) {
-        totalScore += player.score;
+        if (player.score != undefined) {
+            totalScore += player.score;
+        }
     });
     return roundToTen(totalScore / players.length);
 }

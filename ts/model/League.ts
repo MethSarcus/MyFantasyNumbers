@@ -71,12 +71,28 @@ class League {
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
+
+            weekMatches.sort((x: Team, y: Team) => {
+                if (x.potentialPoints < y.potentialPoints) {
+                  return -1;
+                }
+                if (x.potentialPoints > y.potentialPoints) {
+                  return 1;
+                }
+                return 0;
+              });
+              for (let i = 0; i < weekMatches.length; i++) {
+                const curMember: Member = this.getMember(weekMatches[i].teamID);
+                curMember.stats.potentialPowerWins += i;
+                curMember.stats.potentialPowerLosses += (weekMatches.length - 1 - i);
+              }
        });
         this.members.forEach((member) => {
            member.setAdvancedStats(weeks);
            member.stats.roundStats();
            member.stats.choicesThatCouldHaveWonMatchup = this.getLosingDecisionAmount(member.teamID);
            member.stats.gameLostDueToSingleChoice = this.getGamesLostDueToSingleChoice(member.teamID);
+           member.stats.powerRank = this.getPowerRankFinish(member.teamID);
        });
     }
 
@@ -369,9 +385,11 @@ class League {
                         player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, 
                         player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
+                var awayTeamId = -1;
                 var away;
                 if (!matchup.byeWeek) {
                     var awayRoster = [];
+                    awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(player => {
                     awayRoster.push(new Player(player.firstName, player.lastName, 
                         player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, 
@@ -380,9 +398,7 @@ class League {
                     away = new Team(matchup.away.teamID,
                         awayRoster,
                         object.settings.activeLineupSlots,
-                        matchup.away.teamID);
-                } else {
-                    var awayTeamId = -1;
+                        matchup.home.teamID);
                 }
                 var home = new Team(
                     matchup.home.teamID,
@@ -554,5 +570,17 @@ class League {
         });
 
         return winnableLosses;
+    }
+
+    public getPowerRankFinish(teamID: number): number {
+        let finish = 1;
+        const wins = this.getMember(teamID).stats.powerWins;
+        this.members.forEach((member) => {
+            if (wins < member.stats.powerWins && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
     }
 }
