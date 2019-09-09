@@ -66,6 +66,9 @@ function getLineupSlot(lineupSlotID) {
     else if (lineupSlotID == 20) {
         return "BENCH";
     }
+    else if (lineupSlotID == 7) {
+        return "SUPERFLEX";
+    }
     else if (lineupSlotID == 21) {
         return "IR";
     }
@@ -230,7 +233,7 @@ function getBestPositionPlayerAverageScore(league, position) {
     });
     var totalScore = 0;
     players.forEach(function (player) {
-        if (player.score != undefined) {
+        if (player != undefined) {
             totalScore += player.score;
         }
     });

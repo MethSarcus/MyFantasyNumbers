@@ -19,7 +19,7 @@ function createTeamBarChart(league, member) {
                 data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
             }]
     };
-    var memberBarChart = new Chart(ctx, {
+    window.myBarChart = new Chart(ctx, {
         type: 'bar',
         data: chartData,
         options: {
@@ -56,7 +56,7 @@ function createTeamBarChart(league, member) {
             }
         }
     });
-    memberBarChart.render();
+    window.myBarChart.render();
 }
 // function createLeagueStackedGraph(league: League): void {
 //     var ctx = document.getElementById("league_stacked_graph_container");

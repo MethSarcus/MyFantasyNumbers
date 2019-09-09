@@ -11,7 +11,7 @@ var Settings = /** @class */ (function () {
         var returnpositions = [];
         var positions = [];
         this.activeLineupSlots.forEach(function (slot) {
-            if (!positions.includes(slot[0]) && slot[0] != "23") {
+            if (!positions.includes(slot[0]) && slot[0] != "23" && slot[0] != "7") {
                 positions.push(slot[0]);
                 returnpositions.push(getLineupSlot(slot[0]));
             }

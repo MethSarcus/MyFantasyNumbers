@@ -1,7 +1,7 @@
 function createTeamRadarChart(league, member) {
     $('#radar_chart_canvas').remove();
-    $('#radar_chart_container').append('<canvas id="radar_chart_canvas"><canvas>');
-    new Chart(document.getElementById("radar_chart_canvas"), {
+    $('#radar_chart_container').html('<canvas id="radar_chart_canvas"><canvas>');
+    window.myRadarChart = new Chart(document.getElementById("radar_chart_canvas"), {
         type: 'radar',
         data: {
             labels: league.settings.positions,
