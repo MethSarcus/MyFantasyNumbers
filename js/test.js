@@ -18,7 +18,6 @@ function getSmallestMOV(myYear) {
             }
         }
     }
-
     return curWeek;
 }
 
@@ -96,62 +95,81 @@ function startValueEquation(player1, player2, week) {
 
 }
 
-function StartSit(start, sit, week) {
-    this.started = start;
-    this.sat = sit;
-    this.actualDifference = start.actualScore - sit.actualScore;
-    this.projectedDifference = start.projectedScore - sit.projectedScore;
-    this.week = week;
-    if (this.actualDifference > 0) {
-        this.goodDecision = true;
-    } else if (this.actualDifference < 0) {
-        this.goodDecision = false;
-    } else {
-        this.goodDecision = null;
+class StartSit {
+    constructor(start, sit, week) {
+        this.started = start;
+        this.sat = sit;
+        this.actualDifference = start.actualScore - sit.actualScore;
+        this.projectedDifference = start.projectedScore - sit.projectedScore;
+        this.week = week;
+        if (this.actualDifference > 0) {
+            this.goodDecision = true;
+        }
+        else if (this.actualDifference < 0) {
+            this.goodDecision = false;
+        }
+        else {
+            this.goodDecision = null;
+        }
+        if (calcMatchupPointDifference(week) < this.actualDifference) {
+            this.changedOutcome = true;
+        }
+        else {
+            this.changedOutcome = false;
+        }
     }
-
-    if (calcMatchupPointDifference(week) < this.actualDifference) {
-        this.changedOutcome = true;
-    } else {
-        this.changedOutcome = false;
-    }
-
-
 }
 
-function seasonMatchups() {
-    this.regularSeasonNumWeeks = 0;
-    this.playoffDuration = 0;
-    this.totalNumWeeks = 0;
-    this.matchups = [];
-}
+// class Matchup {
+//     constructor(home, away, weekNumber, isPlayoff) {
+//         this.home = home;
+//         this.weekNumber = weekNumber;
+//         this.isPlayoffs = isPlayoff;
+//         if (away == undefined){
+//             this.byeWeek = true;
+//             this.isUpset = false;
+//         } else{
+//             this.away = away;
+//             if (home.projectedScore > away.projectedScore) {
+//                 this.projectedWinner = home.teamID;
+//             } else {
+//                 this.projectedWinner = away.teamID
+//             }
+//             this.projectedMOV = (Math.abs(home.projectedScore - away.projectedScore));
+//             if (home.score > away.score) {
+//                 this.winner = home.teamID;
+//             } else {
+//                 this.winner = away.teamID
+//             }
+//             this.marginOfVictory = (Math.abs(home.score - away.score));
+//             this.byeWeek = false;
+//             if (this.projectedWinner != this.winner) {
+//                 this.isUpset = true;
+//             } else {
+//                 this.isUpset = false;
+//             }
+//         }
+//     }
+// }
 
-function Matchup(home, away) {
-    this.homeTeam = new Team(home);
-    this.awayTeam = new Team(away);
-    this.projectedWinnerTeamID = "";
-    this.projectedMOV = 0;
-    this.actualWInnerTeamID = "";
-    this.actualMOV = 0;
-    this.playoffMatchup = false;
-    this.byeWeek = false;
-    this.weekNumber = 0;
-    this.isUpset = false;
-}
 
-function Team() {
-    this.teamID = 0;
-    this.memberID = "";
-    this.location = "";
-    this.nickname = "";
-    this.fullName = "";
-    this.teamAbbrev = "";
-    this.finalScore = 0;
-    this.projectedScore = 0;
-    this.possibleScore = 0;
-    this.projectedDifference = 0;
-    this.possibleDifference = 0;
-    this.activeRoster = [];
-    this.bench = [];
-    this.IR = [];
-}
+// class Team {
+//     constructor(teamID, players, activeLineupSlots) {
+//         this.lineup = [];
+//         this.bench = [];
+//         this.IR = [];
+//         for (player in players){
+//             if (player.lineupSlotID == 21) {
+//                 this.IR.push(player);
+//             } else if (player.lineupSlotID == 20) {
+//                 this.bench.push(player);
+//             } else {
+//                 week.lineup.push(player);
+//             }
+//         }
+//         this.teamID = teamID;
+//         this.potentialPoints = getWeekScore(getPotentialPoints(players, activeLineupSlots));
+//         this.score = getWeekScore(this.lineup);
+//         this.projectedScore = getProjectedScore(this.lineup);
+//     }
+// }

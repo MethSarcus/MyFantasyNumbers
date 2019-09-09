@@ -1,9 +1,5 @@
-//line chart use C3 to be able to use regions
 //donut chart use AMCHARTS for nested dougnut
-
-
-
-function createWeeklyLineCharts(leagueMembers) {
+function createWeeklyLineCharts(league) {
     //Chart.defaults.global.legend.labels.usePointStyle = true;
     //let colors = ['red', 'green', 'blue', 'orange', 'lime', 'magenta', 'teal', 'yellow'];
     window.myChart.destroy();

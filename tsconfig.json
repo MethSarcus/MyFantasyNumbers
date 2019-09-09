@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outDir": "js/typescript",
+        "allowJs": true,
+        "target": "es5",
+        "sourceMap": true
+    },
+    "include": [
+        "./ts/**/*"
+    ]
+}

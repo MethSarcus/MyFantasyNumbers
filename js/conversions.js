@@ -25,45 +25,6 @@ function hslToRgb(h, s, l) {
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
-function getPosition(eligibleSlots) {
-    if (eligibleSlots[0] == 0) {
-        return "QB";
-    } else if (eligibleSlots[0] == 2) {
-        return "RB";
-    } else if (eligibleSlots[0] == 3) {
-        return "WR";
-    } else if (eligibleSlots[0] == 16) {
-        return "D/ST";
-    } else if (eligibleSlots[0] == 17) {
-        return "K";
-    } else if (eligibleSlots[0] == 5) {
-        return "TE";
-    }
-}
-
-function getLineupSlot(lineupSlotID) {
-    if (lineupSlotID == 0) {
-        return "QB";
-    } else if (lineupSlotID == 2) {
-        return "RB";
-    } else if (lineupSlotID == 23) {
-        return "FLEX";
-    } else if (lineupSlotID == 20) {
-        return "BENCH";
-    } else if (lineupSlotID == 21) {
-        return "IR";
-    } else if (lineupSlotID == 4) {
-        return "WR";
-    } else if (lineupSlotID == 16) {
-        return "D/ST";
-    } else if (lineupSlotID == 17) {
-        return "K";
-    } else if (lineupSlotID == 6) {
-        return "TE";
-    }
-}
-
-
 //Params: Int, team ID
 //Returns: String, Team Abbreviation
 function getRealTeamInitials(realteamID) {

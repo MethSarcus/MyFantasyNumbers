@@ -29,16 +29,20 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "5.7.0",
-        "bootstrap": "4.2.1",
+        "@types/mathjs": "^6.0.1",
+        "@types/node": "^12.7.1",
+        "bootstrap": "^4.3.1",
         "chart.js": "2.7.3",
         "datatables.net-bs4": "1.10.19",
-        "jquery": "3.3.1",
+        "jquery": "^3.4.1",
         "jquery.easing": "^1.4.1",
+        "mathjs": "^6.0.4",
         "mysql": "^2.17.1",
+        "node": "^12.8.0",
         "rainbowvis.js": "^1.0.1"
     },
     "devDependencies": {
-        "browser-sync": "2.26.3",
+        "browser-sync": "^2.26.7",
         "gulp": "^4.0.0",
         "gulp-autoprefixer": "^6.0.0",
         "gulp-clean-css": "4.0.0",
