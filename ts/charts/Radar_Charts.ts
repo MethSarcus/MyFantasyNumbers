@@ -58,9 +58,9 @@ function createTeamRadarChart(league: League, member: Member) {
               scale: {
                   ticks: {
                       beginAtZero: true,
-                      max: .8,
+                      max: 1,
                       min: 0,
-                      stepSize: .2,
+                      stepSize: .25,
                       display: false,
                 }
               } 
