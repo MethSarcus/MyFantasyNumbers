@@ -92,15 +92,6 @@ function createMainWeeklyLineChart(league) {
     });
 }
 function createMemberWeeklyLineChart(league, member) {
-    //(window as any).myChart.destroy();
-    $('#TEAM_LINE_CANVAS').remove();
-    $('#team_line_graph_container').append('<canvas id="TEAM_LINE_CANVAS"><canvas>');
-    var ctx = document.getElementById("TEAM_LINE_CANVAS");
-    ctx.classList.toggle('team_weekly_line_chart', true);
-    var myWeekLabels = [];
-    for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
-        myWeekLabels.push("Week " + i);
-    }
     var weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
     weeklyScoreMap.set(-2, []);
@@ -152,46 +143,59 @@ function createMemberWeeklyLineChart(league, member) {
             });
         }
     });
-    var memberLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: myWeekLabels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                position: "top",
-                text: "Points Scored By Week",
-                fontSize: 20,
-                fontColor: "#111",
-            },
-            scales: {
-                yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                        }
-                    }]
-            },
-            plugins: {
-                deferred: {
-                    xOffset: 150,
-                    yOffset: '50%',
-                    delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
-                }
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-                labels: {
-                    fontColor: "#333",
-                    fontSize: 12
-                },
-            }
+    if (window.memberLineChart == undefined) {
+        var ctx = document.getElementById("TEAM_LINE_CANVAS");
+        ctx.classList.toggle('team_weekly_line_chart', true);
+        var myWeekLabels = [];
+        for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
+            myWeekLabels.push("Week " + i);
         }
-    });
-    memberLineChart.render();
+        window.memberLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: myWeekLabels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: {
+                    display: true,
+                    position: "top",
+                    text: "Points Scored By Week",
+                    fontSize: 20,
+                    fontColor: "#111",
+                },
+                scales: {
+                    yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                            }
+                        }]
+                },
+                plugins: {
+                    deferred: {
+                        xOffset: 150,
+                        yOffset: '50%',
+                        delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#333",
+                        fontSize: 12
+                    },
+                }
+            }
+        });
+        window.memberLineChart.render();
+    }
+    else {
+        window.memberLineChart.data.datasets = [];
+        window.memberLineChart.data.datasets = datasets;
+        window.memberLineChart.update();
+    }
 }
 //# sourceMappingURL=Line_Charts.js.map
