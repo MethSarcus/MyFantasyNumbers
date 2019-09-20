@@ -209,6 +209,7 @@ function setPage(league) {
     tradeButton.onclick = drawTradeWeb;
     tradeButton.innerHTML = "Trade Web";
     createLeagueStatsTable(league);
+    createLeagueStackedGraph(league);
     $('#league_stats_table').DataTable({
         paging: false,
         searching: false,

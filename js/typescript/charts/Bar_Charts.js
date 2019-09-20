@@ -1,19 +1,21 @@
 function createTeamBarChart(league, member) {
     if (window.memberBarChart != undefined) {
         window.memberBarChart.data.datasets = [];
-        window.memberBarChart.data.datasets = [{
-                label: member.nameToString(),
-                backgroundColor: "blue",
-                data: league.getMemberTotalPointsPerPosition(member.teamID)
-            }, {
-                label: "All Opponents",
-                backgroundColor: "orange",
-                data: league.getLeaguePointsPerPosition()
-            }, {
-                label: "League Average",
-                backgroundColor: "black",
-                data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
-            }];
+        window.memberBarChart.data.datasets.push({
+            label: member.nameToString(),
+            backgroundColor: "blue",
+            data: league.getMemberTotalPointsPerPosition(member.teamID)
+        });
+        window.memberBarChart.data.datasets.push({
+            label: "All Opponents",
+            backgroundColor: "orange",
+            data: league.getLeaguePointsPerPosition()
+        });
+        window.memberBarChart.data.datasets.push({
+            label: "League Average",
+            backgroundColor: "black",
+            data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
+        });
         window.memberBarChart.update();
     }
     else {
@@ -75,90 +77,93 @@ function createTeamBarChart(league, member) {
         window.memberBarChart.render();
     }
 }
-// function createLeagueStackedGraph(league: League): void {
-//     var ctx = document.getElementById("league_stacked_graph_container");
-//     //window.myChart.destroy();
-//     window.myChart = new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: makeMemberLabels(league),
-//             datasets: createStackedDatasets(league),
-//         },
-//         legend: {
-//             display: true,
-//             position: "bottom",
-//             labels: {
-//                 fontColor: "#333",
-//                 fontSize: 16
-//             }
-//         },
-//         options: {
-//             responsive: true,
-//             title: {
-//                 display: true,
-//                 position: "top",
-//                 text: "Total Points Scored",
-//                 fontSize: 36,
-//                 fontColor: "#111",
-//             },
-//             tooltips: {
-//                 mode: 'index',
-//                 intersect: false
-//             },
-//             scales: {
-//                 xAxes: [{
-//                     stacked: true
-//                 }],
-//                 yAxes: [{
-//                     stacked: true,
-//                     beginAtZero: true,
-//                 }],
-//             },
-//             legend: {
-//                 display: true,
-//                 position: "bottom",
-//                 labels: {
-//                     fontColor: "#333",
-//                     fontSize: 16
-//                 }
-//             }
-//         },
-//     });
-//     myChart.render();
-// }
-// function createStackedPFDatasets(league: League) {
-//     var memberData = [];
-//     var datasets = [];
-//     var backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
-//     var positions = league.settings.positions;
-//     for (i in myYear.members) {
-//         memberData.push(getStackedData(myYear.members[i]));
-//     }
-//     for (x = 0; x < positions.length; x++) {
-//         let set = {
-//             type: 'bar',
-//             label: positions[x],
-//             backgroundColor: backgroundColors[x],
-//             data: extractMemberData(memberData, x),
-//         };
-//         datasets.push(set);
-//     }
-//     return datasets;
-// }
-// function makeMemberLabels(league: League): string[] {
-//     var labels = [];
-//     league.members.forEach(member => {
-//         labels.push(member.nameToString());
-//     });
-//     return labels;
-// }
-// function extractMemberData(memberData, pos) {
-//     var data = [];
-//     for (i = 0; i < memberData.length; i++) {
-//         data.push(memberData[i][pos]);
-//     }
-//     return data;
-// }
-function getMemberStackedPfData() {
+function createLeagueStackedGraph(league) {
+    if (window.leagueStackedChart != undefined) {
+        window.leagueStackedChart.datasets = [];
+        window.leagueStackedChart.datasets = getLeagueStackedDatasets(league);
+        window.leagueStackedChart.update();
+    }
+    else {
+        var ctx = document.getElementById("league_stacked_graph_canvas").getContext('2d');
+        window.leagueStackedChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: makeMemberLabels(league),
+                datasets: getLeagueStackedDatasets(league),
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                    fontColor: "#333",
+                    fontSize: 16
+                }
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: {
+                    display: true,
+                    position: "top",
+                    text: "Total Points Scored",
+                    fontSize: 36,
+                    fontColor: "#111",
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    xAxes: [{
+                            stacked: true
+                        }],
+                    yAxes: [{
+                            stacked: true,
+                            beginAtZero: true,
+                        }],
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#333",
+                        fontSize: 16
+                    }
+                }
+            },
+        });
+        window.leagueStackedChart.render();
+    }
+}
+function getLeagueStackedDatasets(league) {
+    var datasets = [];
+    var backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
+    var positions = league.settings.getPositions();
+    var labels = [];
+    var increment = 0;
+    positions.forEach(function (position) {
+        var dataset = {
+            label: position,
+            backgroundColor: backgroundColors[increment],
+            data: []
+        };
+        datasets.push(dataset);
+        increment += 1;
+    });
+    league.members.forEach(function (member) {
+        labels.push(member.nameToString);
+        var positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
+        for (var i = 0; i < datasets.length; i++) {
+            datasets[i].data.push(positionPoints[i]);
+        }
+    });
+    return datasets;
+}
+function makeMemberLabels(league) {
+    var labels = [];
+    league.members.forEach(function (member) {
+        labels.push(member.nameToString());
+    });
+    return labels;
 }
 //# sourceMappingURL=Bar_Charts.js.map

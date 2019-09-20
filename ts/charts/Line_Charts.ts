@@ -108,7 +108,7 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
         weeklyScoreMap.set(-2, []);
         weeklyScoreMap.set(member.teamID, []);
     
-        league.getSeasonPortionWeeks().forEach(week => {
+        league.weeks.forEach(week => {
             if (!week.getTeamMatchup(member.teamID).byeWeek) {
                 weeklyScoreMap.get(-2).push(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score);
             } else {
@@ -156,7 +156,7 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
         var ctx = (document.getElementById("TEAM_LINE_CANVAS") as HTMLCanvasElement);
         ctx.classList.toggle('team_weekly_line_chart', true);
         var myWeekLabels = [];
-        for(var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
+        for(var i = 1; i <= (league.weeks.length); i++) {
             myWeekLabels.push("Week " + i);
         }
         

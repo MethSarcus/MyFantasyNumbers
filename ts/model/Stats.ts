@@ -11,6 +11,10 @@ class Stats {
     public potentialPowerTies: number;
     public potentialPowerRank: number;
     public finalStanding: number;
+    public gutPoints: number;
+    public gutPlayersPlayed: number;
+    public gutWins: number;
+    public gutLosses: number;
     public pf: number;
     public pa: number;
     public pp: number;
@@ -36,6 +40,10 @@ class Stats {
         this.pp = 0;
         this.choicesThatCouldHaveWonMatchup = 0;
         this.gameLostDueToSingleChoice = 0;
+        this.gutPlayersPlayed = 0;
+        this.gutPoints = 0;
+        this.gutWins = 0;
+        this.gutLosses = 0;
     }
 
     public getWinPct(): number {

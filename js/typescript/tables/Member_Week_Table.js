@@ -2,7 +2,7 @@ function updateMemberWeekTable(league, member) {
     $('#member_week_table_body').empty();
     var weekTable = document.getElementById('memberWeekTable');
     var tableBody = document.getElementById('member_week_table_body');
-    league.getSeasonPortionWeeks().forEach(function (week) {
+    league.weeks.forEach(function (week) {
         var curMatchup = week.getTeamMatchup(member.teamID);
         var curTeam = week.getTeam(member.teamID);
         var row = document.createElement('tr');

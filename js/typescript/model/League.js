@@ -58,6 +58,8 @@ var League = /** @class */ (function () {
             for (var i = 0; i < weekMatches.length; i++) {
                 var curMember = _this.getMember(weekMatches[i].teamID);
                 var curMemberTeam = weekMatches[i];
+                curMember.stats.gutPlayersPlayed += curMemberTeam.gutPlayers;
+                curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
                 curMember.stats.powerWins += i;
@@ -487,6 +489,17 @@ var League = /** @class */ (function () {
         var wins = this.getMember(teamID).stats.powerWins;
         this.members.forEach(function (member) {
             if (wins < member.stats.powerWins && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
+    League.prototype.getGutAverageFinish = function (teamID) {
+        var _this = this;
+        var finish = 1;
+        var gutAvg = this.getMember(teamID).stats.gutPoints / this.getMember(teamID).stats.gutPlayersPlayed;
+        this.members.forEach(function (member) {
+            if (gutAvg < (member.stats.gutPoints / _this.getMember(teamID).stats.gutPlayersPlayed) && member.teamID !== teamID) {
                 finish += 1;
             }
         });

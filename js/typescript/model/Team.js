@@ -20,6 +20,9 @@ var Team = /** @class */ (function () {
         this.score = this.getTeamScore(this.lineup);
         this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
         this.projectedScore = this.getProjectedScore(this.lineup);
+        var gutArray = this.getGutPoints(activeLineupSlots);
+        this.gutDifference = gutArray[0];
+        this.gutPlayers = gutArray[1];
     }
     Team.prototype.getOptimalLineup = function (activeLineupSlots) {
         var rosterSlots = [];
@@ -119,6 +122,66 @@ var Team = /** @class */ (function () {
             return it.isEligible(slot) === true;
         });
         return eligiblePlayers;
+    };
+    Team.prototype.getProjectedOptimalLineup = function (activeLineupSlots) {
+        var rosterSlots = [];
+        // tslint:disable-next-line: forin
+        for (var i in activeLineupSlots) {
+            for (var w = 0; w < activeLineupSlots[i][1]; w++) {
+                rosterSlots.push(activeLineupSlots[i][0]);
+            }
+        }
+        var optimalLineup = new Array();
+        // tslint:disable-next-line: forin
+        for (var x in rosterSlots) {
+            var highScore = 0;
+            var bestPlayer = null;
+            var eligibleWeekPlayers = [];
+            var players = this.lineup.concat(this.bench, this.IR);
+            for (var y in players) {
+                if (!includesPlayer(players[y], optimalLineup)) {
+                    if (players[y].isEligible(rosterSlots[x])) {
+                        eligibleWeekPlayers.push(players[y]);
+                    }
+                }
+            }
+            for (var z in eligibleWeekPlayers) {
+                if (eligibleWeekPlayers[z].projectedScore > highScore) {
+                    highScore = eligibleWeekPlayers[z].projectedScore;
+                    bestPlayer = eligibleWeekPlayers[z];
+                }
+            }
+            if (bestPlayer != null) {
+                optimalLineup.push(bestPlayer);
+                highScore = 0;
+            }
+        }
+        return optimalLineup;
+    };
+    Team.prototype.getGutPoints = function (activeLineupSlots) {
+        var players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
+        var gutPlayers = players[0];
+        var satPlayers = players[1];
+        var diff = this.getTeamScore(gutPlayers) - this.getTeamScore(satPlayers);
+        var playerNum = gutPlayers.length;
+        return [diff, playerNum];
+    };
+    Team.prototype.getProjectedLinupPlayerDifference = function (activeLineupSlots) {
+        var _this = this;
+        var gutPlayers = [];
+        var satPlayers = [];
+        var projectedLineup = this.getProjectedOptimalLineup(activeLineupSlots);
+        this.lineup.forEach(function (player) {
+            if (!includesPlayer(player, projectedLineup)) {
+                gutPlayers.push(player);
+            }
+        });
+        projectedLineup.forEach(function (player) {
+            if (!includesPlayer(player, _this.lineup)) {
+                satPlayers.push(player);
+            }
+        });
+        return [gutPlayers, satPlayers];
     };
     return Team;
 }());

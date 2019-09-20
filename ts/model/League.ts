@@ -66,6 +66,8 @@ class League {
             for (let i = 0; i < weekMatches.length; i++) {
                 const curMember: Member = this.getMember(weekMatches[i].teamID);
                 const curMemberTeam: Team = weekMatches[i];
+                curMember.stats.gutPlayersPlayed += curMemberTeam.gutPlayers;
+                curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
                 curMember.stats.powerWins += i;
@@ -577,6 +579,18 @@ class League {
         const wins = this.getMember(teamID).stats.powerWins;
         this.members.forEach((member) => {
             if (wins < member.stats.powerWins && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+
+    public getGutAverageFinish(teamID: number): number {
+        let finish = 1;
+        const gutAvg = this.getMember(teamID).stats.gutPoints/this.getMember(teamID).stats.gutPlayersPlayed;
+        this.members.forEach((member) => {
+            if (gutAvg < (member.stats.gutPoints/this.getMember(teamID).stats.gutPlayersPlayed) && member.teamID !== teamID) {
                 finish += 1;
             }
         });

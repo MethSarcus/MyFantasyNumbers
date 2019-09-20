@@ -7,6 +7,8 @@ class Team {
     public potentialPoints: number;
     public projectedScore: number;
     public opponentID: number;
+    public gutDifference: number;
+    public gutPlayers: number;
     constructor(teamID, players, activeLineupSlots, opponentID) {
         this.lineup = [];
         this.bench = [];
@@ -25,6 +27,9 @@ class Team {
         this.score = this.getTeamScore(this.lineup);
         this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
         this.projectedScore = this.getProjectedScore(this.lineup);
+        var gutArray = this.getGutPoints(activeLineupSlots);
+        this.gutDifference = gutArray[0];
+        this.gutPlayers = gutArray[1];
     }
 
     public getOptimalLineup(activeLineupSlots: number[]): Player[] {
@@ -135,5 +140,71 @@ class Team {
         });
 
         return eligiblePlayers;
+    }
+
+    public getProjectedOptimalLineup(activeLineupSlots: number[]): Player[] {
+        const rosterSlots = [];
+        // tslint:disable-next-line: forin
+        for (const i in activeLineupSlots) {
+            for (let w = 0; w < activeLineupSlots[i][1]; w++) {
+                rosterSlots.push(activeLineupSlots[i][0]);
+            }
+        }
+        var optimalLineup = new Array<Player>();
+        // tslint:disable-next-line: forin
+        for (const x in rosterSlots) {
+            let highScore = 0;
+            let bestPlayer = null;
+            var eligibleWeekPlayers = [];
+            const players = this.lineup.concat(this.bench, this.IR);
+            for (const y in players) {
+                if (!includesPlayer(players[y], optimalLineup)) {
+                    if (players[y].isEligible(rosterSlots[x])) {
+                        eligibleWeekPlayers.push(players[y]);
+                    }
+                }
+            }
+            for (const z in eligibleWeekPlayers) {
+                if (eligibleWeekPlayers[z].projectedScore > highScore) {
+                    highScore = eligibleWeekPlayers[z].projectedScore;
+                    bestPlayer = eligibleWeekPlayers[z];
+                }
+            }
+
+            if (bestPlayer != null) {
+                optimalLineup.push(bestPlayer);
+                highScore = 0;
+            }
+        }
+        return optimalLineup;
+    }
+
+    public getGutPoints(activeLineupSlots: number[]): [number, number] {
+        var players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
+        var gutPlayers = players[0];
+        var satPlayers = players[1];
+
+        var diff = this.getTeamScore(gutPlayers) - this.getTeamScore(satPlayers);
+        var playerNum = gutPlayers.length;
+        return [diff, playerNum];
+    }
+
+    public getProjectedLinupPlayerDifference(activeLineupSlots: number[]): [Player[], Player[]] {
+        var gutPlayers = [];
+        var satPlayers = [];
+        var projectedLineup = this.getProjectedOptimalLineup(activeLineupSlots);
+        this.lineup.forEach(player => {
+            if (!includesPlayer(player, projectedLineup)) {
+                gutPlayers.push(player);
+            }
+        });
+        projectedLineup.forEach(player => {
+            if (!includesPlayer(player, this.lineup)) {
+                satPlayers.push(player);
+            }
+        });
+
+        return [gutPlayers, satPlayers];
+
     }
 }

@@ -86,6 +86,15 @@ var Matchup = /** @class */ (function () {
             return null;
         }
     };
+    Matchup.prototype.gutHadImpact = function (teamID) {
+        var team = this.getTeam(teamID);
+        if (this.marginOfVictory > Math.abs(team.gutDifference)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
     Matchup.prototype.getPoorLineupDecisions = function () {
         var _this = this;
         var whiffedChoices = 0;

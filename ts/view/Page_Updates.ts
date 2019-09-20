@@ -15,6 +15,8 @@ function updateTeamPill(league: League, teamID: number): void {
     updateMemberWeekTable(league, member);
     createMemberWeeklyLineChart(league, member);
     createTeamBarChart(league, member);
+    updateGutWinCard(league, teamID);
+    updateWinnableGamesLost(league, teamID);
 
     unfade(document.getElementById('teamPill'));
 }
@@ -217,6 +219,26 @@ function updateMostConsistent(mostConsistent: SeasonPlayer) {
     }
     mostConsistentName.innerText = mostConsistent.firstName + " " + mostConsistent.lastName;
     mostConsistentPoints.innerText = "Standard Deviation: " + calcStandardDeviation(mostConsistent.getScores()) + "\n" + mostConsistent.averageScore + " points per game, " + mostConsistent.weeksPlayed + startsText;
+}
+
+function updateWinnableGamesLost(league: League, teamID) {
+    var winnableGamesTitle = document.getElementById('winnable_games_lost_number');
+    var poorRosterDecisions = document.getElementById('winnable_games_lost_choices');
+    var choices = league.getMember(teamID).stats.choicesThatCouldHaveWonMatchup;
+    var gamesLost = league.getMember(teamID).stats.gameLostDueToSingleChoice;
+    winnableGamesTitle.innerText = gamesLost + " Winnable Games Lost";
+    poorRosterDecisions.innerText = choices + " roster decisions could have won those games";
+}
+
+function updateGutWinCard(league: League, teamID) {
+    var gutPointsTotalNumber = document.getElementById('gut_points');
+    var gutPointsNumber = document.getElementById('gut_wins_projected_difference');
+    var gutCard = document.getElementById('gut_wins_card');
+    var gutWins = roundToHundred(league.getMember(teamID).stats.gutPoints);
+    var gutPoints = roundToHundred(league.getMember(teamID).stats.gutPoints/league.getMember(teamID).stats.gutPlayersPlayed);
+    gutPointsTotalNumber.innerText = gutWins + " Gut points earned";
+    gutPointsNumber.innerText = gutPoints + " average points when starting player with lower projection";
+    gutCard.style.backgroundColor = getCardColor(league.getGutAverageFinish(teamID), league.members.length);
 }
 
 function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) {

@@ -147,7 +147,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-6" id="league_stacked_graph_container">
+              <div class="col-6 pb-5 pt-2" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas"></canvas>
               </div>
             </div>
@@ -337,14 +337,14 @@
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <blockquote class="card-blockquote">
                         <h5 id="winnable_games_lost_number">5 winnable games lost</h5>
-                        <footer><small id="winnable_games_lost_choices">14 player decisions resulted in those losses</small></footer>
+                        <footer><small id="winnable_games_lost_choices">14 poor lineup decisions in those games</small></footer>
                       </blockquote>
                     </div>
                     <div id="gut_wins_card" class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <blockquote class="card-blockquote">
-                        <h5 id="gut_wins_number">6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Wins where a player was put in despite a lower projection and went on to score enough to win the matchup"></i></small>
+                        <h5 id="gut_points">6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Calculated based on the points that would have been scored if you started players with higher projections"></i></small>
                         <footer><small id="gut_wins_projected_difference">12 players scored 146 more points than the projected optimal </small></footer>
                       </blockquote>
                     </div>
@@ -398,9 +398,9 @@
               </div>
               <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
                 <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
-                  <div id="member_bar_chart_container"><canvas id="member_bar_chart_canvas"></canvas></div>
+                  <div id="member_bar_chart_container" style="height: 250px;"><canvas id="member_bar_chart_canvas"></canvas></div>
                 </div>
-                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12">
+                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12" style="height: 350px;">
                   <canvas id="TEAM_LINE_CANVAS">
                   </canvas>
                 </div>

@@ -93,6 +93,15 @@ class Matchup {
         }
     }
 
+    public gutHadImpact(teamID): boolean {
+        var team = this.getTeam(teamID);
+        if (this.marginOfVictory > Math.abs(team.gutDifference)){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public getPoorLineupDecisions(): number {
         var whiffedChoices = 0;
         var team = this.home;

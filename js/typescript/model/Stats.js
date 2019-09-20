@@ -15,6 +15,10 @@ var Stats = /** @class */ (function () {
         this.pp = 0;
         this.choicesThatCouldHaveWonMatchup = 0;
         this.gameLostDueToSingleChoice = 0;
+        this.gutPlayersPlayed = 0;
+        this.gutPoints = 0;
+        this.gutWins = 0;
+        this.gutLosses = 0;
     }
     Stats.prototype.getWinPct = function () {
         if (this.wins == 0) {
