@@ -130,69 +130,7 @@ function setPage(league) {
 
 
     //create graph page
-    graphPage = document.createElement("div");
-    graphPage.id = "graphPage";
-    graphPage.classList.add("tab-pane", "fade");
-    var crumbLis = document.createElement('ol');
-    crumbLis.classList.add('breadcrumb');
-    var crumbIte = document.createElement('li');
-    crumbIte.classList.add('breadcrumb-item', 'active');
-    breadLink = document.createElement('a');
-    breadLink.innerText = "Graphs";
-    breadLink.href = "#"
-    breadLink.onclick = function () {
-        $(".nav-link").removeClass('active');
-    };
-    crumbIte.appendChild(breadLink);
-    crumbLis.appendChild(crumbIte);
-    graphPage.appendChild(crumbLis);
-    //graphpage contents
-    var selectRow = document.createElement('div');
-    selectRow.classList.add('row', 'mb-4');
-
-    var pieButton = document.createElement('button');
-    pieButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-
-    var barButton = document.createElement('button');
-    
-
-    var lineButton = document.createElement('button');
-    
-
-    var tradeButton = document.createElement('button');
-    
-
-    // var topGuys = document.createElement('button');
-    // topGuys.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    // topGuys.onclick = drawLineGraph(myYear.members);
-    // topGuys.innerHTML = "Top Players";
-    
-    var graphRow = document.createElement('div');
-    graphRow.classList.add('row');
-    //var stackSpace = document.createElement('div');
-    //stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
-    
-
-    var graphContainer = document.createElement('div');
-    graphContainer.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9', 'graphContainer');
-    var stackedCanvas = document.createElement('canvas');
-    stackedCanvas.id = "GRAPHCANVAS";
-    graphContainer.appendChild(stackedCanvas);
-    //var graphOptions = document.createElement('div');
-    //graphOptions.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
-    //var graphOptions = createMainGraphOptions();
-    
-    selectRow.appendChild(barButton);
-    selectRow.appendChild(pieButton);
-    selectRow.appendChild(lineButton);
-    selectRow.appendChild(tradeButton);
-    graphPage.appendChild(selectRow);
-    graphRow.appendChild(graphContainer);
-    //graphRow.appendChild(graphOptions);
-
-    graphPage.appendChild(graphRow);
-
-    tabsList.appendChild(graphPage); //adds Graph Page
+    graphPage = document.getElementById("graphPage");
     createStackedColumns(league);
     pieButton.onclick = drawPieChart;
     pieButton.innerHTML = "Position Breakdown";
@@ -229,10 +167,9 @@ function setPage(league) {
 
 
 function fixNoImage() {
-    this.src = "../assets/user1.png";
+    this.src = "assets/user1.png";
     this.style.backgroundColor = "white";
     this.onerror = null;
-
 }
 
 function makeStatCard(title, main, small, extraSmall, bottom, cardColor, textColor, toolTip) {

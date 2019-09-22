@@ -155,21 +155,21 @@
           <div id="power_ranks_page" class="tab-pane">
             <div class="row">
               <div class="col-7">
-                  <table class="table table-sm hover" id="power_rank_table">
-                      <thead>
-                          <tr id="power_rank_table_head">
-                            <th scope="col">Power Rank</th>
-                            <th scope="col">Team</th>
-                            <th scope="col">Power Record</th>
-                            <th scope="col">Win %</th>
-                            <th scope="col">Potential Record</th>
-                            <th scope="col">Potential Win %</th>
-                          </tr>
-                        </thead>
-                        <tbody id="power_rank_table_body">
-                          
-                        </tbody>
-                  </table>
+                <table class="table table-sm hover" id="power_rank_table">
+                  <thead>
+                    <tr id="power_rank_table_head">
+                      <th scope="col">Power Rank</th>
+                      <th scope="col">Team</th>
+                      <th scope="col">Power Record</th>
+                      <th scope="col">Win %</th>
+                      <th scope="col">Potential Record</th>
+                      <th scope="col">Potential Win %</th>
+                    </tr>
+                  </thead>
+                  <tbody id="power_rank_table_body">
+
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -333,19 +333,24 @@
                 </div>
                 <div class="row py-1">
                   <div class="col-12 card-deck">
-                    <div id="winnable_games_lost_card" class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    <div id="winnable_games_lost_card"
+                      class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <blockquote class="card-blockquote">
                         <h5 id="winnable_games_lost_number">5 winnable games lost</h5>
-                        <footer><small id="winnable_games_lost_choices">14 poor lineup decisions in those games</small></footer>
+                        <footer><small id="winnable_games_lost_choices">14 poor lineup decisions in those games</small>
+                        </footer>
                       </blockquote>
                     </div>
-                    <div id="gut_wins_card" class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
+                    <div id="gut_wins_card"
+                      class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
                       style="background-color: rgb(43, 255, 0); color: black;">
                       <blockquote class="card-blockquote">
-                        <h5 id="gut_points">6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right" title=""
+                        <h5 id="gut_points">6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right"
+                          title=""
                           data-original-title="Calculated based on the points that would have been scored if you started players with higher projections"></i></small>
-                        <footer><small id="gut_wins_projected_difference">12 players scored 146 more points than the projected optimal </small></footer>
+                        <footer><small id="gut_wins_projected_difference">12 players scored 146 more points than the
+                            projected optimal </small></footer>
                       </blockquote>
                     </div>
                     <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
@@ -398,13 +403,27 @@
               </div>
               <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
                 <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
-                  <div id="member_bar_chart_container" style="height: 250px;"><canvas id="member_bar_chart_canvas"></canvas></div>
+                  <div id="member_bar_chart_container" style="height: 250px;"><canvas
+                      id="member_bar_chart_canvas"></canvas></div>
                 </div>
-                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12" style="height: 350px;">
+                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
+                  style="height: 350px;">
                   <canvas id="TEAM_LINE_CANVAS">
                   </canvas>
                 </div>
               </div>
+            </div>
+          </div>
+          <div id="graphPage" class="tab-pane fade">
+            <div class="row mb-4">
+              <button class="col-2 btn btn-outline-info mx-auto">PF Breakdown</button>
+              <button class="col-2 btn btn-outline-info mx-auto">Position Breakdown</button>
+              <button class="col-2 btn btn-outline-info mx-auto">Weekly Points</button>
+              <button class="col-2 btn btn-outline-info mx-auto">Trade Web</button>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9 graphContainer"><canvas id="GRAPHCANVAS"
+                  class="mainChart"></canvas></div>
             </div>
           </div>
           <!-- <button class="scroll-to-top rounded" href="#page-top" id="scrollBtn">
