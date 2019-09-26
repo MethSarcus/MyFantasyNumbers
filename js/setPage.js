@@ -82,56 +82,74 @@ function setPage(league) {
         a.appendChild(b);
         nav.appendChild(a);
     }
-    /*
-    for (i in myYear.members) {
-        var dropdown = document.getElementById('teamDropdown')
-        let a = document.createElement("a");
-        a.classList.add("dropdown-item", 'align-items-center', 'd-flex', 'justify-content-center');
-        //a.setAttribute('data-toggle', 'pill');
-        a.href = "#pillTeam" + myYear.members[i].teamID;
-        //a.classList.add('nav-link');
-        // let b = document.createElement('img');
-        // b.src = myYear.members[i].logoURL;
-        // b.style.width = "25px";
-        // b.style.height = "25px";
-        // b.style.borderRadius = "25px";
-        // b.addEventListener("error", fixNoImage);
-        // b.style.marginLeft = "auto";
-        // b.style.marginRight = "auto";
-        // a.appendChild(b);
-        // a.appendChild(document.createElement('br'));
-        let c = document.createTextNode(" " + myYear.members[i].teamLocation + " " + myYear.members[i].teamNickname);
-        //b.appendChild(c);
-        a.appendChild(c);
-        dropdown.appendChild(a);
-    }*/
 
     //make league main page
     q = document.getElementById("leaguePage");
+    tabsList.appendChild(q); //adds main league page
     //q.classList.add("tab-pane", "fade", "active", "show");
-    var cardRow = document.createElement('div');
-    cardRow.classList.add('row');
-    cardRow.appendChild(makeLeagueStatCards('League Average', league.getLeagueWeeklyAverage(), league.getLeagueStandardDeviation()));
-    let topMatchup = league.getOverallBestWeek();
-    let topTeam = topMatchup.getWinningTeam();
-    cardRow.appendChild(makeLeagueCards("Best Week", topTeam.teamID, roundToHundred(topTeam.score) + " points", "Week " + topMatchup.weekNumber));
+    // var cardRow = document.createElement('div');
+    // cardRow.classList.add('row');
+    // cardRow.appendChild(makeLeagueStatCards('League Average', league.getLeagueWeeklyAverage(), league.getLeagueStandardDeviation()));
+    // let topMatchup = league.getOverallBestWeek();
+    // let topTeam = topMatchup.getWinningTeam();
+    // cardRow.appendChild(makeLeagueCards("Best Week", topTeam.teamID, roundToHundred(topTeam.score) + " points", "Week " + topMatchup.weekNumber));
     // let worstWeekMember = getWorstWeekMember(league)[0];
     // let worstWeekObject = getWorstWeekMember(league)[1];
     // cardRow.appendChild(makeLeagueCards("Worst Week", worstWeekMember, roundToHundred(worstWeekObject.activeScore) + " points", "Week " + worstWeekObject.weekNumber));
 
-    let biggestMOV = league.getLargestMarginOfVictory();
-    cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", league.getMember(biggestMOV.getWinningTeam().teamID), league.getMember(biggestMOV.getWinningTeam().teamID), biggestMOV.weekNumber));
-    let smallestMOV = league.getSmallestMarginOfVictory();
-    cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", league.getMember(smallestMOV.getWinningTeam().teamID), league.getMember(smallestMOV.getWinningTeam().opponentTeamID), smallestMOV.weekNumber));
+    // let biggestMOV = league.getLargestMarginOfVictory();
+    // cardRow.appendChild(makeHeadToHeadCards("Largest Margin Of Victory", league.getMember(biggestMOV.getWinningTeam().teamID), league.getMember(biggestMOV.getWinningTeam().teamID), biggestMOV.weekNumber));
+    // let smallestMOV = league.getSmallestMarginOfVictory();
+    // cardRow.appendChild(makeHeadToHeadCards("Slimist Margin Of Victory", league.getMember(smallestMOV.getWinningTeam().teamID), league.getMember(smallestMOV.getWinningTeam().opponentTeamID), smallestMOV.weekNumber));
     //stackedRow.appendChild(stackSpace);
-    q.insertBefore(cardRow, q.childNodes[0]);
-    tabsList.appendChild(q); //adds main league page
+    //q.insertBefore(cardRow, q.childNodes[0]);
+    //tabsList.appendChild(q); //adds main league page
     createPowerRankTable(league);
-
 
     //create graph page
     graphPage = document.getElementById("graphPage");
+    //graphpage contents
+    var selectRow = document.createElement('div');
+    selectRow.classList.add('row', 'mb-4');
+
+    var pieButton = document.createElement('button');
+    pieButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    var barButton = document.createElement('button');
+    var lineButton = document.createElement('button');
+    var tradeButton = document.createElement('button');
+    // var topGuys = document.createElement('button');
+    // topGuys.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    // topGuys.onclick = drawLineGraph(myYear.members);
+    // topGuys.innerHTML = "Top Players";
+    
+    var graphRow = document.createElement('div');
+    graphRow.classList.add('row');
+    //var stackSpace = document.createElement('div');
+    //stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
+    
+
+    var graphContainer = document.createElement('div');
+    graphContainer.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9', 'graphContainer');
+    var stackedCanvas = document.createElement('canvas');
+    stackedCanvas.id = "GRAPHCANVAS";
+    graphContainer.appendChild(stackedCanvas);
+    //var graphOptions = document.createElement('div');
+    //graphOptions.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
+    //var graphOptions = createMainGraphOptions();
+    
+    selectRow.appendChild(barButton);
+    selectRow.appendChild(pieButton);
+    selectRow.appendChild(lineButton);
+    selectRow.appendChild(tradeButton);
+    graphPage.appendChild(selectRow);
+    graphRow.appendChild(graphContainer);
+    //graphRow.appendChild(graphOptions);
+
+    graphPage.appendChild(graphRow);
+
+    tabsList.appendChild(graphPage); //adds Graph Page
     createStackedColumns(league);
+    createLeagueWeeklyLineChart(league);
     pieButton.onclick = drawPieChart;
     pieButton.innerHTML = "Position Breakdown";
 

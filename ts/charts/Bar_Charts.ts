@@ -6,17 +6,17 @@ function createTeamBarChart(league: League, member: Member) {
         (window as any).memberBarChart.data.datasets = [];
         (window as any).memberBarChart.data.datasets.push({
             label: member.nameToString(),
-            backgroundColor: "blue",
+            backgroundColor: getMemberColor(member.teamID),
             data: league.getMemberTotalPointsPerPosition(member.teamID)
         });
         (window as any).memberBarChart.data.datasets.push({
             label: "All Opponents",
-            backgroundColor: "orange",
+            backgroundColor: "lightgrey",
             data: league.getLeaguePointsPerPosition()
         });
         (window as any).memberBarChart.data.datasets.push({
             label: "League Average",
-            backgroundColor: "black",
+            backgroundColor: "darkgrey",
             data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
         });
         (window as any).memberBarChart.update();
@@ -28,15 +28,15 @@ function createTeamBarChart(league: League, member: Member) {
             labels: league.settings.getPositions(),
             datasets: [{
                 label: member.nameToString(),
-                backgroundColor: "blue",
+                backgroundColor: getMemberColor(member.teamID),
                 data: league.getMemberTotalPointsPerPosition(member.teamID)
             }, {
                 label: "All Opponents",
-                backgroundColor: "orange",
+                backgroundColor: "lightgrey",
                 data: league.getLeaguePointsPerPosition()
             }, {
                 label: "League Average",
-                backgroundColor: "black",
+                backgroundColor: "darkgrey",
                 data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
             }]
         };

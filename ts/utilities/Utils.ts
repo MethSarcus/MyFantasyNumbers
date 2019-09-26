@@ -243,10 +243,9 @@ function getBestPositionPlayerAverageScore(league: League, position: any): numbe
 }
 
 function getMemberColor(memberID: number): string {
-    var colorCode = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4',
-        '#42d4f4', '#f032e6', '#bfef45', '#fabebe', '#469990', '#e6beff',
-        '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
-        '#000075', '#a9a9a9', '#ffffff'];
+    var colorCode = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00","#b82e2e","#316395",
+    "#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac",
+    "#b77322","#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
 
     return colorCode[memberID];
 }
