@@ -149,21 +149,20 @@ function setPage(league) {
 
     tabsList.appendChild(graphPage); //adds Graph Page
     createStackedColumns(league);
-    createLeagueWeeklyLineChart(league);
-    pieButton.onclick = drawPieChart;
-    pieButton.innerHTML = "Position Breakdown";
+    // pieButton.onclick = drawPieChart;
+    // pieButton.innerHTML = "Position Breakdown";
 
-    barButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    barButton.onclick = drawBarGraph;
-    barButton.innerHTML = "PF Breakdown";
+    // barButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    // barButton.onclick = drawBarGraph;
+    // barButton.innerHTML = "PF Breakdown";
 
-    lineButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    lineButton.onclick = drawLineGraph;
-    lineButton.innerHTML = "Weekly Points";
+    // lineButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    // lineButton.onclick = drawLineGraph;
+    // lineButton.innerHTML = "Weekly Points";
     
-    tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
-    tradeButton.onclick = drawTradeWeb;
-    tradeButton.innerHTML = "Trade Web";
+    // tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
+    // tradeButton.onclick = drawTradeWeb;
+    // tradeButton.innerHTML = "Trade Web";
     createLeagueStatsTable(league);
     createLeagueStackedGraph(league);
     $('#league_stats_table').DataTable({
