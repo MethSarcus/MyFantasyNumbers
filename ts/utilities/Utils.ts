@@ -29,8 +29,16 @@ enum POSITION {
     K = "K",
     D_ST = "D/ST",
     DL = "DL",
+    DT = "DT",
     LB = "LB",
     DB = "DB",
+    DE = "DE",
+    DP = "DP",
+    LT = "LT",
+    CB = "CB",
+    S = "S",
+    P = "P",
+    HC = "HC"
 }
 
 function getPosition(eligibleSlots: number[]): POSITION {
@@ -46,30 +54,100 @@ function getPosition(eligibleSlots: number[]): POSITION {
         return POSITION.K;
     } else if (eligibleSlots[0] === 5) {
         return POSITION.TE;
+    } else if (eligibleSlots[0] === 8) {
+        return POSITION.DT;
+    } else if (eligibleSlots[0] === 9) {
+        return POSITION.DE;
+    } else if (eligibleSlots[0] === 10) {
+        return POSITION.LB;
+    } else if (eligibleSlots[0] === 11) {
+        return POSITION.DL;
+    } else if (eligibleSlots[0] === 12) {
+        return POSITION.CB;
+    } else if (eligibleSlots[0] === 13) {
+        return POSITION.S;
+    } else if (eligibleSlots[0] === 14) {
+        return POSITION.DB;
+    } else if (eligibleSlots[0] === 15) {
+        return POSITION.DP;
+    } else if (eligibleSlots[0] === 18) {
+        return POSITION.P;
+    } else if (eligibleSlots[0] === 19) {
+        return POSITION.HC;
     }
 }
 
 function getLineupSlot(lineupSlotID: number): string {
-    if (lineupSlotID == 0) {
-        return "QB";
-    } else if (lineupSlotID == 2) {
-        return "RB";
-    } else if (lineupSlotID == 23) {
-        return "FLEX";
-    } else if (lineupSlotID == 20) {
-        return "BENCH";
-    } else if (lineupSlotID == 7) {
-        return "SUPERFLEX";
-    } else if (lineupSlotID == 21) {
-        return "IR";
-    } else if (lineupSlotID == 4) {
-        return "WR";
-    } else if (lineupSlotID == 16) {
-        return "D/ST";
-    } else if (lineupSlotID == 17) {
-        return "K";
-    } else if (lineupSlotID == 6) {
-        return "TE";
+    switch(lineupSlotID) {
+        case 0: {
+            return "QB";
+        }
+        case 1: {
+            return "TQB";
+        }
+        case 2: {
+            return "RB";
+        }
+        case 3: {
+            return "RB/WR";
+        }
+        case 4: {
+            return "WR";
+        }
+        case 5: {
+            return "WR/TE";
+        }
+        case 6: {
+            return "TE";
+        }
+        case 7: {
+            return "OP";
+        }
+        case 8: {
+            return "DT";
+        }
+        case 9: {
+            return "DE";
+        }
+        case 10: {
+            return "LB";
+        }
+        case 11: {
+            return "DL";
+        }
+        case 12: {
+            return "CB";
+        }
+        case 13: {
+            return "S";
+        }
+        case 14: {
+            return "DB";
+        }
+        case 15: {
+            return "DP";
+        }
+        case 16: {
+            return "D/ST";
+        }
+        case 17: {
+            return "K";
+        }
+        case 18: {
+            return "P";
+        }
+        case 19: {
+            return "HC";
+        }
+        case 20: {
+            return "BENCH";
+        }
+        case 21: {
+            return "IR";
+        }
+        case 23: {
+            return "RB/WR/TE";
+        }
     }
 }
 

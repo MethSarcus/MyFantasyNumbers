@@ -217,7 +217,7 @@ function createLeagueWeeklyLineChart(league) {
             backgroundColor: '#DCDCDC',
             options: {
                 tooltips: {
-                    mode: 'x'
+                    mode: 'point'
                 },
                 responsive: true,
                 maintainAspectRatio: false,

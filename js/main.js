@@ -130,6 +130,9 @@ function getESPNSettings(leagueID, seasonID) {
         path: 'apis/v3/games/ffl/seasons/2018/segments/0/leagues/' + leagueID + '?view=mSettings'
     }, '').done(function (json) {
         console.log("getting settings");
+        if (json.type = "AUTH_LEAGUE_NOT_VISIBLE") {
+            alert("Error: League not accessable, make sure your league is set to public for the current season and the 2018 season");
+        }
         var regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
         var divisions = json.settings.scheduleSettings.divisions;
         var draftOrder = json.settings.draftSettings.pickOrder;
