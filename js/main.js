@@ -173,7 +173,6 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
     myXhr('get', {
         path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mTeam'
     }, '').done(function (json) {
-        console.log(json);
         var members = [];
         var teams = json.teams;
         seasonLength = settings.regularSeasonMatchupCount + settings.playoffLength;

@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
         "outDir": "js/typescript",
+        "outFile": "js/typescript/tsc.js",
         "allowJs": true,
         "target": "es5",
+        "removeComments": true,
         "sourceMap": true
     },
     "include": [

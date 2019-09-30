@@ -168,7 +168,7 @@ function setPage(league) {
     graphPage.appendChild(graphRow);
 
     tabsList.appendChild(graphPage); //adds Graph Page
-    createStackedColumns(league);
+    //createStackedColumns(league);
     createLeagueWeeklyLineChart(league);
     pieButton.onclick = drawPieChart;
     pieButton.innerHTML = "Position Breakdown";
