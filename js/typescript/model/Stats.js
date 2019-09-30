@@ -19,6 +19,7 @@ var Stats = /** @class */ (function () {
         this.gutPoints = 0;
         this.gutWins = 0;
         this.gutLosses = 0;
+        this.rank = 0;
     }
     Stats.prototype.getWinPct = function () {
         if (this.wins == 0) {

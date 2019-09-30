@@ -82,6 +82,7 @@ var League = /** @class */ (function () {
         });
         this.members.forEach(function (member) {
             member.setAdvancedStats(weeks);
+            member.stats.rank = _this.getRank(member.teamID);
             member.stats.roundStats();
             member.stats.choicesThatCouldHaveWonMatchup = _this.getLosingDecisionAmount(member.teamID);
             member.stats.gameLostDueToSingleChoice = _this.getGamesLostDueToSingleChoice(member.teamID);
@@ -115,15 +116,16 @@ var League = /** @class */ (function () {
         return roundToHundred(pp / this.members.length);
     };
     League.prototype.getSeasonPortionWeeks = function () {
+        var _this = this;
         var weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs === false;
+                return it.isPlayoffs === false && it.weekNumber < _this.settings.currentMatchupPeriod;
             });
         }
         else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs === true;
+                return it.isPlayoffs === true && it.weekNumber < _this.settings.currentMatchupPeriod;
             });
         }
         return weekPortion;
@@ -327,7 +329,7 @@ var League = /** @class */ (function () {
         var members = [];
         var weeks = [];
         var jsonSettings = object.settings;
-        var settings = new Settings(jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType);
+        var settings = new Settings(jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType, jsonSettings.currentMatchupPeriod, jsonSettings.isActive, jsonSettings.yearsActive);
         object.weeks.forEach(function (week) {
             var matchups = [];
             week.matchups.forEach(function (matchup) {
@@ -489,6 +491,22 @@ var League = /** @class */ (function () {
         var wins = this.getMember(teamID).stats.powerWins;
         this.members.forEach(function (member) {
             if (wins < member.stats.powerWins && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
+    League.prototype.getRank = function (teamID) {
+        var finish = 1;
+        var winPct = this.getMember(teamID).stats.getWinPct();
+        var pf = this.getMember(teamID).stats.pf;
+        this.members.forEach(function (member) {
+            if (winPct == member.stats.getWinPct() && member.teamID !== teamID) {
+                if (pf < member.stats.pf) {
+                    finish += 1;
+                }
+            }
+            else if (winPct < member.stats.getWinPct() && member.teamID !== teamID) {
                 finish += 1;
             }
         });

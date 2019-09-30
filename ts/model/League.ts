@@ -91,6 +91,7 @@ class League {
        });
         this.members.forEach((member) => {
            member.setAdvancedStats(weeks);
+           member.stats.rank = this.getRank(member.teamID);
            member.stats.roundStats();
            member.stats.choicesThatCouldHaveWonMatchup = this.getLosingDecisionAmount(member.teamID);
            member.stats.gameLostDueToSingleChoice = this.getGamesLostDueToSingleChoice(member.teamID);
@@ -135,11 +136,11 @@ class League {
         let weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === false;
+                return it.isPlayoffs === false && it.weekNumber < this.settings.currentMatchupPeriod;
             });
         } else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === true;
+                return it.isPlayoffs === true && it.weekNumber < this.settings.currentMatchupPeriod;
             });
         }
         return weekPortion;
@@ -374,10 +375,13 @@ class League {
         var weeks = [];
         var jsonSettings = object.settings;
         var settings = new Settings(jsonSettings.activeLineupSlots,
-             jsonSettings.lineupSlots,
-              jsonSettings.regularSeasonLength,
-               jsonSettings.playoffLength,
-                jsonSettings.draftType);
+                jsonSettings.lineupSlots,
+                jsonSettings.regularSeasonLength,
+                jsonSettings.playoffLength,
+                jsonSettings.draftType, 
+                jsonSettings.currentMatchupPeriod,
+                jsonSettings.isActive,
+                jsonSettings.yearsActive);
         object.weeks.forEach(week => {
             var matchups = [];
             week.matchups.forEach(matchup => {
@@ -579,6 +583,23 @@ class League {
         const wins = this.getMember(teamID).stats.powerWins;
         this.members.forEach((member) => {
             if (wins < member.stats.powerWins && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+
+    public getRank(teamID: number): number {
+        let finish = 1;
+        const winPct = this.getMember(teamID).stats.getWinPct();
+        const pf = this.getMember(teamID).stats.pf;
+        this.members.forEach((member) => {
+            if (winPct == member.stats.getWinPct() && member.teamID !== teamID) {
+                if (pf < member.stats.pf) {
+                    finish += 1;
+                }
+            } else if (winPct < member.stats.getWinPct() && member.teamID !== teamID) {
                 finish += 1;
             }
         });

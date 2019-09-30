@@ -2,6 +2,7 @@ class Stats {
     public wins: number;
     public losses: number;
     public ties: number;
+    public rank: number;
     public powerRank: number;
     public powerWins: number;
     public powerLosses: number;
@@ -44,6 +45,7 @@ class Stats {
         this.gutPoints = 0;
         this.gutWins = 0;
         this.gutLosses = 0;
+        this.rank = 0;
     }
 
     public getWinPct(): number {

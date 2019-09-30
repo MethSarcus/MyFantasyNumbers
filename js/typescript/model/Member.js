@@ -35,6 +35,9 @@ var Member = /** @class */ (function () {
             return this.stats.wins + "-" + this.stats.losses;
         }
     };
+    Member.prototype.rankToString = function () {
+        return ordinal_suffix_of(this.stats.rank);
+    };
     Member.prototype.finishToString = function () {
         return ordinal_suffix_of(this.stats.finalStanding);
     };

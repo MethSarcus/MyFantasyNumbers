@@ -51,6 +51,10 @@ class Member {
         }
     }
 
+    public rankToString(): string {
+        return ordinal_suffix_of(this.stats.rank);
+    }
+
     public finishToString(): string {
         return ordinal_suffix_of(this.stats.finalStanding);
     }

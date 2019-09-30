@@ -1,57 +1,77 @@
 function setPage(league) {
     document.getElementById("my-navbar-brand").innerHTML = league.leagueName;
-        document.getElementById("my-navbar-brand").onclick = function () {
-            $(".nav-link").removeClass('active');
-            fadeToLeaguePage();
-        };
+    document.getElementById("my-navbar-brand").onclick = function () {
+        $(".nav-link").removeClass('active');
+        fadeToLeaguePage();
+    };
     localStorage.setItem(league.leagueID + "" + league.seasonID, JSON.stringify(league));
     console.log(league);
     profileImage = document.getElementById('team_image');
     profileImage.addEventListener("error", fixNoImage);
     console.log("Running setpage");
-    document.getElementById(SEASON_PORTION.REGULAR).onclick = function(){
-        league.seasonPortion = SEASON_PORTION.REGULAR;
-        league.resetStats();
-        league.setMemberStats(league.getSeasonPortionWeeks());
-        for (var i = 1; i <= league.members.length; i++) {
-            if($('#' + i).find('a.active').length !== 0) {
-                fadeTeam(document.getElementById('teamPill'), league, i);
-            } else {
-                
+    
+    if (league.settings.currentMatchupPeriod > league.settings.regularSeasonLength) {
+        document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.REGULAR;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($('#' + i).find('a.active').length !== 0) {
+                    fadeTeam(document.getElementById('teamPill'), league, i);
+                } else {
+    
+                }
             }
-        }
-    };
-        
-    document.getElementById(SEASON_PORTION.POST).onclick = function(){
-        league.seasonPortion = SEASON_PORTION.POST;
-        league.resetStats();
-        league.setMemberStats(league.getSeasonPortionWeeks());
-        for (var i = 1; i <= league.members.length; i++) {
-            if($('#' + i).find('a.active').length !== 0) {
-                fadeTeam(document.getElementById('teamPill'), league, i);
-            } else {
-                
+        };
+
+        document.getElementById(SEASON_PORTION.POST).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.POST;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($('#' + i).find('a.active').length !== 0) {
+                    fadeTeam(document.getElementById('teamPill'), league, i);
+                } else {
+
+                }
             }
-        }
-    };
-        
-    document.getElementById(SEASON_PORTION.ALL).onclick = function(){
-        league.seasonPortion = SEASON_PORTION.ALL;
-        league.resetStats();
-        league.setMemberStats(league.getSeasonPortionWeeks());
-        for (var i = 1; i <= league.members.length; i++) {
-            if($('#' + i).find('a.active').length !== 0) {
-                fadeTeam(document.getElementById('teamPill'), league, i);
-            } else {
-                
+        };
+
+        document.getElementById(SEASON_PORTION.ALL).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.ALL;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($('#' + i).find('a.active').length !== 0) {
+                    fadeTeam(document.getElementById('teamPill'), league, i);
+                } else {
+
+                }
             }
+        };
+    } else {
+        document.getElementById(SEASON_PORTION.ALL).classList.add('disabled');
+        document.getElementById(SEASON_PORTION.POST).classList.add('disabled');
+        document.getElementById("post_radio_button").disabled = true;
+        document.getElementById("complete_radio_button").disabled = true;
+    }
+
+    var yearSelector = document.getElementById("available_seasons");
+    league.settings.yearsActive.forEach(year => {
+        var option = document.createElement("option");
+        option.text = year;
+        option.value = year;
+        if (option == league.season) {
+            option.selected = true;
         }
-    };
+        yearSelector.add(option);
+    });
+
     var l = new Color("#FF0000");
     var r = new Color("#00FF00");
     var nav = document.getElementById("sideNav");
     var tabsList = document.getElementById('tabs-content');
-    
+
     //adds teams to sidebar
     for (i in league.members) {
         let a = document.createElement("li");
@@ -121,12 +141,12 @@ function setPage(league) {
     // topGuys.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
     // topGuys.onclick = drawLineGraph(myYear.members);
     // topGuys.innerHTML = "Top Players";
-    
+
     var graphRow = document.createElement('div');
     graphRow.classList.add('row');
     //var stackSpace = document.createElement('div');
     //stackSpace.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9');
-    
+
 
     var graphContainer = document.createElement('div');
     graphContainer.classList.add('col-12', 'col-sm-12', 'col-md-9', 'col-lg-9', 'col-xl-9', 'graphContainer');
@@ -136,7 +156,7 @@ function setPage(league) {
     //var graphOptions = document.createElement('div');
     //graphOptions.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3');
     //var graphOptions = createMainGraphOptions();
-    
+
     selectRow.appendChild(barButton);
     selectRow.appendChild(pieButton);
     selectRow.appendChild(lineButton);
@@ -160,7 +180,7 @@ function setPage(league) {
     lineButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
     lineButton.onclick = drawLineGraph;
     lineButton.innerHTML = "Weekly Points";
-    
+
     tradeButton.classList.add('col-2', 'btn', 'btn-outline-info', 'mx-auto');
     tradeButton.onclick = drawTradeWeb;
     tradeButton.innerHTML = "Trade Web";
@@ -351,7 +371,7 @@ function createPwerRankTable(league) {
         ppCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.pp)));
         recordCell.appendChild(document.createTextNode(curMember.stats.wins + "-" + curMember.stats.losses));
         teamNameCell.appendChild(document.createTextNode(curMember.teamLocation + " " + curMember.teamNickname));
-        pctCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.wins/curMember.stats.losses * 100) + "%"));
+        pctCell.appendChild(document.createTextNode(roundToHundred(curMember.stats.wins / curMember.stats.losses * 100) + "%"));
         row.appendChild(rankCell);
         //row.appendChild(pwrRankCell);
         row.appendChild(teamNameCell);
@@ -421,20 +441,20 @@ function makeLeagueStatCards(statName, subtext, little) {
     return statContainer;
 }
 
-function drawTradeWeb(members){
+function drawTradeWeb(members) {
 
 }
 
-function drawPieChart(){
+function drawPieChart() {
     createLeagueDonutChart(myYear.members)
 }
 
-function drawBarGraph(){
+function drawBarGraph() {
     window.myChart.destroy();
     createStackedColumns(myYear);
 }
 
-function drawLineGraph(){
+function drawLineGraph() {
     createWeeklyLineCharts(myYear.members);
 }
 
@@ -497,21 +517,21 @@ function makeHeadToHeadCards(statName, member, member2, little) {
     return statContainer;
 }
 
-function createMainGraphOptions(){
+function createMainGraphOptions() {
     var containment = document.createElement('div');
     containment.style.backgroundColor = 'lightgrey';
     containment.classList.add('col-12', 'col-sm-12', 'col-md-3', 'col-lg-3', 'col-xl-3')
-    for (var i = 0; i < myYear.members.length; i++){
-        let teamRow  = document.createElement('div');
+    for (var i = 0; i < myYear.members.length; i++) {
+        let teamRow = document.createElement('div');
         teamRow.classList.add('row');
         let teamCheckBox = document.createElement('input');
         checkbox.type = "checkbox";
-checkbox.name = "name";
-checkbox.value = "value";
-checkbox.id = "id";
+        checkbox.name = "name";
+        checkbox.value = "value";
+        checkbox.id = "id";
 
         let teamName = myLeague.members[i].teamName;
         let teamID = myLeague.members[i].teamID;
-        
+
     }
 }
