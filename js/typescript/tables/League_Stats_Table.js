@@ -13,13 +13,17 @@ function createLeagueStatsTableRow(member) {
     var paCell = document.createElement('td');
     var ppCell = document.createElement('td');
     var pctCell = document.createElement('td');
+    var pctText = "%";
     rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
     ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
     recordCell.appendChild(document.createTextNode(member.recordToString()));
     teamNameCell.appendChild(document.createTextNode(member.nameToString()));
-    pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + "%"));
+    if (member.stats.getWinPct() == 0 || member.stats.getWinPct() == 1) {
+        pctText = ".00" + pctText;
+    }
+    pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
     row.appendChild(rankCell);
     row.appendChild(teamNameCell);
     row.appendChild(recordCell);

@@ -31,11 +31,12 @@ $(document).ready(function () {
 function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
     var weeks = [];
     console.log("getting matchups");
-    var weeksToGet = settings.currentMatchupPeriod - 1;
-    if (settings.isActive == false) {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength + 1;
+    var weeksToGet;
+    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
+        weeksToGet = settings.currentMatchupPeriod - 1;
+    } else {
+        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
     }
-    
     for (let q = 1; q <= weeksToGet; q++) {
         myXhr('get', {
             path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q

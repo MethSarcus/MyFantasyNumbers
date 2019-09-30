@@ -113,7 +113,11 @@ function updateTeamCard(league: League, member: Member): void {
     picture.setAttribute('src', member.logoURL);
     team.innerHTML = member.nameToString();
     owner.innerHTML = member.ownerToString();
-    finish.innerHTML = "Finished " + member.finishToString() + " overall";
+    if (league.settings.isActive) {
+        finish.innerHTML = "Ranked " + member.rankToString() + " overall";
+    } else {
+        finish.innerHTML = "Finished " + member.finishToString() + " overall";
+    }
     record.innerHTML = "Record: " + member.recordToString();
     
 }
