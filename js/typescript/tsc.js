@@ -173,6 +173,13 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
         getESPNMatchups(settings, members, leagueID, seasonID, leagueName);
     });
 }
+function getLeagueSettings(leagueID, seasonID) {
+    myXhr('get', {
+        path: 'https://api.sleeper.app/v1/league/' + leagueID.toString()
+    }, '').done(function (json) {
+        console.log(json);
+    });
+}
 function createTeamBarChart(league, member) {
     if (window.memberBarChart != undefined) {
         window.memberBarChart.data.datasets = [];
@@ -704,24 +711,6 @@ function createTeamRadarChart(league, member) {
         window.myRadarChart.render();
     }
 }
-$(document).ready(function () {
-    var input = prompt("Please enter ESPN League ID", "2319896");
-    var season = prompt("Please enter year", "2018");
-    if (input != null) {
-        var leagueID = input;
-        if (localStorage.getItem(leagueID + season)) {
-            var year = JSON.parse(localStorage.getItem(leagueID + season));
-            var restoredLeague = League.convertFromJson(year);
-            console.log(restoredLeague);
-            setPage(restoredLeague);
-        }
-        else {
-            console.log("running");
-            localStorage.clear();
-            getESPNSettings(leagueID, season);
-        }
-    }
-});
 function setPage(league) {
     document.getElementById("my-navbar-brand").innerHTML = league.leagueName;
     document.getElementById("my-navbar-brand").onclick = function () {
@@ -851,6 +840,24 @@ function setPage(league) {
         $('[data-toggle="tooltip"]').tooltip();
     });
 }
+$(document).ready(function () {
+    var input = prompt("Please enter ESPN League ID", "2319896");
+    var season = prompt("Please enter year", "2018");
+    if (input != null) {
+        var leagueID = input;
+        if (localStorage.getItem(leagueID + season)) {
+            var year = JSON.parse(localStorage.getItem(leagueID + season));
+            var restoredLeague = League.convertFromJson(year);
+            console.log(restoredLeague);
+            setPage(restoredLeague);
+        }
+        else {
+            console.log("running");
+            localStorage.clear();
+            getESPNSettings(leagueID, season);
+        }
+    }
+});
 var Draft = (function () {
     function Draft(leagueID, year, draftType, pickOrder, draftPicks, auctionBudget) {
         this.leagueID = leagueID;
