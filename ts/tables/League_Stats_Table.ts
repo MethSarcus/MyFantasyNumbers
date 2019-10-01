@@ -14,14 +14,18 @@ function createLeagueStatsTableRow(member: Member): HTMLTableRowElement {
     let paCell = document.createElement('td');
     let ppCell = document.createElement('td');
     let pctCell = document.createElement('td');
+    let pctText = "%";
 
-    rankCell.appendChild(document.createTextNode(member.stats.finalStanding.toString()));
+    rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
     ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
-    recordCell.appendChild(document.createTextNode(member.finishToString()));
+    recordCell.appendChild(document.createTextNode(member.recordToString()));
     teamNameCell.appendChild(document.createTextNode(member.nameToString()));
-    pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + "%"));
+    if (member.stats.getWinPct() == 0 || member.stats.getWinPct() == 1) {
+        pctText = ".00" + pctText
+    }
+    pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
 
     row.appendChild(rankCell);
     row.appendChild(teamNameCell);

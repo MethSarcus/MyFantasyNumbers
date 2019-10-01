@@ -211,8 +211,6 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
 }
 
 function createLeagueWeeklyLineChart(league: League) {
-    console.log("Making league line chart");
-    console.log(league);
     if ((window as any).leagueWeeklyLineChart == undefined) {
         var ctx = (document.getElementById("league_weekly_line_canvas") as HTMLCanvasElement).getContext("2d");
         var dataSets = getLeagueLineData(league);

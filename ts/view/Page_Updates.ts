@@ -113,7 +113,11 @@ function updateTeamCard(league: League, member: Member): void {
     picture.setAttribute('src', member.logoURL);
     team.innerHTML = member.nameToString();
     owner.innerHTML = member.ownerToString();
-    finish.innerHTML = "Finished " + member.finishToString() + " overall";
+    if (league.settings.isActive) {
+        finish.innerHTML = "Ranked " + member.rankToString() + " overall";
+    } else {
+        finish.innerHTML = "Finished " + member.finishToString() + " overall";
+    }
     record.innerHTML = "Record: " + member.recordToString();
     
 }
@@ -306,5 +310,11 @@ function unfade(element) {
         element.style.filter = 'alpha(opacity=' + op * 100 + ")";
         op += op * 0.05;
     }, 8);
+}
+
+function fixNoImage() {
+    this.src = "assets/user1.png";
+    this.style.backgroundColor = "white";
+    this.onerror = null;
 }
 

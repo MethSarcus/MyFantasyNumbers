@@ -21,31 +21,7 @@
   <script src="https://www.amcharts.com/lib/4/core.js"></script>
   <script src="https://www.amcharts.com/lib/4/charts.js"></script>
   <script src="https://www.amcharts.com/lib/4/maps.js"></script>
-  <script type="text/javascript" src="js/typescript/utilities/Utils.js"></script>
-  <script type="text/javascript" src="js/typescript/view/Page_Updates.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Stats.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Settings.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Team.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Member.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Week.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Matchup.js"></script>
-  <script type="text/javascript" src="js/typescript/utilities/calculations.js"></script>
-  <script type="text/javascript" src="js/typescript/tables/League_Stats_Table.js"></script>
-  <script type="text/javascript" src="js/typescript/model/power_rank/PowerStats.js"></script>
-  <script type="text/javascript" src="js/typescript/model/power_rank/WeeklyPowerRanks.js"></script>
-  <script type="text/javascript" src="js/typescript/tables/Member_Week_Table.js"></script>
-  <script type="text/javascript" src="js/typescript/tables/Power_Rank_Table.js"></script>
-  <script type="text/javascript" src="js/advancedCalculations.js"></script>
-  <script type="text/javascript" src="js/typescript/model/Player.js"></script>
-  <script type="text/javascript" src="js/typescript/model/SeasonPlayer.js"></script>
-  <script type="text/javascript" src="js/typescript/charts/Line_Charts.js"></script>
-  <script type="text/javascript" src="js/typescript/charts/Bar_Charts.js"></script>
-  <script type="text/javascript" src="js/typescript/charts/Radar_Charts.js"></script>
-  <script type="text/javascript" src="js/typescript/model/League.js"></script>
-  <script type="text/javascript" src="js/setPage.js"></script>
-  <script type="text/javascript" src="js/conversions.js"></script>
-  <script type="text/javascript" src="js/getLeague.js"></script>
-  <script src="js/makeCharts.js"></script>
+  <script type="text/javascript" src="js/typescript/tsc.js"></script>
   <!-- Load d3.js and c3.js -->
   <!-- <script src="Charts\c3-0.6.12\c3.min.js"></script> -->
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -98,21 +74,18 @@
         <a id="pwrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#power_ranks_page">Power
           Ranks</a>
       </li>
-      <li class="nav-item ml-auto mr-0 my-auto" id="yearSelector">
-        <select class="form-control form-control-sm ">
-          <option value="1">2019</option>
-          <option selected value="2">2018</option>
-          <option value="3">2017</option>
+      <li class="nav-item ml-auto mr-0 my-auto">
+        <select class="form-control form-control-sm" id="available_seasons">
         </select>
       </li>
       <li class="my-auto mx-3">
         <div class="btn-group btn-group-toggle" data-toggle="buttons" id="SeasonSegment">
           <label class="btn btn-primary btn-sm season-portion-button active" id="Regular Season">
-            <input type="radio" autocomplete="off">Regular Season</label>
+            <input type="radio" autocomplete="off" id="regular_radio_button">Regular Season</label>
           <label class="btn btn-primary btn-sm season-portion-button" id="Post-Season">
-            <input type="radio" autocomplete="off">Post Season</label>
+            <input type="radio" autocomplete="off" id="post_radio_button">Post Season</label>
           <label class="btn btn-primary btn-sm season-portion-button" id="Complete Season">
-            <input type="radio" autocomplete="off">All</label>
+            <input type="radio" autocomplete="off" id="complete_radio_button">All</label>
         </div>
       </li>
     </ul>
@@ -447,6 +420,4 @@
       </div>
     </div>
 </body>
-<script type="text/javascript" src="js/main.js"></script>
-
 </html>

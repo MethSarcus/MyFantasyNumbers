@@ -182,8 +182,14 @@ function getMean(numbers: number[]): number {
 
 function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] {
     var players = getSeasonPlayers(league, teamID);
+    var minSampleSize = 5;
+    if (league.settings.isActive) {
+        if (league.settings.currentMatchupPeriod < 5) {
+            minSampleSize = league.settings.currentMatchupPeriod - 1;
+        }
+    }
     var mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
-        return (player.weeksPlayed > 5);
+        return (player.weeksPlayed >= minSampleSize);
     });
     var mvp = players[0];
     var lvp = players[0];
@@ -196,10 +202,11 @@ function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] 
             lvp = seasonPlayer;
         }
     });
+    
 
     mostConsistentPlayers.forEach((seasonPlayer) => {
         if (calcStandardDeviation(seasonPlayer.getScores()) < calcStandardDeviation(mostConsistent.getScores()) &&
-        seasonPlayer.weeksPlayed > 5 && seasonPlayer.seasonScore != 0) {
+        seasonPlayer.weeksPlayed >= minSampleSize && seasonPlayer.seasonScore != 0) {
             mostConsistent = seasonPlayer;
         }
     });
@@ -432,4 +439,15 @@ function getRealTeamInitials(realteamID) {
             break;
     }
     return team;
+}
+
+function myXhr(t, d, id) {
+    return $.ajax({
+        type: t,
+        url: 'js/proxy.php',
+        dataType: 'json',
+        data: d,
+        cache: false,
+        async: true,
+    })
 }
