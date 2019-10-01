@@ -184,13 +184,19 @@ function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] 
     var players = getSeasonPlayers(league, teamID);
     var minSampleSize = 5;
     if (league.settings.isActive) {
-        if (league.settings.currentMatchupPeriod < 5) {
+        if (league.settings.currentMatchupPeriod <= 5) {
             minSampleSize = league.settings.currentMatchupPeriod - 1;
         }
     }
     var mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
         return (player.weeksPlayed >= minSampleSize);
     });
+    while (mostConsistentPlayers.length == 0) {
+        minSampleSize -= 1;
+        mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
+            return (player.weeksPlayed >= minSampleSize);
+        });
+    }
     var mvp = players[0];
     var lvp = players[0];
     var mostConsistent = mostConsistentPlayers[0];
