@@ -1,33 +1,3 @@
-$(document).ready(function () {
-    //leagueID = 340734;
-    // document.getElementById("content-wrapper").onscroll = function () {
-    //     console.log("triggered");
-    //     scrollup()
-    //   };
-
-
-    var input = prompt("Please enter ESPN League ID", "2319896");
-    var season = prompt("Please enter year", "2018");
-    //var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
-
-    if (input != null) {
-        var leagueID = input;
-        if (localStorage.getItem(leagueID + season)) {
-            var year = JSON.parse(localStorage.getItem(leagueID + season));
-            var restoredLeague = League.convertFromJson(year);
-            console.log(restoredLeague);
-            setPage(restoredLeague);
-        } else {
-            console.log("running");
-            localStorage.clear();
-            getESPNSettings(leagueID, season);
-            //'apis/v3/games/ffl/seasons/2018/segments/0/leagues/340734?view=mMatchupScore&teamId=1&scoringPeriodId=1' for telling if a game is a playoff game
-        }
-        
-    }
-
-});
-
 function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
     var weeks = [];
     console.log("getting matchups");
@@ -43,13 +13,13 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
         }, '').done(function (json) {
             var matchups = [];
             //console.log(weeks);
-            for (i in json.schedule) { //increments through each matchup
+            for (var i in json.schedule) { //increments through each matchup
                 let curWeek = json.schedule[i];
                 
                 if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod != undefined) { //checks if the roster data is available for scraping
                     var homeTeamID = curWeek.home.teamId;
                     var homePlayers = [];
-                    for (z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
+                    for (var z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
                         //(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
                         let curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
 
@@ -80,7 +50,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                     if (curWeek.away != null && curWeek.away != undefined) {
                         var awayTeamID = curWeek.away.teamId;
                         var awayPlayers = [];
-                        for (l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
+                        for (var l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
                             let curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
                             let firstName = curPlayer.playerPoolEntry.player.firstName;
                             let lastName = curPlayer.playerPoolEntry.player.lastName;
@@ -153,17 +123,17 @@ function getESPNSettings(leagueID, seasonID) {
         var playoffLength = totalMatchupCount - regularSeasonMatchupCount;
         var DRAFT_TYPE = json.settings.draftSettings.type;
         var lineupSlots = Object.entries(json.settings.rosterSettings.lineupSlotCounts);
-        lineupSlots = lineupSlots.map(function (slot) {
+        var lineup = lineupSlots.map(function (slot) {
             return [parseInt(slot[0]), slot[1]]
           }).filter(function (slot) {
             return slot[1] != 0;
         });
         leagueSeasons.push(seasonID);
         var leagueName = json.settings.name;
-        var activeLineupSlots = lineupSlots.filter(function (slot) {
+        var activeLineupSlots = lineup.filter(function (slot) {
             return slot[0] != 21 && slot[0] != 20;
         });
-        var settings = new Settings(activeLineupSlots, lineupSlots, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
+        var settings = new Settings(activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
         getESPNMembers(settings, leagueID, seasonID, leagueName);
     });
 }
@@ -175,8 +145,8 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
     }, '').done(function (json) {
         var members = [];
         var teams = json.teams;
-        seasonLength = settings.regularSeasonMatchupCount + settings.playoffLength;
-        for (i in json.members) {
+        var seasonLength = settings.regularSeasonMatchupCount + settings.playoffLength;
+        for (var i in json.members) {
             let member = json.members[i];
 
             var firstName = member.firstName;
@@ -184,7 +154,7 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
             var memberID = member.id;
             var notificationSettings = member.notificationSettings;
 
-            for (x in teams) {
+            for (var x in teams) {
                 if (teams[x].primaryOwner == memberID) {
                     let curTeam = teams[x];
                     var location = curTeam.location;
@@ -203,15 +173,4 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
         }
         getESPNMatchups(settings, members, leagueID, seasonID, leagueName)
     });
-}
-
-function myXhr(t, d, id) {
-    return $.ajax({
-        type: t,
-        url: 'js/proxy.php',
-        dataType: 'json',
-        data: d,
-        cache: false,
-        async: true,
-    })
 }

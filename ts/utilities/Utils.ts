@@ -440,3 +440,14 @@ function getRealTeamInitials(realteamID) {
     }
     return team;
 }
+
+function myXhr(t, d, id) {
+    return $.ajax({
+        type: t,
+        url: 'js/proxy.php',
+        dataType: 'json',
+        data: d,
+        cache: false,
+        async: true,
+    })
+}

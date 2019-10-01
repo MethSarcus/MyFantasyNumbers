@@ -312,3 +312,9 @@ function unfade(element) {
     }, 8);
 }
 
+function fixNoImage() {
+    this.src = "assets/user1.png";
+    this.style.backgroundColor = "white";
+    this.onerror = null;
+}
+

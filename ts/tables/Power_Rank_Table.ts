@@ -1,4 +1,3 @@
-declare var fixNoImage: any;
 function createPowerRankTable(league: League) {
     var tableBody: HTMLTableElement = <HTMLTableElement> document.getElementById("power_rank_table_body");
     league.members.forEach(member => {
