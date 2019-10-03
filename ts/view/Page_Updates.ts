@@ -20,8 +20,7 @@ function updateTeamPill(league: League, teamID: number): void {
     updateMargins(league, member);
     updateUpsets(league, member);
 
-
-    unfade(document.getElementById('teamPill'));
+    unfadeTeam();
 }
 
 function updateBestWorstConsistent(league: League, member: Member): void {
@@ -294,17 +293,19 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
     biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
 }
 
-function fadeTeam(element, league, teamID) {
-    $('#teamPill').stop(true, true).fadeOut(200, function() {
-        updateTeamPill(league, teamID);
-    } );
+function fadeTeam(league: League, teamID: number) {
+    if (document.getElementById('team_name').innerText != league.getMember(teamID).nameToString()) {
+        $('#teamPill').stop(true, true).fadeOut(200, function() {
+            updateTeamPill(league, teamID);
+        });
+    }
 }
 
 function fadeToLeaguePage() {
     $('#teamPill').stop(true, true).fadeOut(200);
 }
 
-function unfade(element) {
+function unfadeTeam() {
     $('#teamPill').stop(true, true).fadeIn(200);
 }
 

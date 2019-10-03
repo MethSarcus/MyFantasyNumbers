@@ -1,6 +1,6 @@
 function setPage(league: League) {
-    document.getElementById("my-navbar-brand").innerHTML = league.leagueName;
-    document.getElementById("my-navbar-brand").onclick = function () {
+    document.getElementById("league_name_header").innerHTML = league.leagueName;
+    document.getElementById("league_name_header").onclick = function () {
         $(".nav-link").removeClass('active');
         fadeToLeaguePage();
     };
@@ -21,7 +21,7 @@ function setPage(league: League) {
             league.setMemberStats(league.getSeasonPortionWeeks());
             for (var i = 1; i <= league.members.length; i++) {
                 if ($('#' + i).find('a.active').length !== 0) {
-                    fadeTeam(document.getElementById('teamPill'), league, i);
+                    fadeTeam(league, i);
                 }
             }
         };
@@ -32,7 +32,7 @@ function setPage(league: League) {
             league.setMemberStats(league.getSeasonPortionWeeks());
             for (var i = 1; i <= league.members.length; i++) {
                 if ($('#' + i).find('a.active').length !== 0) {
-                    fadeTeam(document.getElementById('teamPill'), league, i);
+                    fadeTeam(league, i);
                 }
             }
         };
@@ -43,7 +43,7 @@ function setPage(league: League) {
             league.setMemberStats(league.getSeasonPortionWeeks());
             for (var i = 1; i <= league.members.length; i++) {
                 if ($('#' + i).find('a.active').length !== 0) {
-                    fadeTeam(document.getElementById('teamPill'), league, i);
+                    fadeTeam(league, i);
                 }
             }
         };
@@ -75,10 +75,11 @@ function setPage(league: League) {
         a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass('active');
-            fadeTeam(document.getElementById('teamPill'), league, (this as any).id);
+            fadeTeam(league, (this as any).id);
             //updateTeamPill(league, this.id);
         };
         let b = document.createElement("a");
+        b.id = league.members[i].teamID + "_link";
         b.setAttribute('data-toggle', 'pill');
         b.href = "#teamPill";
         b.classList.add('nav-link');

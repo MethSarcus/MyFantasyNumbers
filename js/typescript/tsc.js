@@ -728,8 +728,8 @@ function createTeamRadarChart(league, member) {
     }
 }
 function setPage(league) {
-    document.getElementById("my-navbar-brand").innerHTML = league.leagueName;
-    document.getElementById("my-navbar-brand").onclick = function () {
+    document.getElementById("league_name_header").innerHTML = league.leagueName;
+    document.getElementById("league_name_header").onclick = function () {
         $(".nav-link").removeClass('active');
         fadeToLeaguePage();
     };
@@ -749,7 +749,7 @@ function setPage(league) {
             league.setMemberStats(league.getSeasonPortionWeeks());
             for (var i = 1; i <= league.members.length; i++) {
                 if ($('#' + i).find('a.active').length !== 0) {
-                    fadeTeam(document.getElementById('teamPill'), league, i);
+                    fadeTeam(league, i);
                 }
             }
         };
@@ -759,7 +759,7 @@ function setPage(league) {
             league.setMemberStats(league.getSeasonPortionWeeks());
             for (var i = 1; i <= league.members.length; i++) {
                 if ($('#' + i).find('a.active').length !== 0) {
-                    fadeTeam(document.getElementById('teamPill'), league, i);
+                    fadeTeam(league, i);
                 }
             }
         };
@@ -769,7 +769,7 @@ function setPage(league) {
             league.setMemberStats(league.getSeasonPortionWeeks());
             for (var i = 1; i <= league.members.length; i++) {
                 if ($('#' + i).find('a.active').length !== 0) {
-                    fadeTeam(document.getElementById('teamPill'), league, i);
+                    fadeTeam(league, i);
                 }
             }
         };
@@ -798,9 +798,10 @@ function setPage(league) {
         a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass('active');
-            fadeTeam(document.getElementById('teamPill'), league, this.id);
+            fadeTeam(league, this.id);
         };
         var b = document.createElement("a");
+        b.id = league.members[i].teamID + "_link";
         b.setAttribute('data-toggle', 'pill');
         b.href = "#teamPill";
         b.classList.add('nav-link');
@@ -2710,7 +2711,7 @@ function updateTeamPill(league, teamID) {
     updateWinnableGamesLost(league, member);
     updateMargins(league, member);
     updateUpsets(league, member);
-    unfade(document.getElementById('teamPill'));
+    unfadeTeam();
 }
 function updateBestWorstConsistent(league, member) {
     var arr = getBestLeastConsistent(league, member.teamID);
@@ -2967,15 +2968,17 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
     biggestBoomName.innerText = biggestBoom.firstName + " " + biggestBoom.lastName;
     biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
 }
-function fadeTeam(element, league, teamID) {
-    $('#teamPill').stop(true, true).fadeOut(200, function () {
-        updateTeamPill(league, teamID);
-    });
+function fadeTeam(league, teamID) {
+    if (document.getElementById('team_name').innerText != league.getMember(teamID).nameToString()) {
+        $('#teamPill').stop(true, true).fadeOut(200, function () {
+            updateTeamPill(league, teamID);
+        });
+    }
 }
 function fadeToLeaguePage() {
     $('#teamPill').stop(true, true).fadeOut(200);
 }
-function unfade(element) {
+function unfadeTeam() {
     $('#teamPill').stop(true, true).fadeIn(200);
 }
 function fixNoImage() {
