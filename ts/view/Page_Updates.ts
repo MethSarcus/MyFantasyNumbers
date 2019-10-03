@@ -15,8 +15,11 @@ function updateTeamPill(league: League, teamID: number): void {
     updateMemberWeekTable(league, member);
     createMemberWeeklyLineChart(league, member);
     createTeamBarChart(league, member);
-    updateGutWinCard(league, teamID);
-    updateWinnableGamesLost(league, teamID);
+    updateGutWinCard(league, member);
+    updateWinnableGamesLost(league, member);
+    updateMargins(league, member);
+    updateUpsets(league, member);
+
 
     unfade(document.getElementById('teamPill'));
 }
@@ -225,7 +228,8 @@ function updateMostConsistent(mostConsistent: SeasonPlayer) {
     mostConsistentPoints.innerText = "Standard Deviation: " + calcStandardDeviation(mostConsistent.getScores()) + "\n" + mostConsistent.averageScore + " points per game, " + mostConsistent.weeksPlayed + startsText;
 }
 
-function updateWinnableGamesLost(league: League, teamID) {
+function updateWinnableGamesLost(league: League, member: Member) {
+    var teamID = member.teamID;
     var winnableGamesTitle = document.getElementById('winnable_games_lost_number');
     var poorRosterDecisions = document.getElementById('winnable_games_lost_choices');
     var choices = league.getMember(teamID).stats.choicesThatCouldHaveWonMatchup;
@@ -234,7 +238,8 @@ function updateWinnableGamesLost(league: League, teamID) {
     poorRosterDecisions.innerText = choices + " roster decisions could have won those games";
 }
 
-function updateGutWinCard(league: League, teamID) {
+function updateGutWinCard(league: League, member: Member) {
+    var teamID = member.teamID;
     var gutPointsTotalNumber = document.getElementById('gut_points');
     var gutPointsNumber = document.getElementById('gut_wins_projected_difference');
     var gutCard = document.getElementById('gut_wins_card');
@@ -243,6 +248,23 @@ function updateGutWinCard(league: League, teamID) {
     gutPointsTotalNumber.innerText = gutWins + " Gut points earned";
     gutPointsNumber.innerText = gutPoints + " average points when starting player with lower projection";
     gutCard.style.backgroundColor = getCardColor(league.getGutAverageFinish(teamID), league.members.length);
+}
+
+function updateMargins(league: League, member: Member) {
+    var teamID = member.teamID;
+    var mov = document.getElementById('margin_of_victory');
+    var mod = document.getElementById('margin_of_defeat');
+    mov.innerText = "Average victory margin\n\n" + league.getMember(teamID).stats.averageMOV + " Points";
+    mod.innerText = "Average defeat margin\n\n" + league.getMember(teamID).stats.averageMOD + " Points";
+}
+
+function updateUpsets(league: League, member: Member) {
+    var teamID = member.teamID;
+    var upsetTitle = document.getElementById('upsets_title');
+    var underdogCount = document.getElementById('underdog_count');
+    var upsets = league.getUpsets(teamID);
+    upsetTitle.innerText = "Upset projected winner " + upsets[1] + " times";
+    underdogCount.innerText = "Underdog " + upsets[0] + " times";
 }
 
 function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) {

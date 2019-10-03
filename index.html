@@ -67,9 +67,9 @@
         class="fas fa-bars"></i></span>
     <a id="my-navbar-brand" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
     <ul class="navbar-nav ml-2 w-100">
-      <li class="nav-item ml-2">
+      <!-- <li class="nav-item ml-2">
         <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
-      </li>
+      </li> -->
       <li class="nav-item ml-2">
         <a id="pwrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#power_ranks_page">Power
           Ranks</a>
@@ -311,7 +311,7 @@
                   <div class="col-12 card-deck">
                     <div id="winnable_games_lost_card"
                       class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
-                      style="background-color: rgb(43, 255, 0); color: black;">
+                      style="color: black;">
                       <blockquote class="card-blockquote">
                         <h5 id="winnable_games_lost_number">5 winnable games lost</h5>
                         <footer><small id="winnable_games_lost_choices">14 poor lineup decisions in those games</small>
@@ -320,7 +320,7 @@
                     </div>
                     <div id="gut_wins_card"
                       class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
-                      style="background-color: rgb(43, 255, 0); color: black;">
+                      style="color: black;">
                       <blockquote class="card-blockquote">
                         <h5 id="gut_points">6 wins due to gut</h5><small data-toggle="tooltip" data-placement="right"
                           title=""
@@ -330,32 +330,20 @@
                       </blockquote>
                     </div>
                     <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
-                      style="background-color: rgb(128, 255, 0); color: black;">
-                      <h5 class="card-title">7 Upsets</h5>
+                      style="color: black;">
+                      <h5 class="card-title" id="upsets_title">7 Upsets</h5>
                       <blockquote class="card-blockquote">
-                        <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
-              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
-                        <footer><small>-5.5 League Average</small></footer>
+                        <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Matchups you were projected to lose" id="underdog_count">Underdog 3 times<i class="fa fa-info-circle"></i></small>
                       </blockquote>
                     </div>
 
                     <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
-                      style="background-color: rgb(128, 255, 0); color: black;">
-                      <h5 class="card-title">Highest weekly scorer 4 times</h5>
-                      <blockquote class="card-blockquote">
-                        <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
-              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
-                        <footer><small>-5.5 League Average</small></footer>
-                      </blockquote>
+                      style="color: black;">
+                      <h6 class="card-title" id="margin_of_victory">14pt Average Margin of Victory</h5>
                     </div>
                     <div class="card p-2 text-center statcard align-items-center d-flex justify-content-center"
-                      style="background-color: rgb(128, 255, 0); color: black;">
-                      <h5 class="card-title">3 Games within 5 Points</h5>
-                      <blockquote class="card-blockquote">
-                        <small data-toggle="tooltip" data-placement="right" title="" data-original-title="Indicates weekly variation of points a team had from their average 
-              Lower is better">Standard Deviation <i class="fa fa-info-circle"></i></small>
-                        <footer><small>-5.5 League Average</small></footer>
-                      </blockquote>
+                      style="color: black;">
+                      <h6 class="card-title" id="margin_of_defeat">10pt Margin of defeat</h5>     
                     </div>
                   </div>
                 </div>

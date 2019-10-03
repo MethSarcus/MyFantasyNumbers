@@ -717,6 +717,10 @@ function setPage(league) {
         $(".nav-link").removeClass('active');
         fadeToLeaguePage();
     };
+    document.getElementById("pwrRankButton").onclick = function () {
+        $(".nav-link").removeClass('active');
+        fadeToLeaguePage();
+    };
     localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
     console.log(league);
     var profileImage = document.getElementById('team_image');
@@ -985,6 +989,7 @@ var League = (function () {
             member.stats.choicesThatCouldHaveWonMatchup = _this.getLosingDecisionAmount(member.teamID);
             member.stats.gameLostDueToSingleChoice = _this.getGamesLostDueToSingleChoice(member.teamID);
             member.stats.powerRank = _this.getPowerRankFinish(member.teamID);
+            _this.setAverageMargins(member.teamID);
         });
     };
     League.prototype.resetStats = function () {
@@ -1421,6 +1426,39 @@ var League = (function () {
         });
         return finish;
     };
+    League.prototype.setAverageMargins = function (teamID) {
+        var member = this.getMember(teamID);
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            var matchup = week.getTeamMatchup(teamID);
+            if (!matchup.byeWeek) {
+                if (matchup.getWinningTeam().teamID == teamID) {
+                    member.stats.averageMOV += matchup.marginOfVictory;
+                }
+                else if (matchup.getWinningTeam().teamID != teamID) {
+                    member.stats.averageMOD += matchup.marginOfVictory;
+                }
+            }
+        });
+        member.stats.averageMOV = roundToHundred(member.stats.averageMOV / member.stats.wins);
+        member.stats.averageMOD = roundToHundred(member.stats.averageMOD / member.stats.losses);
+    };
+    League.prototype.getUpsets = function (teamID) {
+        var upsetCount = 0;
+        var underdogCount = 0;
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            var match = week.getTeamMatchup(teamID);
+            if (!match.byeWeek) {
+                if (match.getWinningTeam().teamID == teamID && match.isUpset) {
+                    upsetCount += 1;
+                    underdogCount += 1;
+                }
+                else if (match.getWinningTeam().teamID != teamID && !match.isUpset) {
+                    underdogCount += 1;
+                }
+            }
+        });
+        return [underdogCount, upsetCount];
+    };
     return League;
 }());
 var LeagueStats = (function () {
@@ -1728,6 +1766,8 @@ var Stats = (function () {
         this.gutWins = 0;
         this.gutLosses = 0;
         this.rank = 0;
+        this.averageMOD = 0;
+        this.averageMOV = 0;
     }
     Stats.prototype.getWinPct = function () {
         if (this.wins == 0) {
@@ -2650,8 +2690,10 @@ function updateTeamPill(league, teamID) {
     updateMemberWeekTable(league, member);
     createMemberWeeklyLineChart(league, member);
     createTeamBarChart(league, member);
-    updateGutWinCard(league, teamID);
-    updateWinnableGamesLost(league, teamID);
+    updateGutWinCard(league, member);
+    updateWinnableGamesLost(league, member);
+    updateMargins(league, member);
+    updateUpsets(league, member);
     unfade(document.getElementById('teamPill'));
 }
 function updateBestWorstConsistent(league, member) {
@@ -2845,7 +2887,8 @@ function updateMostConsistent(mostConsistent) {
     mostConsistentName.innerText = mostConsistent.firstName + " " + mostConsistent.lastName;
     mostConsistentPoints.innerText = "Standard Deviation: " + calcStandardDeviation(mostConsistent.getScores()) + "\n" + mostConsistent.averageScore + " points per game, " + mostConsistent.weeksPlayed + startsText;
 }
-function updateWinnableGamesLost(league, teamID) {
+function updateWinnableGamesLost(league, member) {
+    var teamID = member.teamID;
     var winnableGamesTitle = document.getElementById('winnable_games_lost_number');
     var poorRosterDecisions = document.getElementById('winnable_games_lost_choices');
     var choices = league.getMember(teamID).stats.choicesThatCouldHaveWonMatchup;
@@ -2853,7 +2896,8 @@ function updateWinnableGamesLost(league, teamID) {
     winnableGamesTitle.innerText = gamesLost + " Winnable Games Lost";
     poorRosterDecisions.innerText = choices + " roster decisions could have won those games";
 }
-function updateGutWinCard(league, teamID) {
+function updateGutWinCard(league, member) {
+    var teamID = member.teamID;
     var gutPointsTotalNumber = document.getElementById('gut_points');
     var gutPointsNumber = document.getElementById('gut_wins_projected_difference');
     var gutCard = document.getElementById('gut_wins_card');
@@ -2862,6 +2906,21 @@ function updateGutWinCard(league, teamID) {
     gutPointsTotalNumber.innerText = gutWins + " Gut points earned";
     gutPointsNumber.innerText = gutPoints + " average points when starting player with lower projection";
     gutCard.style.backgroundColor = getCardColor(league.getGutAverageFinish(teamID), league.members.length);
+}
+function updateMargins(league, member) {
+    var teamID = member.teamID;
+    var mov = document.getElementById('margin_of_victory');
+    var mod = document.getElementById('margin_of_defeat');
+    mov.innerText = "Average victory margin\n\n" + league.getMember(teamID).stats.averageMOV + " Points";
+    mod.innerText = "Average defeat margin\n\n" + league.getMember(teamID).stats.averageMOD + " Points";
+}
+function updateUpsets(league, member) {
+    var teamID = member.teamID;
+    var upsetTitle = document.getElementById('upsets_title');
+    var underdogCount = document.getElementById('underdog_count');
+    var upsets = league.getUpsets(teamID);
+    upsetTitle.innerText = "Upset projected winner " + upsets[1] + " times";
+    underdogCount.innerText = "Underdog " + upsets[0] + " times";
 }
 function updateBiggestBoom(league, biggestBoom, teamID) {
     var biggestBoomTitle = document.getElementById('consistent_or_boom');

@@ -4,6 +4,10 @@ function setPage(league: League) {
         $(".nav-link").removeClass('active');
         fadeToLeaguePage();
     };
+    document.getElementById("pwrRankButton").onclick = function () {
+        $(".nav-link").removeClass('active');
+        fadeToLeaguePage();
+    };
     localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
     console.log(league);
     const profileImage = document.getElementById('team_image');

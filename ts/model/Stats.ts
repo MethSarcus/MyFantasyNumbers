@@ -16,6 +16,8 @@ class Stats {
     public gutPlayersPlayed: number;
     public gutWins: number;
     public gutLosses: number;
+    public averageMOV: number;
+    public averageMOD: number;
     public pf: number;
     public pa: number;
     public pp: number;
@@ -46,6 +48,8 @@ class Stats {
         this.gutWins = 0;
         this.gutLosses = 0;
         this.rank = 0;
+        this.averageMOD = 0;
+        this.averageMOV = 0;
     }
 
     public getWinPct(): number {

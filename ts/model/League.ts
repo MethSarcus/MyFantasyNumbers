@@ -12,7 +12,7 @@ class League {
         this.weeks = weeks;
         this.season = season;
         this.members = members;
-        this.settings = settings; 
+        this.settings = settings;
         this.seasonPortion = SEASON_PORTION.REGULAR;
         this.leagueName = leagueName;
     }
@@ -34,7 +34,7 @@ class League {
     }
 
     public setMemberStats(weeks): void {
-        weeks.forEach( (week) => {
+        weeks.forEach((week) => {
             const weekMatches = [];
             week.matchups.forEach((matchup) => {
                 if (matchup.byeWeek !== true) {
@@ -55,13 +55,13 @@ class League {
             });
             weekMatches.sort((x: Team, y: Team) => {
                 if (x.score < y.score) {
-                  return -1;
+                    return -1;
                 }
                 if (x.score > y.score) {
-                  return 1;
+                    return 1;
                 }
                 return 0;
-              });
+            });
 
             for (let i = 0; i < weekMatches.length; i++) {
                 const curMember: Member = this.getMember(weekMatches[i].teamID);
@@ -76,27 +76,28 @@ class League {
 
             weekMatches.sort((x: Team, y: Team) => {
                 if (x.potentialPoints < y.potentialPoints) {
-                  return -1;
+                    return -1;
                 }
                 if (x.potentialPoints > y.potentialPoints) {
-                  return 1;
+                    return 1;
                 }
                 return 0;
-              });
-              for (let i = 0; i < weekMatches.length; i++) {
+            });
+            for (let i = 0; i < weekMatches.length; i++) {
                 const curMember: Member = this.getMember(weekMatches[i].teamID);
                 curMember.stats.potentialPowerWins += i;
                 curMember.stats.potentialPowerLosses += (weekMatches.length - 1 - i);
-              }
-       });
+            }
+        });
         this.members.forEach((member) => {
-           member.setAdvancedStats(weeks);
-           member.stats.rank = this.getRank(member.teamID);
-           member.stats.roundStats();
-           member.stats.choicesThatCouldHaveWonMatchup = this.getLosingDecisionAmount(member.teamID);
-           member.stats.gameLostDueToSingleChoice = this.getGamesLostDueToSingleChoice(member.teamID);
-           member.stats.powerRank = this.getPowerRankFinish(member.teamID);
-       });
+            member.setAdvancedStats(weeks);
+            member.stats.rank = this.getRank(member.teamID);
+            member.stats.roundStats();
+            member.stats.choicesThatCouldHaveWonMatchup = this.getLosingDecisionAmount(member.teamID);
+            member.stats.gameLostDueToSingleChoice = this.getGamesLostDueToSingleChoice(member.teamID);
+            member.stats.powerRank = this.getPowerRankFinish(member.teamID);
+            this.setAverageMargins(member.teamID);
+        });
     }
 
     public resetStats(): void {
@@ -111,7 +112,7 @@ class League {
             pf += member.stats.pf;
         });
 
-        return roundToHundred(pf/this.members.length);
+        return roundToHundred(pf / this.members.length);
     }
 
     public getLeaguePA(): number {
@@ -120,7 +121,7 @@ class League {
             pa += member.stats.pa;
         });
 
-        return roundToHundred(pa/this.members.length);
+        return roundToHundred(pa / this.members.length);
     }
 
     public getLeaguePP(): number {
@@ -129,7 +130,7 @@ class League {
             pp += member.stats.pp;
         });
 
-        return roundToHundred(pp/this.members.length);
+        return roundToHundred(pp / this.members.length);
     }
 
     public getSeasonPortionWeeks(): Week[] {
@@ -176,7 +177,7 @@ class League {
                 if (player.score > boomPlayer.score) {
                     boomPlayer = player;
                 }
-            }); 
+            });
         });
         return boomPlayer;
     }
@@ -356,13 +357,13 @@ class League {
         this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach(matchup => {
                 if (matchup.home.score > highestScore) {
-                     bestWeekMatchup = matchup;
-                     highestScore = matchup.home.score;
-                } else if (!matchup.byeWeek){
+                    bestWeekMatchup = matchup;
+                    highestScore = matchup.home.score;
+                } else if (!matchup.byeWeek) {
                     if (matchup.away.score > highestScore) {
                         bestWeekMatchup = matchup;
                         highestScore = matchup.away.score;
-                   }
+                    }
                 }
             });
         });
@@ -370,25 +371,25 @@ class League {
         return bestWeekMatchup;
     }
 
-    static convertFromJson(object: any) : League {
+    static convertFromJson(object: any): League {
         var members = [];
         var weeks = [];
         var jsonSettings = object.settings;
         var settings = new Settings(jsonSettings.activeLineupSlots,
-                jsonSettings.lineupSlots,
-                jsonSettings.regularSeasonLength,
-                jsonSettings.playoffLength,
-                jsonSettings.draftType, 
-                jsonSettings.currentMatchupPeriod,
-                jsonSettings.isActive,
-                jsonSettings.yearsActive);
+            jsonSettings.lineupSlots,
+            jsonSettings.regularSeasonLength,
+            jsonSettings.playoffLength,
+            jsonSettings.draftType,
+            jsonSettings.currentMatchupPeriod,
+            jsonSettings.isActive,
+            jsonSettings.yearsActive);
         object.weeks.forEach(week => {
             var matchups = [];
             week.matchups.forEach(matchup => {
                 var homeRoster = [];
                 matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(player => {
-                    homeRoster.push(new Player(player.firstName, player.lastName, 
-                        player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, 
+                    homeRoster.push(new Player(player.firstName, player.lastName,
+                        player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
                         player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
                 var awayTeamId = -1;
@@ -397,10 +398,10 @@ class League {
                     var awayRoster = [];
                     awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(player => {
-                    awayRoster.push(new Player(player.firstName, player.lastName, 
-                        player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, 
-                        player.lineupSlotID, player.eligibleSlots, player.weekNumber));
-                });
+                        awayRoster.push(new Player(player.firstName, player.lastName,
+                            player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
+                            player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                    });
                     away = new Team(matchup.away.teamID,
                         awayRoster,
                         object.settings.activeLineupSlots,
@@ -411,7 +412,7 @@ class League {
                     homeRoster,
                     object.settings.activeLineupSlots,
                     awayTeamId);
-                
+
                 matchups.push(new Matchup(home, away, week.weekNumber, week.isPlayoffs));
             });
             weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups))
@@ -452,9 +453,9 @@ class League {
             timesPlayedDict.set(player.position, player.weeksPlayed + timesPlayedDict.get(player.position));
         });
         positions.forEach(position => {
-            scores.push(roundToHundred(scoreDict.get(position)/timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(this, position)));
+            scores.push(roundToHundred(scoreDict.get(position) / timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(this, position)));
         });
-       
+
         return scores;
     }
 
@@ -491,7 +492,7 @@ class League {
         positions.forEach(position => {
             scores.push(roundToHundred(scoreDict.get(position)));
         });
-       
+
         return scores;
     }
 
@@ -500,7 +501,7 @@ class League {
         this.members.forEach(member => {
             totalEfficiency += member.stats.getEfficiency();
         });
-        return totalEfficiency/this.members.length;
+        return totalEfficiency / this.members.length;
     }
 
     public getEfficiencyFinish(teamID: number): number {
@@ -514,7 +515,7 @@ class League {
 
         return finish;
     }
-    
+
     public getMemberOpponentTotalPointsPerPosition(teamID: number): number[] {
         var allPlayers = getSeasonOpponentPlayers(this, teamID);
         var positions = this.settings.getPositions();
@@ -529,7 +530,7 @@ class League {
         positions.forEach(position => {
             scores.push(roundToHundred(scoreDict.get(position)));
         });
-       
+
         return scores;
     }
 
@@ -548,9 +549,9 @@ class League {
             timesPlayedDict.set(player.position, player.weeksPlayed + timesPlayedDict.get(player.position));
         });
         positions.forEach(position => {
-            scores.push(roundToHundred(scoreDict.get(position)/timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(this, position)));
+            scores.push(roundToHundred(scoreDict.get(position) / timesPlayedDict.get(position) / getBestPositionPlayerAverageScore(this, position)));
         });
-       
+
         return scores;
     }
 
@@ -609,13 +610,47 @@ class League {
 
     public getGutAverageFinish(teamID: number): number {
         let finish = 1;
-        const gutAvg = this.getMember(teamID).stats.gutPoints/this.getMember(teamID).stats.gutPlayersPlayed;
+        const gutAvg = this.getMember(teamID).stats.gutPoints / this.getMember(teamID).stats.gutPlayersPlayed;
         this.members.forEach((member) => {
-            if (gutAvg < (member.stats.gutPoints/this.getMember(teamID).stats.gutPlayersPlayed) && member.teamID !== teamID) {
+            if (gutAvg < (member.stats.gutPoints / this.getMember(teamID).stats.gutPlayersPlayed) && member.teamID !== teamID) {
                 finish += 1;
             }
         });
 
         return finish;
+    }
+
+    public setAverageMargins(teamID: number): void {
+        var member = this.getMember(teamID);
+        this.getSeasonPortionWeeks().forEach(week => {
+            let matchup = week.getTeamMatchup(teamID);
+            if (!matchup.byeWeek) {
+                if (matchup.getWinningTeam().teamID == teamID) {
+                    member.stats.averageMOV += matchup.marginOfVictory;
+                } else if (matchup.getWinningTeam().teamID != teamID) {
+                    member.stats.averageMOD += matchup.marginOfVictory;
+                }
+            }
+        });
+
+        member.stats.averageMOV = roundToHundred(member.stats.averageMOV / member.stats.wins);
+        member.stats.averageMOD = roundToHundred(member.stats.averageMOD / member.stats.losses);
+    }
+
+    public getUpsets(teamID: number): [number, number] {
+        var upsetCount = 0;
+        var underdogCount = 0;
+        this.getSeasonPortionWeeks().forEach(week => {
+            var match = week.getTeamMatchup(teamID);
+            if (!match.byeWeek) {
+                if (match.getWinningTeam().teamID == teamID && match.isUpset) {
+                    upsetCount += 1;
+                    underdogCount += 1;
+                } else if (match.getWinningTeam().teamID != teamID && !match.isUpset) {
+                    underdogCount += 1;
+                }
+            }
+        });
+        return [underdogCount, upsetCount];
     }
 }
