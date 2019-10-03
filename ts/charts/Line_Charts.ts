@@ -183,7 +183,15 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
                         ticks: {
                             beginAtZero: true,
                         }
-                    }]
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            padding: 40,
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }],
                 },
                 plugins: {
                     deferred: {
@@ -244,9 +252,17 @@ function createLeagueWeeklyLineChart(league: League) {
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true,
+                            padding: 40,
                         }
-                    }]
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            padding: 40,
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }],
                 },
                 plugins: {
                     deferred: {

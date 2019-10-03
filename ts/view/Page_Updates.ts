@@ -295,43 +295,17 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
 }
 
 function fadeTeam(element, league, teamID) {
-    var op = 1;  // initial opacity
-    var timer = setInterval(function () {
-        if (op <= 0.1){
-            clearInterval(timer);
-            updateTeamPill(league, teamID);
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.1;
-    }, 5);
+    $('#teamPill').stop(true, true).fadeOut(200, function() {
+        updateTeamPill(league, teamID);
+    } );
 }
 
 function fadeToLeaguePage() {
-    var element = document.getElementById('teamPill');
-    var op = 1;  // initial opacity
-    var timer = setInterval(function () {
-        if (op <= 0.1){
-            clearInterval(timer);
-            document.getElementById('teamPill').style.display = 'none';
-        }
-        element.style.opacity = op + "";
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.3;
-    }, 8);
+    $('#teamPill').stop(true, true).fadeOut(200);
 }
 
 function unfade(element) {
-    var op = 0.1;  // initial opacity
-    element.style.display = 'block';
-    var timer = setInterval(function () {
-        if (op >= 1){
-            clearInterval(timer);
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op += op * 0.05;
-    }, 8);
+    $('#teamPill').stop(true, true).fadeIn(200);
 }
 
 function fixNoImage() {
