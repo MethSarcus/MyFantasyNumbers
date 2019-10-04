@@ -75,7 +75,7 @@ function setPage(league: League) {
         a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass('active');
-            fadeTeam(league, (this as any).id);
+            fadeTeamWithLogic(league, (this as any).id);
             //updateTeamPill(league, this.id);
         };
         let b = document.createElement("a");

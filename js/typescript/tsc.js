@@ -798,7 +798,7 @@ function setPage(league) {
         a.classList.add("nav-item", 'align-items-left', 'side-item', "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass('active');
-            fadeTeam(league, this.id);
+            fadeTeamWithLogic(league, this.id);
         };
         var b = document.createElement("a");
         b.id = league.members[i].teamID + "_link";
@@ -2969,7 +2969,13 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
     biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
 }
 function fadeTeam(league, teamID) {
-    if (document.getElementById('team_name').innerText != league.getMember(teamID).nameToString()) {
+    $('#teamPill').stop(true, true).fadeOut(200, function () {
+        updateTeamPill(league, teamID);
+    });
+}
+function fadeTeamWithLogic(league, teamID) {
+    console.log(document.getElementById(teamID + "_link").classList);
+    if (document.getElementById(teamID + "_link").classList[1] != 'active') {
         $('#teamPill').stop(true, true).fadeOut(200, function () {
             updateTeamPill(league, teamID);
         });
