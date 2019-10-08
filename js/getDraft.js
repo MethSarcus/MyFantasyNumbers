@@ -36,7 +36,7 @@
 // function myXhr(t, d, id) {
 //     return $.ajax({
 //         type: t,
-//         url: 'js/proxy.php',
+//         url: 'js/proxy/espn_proxy.php',
 //         dataType: 'json',
 //         data: d,
 //         cache: false,

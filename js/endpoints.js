@@ -12,7 +12,7 @@ $(document).ready(function () {
 function myXhr(t, d, id) {
     return $.ajax({
         type: t,
-        url: 'proxy.php',
+        url: 'js/proxy/espn_proxy.php',
         dataType: 'json',
         data: d,
         cache: false,

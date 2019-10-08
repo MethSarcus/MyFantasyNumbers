@@ -8,9 +8,9 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
         weeksToGet = settings.regularSeasonLength + settings.playoffLength;
     }
     for (let q = 1; q <= weeksToGet; q++) {
-        myXhr('get', {
+        espn_request('get', {
             path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q
-        }, '').done(function (json) {
+        }).done(function (json) {
             var matchups = [];
             //console.log(weeks);
             for (var i in json.schedule) { //increments through each matchup
@@ -101,9 +101,9 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
 }
 
 function getESPNSettings(leagueID, seasonID) {
-    myXhr('get', {
+    espn_request('get', {
         path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mSettings'
-    }, '').done(function (json) {
+    }).done(function (json) {
         console.log(json);
         if (json.hasOwnProperty('messages') && json.messages[0] == "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view"); 
@@ -140,9 +140,9 @@ function getESPNSettings(leagueID, seasonID) {
 
 function getESPNMembers(settings, leagueID, seasonID, leagueName) {
     console.log("getting members");
-    myXhr('get', {
+    espn_request('get', {
         path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mTeam'
-    }, '').done(function (json) {
+    }).done(function (json) {
         var members = [];
         var teams = json.teams;
         var seasonLength = settings.regularSeasonMatchupCount + settings.playoffLength;

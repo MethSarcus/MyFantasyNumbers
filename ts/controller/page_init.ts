@@ -154,4 +154,5 @@ function setPage(league: League) {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
+    getSleeperLeagueSettings("383472092907233280", 2019);
 }

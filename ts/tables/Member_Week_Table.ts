@@ -31,3 +31,16 @@ function updateMemberWeekTable(league: League, member: Member): void {
     //weekTable.appendChild(tableHead);
     weekTable.appendChild(tableBody);
 }
+
+function createMemberWeekTable(league: League): void {
+    var weekTable = document.getElementById('memberWeekTable');
+    var tableBody = document.getElementById('member_week_table_body');
+    for (var i = 1; i <= league.settings.regularSeasonLength; i++) {
+        let row = document.createElement('tr');
+        let weekCell = document.createElement('td');
+        let scoreCell = document.createElement('td');
+        let vsCell = document.createElement('td');
+        let marginCell = document.createElement('td');
+        weekCell.appendChild(document.createTextNode(i.toString()));
+    }
+}

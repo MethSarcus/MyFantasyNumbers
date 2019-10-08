@@ -447,10 +447,21 @@ function getRealTeamInitials(realteamID) {
     return team;
 }
 
-function myXhr(t, d, id) {
+function espn_request(t, d) {
     return $.ajax({
         type: t,
-        url: 'js/proxy.php',
+        url: 'js/proxy/espn_proxy.php',
+        dataType: 'json',
+        data: d,
+        cache: false,
+        async: true,
+    })
+}
+
+function sleeper_request(t, d) {
+    return $.ajax({
+        type: t,
+        url: 'js/proxy/sleeper_proxy.php',
         dataType: 'json',
         data: d,
         cache: false,
