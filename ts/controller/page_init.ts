@@ -94,7 +94,7 @@ function setPage(league: League) {
         c.style.marginRight = "auto";
         b.appendChild(c);
         //b.appendChild(document.createElement('br'));
-        let d = document.createTextNode(" " + league.members[i].teamLocation + " " + league.members[i].teamNickname);
+        let d = document.createTextNode(" " + league.members[i].nameToString());
         b.appendChild(d);
         a.appendChild(b);
         nav.appendChild(a);
@@ -154,5 +154,5 @@ function setPage(league: League) {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
-    getSleeperLeagueSettings("383472092907233280", 2019);
+    //getSleeperLeagueSettings("383472092907233280", 2019);
 }

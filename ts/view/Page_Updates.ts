@@ -300,7 +300,6 @@ function fadeTeam(league: League, teamID: number) {
 }
 
 function fadeTeamWithLogic(league: League, teamID: number) {
-    console.log(document.getElementById(teamID + "_link").classList);
     if (document.getElementById(teamID + "_link").classList[1] != 'active') {
         $('#teamPill').stop(true, true).fadeOut(200, function () {
             updateTeamPill(league, teamID);

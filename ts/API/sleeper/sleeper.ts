@@ -53,7 +53,7 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: Sleeper_
             let leagueID = roster.league_id;
             let coOwners = roster.co_owners;
             members.forEach(member => {
-                if (member.ownerID == rosterOwnerID) {
+                if (member.memberID == rosterOwnerID) {
                     member.teamID = teamID;
                     member.stats = new Stats(-1);
                 }

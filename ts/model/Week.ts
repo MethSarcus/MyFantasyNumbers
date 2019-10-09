@@ -19,6 +19,25 @@ class Week {
         return team;
     }
 
+    public getTeamScoreFinish(teamID: number): number {
+        let finish = 1;
+        let score = this.getTeam(teamID).score;
+        this.matchups.forEach((matchup) => {
+            if (matchup.home.teamID != teamID) {
+                if (matchup.home.score > score) {
+                    finish += 1;
+                }
+            }
+            if (!matchup.byeWeek) {
+                if (matchup.away.score > score && matchup.away.teamID != teamID) {
+                    finish += 1;
+                }
+            }
+        });
+
+        return finish;
+    }
+
     public getTeamMatchup(teamID: number): Matchup {
         let match: Matchup;
         this.matchups.forEach((matchup) => {

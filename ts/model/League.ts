@@ -388,7 +388,7 @@ class League {
             week.matchups.forEach(matchup => {
                 var homeRoster = [];
                 matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(player => {
-                    homeRoster.push(new Player(player.firstName, player.lastName,
+                    homeRoster.push(new ESPN_Player(player.firstName, player.lastName,
                         player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
                         player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
@@ -398,7 +398,7 @@ class League {
                     var awayRoster = [];
                     awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(player => {
-                        awayRoster.push(new Player(player.firstName, player.lastName,
+                        awayRoster.push(new ESPN_Player(player.firstName, player.lastName,
                             player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
                             player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                     });
@@ -418,8 +418,8 @@ class League {
             weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups))
         });
         object.members.forEach(member => {
-            members.push(new Member(
-                member.ID,
+            members.push(new ESPN_Member(
+                member.memberID,
                 member.firstName,
                 member.lastName,
                 member.teamLocation,
@@ -635,6 +635,29 @@ class League {
 
         member.stats.averageMOV = roundToHundred(member.stats.averageMOV / member.stats.wins);
         member.stats.averageMOD = roundToHundred(member.stats.averageMOD / member.stats.losses);
+    }
+
+    public getMarginFinish(teamID: number, weekNumber: number) {
+        let finish = 1;
+        let week = this.weeks[weekNumber - 1];
+        const matchup = week.getTeamMatchup(teamID);
+        const margin = matchup.getTeam(teamID).score - matchup.getOpponent(teamID).score;
+        if (margin < 0) {
+            finish += 1;
+        }
+        week.matchups.filter(it => {return !it.byeWeek;}).forEach((matchup) => {
+            if (matchup.home.teamID != teamID && matchup.away.teamID != teamID) {
+                let homeMargin = matchup.home.score - matchup.away.score;
+                let awayMargin = matchup.away.score - matchup.home.score;
+                if (awayMargin > margin && homeMargin > margin) {
+                    finish += 2;
+                } else if (awayMargin > margin || homeMargin > margin) {
+                    finish += 1;
+                }
+            }
+        });
+
+        return finish;
     }
 
     public getUpsets(teamID: number): [number, number] {

@@ -1,4 +1,4 @@
-class Player {
+class ESPN_Player implements Player {
     public firstName: string;
     public lastName: string;
     public eligibleSlots: any;

@@ -13,7 +13,17 @@ function roundToTen(x: number): number {
 function getColor(value: number): string {
     // value from 0 to 1
     const hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,50%)"].join("");
+    return ["hsl(", hue, ",100%,60%)"].join("");
+}
+
+function getLightColor(value: number): string {
+    // value from 0 to 1
+    const hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,95%)"].join("");
+}
+
+function getLightCardColor(rank, outOf) {
+    return getLightColor(rank / outOf);
 }
 
 function getCardColor(rank, outOf) {

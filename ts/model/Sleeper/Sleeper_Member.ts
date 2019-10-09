@@ -1,28 +1,22 @@
-class Member {
-    public ID: number;
-    public firstName: string;
-    public lastName: string;
-    public teamLocation: string;
-    public teamNickname: string;
+class Sleeper_Member implements Member {
+    public memberID: number;
+    public name: string;
+    public teamName: string;
     public teamAbbrev: string;
-    public division: string;
     public teamID: number;
     public logoURL: string;
-    public transactions: any;
     public stats: Stats;
-    constructor(memberID, firstName, lastName, teamLocation,
-                teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
-        this.ID = memberID;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.teamLocation = teamLocation;
-        this.teamNickname = teamNickname;
-        this.teamAbbrev = teamAbbrev;
-        this.division = division;
-        this.teamID = teamID;
-        this.logoURL = logoURL;
-        this.transactions = transactions;
-        this.stats = stats;
+    public division: string;
+    constructor(memberID: number, memberName: string, teamName: string, teamAvatar: string) {
+        this.memberID = memberID;
+        this.name = memberName;
+        this.teamName = teamName;
+        if (teamName != undefined) {
+            this.teamAbbrev = teamName.substring(0, 4);
+        } else {
+            this.teamAbbrev = memberName.substring(0, 4);
+        }
+        this.logoURL = "https://sleepercdn.com/avatars/thumbs/" + teamAvatar.toString();
     }
 
     public setAdvancedStats(weeks: Week[]): void {
@@ -36,11 +30,11 @@ class Member {
     }
 
     public nameToString(): string {
-        return this.teamLocation + " " + this.teamNickname;
+        return this.teamName;
     }
 
     public ownerToString(): string {
-        return this.firstName + " " + this.lastName;
+        return this.name;
     }
 
     public recordToString(): string {

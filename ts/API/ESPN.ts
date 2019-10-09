@@ -43,7 +43,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                         let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         let playerID = curPlayer.playerId;
                         let lineupSlotID = curPlayer.lineupSlotId;
-                        homePlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        homePlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                     }
 
                     var awayTeam = undefined;
@@ -70,7 +70,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                             let playerID = curPlayer.playerId;
                             let lineupSlotID = curPlayer.lineupSlotId;
-                            awayPlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                            awayPlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new Team(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
@@ -167,7 +167,7 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
                     var teamID = curTeam.id;
                     var logo = curTeam.logo;
                     var finalStanding = curTeam.rankCalculatedFinal;
-                    members.push(new Member(memberID, firstName, lastName, location, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
+                    members.push(new ESPN_Member(memberID, firstName, lastName, location, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
                 }
             }
         }

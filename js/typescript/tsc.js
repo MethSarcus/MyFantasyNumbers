@@ -41,7 +41,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                         var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         var playerID = curPlayer.playerId;
                         var lineupSlotID = curPlayer.lineupSlotId;
-                        homePlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        homePlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                     }
                     var awayTeam = undefined;
                     if (curWeek.away != null && curWeek.away != undefined) {
@@ -70,7 +70,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                             var playerID = curPlayer.playerId;
                             var lineupSlotID = curPlayer.lineupSlotId;
-                            awayPlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                            awayPlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new Team(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
@@ -166,7 +166,7 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
                     var teamID = curTeam.id;
                     var logo = curTeam.logo;
                     var finalStanding = curTeam.rankCalculatedFinal;
-                    members.push(new Member(memberID, firstName, lastName, location, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
+                    members.push(new ESPN_Member(memberID, firstName, lastName, location, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
                 }
             }
         }
@@ -226,7 +226,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings) {
             var leagueID = roster.league_id;
             var coOwners = roster.co_owners;
             members.forEach(function (member) {
-                if (member.ownerID == rosterOwnerID) {
+                if (member.memberID == rosterOwnerID) {
                     member.teamID = teamID;
                     member.stats = new Stats(-1);
                 }
@@ -984,7 +984,7 @@ function setPage(league) {
         c.style.marginLeft = "8px";
         c.style.marginRight = "auto";
         b.appendChild(c);
-        var d = document.createTextNode(" " + league.members[i].teamLocation + " " + league.members[i].teamNickname);
+        var d = document.createTextNode(" " + league.members[i].nameToString());
         b.appendChild(d);
         a.appendChild(b);
         nav.appendChild(a);
@@ -1029,7 +1029,6 @@ function setPage(league) {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
-    getSleeperLeagueSettings("383472092907233280", 2019);
 }
 $(document).ready(function () {
     var input = prompt("Please enter ESPN League ID", "2319896");
@@ -1425,7 +1424,7 @@ var League = (function () {
             week.matchups.forEach(function (matchup) {
                 var homeRoster = [];
                 matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(function (player) {
-                    homeRoster.push(new Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                    homeRoster.push(new ESPN_Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
                 var awayTeamId = -1;
                 var away;
@@ -1433,7 +1432,7 @@ var League = (function () {
                     var awayRoster = [];
                     awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(function (player) {
-                        awayRoster.push(new Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                        awayRoster.push(new ESPN_Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                     });
                     away = new Team(matchup.away.teamID, awayRoster, object.settings.activeLineupSlots, matchup.home.teamID);
                 }
@@ -1443,7 +1442,7 @@ var League = (function () {
             weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
         });
         object.members.forEach(function (member) {
-            members.push(new Member(member.ID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
+            members.push(new ESPN_Member(member.memberID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
         });
         var league = new League(object.id, object.season, weeks, members, settings, object.leagueName);
         league.setMemberStats(league.getSeasonPortionWeeks());
@@ -1629,6 +1628,28 @@ var League = (function () {
         member.stats.averageMOV = roundToHundred(member.stats.averageMOV / member.stats.wins);
         member.stats.averageMOD = roundToHundred(member.stats.averageMOD / member.stats.losses);
     };
+    League.prototype.getMarginFinish = function (teamID, weekNumber) {
+        var finish = 1;
+        var week = this.weeks[weekNumber - 1];
+        var matchup = week.getTeamMatchup(teamID);
+        var margin = matchup.getTeam(teamID).score - matchup.getOpponent(teamID).score;
+        if (margin < 0) {
+            finish += 1;
+        }
+        week.matchups.filter(function (it) { return !it.byeWeek; }).forEach(function (matchup) {
+            if (matchup.home.teamID != teamID && matchup.away.teamID != teamID) {
+                var homeMargin = matchup.home.score - matchup.away.score;
+                var awayMargin = matchup.away.score - matchup.home.score;
+                if (awayMargin > margin && homeMargin > margin) {
+                    finish += 2;
+                }
+                else if (awayMargin > margin || homeMargin > margin) {
+                    finish += 1;
+                }
+            }
+        });
+        return finish;
+    };
     League.prototype.getUpsets = function (teamID) {
         var upsetCount = 0;
         var underdogCount = 0;
@@ -1772,81 +1793,6 @@ var Matchup = (function () {
     };
     return Matchup;
 }());
-var Member = (function () {
-    function Member(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
-        this.ID = memberID;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.teamLocation = teamLocation;
-        this.teamNickname = teamNickname;
-        this.teamAbbrev = teamAbbrev;
-        this.division = division;
-        this.teamID = teamID;
-        this.logoURL = logoURL;
-        this.transactions = transactions;
-        this.stats = stats;
-    }
-    Member.prototype.setAdvancedStats = function (weeks) {
-        var _this = this;
-        var scores = [];
-        weeks.forEach(function (week) {
-            scores.push(week.getTeam(_this.teamID).score);
-        });
-        this.stats.standardDeviation = calcStandardDeviation(scores);
-        this.stats.weeklyAverage = getMean(scores);
-    };
-    Member.prototype.nameToString = function () {
-        return this.teamLocation + " " + this.teamNickname;
-    };
-    Member.prototype.ownerToString = function () {
-        return this.firstName + " " + this.lastName;
-    };
-    Member.prototype.recordToString = function () {
-        if (this.stats.ties != 0) {
-            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
-        }
-        else {
-            return this.stats.wins + "-" + this.stats.losses;
-        }
-    };
-    Member.prototype.rankToString = function () {
-        return ordinal_suffix_of(this.stats.rank);
-    };
-    Member.prototype.finishToString = function () {
-        return ordinal_suffix_of(this.stats.finalStanding);
-    };
-    Member.prototype.powerRecordToString = function () {
-        return this.stats.powerWins + "-" + this.stats.powerLosses;
-    };
-    Member.prototype.potentialPowerRecordToString = function () {
-        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
-    };
-    return Member;
-}());
-var Player = (function () {
-    function Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.eligibleSlots = eligibleSlots;
-        this.score = score;
-        this.projectedScore = projectedScore;
-        this.position = position;
-        this.realTeamID = realTeamID;
-        this.playerID = playerID;
-        this.lineupSlotID = lineupSlotID;
-        this.weekNumber = weekNumber;
-    }
-    Player.prototype.isEligible = function (slot) {
-        var isEligible = false;
-        this.eligibleSlots.forEach(function (eligibleSlot) {
-            if (eligibleSlot == slot) {
-                isEligible = true;
-            }
-        });
-        return isEligible;
-    };
-    return Player;
-}());
 var PositionalStats = (function () {
     function PositionalStats() {
         this.qb_points = 0;
@@ -1930,56 +1876,6 @@ var Settings = (function () {
         return positions;
     };
     return Settings;
-}());
-var Sleeper_Member = (function () {
-    function Sleeper_Member(ownerID, memberName, teamName, teamAvatar) {
-        this.ownerID = ownerID;
-        this.name = memberName;
-        this.teamName = teamName;
-        if (teamName != undefined) {
-            this.teamAbbrev = teamName.substring(0, 4);
-        }
-        else {
-            this.teamAbbrev = memberName.substring(0, 4);
-        }
-        this.logoURL = "https://sleepercdn.com/avatars/thumbs/" + teamAvatar.toString();
-    }
-    Sleeper_Member.prototype.setAdvancedStats = function (weeks) {
-        var _this = this;
-        var scores = [];
-        weeks.forEach(function (week) {
-            scores.push(week.getTeam(_this.teamID).score);
-        });
-        this.stats.standardDeviation = calcStandardDeviation(scores);
-        this.stats.weeklyAverage = getMean(scores);
-    };
-    Sleeper_Member.prototype.nameToString = function () {
-        return this.teamName;
-    };
-    Sleeper_Member.prototype.ownerToString = function () {
-        return this.name;
-    };
-    Sleeper_Member.prototype.recordToString = function () {
-        if (this.stats.ties != 0) {
-            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
-        }
-        else {
-            return this.stats.wins + "-" + this.stats.losses;
-        }
-    };
-    Sleeper_Member.prototype.rankToString = function () {
-        return ordinal_suffix_of(this.stats.rank);
-    };
-    Sleeper_Member.prototype.finishToString = function () {
-        return ordinal_suffix_of(this.stats.finalStanding);
-    };
-    Sleeper_Member.prototype.powerRecordToString = function () {
-        return this.stats.powerWins + "-" + this.stats.powerLosses;
-    };
-    Sleeper_Member.prototype.potentialPowerRecordToString = function () {
-        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
-    };
-    return Sleeper_Member;
 }());
 var Stats = (function () {
     function Stats(finalStanding) {
@@ -2238,6 +2134,23 @@ var Week = (function () {
         });
         return team;
     };
+    Week.prototype.getTeamScoreFinish = function (teamID) {
+        var finish = 1;
+        var score = this.getTeam(teamID).score;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.home.teamID != teamID) {
+                if (matchup.home.score > score) {
+                    finish += 1;
+                }
+            }
+            if (!matchup.byeWeek) {
+                if (matchup.away.score > score && matchup.away.teamID != teamID) {
+                    finish += 1;
+                }
+            }
+        });
+        return finish;
+    };
     Week.prototype.getTeamMatchup = function (teamID) {
         var match;
         this.matchups.forEach(function (matchup) {
@@ -2279,6 +2192,161 @@ var Week = (function () {
         return bestPlayer;
     };
     return Week;
+}());
+var ESPN_Member = (function () {
+    function ESPN_Member(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
+        this.memberID = memberID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.teamLocation = teamLocation;
+        this.teamNickname = teamNickname;
+        this.teamAbbrev = teamAbbrev;
+        this.division = division;
+        this.teamID = teamID;
+        this.logoURL = logoURL;
+        this.transactions = transactions;
+        this.stats = stats;
+    }
+    ESPN_Member.prototype.setAdvancedStats = function (weeks) {
+        var _this = this;
+        var scores = [];
+        weeks.forEach(function (week) {
+            scores.push(week.getTeam(_this.teamID).score);
+        });
+        this.stats.standardDeviation = calcStandardDeviation(scores);
+        this.stats.weeklyAverage = getMean(scores);
+    };
+    ESPN_Member.prototype.nameToString = function () {
+        return this.teamLocation + " " + this.teamNickname;
+    };
+    ESPN_Member.prototype.ownerToString = function () {
+        return this.firstName + " " + this.lastName;
+    };
+    ESPN_Member.prototype.recordToString = function () {
+        if (this.stats.ties != 0) {
+            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
+        }
+        else {
+            return this.stats.wins + "-" + this.stats.losses;
+        }
+    };
+    ESPN_Member.prototype.rankToString = function () {
+        return ordinal_suffix_of(this.stats.rank);
+    };
+    ESPN_Member.prototype.finishToString = function () {
+        return ordinal_suffix_of(this.stats.finalStanding);
+    };
+    ESPN_Member.prototype.powerRecordToString = function () {
+        return this.stats.powerWins + "-" + this.stats.powerLosses;
+    };
+    ESPN_Member.prototype.potentialPowerRecordToString = function () {
+        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
+    };
+    return ESPN_Member;
+}());
+var ESPN_Player = (function () {
+    function ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.eligibleSlots = eligibleSlots;
+        this.score = score;
+        this.projectedScore = projectedScore;
+        this.position = position;
+        this.realTeamID = realTeamID;
+        this.playerID = playerID;
+        this.lineupSlotID = lineupSlotID;
+        this.weekNumber = weekNumber;
+    }
+    ESPN_Player.prototype.isEligible = function (slot) {
+        var isEligible = false;
+        this.eligibleSlots.forEach(function (eligibleSlot) {
+            if (eligibleSlot == slot) {
+                isEligible = true;
+            }
+        });
+        return isEligible;
+    };
+    return ESPN_Player;
+}());
+var Sleeper_Member = (function () {
+    function Sleeper_Member(memberID, memberName, teamName, teamAvatar) {
+        this.memberID = memberID;
+        this.name = memberName;
+        this.teamName = teamName;
+        if (teamName != undefined) {
+            this.teamAbbrev = teamName.substring(0, 4);
+        }
+        else {
+            this.teamAbbrev = memberName.substring(0, 4);
+        }
+        this.logoURL = "https://sleepercdn.com/avatars/thumbs/" + teamAvatar.toString();
+    }
+    Sleeper_Member.prototype.setAdvancedStats = function (weeks) {
+        var _this = this;
+        var scores = [];
+        weeks.forEach(function (week) {
+            scores.push(week.getTeam(_this.teamID).score);
+        });
+        this.stats.standardDeviation = calcStandardDeviation(scores);
+        this.stats.weeklyAverage = getMean(scores);
+    };
+    Sleeper_Member.prototype.nameToString = function () {
+        return this.teamName;
+    };
+    Sleeper_Member.prototype.ownerToString = function () {
+        return this.name;
+    };
+    Sleeper_Member.prototype.recordToString = function () {
+        if (this.stats.ties != 0) {
+            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
+        }
+        else {
+            return this.stats.wins + "-" + this.stats.losses;
+        }
+    };
+    Sleeper_Member.prototype.rankToString = function () {
+        return ordinal_suffix_of(this.stats.rank);
+    };
+    Sleeper_Member.prototype.finishToString = function () {
+        return ordinal_suffix_of(this.stats.finalStanding);
+    };
+    Sleeper_Member.prototype.powerRecordToString = function () {
+        return this.stats.powerWins + "-" + this.stats.powerLosses;
+    };
+    Sleeper_Member.prototype.potentialPowerRecordToString = function () {
+        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
+    };
+    return Sleeper_Member;
+}());
+var Sleeper_Player = (function () {
+    function Sleeper_Player(playerID) {
+        this.playerID = playerID;
+    }
+    return Sleeper_Player;
+}());
+var Sleeper_Week_Stats = (function () {
+    function Sleeper_Week_Stats(projected_stats, stats, week_number) {
+        this.stats = stats;
+        this.projected_stats = projected_stats;
+        this.week_number = week_number;
+    }
+    Sleeper_Week_Stats.prototype.calculatePlayerScore = function (settings, player) {
+        var player_stats = this.stats[player.playerID];
+        Object.keys(player_stats).forEach(function (stat_name) {
+            if (settings.hasOwnProperty(stat_name)) {
+                player.score += player_stats[stat_name] * player_stats[stat_name];
+            }
+        });
+    };
+    Sleeper_Week_Stats.prototype.calculateProjectedPlayerScore = function (settings, player) {
+        var player_projected_stats = this.projected_stats[player.playerID];
+        Object.keys(player_projected_stats).forEach(function (stat_name) {
+            if (settings.hasOwnProperty(stat_name)) {
+                player.projectedScore += player_projected_stats[stat_name] * player_projected_stats[stat_name];
+            }
+        });
+    };
+    return Sleeper_Week_Stats;
 }());
 var PowerStats = (function () {
     function PowerStats(teamID, weekNumber, pf, pp, projected) {
@@ -2367,6 +2435,7 @@ function updateMemberWeekTable(league, member) {
     var weekTable = document.getElementById('memberWeekTable');
     var tableBody = document.getElementById('member_week_table_body');
     league.weeks.forEach(function (week) {
+        var scoreColor = getLightCardColor(week.getTeamScoreFinish(member.teamID), league.members.length);
         var curMatchup = week.getTeamMatchup(member.teamID);
         var curTeam = week.getTeam(member.teamID);
         var row = document.createElement('tr');
@@ -2376,6 +2445,9 @@ function updateMemberWeekTable(league, member) {
         var marginCell = document.createElement('td');
         weekCell.appendChild(document.createTextNode(week.weekNumber.toString()));
         scoreCell.appendChild(document.createTextNode(roundToHundred(curTeam.score).toString()));
+        scoreCell.style.background = scoreColor;
+        weekCell.style.background = scoreColor;
+        vsCell.style.background = scoreColor;
         if (!curMatchup.byeWeek) {
             vsCell.appendChild(document.createTextNode(league.getMember(curMatchup.getOpponent(member.teamID).teamID).teamAbbrev));
             marginCell.appendChild(document.createTextNode(roundToHundred(curTeam.score - curMatchup.getOpponent(member.teamID).score).toString()));
@@ -2383,6 +2455,9 @@ function updateMemberWeekTable(league, member) {
         else {
             vsCell.appendChild(document.createTextNode("N/A"));
             marginCell.appendChild(document.createTextNode("N/A"));
+        }
+        if (!curMatchup.byeWeek) {
+            marginCell.style.background = getLightCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2);
         }
         row.appendChild(weekCell);
         row.appendChild(scoreCell);
@@ -2401,6 +2476,7 @@ function createMemberWeekTable(league) {
         var scoreCell = document.createElement('td');
         var vsCell = document.createElement('td');
         var marginCell = document.createElement('td');
+        marginCell.id = "week_" + i + "_margin";
         weekCell.appendChild(document.createTextNode(i.toString()));
     }
 }
@@ -2905,7 +2981,14 @@ function roundToTen(x) {
 }
 function getColor(value) {
     var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,50%)"].join("");
+    return ["hsl(", hue, ",100%,60%)"].join("");
+}
+function getLightColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,95%)"].join("");
+}
+function getLightCardColor(rank, outOf) {
+    return getLightColor(rank / outOf);
 }
 function getCardColor(rank, outOf) {
     return getColor(rank / outOf);
@@ -3216,7 +3299,6 @@ function fadeTeam(league, teamID) {
     });
 }
 function fadeTeamWithLogic(league, teamID) {
-    console.log(document.getElementById(teamID + "_link").classList);
     if (document.getElementById(teamID + "_link").classList[1] != 'active') {
         $('#teamPill').stop(true, true).fadeOut(200, function () {
             updateTeamPill(league, teamID);
