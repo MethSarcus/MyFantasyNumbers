@@ -15,10 +15,12 @@ function updateTeamPill(league: League, teamID: number): void {
     updateMemberWeekTable(league, member);
     createMemberWeeklyLineChart(league, member);
     createTeamBarChart(league, member);
-    updateGutWinCard(league, teamID);
-    updateWinnableGamesLost(league, teamID);
+    updateGutWinCard(league, member);
+    updateWinnableGamesLost(league, member);
+    updateMargins(league, member);
+    updateUpsets(league, member);
 
-    unfade(document.getElementById('teamPill'));
+    unfadeTeam();
 }
 
 function updateBestWorstConsistent(league: League, member: Member): void {
@@ -78,7 +80,7 @@ function updateEfficiency(league: League, member: Member): void {
     } else {
         diff = roundToHundred((efficiency - leagueEfficiency) * 100) + "% League Average";
     }
-    
+
     efficiencyVsLeague.innerText = diff;
     efficiencyFinish.innerText = ordinal_suffix_of(finish) + " Most Efficient";
     efficiencyCard.style.backgroundColor = getCardColor(finish, league.members.length);
@@ -119,7 +121,7 @@ function updateTeamCard(league: League, member: Member): void {
         finish.innerHTML = "Finished " + member.finishToString() + " overall";
     }
     record.innerHTML = "Record: " + member.recordToString();
-    
+
 }
 
 function updateMiniStatCards(league: League, member: Member): void {
@@ -148,7 +150,7 @@ function updateMiniStatCards(league: League, member: Member): void {
     }
     pfBackground.style.backgroundColor = getCardColor(
         league.getPointsScoredFinish(member.teamID), league.members.length);
-    
+
     paFinish.innerHTML = ordinal_suffix_of(league.getPointsAgainstFinish(member.teamID));
     paScore.innerHTML = member.stats.pa.toString();
     var paDiff = roundToTen(member.stats.pa - league.getLeaguePA());
@@ -177,12 +179,12 @@ function updateMVP(teamMVP: SeasonPlayer) {
     var mvpName = document.getElementById('team_mvp_name');
     var mvpPoints = document.getElementById('team_mvp_points');
     if (teamMVP.position == "D/ST") {
-            mvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamMVP.realTeamID) + ".png&h=150&w=150";
-        } else {
-            mvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamMVP.playerID + ".png";
+        mvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamMVP.realTeamID) + ".png&h=150&w=150";
+    } else {
+        mvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamMVP.playerID + ".png";
     }
     var startsText = " starts";
-    if(teamMVP.weeksPlayed == 1) {
+    if (teamMVP.weeksPlayed == 1) {
         startsText = " start";
     }
     mvpName.innerText = teamMVP.firstName + " " + teamMVP.lastName;
@@ -194,13 +196,13 @@ function updateLVP(teamLVP: SeasonPlayer) {
     var lvpName = document.getElementById('team_lvp_name');
     var lvpPoints = document.getElementById('team_lvp_points');
     if (teamLVP.position == "D/ST") {
-            lvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamLVP.realTeamID) + ".png&h=150&w=150";
-        } else {
-            lvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamLVP.playerID + ".png";
-        }
+        lvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamLVP.realTeamID) + ".png&h=150&w=150";
+    } else {
+        lvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamLVP.playerID + ".png";
+    }
     lvpName.innerText = teamLVP.firstName + " " + teamLVP.lastName;
     var startsText = " starts";
-    if(teamLVP.weeksPlayed == 1) {
+    if (teamLVP.weeksPlayed == 1) {
         startsText = " start";
     }
     lvpPoints.innerText = roundToHundred(teamLVP.seasonScore) + " Points earned in lineup\n" + teamLVP.averageScore + " points per game, " + teamLVP.weeksPlayed + startsText;
@@ -213,19 +215,20 @@ function updateMostConsistent(mostConsistent: SeasonPlayer) {
     var mostConsistentPoints = document.getElementById('team_most_consistent_points');
     mostConsistentTitle.innerText = "Most Consistent";
     if (mostConsistent.position == "D/ST") {
-            mostConsistentImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(mostConsistent.realTeamID) + ".png&h=150&w=150";
-        } else {
-            mostConsistentImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + mostConsistent.playerID + ".png";
+        mostConsistentImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(mostConsistent.realTeamID) + ".png&h=150&w=150";
+    } else {
+        mostConsistentImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + mostConsistent.playerID + ".png";
     }
     var startsText = " starts";
-    if(mostConsistent.weeksPlayed == 1) {
+    if (mostConsistent.weeksPlayed == 1) {
         startsText = " start";
     }
     mostConsistentName.innerText = mostConsistent.firstName + " " + mostConsistent.lastName;
     mostConsistentPoints.innerText = "Standard Deviation: " + calcStandardDeviation(mostConsistent.getScores()) + "\n" + mostConsistent.averageScore + " points per game, " + mostConsistent.weeksPlayed + startsText;
 }
 
-function updateWinnableGamesLost(league: League, teamID) {
+function updateWinnableGamesLost(league: League, member: Member) {
+    var teamID = member.teamID;
     var winnableGamesTitle = document.getElementById('winnable_games_lost_number');
     var poorRosterDecisions = document.getElementById('winnable_games_lost_choices');
     var choices = league.getMember(teamID).stats.choicesThatCouldHaveWonMatchup;
@@ -234,15 +237,33 @@ function updateWinnableGamesLost(league: League, teamID) {
     poorRosterDecisions.innerText = choices + " roster decisions could have won those games";
 }
 
-function updateGutWinCard(league: League, teamID) {
+function updateGutWinCard(league: League, member: Member) {
+    var teamID = member.teamID;
     var gutPointsTotalNumber = document.getElementById('gut_points');
     var gutPointsNumber = document.getElementById('gut_wins_projected_difference');
     var gutCard = document.getElementById('gut_wins_card');
     var gutWins = roundToHundred(league.getMember(teamID).stats.gutPoints);
-    var gutPoints = roundToHundred(league.getMember(teamID).stats.gutPoints/league.getMember(teamID).stats.gutPlayersPlayed);
+    var gutPoints = roundToHundred(league.getMember(teamID).stats.gutPoints / league.getMember(teamID).stats.gutPlayersPlayed);
     gutPointsTotalNumber.innerText = gutWins + " Gut points earned";
     gutPointsNumber.innerText = gutPoints + " average points when starting player with lower projection";
     gutCard.style.backgroundColor = getCardColor(league.getGutAverageFinish(teamID), league.members.length);
+}
+
+function updateMargins(league: League, member: Member) {
+    var teamID = member.teamID;
+    var mov = document.getElementById('margin_of_victory');
+    var mod = document.getElementById('margin_of_defeat');
+    mov.innerText = "Average victory margin\n\n" + league.getMember(teamID).stats.averageMOV + " Points";
+    mod.innerText = "Average defeat margin\n\n" + league.getMember(teamID).stats.averageMOD + " Points";
+}
+
+function updateUpsets(league: League, member: Member) {
+    var teamID = member.teamID;
+    var upsetTitle = document.getElementById('upsets_title');
+    var underdogCount = document.getElementById('underdog_count');
+    var upsets = league.getUpsets(teamID);
+    upsetTitle.innerText = "Upset projected winner " + upsets[1] + " times";
+    underdogCount.innerText = "Underdog " + upsets[0] + " times";
 }
 
 function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) {
@@ -253,8 +274,8 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
     biggestBoomTitle.innerText = "Biggest Boom";
     if (biggestBoom.position == "D/ST") {
         biggestBoomImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(biggestBoom.realTeamID) + ".png&h=150&w=150";
-        } else {
-            biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.playerID + ".png";
+    } else {
+        biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.playerID + ".png";
     }
     var outcomeText = "";
     var boomMatchup = league.weeks[biggestBoom.weekNumber - 1].getTeamMatchup(teamID);
@@ -263,53 +284,35 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
     } else {
         if (boomMatchup.getWinningTeam().teamID == teamID) {
             outcomeText = "\n Won match by ";
-         } else {
-             outcomeText = "\n Lost match by ";
-         }
-         outcomeText = outcomeText + " " + roundToHundred(boomMatchup.marginOfVictory) + " points";
+        } else {
+            outcomeText = "\n Lost match by ";
+        }
+        outcomeText = outcomeText + " " + roundToHundred(boomMatchup.marginOfVictory) + " points";
     }
     biggestBoomName.innerText = biggestBoom.firstName + " " + biggestBoom.lastName;
     biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
 }
 
-function fadeTeam(element, league, teamID) {
-    var op = 1;  // initial opacity
-    var timer = setInterval(function () {
-        if (op <= 0.1){
-            clearInterval(timer);
+function fadeTeam(league: League, teamID: number) {
+    $('#teamPill').stop(true, true).fadeOut(200, function () {
+        updateTeamPill(league, teamID);
+    });
+}
+
+function fadeTeamWithLogic(league: League, teamID: number) {
+    if (document.getElementById(teamID + "_link").classList[1] != 'active') {
+        $('#teamPill').stop(true, true).fadeOut(200, function () {
             updateTeamPill(league, teamID);
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.1;
-    }, 5);
+        });
+    }
 }
 
 function fadeToLeaguePage() {
-    var element = document.getElementById('teamPill');
-    var op = 1;  // initial opacity
-    var timer = setInterval(function () {
-        if (op <= 0.1){
-            clearInterval(timer);
-            document.getElementById('teamPill').style.display = 'none';
-        }
-        element.style.opacity = op + "";
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.3;
-    }, 8);
+    $('#teamPill').stop(true, true).fadeOut(200);
 }
 
-function unfade(element) {
-    var op = 0.1;  // initial opacity
-    element.style.display = 'block';
-    var timer = setInterval(function () {
-        if (op >= 1){
-            clearInterval(timer);
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op += op * 0.05;
-    }, 8);
+function unfadeTeam() {
+    $('#teamPill').stop(true, true).fadeIn(200);
 }
 
 function fixNoImage() {

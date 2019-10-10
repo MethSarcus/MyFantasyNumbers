@@ -8,9 +8,9 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
         weeksToGet = settings.regularSeasonLength + settings.playoffLength;
     }
     for (let q = 1; q <= weeksToGet; q++) {
-        myXhr('get', {
+        espn_request('get', {
             path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mScoreboard&teamId=1&scoringPeriodId=' + q
-        }, '').done(function (json) {
+        }).done(function (json) {
             var matchups = [];
             //console.log(weeks);
             for (var i in json.schedule) { //increments through each matchup
@@ -43,7 +43,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                         let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         let playerID = curPlayer.playerId;
                         let lineupSlotID = curPlayer.lineupSlotId;
-                        homePlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        homePlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                     }
 
                     var awayTeam = undefined;
@@ -70,7 +70,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             let realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                             let playerID = curPlayer.playerId;
                             let lineupSlotID = curPlayer.lineupSlotId;
-                            awayPlayers.push(new Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                            awayPlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new Team(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
@@ -101,9 +101,9 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
 }
 
 function getESPNSettings(leagueID, seasonID) {
-    myXhr('get', {
+    espn_request('get', {
         path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mSettings'
-    }, '').done(function (json) {
+    }).done(function (json) {
         console.log(json);
         if (json.hasOwnProperty('messages') && json.messages[0] == "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view"); 
@@ -140,9 +140,9 @@ function getESPNSettings(leagueID, seasonID) {
 
 function getESPNMembers(settings, leagueID, seasonID, leagueName) {
     console.log("getting members");
-    myXhr('get', {
+    espn_request('get', {
         path: 'apis/v3/games/ffl/seasons/' + seasonID + '/segments/0/leagues/' + leagueID + '?view=mTeam'
-    }, '').done(function (json) {
+    }).done(function (json) {
         var members = [];
         var teams = json.teams;
         var seasonLength = settings.regularSeasonMatchupCount + settings.playoffLength;
@@ -167,7 +167,7 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
                     var teamID = curTeam.id;
                     var logo = curTeam.logo;
                     var finalStanding = curTeam.rankCalculatedFinal;
-                    members.push(new Member(memberID, firstName, lastName, location, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
+                    members.push(new ESPN_Member(memberID, firstName, lastName, location, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
                 }
             }
         }

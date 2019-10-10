@@ -184,13 +184,19 @@ function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] 
     var players = getSeasonPlayers(league, teamID);
     var minSampleSize = 5;
     if (league.settings.isActive) {
-        if (league.settings.currentMatchupPeriod < 5) {
+        if (league.settings.currentMatchupPeriod <= 5) {
             minSampleSize = league.settings.currentMatchupPeriod - 1;
         }
     }
     var mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
         return (player.weeksPlayed >= minSampleSize);
     });
+    while (mostConsistentPlayers.length == 0) {
+        minSampleSize -= 1;
+        mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
+            return (player.weeksPlayed >= minSampleSize);
+        });
+    }
     var mvp = players[0];
     var lvp = players[0];
     var mostConsistent = mostConsistentPlayers[0];
@@ -441,10 +447,21 @@ function getRealTeamInitials(realteamID) {
     return team;
 }
 
-function myXhr(t, d, id) {
+function espn_request(t, d) {
     return $.ajax({
         type: t,
-        url: 'js/proxy.php',
+        url: 'js/proxy/espn_proxy.php',
+        dataType: 'json',
+        data: d,
+        cache: false,
+        async: true,
+    })
+}
+
+function sleeper_request(t, d) {
+    return $.ajax({
+        type: t,
+        url: 'js/proxy/sleeper_proxy.php',
         dataType: 'json',
         data: d,
         cache: false,
