@@ -44,12 +44,12 @@ class Matchup {
                 this.isUpset = false;
             }
 
-            this.loserPotentialWinningSingleMoves = this.getPoorLineupDecisions();
-            if (this.loserPotentialWinningSingleMoves > 0) {
-                this.withinSingleMoveOfWinning = true;
-            } else {
-                this.withinSingleMoveOfWinning = false;
-            }
+            // this.loserPotentialWinningSingleMoves = this.getPoorLineupDecisions();
+            // if (this.loserPotentialWinningSingleMoves > 0) {
+            //     this.withinSingleMoveOfWinning = true;
+            // } else {
+            //     this.withinSingleMoveOfWinning = false;
+            // }
         }
     }
 

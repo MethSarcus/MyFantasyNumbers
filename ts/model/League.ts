@@ -402,12 +402,12 @@ class League {
                             player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
                             player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                     });
-                    away = new Team(matchup.away.teamID,
+                    away = new ESPN_Team(matchup.away.teamID,
                         awayRoster,
                         object.settings.activeLineupSlots,
                         matchup.home.teamID);
                 }
-                var home = new Team(
+                var home = new ESPN_Team(
                     matchup.home.teamID,
                     homeRoster,
                     object.settings.activeLineupSlots,

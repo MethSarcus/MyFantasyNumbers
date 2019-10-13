@@ -3,7 +3,6 @@ function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi:
     var benchCount = new Map();
     var activeLineupSlots = [];
     var benchSlots = [];
-    console.log(rosterPositions);
     var active = rosterPositions.filter(it => {
         return it != "BN";
     }).map(slot => positionToInt.get(slot));
@@ -43,6 +42,81 @@ function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi:
     
 
     return [activeLineupSlots, benchSlots];
+}
+
+function makeSleeperPlayers(players: string[]): Sleeper_Player[] {
+    var sleeperPlayers = [];
+    players.forEach(player => {
+        sleeperPlayers.push(player);
+    });
+    return sleeperPlayers;
+}
+
+function getSleeperWeekStats(numWeeks: number): Promise<any> {
+    var statPromises = [];
+    var allWeekStats;
+    var allWeekProjections;
+    for (var i = 1; i <= numWeeks; i++) {
+        statPromises.push(makeRequest('https://api.sleeper.app/v1/stats/nfl/regular/2019/' + i));
+    }
+
+    var projectionPromises = [];
+    for (var i = 1; i <= numWeeks; i++) {
+        projectionPromises.push(makeRequest('https://api.sleeper.app/v1/projections/nfl/regular/2019/' + i));
+    }
+    var allPromises = statPromises.concat(projectionPromises)
+    return Promise.all(allPromises).then(result => {
+        var sleeperStats = [];
+        var stats = result.slice(0, statPromises.length).map(obj => {
+            return obj.response;
+        });
+        var projections = result.slice(statPromises.length, allPromises.length).map(obj => {
+            return obj.response;
+        });
+
+        for (var i = 0; i < stats.length; i++) {
+            sleeperStats.push(new Sleeper_Week_Stats(projections[i], stats[i], i + 1));
+        }
+
+        return sleeperStats;
+    });
+}
+
+function makeRequest(url: string): Promise<XMLHttpRequest> {
+	// Create the XHR request
+    var request = new XMLHttpRequest();
+    request.responseType = "json";
+
+	// Return it as a Promise
+	return new Promise(function (resolve, reject) {
+
+		// Setup our listener to process compeleted requests
+		request.onreadystatechange = function () {
+
+			// Only run if the request is complete
+			if (request.readyState !== 4) return;
+
+			// Process the response
+			if (request.status >= 200 && request.status < 300) {
+				// If successful
+				resolve(request);
+			} else {
+				// If failed
+				reject({
+					status: request.status,
+					statusText: request.statusText
+				});
+			}
+
+		};
+
+		// Setup our HTTP request
+		request.open('GET', url, true);
+
+		// Send the request
+		request.send();
+
+	});
 }
 
 const intToPosition = new Map([

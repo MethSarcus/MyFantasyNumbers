@@ -72,10 +72,10 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             let lineupSlotID = curPlayer.lineupSlotId;
                             awayPlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
-                        awayTeam = new Team(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
+                        awayTeam = new ESPN_Team(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
                     let isPlayoff = (q > settings.regularSeasonLength);
-                    var homeTeam = new Team(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeamID);
+                    var homeTeam = new ESPN_Team(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeamID);
                     matchups.push(new Matchup(homeTeam, awayTeam, q, isPlayoff));
                 }
             }

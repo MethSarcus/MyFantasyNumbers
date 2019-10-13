@@ -10,9 +10,23 @@ class Sleeper_Player implements Player {
     weekNumber: any;
     lineupSlotID: any;
 
-    constructor(playerID: number) {
+    constructor(playerID: string) {
         this.playerID = playerID;
+        this.score = 0;
+        this.projectedScore = 0;
     }
 
-    isEligible: (slot: number) => boolean;
+    public isEligible(slot: number): boolean {
+        var isEligible = false;
+        this.eligibleSlots.forEach((eligibleSlot) => {
+            if (eligibleSlot == slot) {
+                isEligible = true;
+            }
+        });
+        return isEligible;
+    }
+
+    public assignAttributes(attributes: Sleeper_Player_Library_Entry) {
+        
+    }
 }
