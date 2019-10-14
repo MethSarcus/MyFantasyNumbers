@@ -10,30 +10,20 @@ class Sleeper_Team implements Team {
     public opponentID: number;
     public gutDifference: number;
     public gutPlayers: number;
-    constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber, activeLineupSlots) {
-        // console.log(lineup);
-        // console.log(totalRoster);
-        this.lineup = lineup.map(playerID => {
-            return new Sleeper_Player(playerID, weekNumber);
+    constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber, activeLineupSlots, lineupOrder: string[]) {
+        this.lineup = lineup.map((playerID, index) => {
+            return new Sleeper_Player(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
         });
-        //console.log(this.lineup);
-
         this.bench = totalRoster.filter( element => {
             return !lineup.includes(element);
         }).map(playerID => {
-            return new Sleeper_Player(playerID, weekNumber);
+            return new Sleeper_Player(playerID, weekNumber, positionToInt.get("BN"));
         });
         this.IR = [];
         this.opponentID = opponentID;
         this.teamID = rosterID;
         this.score = score;
         this.matchupID = matchupID;
-        //console.log(activeLineupSlots);
-        //this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
-        // this.projectedScore = this.getProjectedScore(this.lineup);
-        // var gutArray = this.getGutPoints(activeLineupSlots);
-        // this.gutDifference = gutArray[0];
-        // this.gutPlayers = gutArray[1];
     }
 
     public getOptimalLineup(activeLineupSlots: number[]): Sleeper_Player[] {
@@ -131,7 +121,7 @@ class Sleeper_Team implements Team {
     public getEligibleSlotPlayers(slot: number): Sleeper_Player[] {
         var players = this.lineup.concat(this.bench, this.IR);
         var eligiblePlayers = players.filter(function (it) {
-            return it.isEligible(slot) === true;
+            return it.isEligible(slot) == true;
         });
 
         return eligiblePlayers;
@@ -140,7 +130,7 @@ class Sleeper_Team implements Team {
     public getEligibleSlotBenchPlayers(slot: number): Sleeper_Player[] {
         var players = this.bench.concat(this.IR);
         var eligiblePlayers = players.filter(function (it) {
-            return it.isEligible(slot) === true;
+            return it.isEligible(slot) == true;
         });
 
         return eligiblePlayers;
@@ -209,5 +199,14 @@ class Sleeper_Team implements Team {
         });
 
         return [gutPlayers, satPlayers];
+    }
+
+    public setTeamMetrics(activeLineupSlots): void {
+        
+        this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
+        this.projectedScore = this.getProjectedScore(this.lineup);
+        var gutArray = this.getGutPoints(activeLineupSlots);
+        this.gutDifference = gutArray[0];
+        this.gutPlayers = gutArray[1];
     }
 }

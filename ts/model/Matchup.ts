@@ -43,13 +43,6 @@ class Matchup {
             } else {
                 this.isUpset = false;
             }
-
-            // this.loserPotentialWinningSingleMoves = this.getPoorLineupDecisions();
-            // if (this.loserPotentialWinningSingleMoves > 0) {
-            //     this.withinSingleMoveOfWinning = true;
-            // } else {
-            //     this.withinSingleMoveOfWinning = false;
-            // }
         }
     }
 
@@ -65,28 +58,28 @@ class Matchup {
 
     public hasTeam(teamID: number): boolean {
         if (this.byeWeek !== true) {
-            if (this.home.teamID === teamID || this.away.teamID === teamID) {
+            if (this.home.teamID == teamID || this.away.teamID == teamID) {
                 return true;
                 } 
             } else {
-                if (this.home.teamID === teamID) {
+                if (this.home.teamID == teamID) {
                     return true;
             }
         }
     }
 
     public getTeam(teamID: number): Team {
-        if (this.home.teamID === teamID) {
+        if (this.home.teamID == teamID) {
             return this.home;
-        } else if (this.away.teamID === teamID) {
+        } else if (this.away.teamID == teamID) {
             return this.away;
         }
     }
 
     public getOpponent(teamID: number): Team {
-        if (this.home.teamID === teamID && this.byeWeek === false) {
+        if (this.home.teamID == teamID && this.byeWeek == false) {
             return this.away;
-        } else if (this.away.teamID === teamID) {
+        } else if (this.away.teamID == teamID) {
             return this.home;
         } else {
             return null;
@@ -102,7 +95,7 @@ class Matchup {
         }
     }
 
-    public getPoorLineupDecisions(): number {
+    public setPoorLineupDecisions(): void {
         var whiffedChoices = 0;
         var team = this.home;
         if (this.home.score > this.away.score) {
@@ -117,6 +110,12 @@ class Matchup {
             });
         });
 
-        return whiffedChoices;
+        this.loserPotentialWinningSingleMoves = whiffedChoices;
+
+        if (this.loserPotentialWinningSingleMoves > 0) {
+            this.withinSingleMoveOfWinning = true;
+        } else {
+            this.withinSingleMoveOfWinning = false;
+        }
     }
 }

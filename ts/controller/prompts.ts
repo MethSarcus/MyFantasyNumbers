@@ -14,7 +14,7 @@ $(document).ready(function () {
         var leagueID = input;
         if (localStorage.getItem(leagueID + season)) {
             var year = JSON.parse(localStorage.getItem(leagueID + season));
-            var restoredLeague = League.convertFromJson(year);
+            var restoredLeague = League.convertESPNFromJson(year);
             console.log(restoredLeague);
             setPage(restoredLeague);
         } else {

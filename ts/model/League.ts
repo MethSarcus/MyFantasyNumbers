@@ -371,7 +371,7 @@ class League {
         return bestWeekMatchup;
     }
 
-    static convertFromJson(object: any): League {
+    static convertESPNFromJson(object: any): League {
         var members = [];
         var weeks = [];
         var jsonSettings = object.settings;
@@ -633,8 +633,12 @@ class League {
             }
         });
 
-        member.stats.averageMOV = roundToHundred(member.stats.averageMOV / member.stats.wins);
-        member.stats.averageMOD = roundToHundred(member.stats.averageMOD / member.stats.losses);
+        if (member.stats.wins != 0) {
+            member.stats.averageMOV = roundToHundred(member.stats.averageMOV / member.stats.wins);
+        }
+        if (member.stats.losses != 0) {
+            member.stats.averageMOD = roundToHundred(member.stats.averageMOD / member.stats.losses);
+        }
     }
 
     public getMarginFinish(teamID: number, weekNumber: number) {

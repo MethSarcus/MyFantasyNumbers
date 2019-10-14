@@ -40,7 +40,6 @@ function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi:
         benchSlots.push([key, value]);
     });
     
-
     return [activeLineupSlots, benchSlots];
 }
 
@@ -119,7 +118,7 @@ function makeRequest(url: string): Promise<XMLHttpRequest> {
 	});
 }
 
-function assignAllPlayerAttributes(weeks: Week[]) {
+function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: Settings, leagueID, seasonID, members, leagueName) {
     makeRequest('../../ts/API_responses/sleeper/player_library.json').then(result => {
         const lib = (result.response as Sleeper_Player_Library_Entry[]);
         weeks.forEach(week => {
@@ -133,6 +132,7 @@ function assignAllPlayerAttributes(weeks: Week[]) {
                 matchup.home.IR.forEach(player => {
                     assignSleeperPlayerAttributes(player, lib[player.playerID]);
                 });
+                (matchup.home as Sleeper_Team).setTeamMetrics(activeLineupSlots);
                 if (!matchup.byeWeek) {
                     matchup.away.lineup.forEach(player => {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
@@ -143,24 +143,48 @@ function assignAllPlayerAttributes(weeks: Week[]) {
                     matchup.away.IR.forEach(player => {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
                     });
+                    (matchup.away as Sleeper_Team).setTeamMetrics(activeLineupSlots);
+                    matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
+                    matchup.setPoorLineupDecisions();
                 }
             });
         }); 
 
-        console.log(weeks);
 
-    });
+        var league = new League(leagueID, seasonID, weeks, members, settings, leagueName);
+        league.setMemberStats(league.getSeasonPortionWeeks());
+        console.log(league);
 
-    
+    }); 
 }
 
 function assignSleeperPlayerAttributes(player: Sleeper_Player, player_attributes: Sleeper_Player_Library_Entry) {
     player.firstName = player_attributes.first_name;
     player.lastName = player_attributes.last_name;
-    player.position = player_attributes.position;
-    player.eligibleSlots = player_attributes.fantasy_positions;
+    player.position =  player_attributes.position;
+    player.playerID = player.playerID;
+    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(player_attributes.position));
     player.realTeamID = player_attributes.team;
 }
+
+const eligibleSlotMap = new Map([
+    [0, [0, 1, 7, 20, 21]],
+    [1, [1, 7, 20, 21]],
+    [2, [2, 3, 7, 20, 21, 23]],
+    [4, [4, 3, 5, 7, 20, 21, 23]],
+    [6, [6, 5, 7, 20, 21, 23]],
+    [8, [8, 15, 20, 21]],
+    [9, [9, 15, 20, 21]],
+    [10, [10, 15, 20, 21]],
+    [11, [11, 15, 20, 21]],
+    [12, [12, 15, 20, 21]],
+    [13, [13, 15, 20, 21]],
+    [14, [14, 15, 20, 21]],
+    [16, [16, 20]],
+    [17, [17, 20, 21]],
+    [18, [18, 20, 21]],
+    [19, [19, 20]]
+]);
 
 const intToPosition = new Map([
     [0, "QB"],

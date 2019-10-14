@@ -27,7 +27,7 @@ enum POSITION {
     WR = "WR",
     TE = "TE",
     K = "K",
-    D_ST = "D/ST",
+    D_ST = "DEF",
     DL = "DL",
     DT = "DT",
     LB = "LB",
@@ -128,7 +128,7 @@ function getLineupSlot(lineupSlotID: number): string {
             return "DP";
         }
         case 16: {
-            return "D/ST";
+            return "DEF";
         }
         case 17: {
             return "K";
@@ -146,7 +146,7 @@ function getLineupSlot(lineupSlotID: number): string {
             return "IR";
         }
         case 23: {
-            return "RB/WR/TE";
+            return "FLEX";
         }
     }
 }

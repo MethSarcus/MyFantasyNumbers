@@ -2,8 +2,8 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
     sleeper_request('get', {
         path: 'league/' + leagueID.toString()
     }).done(function (json) {
-        console.log(json);
         const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
+        const lineupOrder = json.roster_positions.filter(it => {return it != "BN"});
         const leagueName = json.name;
         const leagueAvatar = json.avatar
         const draftId = json.draft_id;
@@ -18,11 +18,11 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
         const settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16, 16 - playoffStartWeek, "", currentMatchupPeriod, isActive, [seasonID]);
-        getSleeperMembers(leagueID, seasonID, settings, scoring_settings);
+        getSleeperMembers(leagueID, seasonID, settings, scoring_settings, lineupOrder, leagueName);
     });
 }
 
-function getSleeperMembers(leagueID: string, seasonID: number, settings: Settings, scoring_settings: object) {
+function getSleeperMembers(leagueID: string, seasonID: number, settings: Settings, scoring_settings: object, lineupOrder: string[], leagueName: string) {
     sleeper_request('get', {
         path: 'league/' + leagueID.toString() + '/users'
     }).done(function (json) {
@@ -34,15 +34,14 @@ function getSleeperMembers(leagueID: string, seasonID: number, settings: Setting
             let teamAvatar = member.avatar;
             members.push(new Sleeper_Member(memberID, memberName, teamName, teamAvatar));
         });
-        getSleeperRosters(leagueID, seasonID, members, settings, scoring_settings);
+        getSleeperRosters(leagueID, seasonID, members, settings, scoring_settings, lineupOrder, leagueName);
     });
 }
 
-function getSleeperRosters(leagueID: string, seasonID: number, members: Sleeper_Member[], settings: Settings, scoring_settings) {
+function getSleeperRosters(leagueID: string, seasonID: number, members: Sleeper_Member[], settings: Settings, scoring_settings: object, lineupOrder: string[], leagueName: string) {
     sleeper_request('get', {
         path: 'league/' + leagueID.toString() + '/rosters/'
     }).done(function (json) {
-        console.log(json);
         json.forEach(roster => {
             let teamID = roster.roster_id;
             let wins = roster.settings.wins;
@@ -58,11 +57,11 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: Sleeper_
             });
         });
 
-        getSleeperMatchups(leagueID, seasonID, members, settings, scoring_settings);
+        getSleeperMatchups(leagueID, seasonID, members, settings, scoring_settings, lineupOrder, leagueName);
     });
 }
 
-function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper_Member[], settings: Settings, scoring_settings) {
+function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper_Member[], settings: Settings, scoring_settings: object, lineupOrder: string[], leagueName: string) {
     console.log("getting matchups");
     var weeksToGet;
     if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
@@ -79,7 +78,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
     Promise.all(promises).then(weeks => {
         weeks.forEach(week => {
             var isPlayoffs = (weekCounter > settings.regularSeasonLength);
-            var weekMatches = getSleeperWeekMatchups(week.response, settings.activeLineupSlots, weekCounter, isPlayoffs);
+            var weekMatches = getSleeperWeekMatchups(week.response, settings.activeLineupSlots, weekCounter, isPlayoffs, lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
             weekCounter += 1;
         });
@@ -109,23 +108,19 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
                 });
                 
             }
-            console.log(Weeks);
-            assignAllPlayerAttributes(Weeks);
-            return result;
+            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName);
+            
         });
-    })
-    .catch(error => { 
-        console.error(error.message)
-      });
+    });
 }
 
-function getSleeperWeekMatchups(teams: Team_Response[], activeLineupSlots, weekNumber: number, isPlayoff: boolean): Matchup[] {
+function getSleeperWeekMatchups(teams: Team_Response[], activeLineupSlots, weekNumber: number, isPlayoff: boolean, lineupOrder: string[]): Matchup[] {
     
     var allTeams = (teams as any).map(team => {
-        return new Sleeper_Team(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, activeLineupSlots);
+        return new Sleeper_Team(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, activeLineupSlots, lineupOrder);
     });
     var matchups = [];
-    for (var i = 0; i < (teams.length/2); i++) {
+    for (var i = 0; i <= (teams.length/2); i++) {
         let curTeams = allTeams.filter(team => {
             return team.matchupID == i;
         });
