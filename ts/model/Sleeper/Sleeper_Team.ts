@@ -10,18 +10,18 @@ class Sleeper_Team implements Team {
     public opponentID: number;
     public gutDifference: number;
     public gutPlayers: number;
-    constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, activeLineupSlots) {
+    constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber, activeLineupSlots) {
         // console.log(lineup);
         // console.log(totalRoster);
         this.lineup = lineup.map(playerID => {
-            return new Sleeper_Player(playerID);
+            return new Sleeper_Player(playerID, weekNumber);
         });
         //console.log(this.lineup);
 
         this.bench = totalRoster.filter( element => {
             return !lineup.includes(element);
         }).map(playerID => {
-            return new Sleeper_Player(playerID);
+            return new Sleeper_Player(playerID, weekNumber);
         });
         this.IR = [];
         this.opponentID = opponentID;

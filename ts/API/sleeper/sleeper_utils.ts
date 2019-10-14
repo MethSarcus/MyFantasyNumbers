@@ -119,6 +119,49 @@ function makeRequest(url: string): Promise<XMLHttpRequest> {
 	});
 }
 
+function assignAllPlayerAttributes(weeks: Week[]) {
+    makeRequest('../../ts/API_responses/sleeper/player_library.json').then(result => {
+        const lib = (result.response as Sleeper_Player_Library_Entry[]);
+        weeks.forEach(week => {
+            week.matchups.forEach(matchup => {
+                matchup.home.lineup.forEach(player => {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.bench.forEach(player => {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.IR.forEach(player => {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                if (!matchup.byeWeek) {
+                    matchup.away.lineup.forEach(player => {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.bench.forEach(player => {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.IR.forEach(player => {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                }
+            });
+        }); 
+
+        console.log(weeks);
+
+    });
+
+    
+}
+
+function assignSleeperPlayerAttributes(player: Sleeper_Player, player_attributes: Sleeper_Player_Library_Entry) {
+    player.firstName = player_attributes.first_name;
+    player.lastName = player_attributes.last_name;
+    player.position = player_attributes.position;
+    player.eligibleSlots = player_attributes.fantasy_positions;
+    player.realTeamID = player_attributes.team;
+}
+
 const intToPosition = new Map([
     [0, "QB"],
     [1, "TQB"],

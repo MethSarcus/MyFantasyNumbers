@@ -85,7 +85,6 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
         });
 
         getSleeperWeekStats(weeksToGet).then(result => {
-            console.log(result);
             for (var y = 0; y < result.length; y++) {
                 (Weeks as Week[])[y].matchups.forEach(matchup => {
                     matchup.home.lineup.forEach(player => {
@@ -111,6 +110,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
                 
             }
             console.log(Weeks);
+            assignAllPlayerAttributes(Weeks);
             return result;
         });
     })
@@ -122,7 +122,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
 function getSleeperWeekMatchups(teams: Team_Response[], activeLineupSlots, weekNumber: number, isPlayoff: boolean): Matchup[] {
     
     var allTeams = (teams as any).map(team => {
-        return new Sleeper_Team(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), activeLineupSlots);
+        return new Sleeper_Team(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, activeLineupSlots);
     });
     var matchups = [];
     for (var i = 0; i < (teams.length/2); i++) {

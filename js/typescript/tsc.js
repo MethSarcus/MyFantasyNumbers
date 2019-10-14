@@ -256,7 +256,6 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoring_setti
             weekCounter += 1;
         });
         getSleeperWeekStats(weeksToGet).then(function (result) {
-            console.log(result);
             for (var y = 0; y < result.length; y++) {
                 Weeks[y].matchups.forEach(function (matchup) {
                     matchup.home.lineup.forEach(function (player) {
@@ -280,6 +279,7 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoring_setti
                 });
             }
             console.log(Weeks);
+            assignAllPlayerAttributes(Weeks);
             return result;
         });
     })
@@ -289,7 +289,7 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoring_setti
 }
 function getSleeperWeekMatchups(teams, activeLineupSlots, weekNumber, isPlayoff) {
     var allTeams = teams.map(function (team) {
-        return new Sleeper_Team(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), activeLineupSlots);
+        return new Sleeper_Team(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, activeLineupSlots);
     });
     var matchups = [];
     for (var i = 0; i < (teams.length / 2); i++) {
@@ -410,6 +410,43 @@ function makeRequest(url) {
         request.open('GET', url, true);
         request.send();
     });
+}
+function assignAllPlayerAttributes(weeks) {
+    makeRequest('../../ts/API_responses/sleeper/player_library.json').then(function (result) {
+        var lib = result.response;
+        weeks.forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
+                matchup.home.lineup.forEach(function (player) {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.bench.forEach(function (player) {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.IR.forEach(function (player) {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                if (!matchup.byeWeek) {
+                    matchup.away.lineup.forEach(function (player) {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.bench.forEach(function (player) {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.IR.forEach(function (player) {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                }
+            });
+        });
+        console.log(weeks);
+    });
+}
+function assignSleeperPlayerAttributes(player, player_attributes) {
+    player.firstName = player_attributes.first_name;
+    player.lastName = player_attributes.last_name;
+    player.position = player_attributes.position;
+    player.eligibleSlots = player_attributes.fantasy_positions;
+    player.realTeamID = player_attributes.team;
 }
 var intToPosition = new Map([
     [0, "QB"],
@@ -2427,10 +2464,11 @@ var Sleeper_Member = (function () {
     return Sleeper_Member;
 }());
 var Sleeper_Player = (function () {
-    function Sleeper_Player(playerID) {
+    function Sleeper_Player(playerID, weekNumber) {
         this.playerID = playerID;
         this.score = 0;
         this.projectedScore = 0;
+        this.weekNumber = weekNumber;
     }
     Sleeper_Player.prototype.isEligible = function (slot) {
         var isEligible = false;
@@ -2441,19 +2479,17 @@ var Sleeper_Player = (function () {
         });
         return isEligible;
     };
-    Sleeper_Player.prototype.assignAttributes = function (attributes) {
-    };
     return Sleeper_Player;
 }());
 var Sleeper_Team = (function () {
-    function Sleeper_Team(lineup, totalRoster, score, matchupID, rosterID, opponentID, activeLineupSlots) {
+    function Sleeper_Team(lineup, totalRoster, score, matchupID, rosterID, opponentID, weekNumber, activeLineupSlots) {
         this.lineup = lineup.map(function (playerID) {
-            return new Sleeper_Player(playerID);
+            return new Sleeper_Player(playerID, weekNumber);
         });
         this.bench = totalRoster.filter(function (element) {
             return !lineup.includes(element);
         }).map(function (playerID) {
-            return new Sleeper_Player(playerID);
+            return new Sleeper_Player(playerID, weekNumber);
         });
         this.IR = [];
         this.opponentID = opponentID;

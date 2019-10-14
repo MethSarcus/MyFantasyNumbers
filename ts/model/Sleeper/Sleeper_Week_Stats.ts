@@ -9,7 +9,7 @@ class Sleeper_Week_Stats {
         this.week_number = week_number;
     }
 
-    public calculatePlayerScore(settings: object, player: Sleeper_Player): void {
+    public calculatePlayerScore(settings: object, player: Player): void {
         const player_stats = this.stats[player.playerID];
         if (player_stats != undefined) {
             Object.keys(player_stats).forEach(stat_name => {
@@ -20,7 +20,7 @@ class Sleeper_Week_Stats {
         }
     }
 
-    public calculateProjectedPlayerScore(settings: object, player: Sleeper_Player): void {
+    public calculateProjectedPlayerScore(settings: object, player: Player): void {
         const player_projected_stats = this.projected_stats[player.playerID];
         if (player_projected_stats != undefined) {
             Object.keys(player_projected_stats).forEach(stat_name => {

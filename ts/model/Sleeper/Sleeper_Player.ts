@@ -10,10 +10,11 @@ class Sleeper_Player implements Player {
     weekNumber: any;
     lineupSlotID: any;
 
-    constructor(playerID: string) {
+    constructor(playerID: string, weekNumber: number) {
         this.playerID = playerID;
         this.score = 0;
         this.projectedScore = 0;
+        this.weekNumber = weekNumber;
     }
 
     public isEligible(slot: number): boolean {
@@ -24,9 +25,5 @@ class Sleeper_Player implements Player {
             }
         });
         return isEligible;
-    }
-
-    public assignAttributes(attributes: Sleeper_Player_Library_Entry) {
-        
     }
 }
