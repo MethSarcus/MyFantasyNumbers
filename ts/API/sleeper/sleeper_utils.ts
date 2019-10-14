@@ -53,8 +53,6 @@ function makeSleeperPlayers(players: string[]): Sleeper_Player[] {
 
 function getSleeperWeekStats(numWeeks: number): Promise<any> {
     var statPromises = [];
-    var allWeekStats;
-    var allWeekProjections;
     for (var i = 1; i <= numWeeks; i++) {
         statPromises.push(makeRequest('https://api.sleeper.app/v1/stats/nfl/regular/2019/' + i));
     }
@@ -124,13 +122,13 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: S
         weeks.forEach(week => {
             week.matchups.forEach(matchup => {
                 matchup.home.lineup.forEach(player => {
-                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    assignSleeperPlayerAttributes(player as Sleeper_Player, lib[player.playerID]);
                 });
                 matchup.home.bench.forEach(player => {
-                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    assignSleeperPlayerAttributes(player as Sleeper_Player, lib[player.playerID]);
                 });
                 matchup.home.IR.forEach(player => {
-                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    assignSleeperPlayerAttributes(player as Sleeper_Player, lib[player.playerID]);
                 });
                 (matchup.home as Sleeper_Team).setTeamMetrics(activeLineupSlots);
                 if (!matchup.byeWeek) {
@@ -151,9 +149,10 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: S
         }); 
 
 
-        var league = new League(leagueID, seasonID, weeks, members, settings, leagueName);
+        var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         league.setMemberStats(league.getSeasonPortionWeeks());
         console.log(league);
+        setPage(league);
 
     }); 
 }
@@ -165,6 +164,7 @@ function assignSleeperPlayerAttributes(player: Sleeper_Player, player_attributes
     player.playerID = player.playerID;
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(player_attributes.position));
     player.realTeamID = player_attributes.team;
+    player.espnID = player_attributes.espn_id;
 }
 
 const eligibleSlotMap = new Map([
@@ -221,6 +221,7 @@ const positionToInt = new Map([
     ["WR", 4],
     ["WR/TE", 5],
     ["TE", 6],
+    ["SUPER_FLEX", 7],
     ["OP", 7],
     ["DT", 8],
     ["DE", 9],

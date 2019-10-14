@@ -10,7 +10,9 @@ class SeasonPlayer {
     public weeksPlayed: number;
     public averageScore: number;
     public scores: [[number, number]];
-    constructor(player: Player) {
+    public pictureURL: string;
+    public pictureID: number;
+    constructor(player: Player, platform: PLATFORM) {
         this.firstName = player.firstName;
         this.lastName = player.lastName;
         this.eligibleSlots = player.eligibleSlots;
@@ -22,6 +24,12 @@ class SeasonPlayer {
         this.weeksPlayed = 1;
         this.averageScore = player.score;
         this.scores = [[player.score, player.weekNumber]];
+        if (platform == PLATFORM.SLEEPER) {
+            this.pictureID = (player as Sleeper_Player).espnID;
+        } else {
+            this.pictureID = player.playerID;
+        }
+        this.setPictureURL();
     }
 
     public addPerformance(player: Player) {
@@ -50,5 +58,13 @@ class SeasonPlayer {
             }
         });
         return isEligible;
+    }
+
+    public setPictureURL(): void {
+        if (this.position == "D/ST" || this.position == "DEF") {
+            this.pictureURL = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
+        } else {
+            this.pictureURL = "http://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
+        }
     }
 }

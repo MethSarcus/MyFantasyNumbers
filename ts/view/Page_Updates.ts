@@ -178,11 +178,7 @@ function updateMVP(teamMVP: SeasonPlayer) {
     var mvpImage = document.getElementById('mvp_image') as HTMLImageElement;
     var mvpName = document.getElementById('team_mvp_name');
     var mvpPoints = document.getElementById('team_mvp_points');
-    if (teamMVP.position == "D/ST") {
-        mvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamMVP.realTeamID) + ".png&h=150&w=150";
-    } else {
-        mvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamMVP.playerID + ".png";
-    }
+    mvpImage.src = teamMVP.pictureURL;
     var startsText = " starts";
     if (teamMVP.weeksPlayed == 1) {
         startsText = " start";
@@ -195,17 +191,13 @@ function updateLVP(teamLVP: SeasonPlayer) {
     var lvpImage = document.getElementById('lvp_image') as HTMLImageElement;
     var lvpName = document.getElementById('team_lvp_name');
     var lvpPoints = document.getElementById('team_lvp_points');
-    if (teamLVP.position == "D/ST") {
-        lvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamLVP.realTeamID) + ".png&h=150&w=150";
-    } else {
-        lvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamLVP.playerID + ".png";
-    }
+    lvpImage.src = teamLVP.pictureURL;
     lvpName.innerText = teamLVP.firstName + " " + teamLVP.lastName;
     var startsText = " starts";
     if (teamLVP.weeksPlayed == 1) {
         startsText = " start";
     }
-    lvpPoints.innerText = roundToHundred(teamLVP.seasonScore) + " Points earned in lineup\n" + teamLVP.averageScore + " points per game, " + teamLVP.weeksPlayed + startsText;
+    lvpPoints.innerText = roundToHundred(teamLVP.seasonScore) + " Points earned in lineup\n" + roundToHundred(teamLVP.averageScore) + " points per game, " + teamLVP.weeksPlayed + startsText;
 }
 
 function updateMostConsistent(mostConsistent: SeasonPlayer) {
@@ -214,11 +206,7 @@ function updateMostConsistent(mostConsistent: SeasonPlayer) {
     var mostConsistentName = document.getElementById('team_most_consistent_name');
     var mostConsistentPoints = document.getElementById('team_most_consistent_points');
     mostConsistentTitle.innerText = "Most Consistent";
-    if (mostConsistent.position == "D/ST") {
-        mostConsistentImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(mostConsistent.realTeamID) + ".png&h=150&w=150";
-    } else {
-        mostConsistentImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + mostConsistent.playerID + ".png";
-    }
+    mostConsistentImage.src = mostConsistent.pictureURL;
     var startsText = " starts";
     if (mostConsistent.weeksPlayed == 1) {
         startsText = " start";

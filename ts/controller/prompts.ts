@@ -6,7 +6,7 @@ $(document).ready(function () {
     //   };
 
 
-    var input = prompt("Please enter ESPN League ID", "2319896");
+    var input = prompt("Please enter League ID", "2319896");
     var season = prompt("Please enter year", "2018");
     //var r = confirm("If you have not visited the league you entered this will take a few seconds to load while the data is gathered\nGood things come to those who wait!");
 
@@ -20,7 +20,13 @@ $(document).ready(function () {
         } else {
             console.log("running");
             localStorage.clear();
-            getESPNSettings(leagueID, season);
+            if (leagueID.length > 9) {
+                getSleeperLeagueSettings(leagueID, parseInt(season));
+            } else {
+                getESPNSettings(leagueID, season);
+            }
+            
+            
             //'apis/v3/games/ffl/seasons/2018/segments/0/leagues/340734?view=mMatchupScore&teamId=1&scoringPeriodId=1' for telling if a game is a playoff game
         }
         

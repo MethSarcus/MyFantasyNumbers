@@ -91,7 +91,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                     }
                     return 0;
                 });
-                var league = new League(leagueID, seasonID, weeks, members, settings, leagueName);
+                var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
                 league.setMemberStats(league.getSeasonPortionWeeks());
                 localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
                 setPage(league);
@@ -189,6 +189,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
         var isActive = (json.status == "in_season");
         var scoring_settings = json.scoring_settings;
         var divisions = [];
+        console.log(lineupOrder);
         for (var i = 0; i < numDivisions; i++) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
@@ -204,7 +205,7 @@ function getSleeperMembers(leagueID, seasonID, settings, scoring_settings, lineu
         json.forEach(function (member) {
             var memberName = member.display_name;
             var memberID = member.user_id;
-            var teamName = member.metadata.teamName;
+            var teamName = member.metadata.team_name;
             var teamAvatar = member.avatar;
             members.push(new Sleeper_Member(memberID, memberName, teamName, teamAvatar));
         });
@@ -216,6 +217,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoring_settin
         path: 'league/' + leagueID.toString() + '/rosters/'
     }).done(function (json) {
         json.forEach(function (roster) {
+            console.log(json);
             var teamID = roster.roster_id;
             var wins = roster.settings.wins;
             var totalMoves = roster.settings.totalMoves;
@@ -229,7 +231,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoring_settin
                 }
             });
         });
-        getSleeperMatchups(leagueID, seasonID, members, settings, scoring_settings, lineupOrder, leagueName);
+        getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID != undefined; }), settings, scoring_settings, lineupOrder, leagueName);
     });
 }
 function getSleeperMatchups(leagueID, seasonID, members, settings, scoring_settings, lineupOrder, leagueName) {
@@ -360,8 +362,6 @@ function makeSleeperPlayers(players) {
 }
 function getSleeperWeekStats(numWeeks) {
     var statPromises = [];
-    var allWeekStats;
-    var allWeekProjections;
     for (var i = 1; i <= numWeeks; i++) {
         statPromises.push(makeRequest('https://api.sleeper.app/v1/stats/nfl/regular/2019/' + i));
     }
@@ -436,9 +436,10 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
                 }
             });
         });
-        var league = new League(leagueID, seasonID, weeks, members, settings, leagueName);
+        var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         league.setMemberStats(league.getSeasonPortionWeeks());
         console.log(league);
+        setPage(league);
     });
 }
 function assignSleeperPlayerAttributes(player, player_attributes) {
@@ -448,6 +449,7 @@ function assignSleeperPlayerAttributes(player, player_attributes) {
     player.playerID = player.playerID;
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(player_attributes.position));
     player.realTeamID = player_attributes.team;
+    player.espnID = player_attributes.espn_id;
 }
 var eligibleSlotMap = new Map([
     [0, [0, 1, 7, 20, 21]],
@@ -501,6 +503,7 @@ var positionToInt = new Map([
     ["WR", 4],
     ["WR/TE", 5],
     ["TE", 6],
+    ["SUPER_FLEX", 7],
     ["OP", 7],
     ["DT", 8],
     ["DE", 9],
@@ -1199,10 +1202,9 @@ function setPage(league) {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
-    getSleeperLeagueSettings("383472092907233280", 2019);
 }
 $(document).ready(function () {
-    var input = prompt("Please enter ESPN League ID", "2319896");
+    var input = prompt("Please enter League ID", "2319896");
     var season = prompt("Please enter year", "2018");
     if (input != null) {
         var leagueID = input;
@@ -1215,7 +1217,12 @@ $(document).ready(function () {
         else {
             console.log("running");
             localStorage.clear();
-            getESPNSettings(leagueID, season);
+            if (leagueID.length > 9) {
+                getSleeperLeagueSettings(leagueID, parseInt(season));
+            }
+            else {
+                getESPNSettings(leagueID, season);
+            }
         }
     }
 });
@@ -1258,7 +1265,7 @@ var EmptySlot = (function () {
     return EmptySlot;
 }());
 var League = (function () {
-    function League(id, season, weeks, members, settings, leagueName) {
+    function League(id, season, weeks, members, settings, leagueName, leaguePlatform) {
         this.id = id;
         this.weeks = weeks;
         this.season = season;
@@ -1266,6 +1273,7 @@ var League = (function () {
         this.settings = settings;
         this.seasonPortion = SEASON_PORTION.REGULAR;
         this.leagueName = leagueName;
+        this.leaguePlatform = leaguePlatform;
     }
     League.prototype.setPowerRanks = function () {
         var _this = this;
@@ -1340,6 +1348,7 @@ var League = (function () {
             }
         });
         this.members.forEach(function (member) {
+            console.log(member);
             member.setAdvancedStats(weeks);
             member.stats.rank = _this.getRank(member.teamID);
             member.stats.roundStats();
@@ -1615,7 +1624,7 @@ var League = (function () {
         object.members.forEach(function (member) {
             members.push(new ESPN_Member(member.memberID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
         });
-        var league = new League(object.id, object.season, weeks, members, settings, object.leagueName);
+        var league = new League(object.id, object.season, weeks, members, settings, object.leagueName, object.leaguePlatform);
         league.setMemberStats(league.getSeasonPortionWeeks());
         league.setPowerRanks();
         return league;
@@ -1991,7 +2000,7 @@ var PositionalStats = (function () {
     return PositionalStats;
 }());
 var SeasonPlayer = (function () {
-    function SeasonPlayer(player) {
+    function SeasonPlayer(player, platform) {
         this.firstName = player.firstName;
         this.lastName = player.lastName;
         this.eligibleSlots = player.eligibleSlots;
@@ -2003,6 +2012,13 @@ var SeasonPlayer = (function () {
         this.weeksPlayed = 1;
         this.averageScore = player.score;
         this.scores = [[player.score, player.weekNumber]];
+        if (platform == PLATFORM.SLEEPER) {
+            this.pictureID = player.espnID;
+        }
+        else {
+            this.pictureID = player.playerID;
+        }
+        this.setPictureURL();
     }
     SeasonPlayer.prototype.addPerformance = function (player) {
         this.weeksPlayed += 1;
@@ -2026,6 +2042,14 @@ var SeasonPlayer = (function () {
             }
         });
         return isEligible;
+    };
+    SeasonPlayer.prototype.setPictureURL = function () {
+        if (this.position == "D/ST" || this.position == "DEF") {
+            this.pictureURL = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
+        }
+        else {
+            this.pictureURL = "http://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
+        }
     };
     return SeasonPlayer;
 }());
@@ -2453,22 +2477,24 @@ var Sleeper_Member = (function () {
         else {
             this.teamAbbrev = memberName.substring(0, 4);
         }
-        this.logoURL = "https://sleepercdn.com/avatars/thumbs/" + teamAvatar.toString();
+        this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
     }
     Sleeper_Member.prototype.setAdvancedStats = function (weeks) {
         var _this = this;
         var scores = [];
         weeks.forEach(function (week) {
+            console.log(week);
+            console.log(_this);
             scores.push(week.getTeam(_this.teamID).score);
         });
         this.stats.standardDeviation = calcStandardDeviation(scores);
         this.stats.weeklyAverage = getMean(scores);
     };
     Sleeper_Member.prototype.nameToString = function () {
-        return this.teamName;
+        return this.name;
     };
     Sleeper_Member.prototype.ownerToString = function () {
-        return this.name;
+        return this.teamName;
     };
     Sleeper_Member.prototype.recordToString = function () {
         if (this.stats.ties != 0) {
@@ -2498,6 +2524,11 @@ var Sleeper_Player = (function () {
         this.score = 0;
         this.projectedScore = 0;
         this.weekNumber = weekNumber;
+        if (undefined == lineupSlotID) {
+            console.log(playerID);
+            console.log(weekNumber);
+            console.log(lineupSlotID);
+        }
         this.lineupSlotID = parseInt(lineupSlotID.toString());
     }
     Sleeper_Player.prototype.isEligible = function (slot) {
@@ -2890,6 +2921,13 @@ var SEASON_PORTION;
     SEASON_PORTION["POST"] = "Post-Season";
     SEASON_PORTION["ALL"] = "Complete Season";
 })(SEASON_PORTION || (SEASON_PORTION = {}));
+var PLATFORM;
+(function (PLATFORM) {
+    PLATFORM[PLATFORM["SLEEPER"] = 0] = "SLEEPER";
+    PLATFORM[PLATFORM["ESPN"] = 1] = "ESPN";
+    PLATFORM[PLATFORM["NFL"] = 2] = "NFL";
+    PLATFORM[PLATFORM["YAHOO"] = 3] = "YAHOO";
+})(PLATFORM || (PLATFORM = {}));
 var DRAFT_TYPE;
 (function (DRAFT_TYPE) {
     DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";
@@ -3146,7 +3184,7 @@ function getSeasonPlayers(league, teamID) {
                 players[index].addPerformance(player);
             }
             else {
-                players.push(new SeasonPlayer(player));
+                players.push(new SeasonPlayer(player, league.leaguePlatform));
             }
         });
     });
@@ -3164,7 +3202,7 @@ function getSeasonOpponentPlayers(league, teamID) {
                     players[index].addPerformance(player);
                 }
                 else {
-                    players.push(new SeasonPlayer(player));
+                    players.push(new SeasonPlayer(player, league.leaguePlatform));
                 }
             });
         }
@@ -3183,7 +3221,7 @@ function getAllSeasonPlayers(league) {
                     players[index].addPerformance(player);
                 }
                 else {
-                    players.push(new SeasonPlayer(player));
+                    players.push(new SeasonPlayer(player, league.leaguePlatform));
                 }
             });
             if (!matchup.byeWeek) {
@@ -3195,7 +3233,7 @@ function getAllSeasonPlayers(league) {
                         players[index].addPerformance(player);
                     }
                     else {
-                        players.push(new SeasonPlayer(player));
+                        players.push(new SeasonPlayer(player, league.leaguePlatform));
                     }
                 });
             }
@@ -3223,7 +3261,7 @@ function getMemberColor(memberID) {
     return colorCode[memberID];
 }
 function getRealTeamInitials(realteamID) {
-    var team;
+    var team = realteamID;
     switch (realteamID) {
         case 1:
             team = "Atl";
@@ -3551,12 +3589,7 @@ function updateMVP(teamMVP) {
     var mvpImage = document.getElementById('mvp_image');
     var mvpName = document.getElementById('team_mvp_name');
     var mvpPoints = document.getElementById('team_mvp_points');
-    if (teamMVP.position == "D/ST") {
-        mvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamMVP.realTeamID) + ".png&h=150&w=150";
-    }
-    else {
-        mvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamMVP.playerID + ".png";
-    }
+    mvpImage.src = teamMVP.pictureURL;
     var startsText = " starts";
     if (teamMVP.weeksPlayed == 1) {
         startsText = " start";
@@ -3568,18 +3601,13 @@ function updateLVP(teamLVP) {
     var lvpImage = document.getElementById('lvp_image');
     var lvpName = document.getElementById('team_lvp_name');
     var lvpPoints = document.getElementById('team_lvp_points');
-    if (teamLVP.position == "D/ST") {
-        lvpImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(teamLVP.realTeamID) + ".png&h=150&w=150";
-    }
-    else {
-        lvpImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + teamLVP.playerID + ".png";
-    }
+    lvpImage.src = teamLVP.pictureURL;
     lvpName.innerText = teamLVP.firstName + " " + teamLVP.lastName;
     var startsText = " starts";
     if (teamLVP.weeksPlayed == 1) {
         startsText = " start";
     }
-    lvpPoints.innerText = roundToHundred(teamLVP.seasonScore) + " Points earned in lineup\n" + teamLVP.averageScore + " points per game, " + teamLVP.weeksPlayed + startsText;
+    lvpPoints.innerText = roundToHundred(teamLVP.seasonScore) + " Points earned in lineup\n" + roundToHundred(teamLVP.averageScore) + " points per game, " + teamLVP.weeksPlayed + startsText;
 }
 function updateMostConsistent(mostConsistent) {
     var mostConsistentTitle = document.getElementById('consistent_or_boom');
@@ -3587,12 +3615,7 @@ function updateMostConsistent(mostConsistent) {
     var mostConsistentName = document.getElementById('team_most_consistent_name');
     var mostConsistentPoints = document.getElementById('team_most_consistent_points');
     mostConsistentTitle.innerText = "Most Consistent";
-    if (mostConsistent.position == "D/ST") {
-        mostConsistentImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(mostConsistent.realTeamID) + ".png&h=150&w=150";
-    }
-    else {
-        mostConsistentImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + mostConsistent.playerID + ".png";
-    }
+    mostConsistentImage.src = mostConsistent.pictureURL;
     var startsText = " starts";
     if (mostConsistent.weeksPlayed == 1) {
         startsText = " start";

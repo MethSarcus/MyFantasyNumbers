@@ -16,12 +16,14 @@ class Sleeper_Member implements Member {
         } else {
             this.teamAbbrev = memberName.substring(0, 4);
         }
-        this.logoURL = "https://sleepercdn.com/avatars/thumbs/" + teamAvatar.toString();
+        this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
     }
 
     public setAdvancedStats(weeks: Week[]): void {
         const scores = [];
         weeks.forEach(week => {
+            console.log(week);
+            console.log(this);
             scores.push(week.getTeam(this.teamID).score);
         });
 
@@ -30,11 +32,11 @@ class Sleeper_Member implements Member {
     }
 
     public nameToString(): string {
-        return this.teamName;
+        return this.name;
     }
 
     public ownerToString(): string {
-        return this.name;
+        return this.teamName;
     }
 
     public recordToString(): string {

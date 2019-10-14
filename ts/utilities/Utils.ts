@@ -4,6 +4,13 @@ enum SEASON_PORTION {
     ALL = "Complete Season",
 }
 
+enum PLATFORM {
+    SLEEPER,
+    ESPN,
+    NFL,
+    YAHOO,
+}
+
 enum DRAFT_TYPE {
     AUCTION,
     SNAKE,
@@ -258,7 +265,7 @@ function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
             if (index > -1) {
                 players[index].addPerformance(player);
                 } else {
-                    players.push(new SeasonPlayer(player));
+                    players.push(new SeasonPlayer(player, league.leaguePlatform));
             }
         });
     });
@@ -277,7 +284,7 @@ function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[
                 if (index > -1) {
                     players[index].addPerformance(player);
                     } else {
-                        players.push(new SeasonPlayer(player));
+                        players.push(new SeasonPlayer(player, league.leaguePlatform));
                 }
             });
         }
@@ -297,7 +304,7 @@ function getAllSeasonPlayers(league: League): SeasonPlayer[] {
                 if (index > -1) {
                     players[index].addPerformance(player);
                     } else {
-                        players.push(new SeasonPlayer(player));
+                        players.push(new SeasonPlayer(player, league.leaguePlatform));
                 }
             });
             if (!matchup.byeWeek) {
@@ -308,7 +315,7 @@ function getAllSeasonPlayers(league: League): SeasonPlayer[] {
                     if (index > -1) {
                         players[index].addPerformance(player);
                         } else {
-                            players.push(new SeasonPlayer(player));
+                            players.push(new SeasonPlayer(player, league.leaguePlatform));
                     }
                 });
             }
@@ -344,7 +351,7 @@ function getMemberColor(memberID: number): string {
 //Params: Int, team ID
 //Returns: String, Team Abbreviation
 function getRealTeamInitials(realteamID) {
-    var team;
+    var team = realteamID;
     //console.log(realteamID);
     switch (realteamID) {
         case 1:

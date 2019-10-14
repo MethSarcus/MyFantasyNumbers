@@ -91,7 +91,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                     }
                     return 0;
                 });
-                var league = new League(leagueID, seasonID, weeks, members, settings, leagueName);
+                var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
                 league.setMemberStats(league.getSeasonPortionWeeks());
                 localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
                 setPage(league);

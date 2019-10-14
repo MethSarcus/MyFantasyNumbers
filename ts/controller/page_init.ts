@@ -156,7 +156,6 @@ function setPage(league: League) {
     });
 
     //console.log(getSleeperWeekStats(4));
-    getSleeperLeagueSettings("383472092907233280", 2019);
     // makeRequest('https://api.sleeper.app/v1/league/383472092907233280')
 	// .then(function (posts) {
 	// 	console.log('Success!', posts);

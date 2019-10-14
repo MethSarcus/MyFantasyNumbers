@@ -14,6 +14,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
         const isActive = (json.status == "in_season");
         const scoring_settings = json.scoring_settings;
         var divisions = [];
+        console.log(lineupOrder);
         for(var i = 0; i < numDivisions; i++) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
@@ -30,7 +31,7 @@ function getSleeperMembers(leagueID: string, seasonID: number, settings: Setting
         json.forEach(member => {
             let memberName = member.display_name;
             let memberID = member.user_id;
-            let teamName = member.metadata.teamName;
+            let teamName = member.metadata.team_name;
             let teamAvatar = member.avatar;
             members.push(new Sleeper_Member(memberID, memberName, teamName, teamAvatar));
         });
@@ -43,6 +44,7 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: Sleeper_
         path: 'league/' + leagueID.toString() + '/rosters/'
     }).done(function (json) {
         json.forEach(roster => {
+            console.log(json);
             let teamID = roster.roster_id;
             let wins = roster.settings.wins;
             let totalMoves = roster.settings.totalMoves;
@@ -57,7 +59,7 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: Sleeper_
             });
         });
 
-        getSleeperMatchups(leagueID, seasonID, members, settings, scoring_settings, lineupOrder, leagueName);
+        getSleeperMatchups(leagueID, seasonID, members.filter(member => {return member.teamID != undefined}), settings, scoring_settings, lineupOrder, leagueName);
     });
 }
 
