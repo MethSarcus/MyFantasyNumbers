@@ -20,13 +20,13 @@ class Settings {
         this.positions = this.getPositions();
         this.currentMatchupPeriod = currentMatchupPeriod;
         this.isActive = isActive;
-        this.yearsActive = yearsActive.sort(function(a, b){return b-a});
+        this.yearsActive = yearsActive.sort((a, b) => b - a);
     }
 
     public getPositions(): string[] {
-        var positions = this.activeLineupSlots.filter(function (slot) {
-            return slot[0] != 1 && slot[0] != 3 && slot[0] != 5 && slot[0] != 7 && slot[0] != 23;
-        }).map(function (slot) {
+        const positions = this.activeLineupSlots.filter((slot) => {
+            return slot[0] !== 1 && slot[0] !== 3 && slot[0] !== 5 && slot[0] !== 7 && slot[0] !== 23;
+        }).map((slot) => {
             return getLineupSlot(slot[0]);
         });
         return positions;

@@ -6,12 +6,12 @@ class SeasonPlayer {
     public projectedSeasonScore: number;
     public position: any;
     public realTeamID: number;
-    public playerID: number;
+    public playerID: string;
     public weeksPlayed: number;
     public averageScore: number;
     public scores: [[number, number]];
     public pictureURL: string;
-    public pictureID: number;
+    public pictureID: string;
     constructor(player: Player, platform: PLATFORM) {
         this.firstName = player.firstName;
         this.lastName = player.lastName;
@@ -24,8 +24,8 @@ class SeasonPlayer {
         this.weeksPlayed = 1;
         this.averageScore = player.score;
         this.scores = [[player.score, player.weekNumber]];
-        if (platform == PLATFORM.SLEEPER) {
-            this.pictureID = (player as Sleeper_Player).espnID;
+        if (platform === PLATFORM.SLEEPER) {
+            this.pictureID = (player as SleeperPlayer).espnID;
         } else {
             this.pictureID = player.playerID;
         }
@@ -41,19 +41,18 @@ class SeasonPlayer {
     }
 
     public getScores(): number[] {
-        var points = [];
-        this.scores.forEach(tup => {
+        const points = [];
+        this.scores.forEach((tup) => {
             points.push(tup[0]);
         });
 
         return points;
     }
 
-
     public isEligible(slot: number): boolean {
-        var isEligible = false;
+        let isEligible = false;
         this.eligibleSlots.forEach((eligibleSlot) => {
-            if (eligibleSlot == slot) {
+            if (eligibleSlot === slot) {
                 isEligible = true;
             }
         });
@@ -61,7 +60,7 @@ class SeasonPlayer {
     }
 
     public setPictureURL(): void {
-        if (this.position == "D/ST" || this.position == "DEF") {
+        if (this.position === "D/ST" || this.position === "DEF") {
             this.pictureURL = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
         } else {
             this.pictureURL = "http://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";

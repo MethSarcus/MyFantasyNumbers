@@ -1,5 +1,5 @@
 interface Member {
-    memberID: number;
+    memberID: string;
     teamAbbrev: string;
     division: string;
     teamID: number;

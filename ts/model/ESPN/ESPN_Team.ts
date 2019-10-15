@@ -1,4 +1,4 @@
-class ESPN_Team {
+class ESPNTeam {
     public lineup: Player[];
     public bench: Player[];
     public IR: Player[];
@@ -27,7 +27,7 @@ class ESPN_Team {
         this.score = this.getTeamScore(this.lineup);
         this.potentialPoints = this.getTeamScore(this.getOptimalLineup(activeLineupSlots));
         this.projectedScore = this.getProjectedScore(this.lineup);
-        var gutArray = this.getGutPoints(activeLineupSlots);
+        const gutArray = this.getGutPoints(activeLineupSlots);
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];
     }
@@ -40,12 +40,12 @@ class ESPN_Team {
                 rosterSlots.push(activeLineupSlots[i][0]);
             }
         }
-        var optimalLineup = new Array<Player>();
+        const optimalLineup = new Array<Player>();
         // tslint:disable-next-line: forin
         for (const x in rosterSlots) {
             let highScore = 0;
             let bestPlayer = null;
-            var eligibleWeekPlayers = [];
+            const eligibleWeekPlayers = [];
             const players = this.lineup.concat(this.bench, this.IR);
             for (const y in players) {
                 if (!includesPlayer(players[y], optimalLineup)) {
@@ -72,7 +72,7 @@ class ESPN_Team {
     public getTeamScore(players: Player[]): number {
         let score = 0;
         for (const i in players) {
-            if (players[i].score != null && players[i].score !== "undefined") {
+            if (players[i].score != null && players[i].score !== undefined) {
                 score += players[i].score;
             }
         }
@@ -80,9 +80,9 @@ class ESPN_Team {
     }
 
     public getProjectedScore(players: Player[]): number {
-        var projectedScore = 0;
+        let projectedScore = 0;
         for (const i in players) {
-            if (players[i].projectedScore != null && players[i].projectedScore !== "undefined") {
+            if (players[i].projectedScore != null && players[i].projectedScore !== undefined) {
                 projectedScore += players[i].projectedScore;
             }
         }
@@ -90,9 +90,9 @@ class ESPN_Team {
     }
 
     public getMVP(): Player {
-        var mvp = this.lineup[0];
-        var mvpScore = 0;
-        this.lineup.forEach(player => {
+        let mvp = this.lineup[0];
+        let mvpScore = 0;
+        this.lineup.forEach((player) => {
             if (player.score > mvpScore) {
                 mvpScore = player.score;
                 mvp = player;
@@ -102,9 +102,9 @@ class ESPN_Team {
     }
 
     public getLVP(): Player {
-        var lvp = this.lineup[0];
-        var lvpScore = this.lineup[0].score;
-        this.lineup.forEach(player => {
+        let lvp = this.lineup[0];
+        let lvpScore = this.lineup[0].score;
+        this.lineup.forEach((player) => {
             if (player.score > lvpScore) {
                 lvpScore = player.score;
                 lvp = player;
@@ -115,9 +115,9 @@ class ESPN_Team {
 
     public getPositionalPlayers(position: string): Player[] {
         const players = this.lineup;
-        var positionPlayers = [];
+        const positionPlayers = [];
         players.forEach((player) => {
-            if (player.position == position) {
+            if (player.position === position) {
                 positionPlayers.push(player);
             }
         });
@@ -125,8 +125,8 @@ class ESPN_Team {
     }
 
     public getEligibleSlotPlayers(slot: number): Player[] {
-        var players = this.lineup.concat(this.bench, this.IR);
-        var eligiblePlayers = players.filter(function (it) {
+        const players = this.lineup.concat(this.bench, this.IR);
+        const eligiblePlayers = players.filter((it) => {
             return it.isEligible(slot) === true;
         });
 
@@ -134,8 +134,8 @@ class ESPN_Team {
     }
 
     public getEligibleSlotBenchPlayers(slot: number): Player[] {
-        var players = this.bench.concat(this.IR);
-        var eligiblePlayers = players.filter(function (it) {
+        const players = this.bench.concat(this.IR);
+        const eligiblePlayers = players.filter((it) => {
             return it.isEligible(slot) === true;
         });
 
@@ -150,12 +150,12 @@ class ESPN_Team {
                 rosterSlots.push(activeLineupSlots[i][0]);
             }
         }
-        var optimalLineup = new Array<Player>();
+        const optimalLineup = new Array<Player>();
         // tslint:disable-next-line: forin
         for (const x in rosterSlots) {
             let highScore = 0;
             let bestPlayer = null;
-            var eligibleWeekPlayers = [];
+            const eligibleWeekPlayers = [];
             const players = this.lineup.concat(this.bench, this.IR);
             for (const y in players) {
                 if (!includesPlayer(players[y], optimalLineup)) {
@@ -180,25 +180,25 @@ class ESPN_Team {
     }
 
     public getGutPoints(activeLineupSlots: number[]): [number, number] {
-        var players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
-        var gutPlayers = players[0];
-        var satPlayers = players[1];
+        const players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
+        const gutPlayers = players[0];
+        const satPlayers = players[1];
 
-        var diff = this.getTeamScore(gutPlayers) - this.getTeamScore(satPlayers);
-        var playerNum = gutPlayers.length;
+        const diff = this.getTeamScore(gutPlayers) - this.getTeamScore(satPlayers);
+        const playerNum = gutPlayers.length;
         return [diff, playerNum];
     }
 
     public getProjectedLinupPlayerDifference(activeLineupSlots: number[]): [Player[], Player[]] {
-        var gutPlayers = [];
-        var satPlayers = [];
-        var projectedLineup = this.getProjectedOptimalLineup(activeLineupSlots);
-        this.lineup.forEach(player => {
+        const gutPlayers = [];
+        const satPlayers = [];
+        const projectedLineup = this.getProjectedOptimalLineup(activeLineupSlots);
+        this.lineup.forEach((player) => {
             if (!includesPlayer(player, projectedLineup)) {
                 gutPlayers.push(player);
             }
         });
-        projectedLineup.forEach(player => {
+        projectedLineup.forEach((player) => {
             if (!includesPlayer(player, this.lineup)) {
                 satPlayers.push(player);
             }

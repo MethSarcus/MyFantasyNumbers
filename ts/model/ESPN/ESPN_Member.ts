@@ -1,5 +1,5 @@
-class ESPN_Member implements Member {
-    public memberID: number;
+class ESPNMember implements Member {
+    public memberID: string;
     public firstName: string;
     public lastName: string;
     public teamLocation: string;
@@ -10,8 +10,8 @@ class ESPN_Member implements Member {
     public logoURL: string;
     public transactions: any;
     public stats: Stats;
-    constructor(memberID, firstName, lastName, teamLocation,
-                teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
+    constructor(memberID: string, firstName: string, lastName: string, teamLocation: string,
+                teamNickname: string, teamAbbrev: string, division: string, teamID: number, logoURL: string, transactions, stats: Stats) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -44,7 +44,7 @@ class ESPN_Member implements Member {
     }
 
     public recordToString(): string {
-        if (this.stats.ties != 0) {
+        if (this.stats.ties !== 0) {
             return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
         } else {
             return this.stats.wins + "-" + this.stats.losses;

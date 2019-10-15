@@ -1,14 +1,14 @@
 interface Player {
     firstName: string;
     lastName: string;
-    eligibleSlots: any;
-    score: any;
-    projectedScore: any;
-    position: any;
-    realTeamID: any;
-    playerID: any;
-    weekNumber: any;
-    lineupSlotID: any;
+    eligibleSlots: number[];
+    score: number;
+    projectedScore: number;
+    position: string;
+    realTeamID: number;
+    playerID: string;
+    weekNumber: number;
+    lineupSlotID: number;
 
     isEligible: (slot: number) => boolean;
 }

@@ -2,22 +2,21 @@ declare var myChart: any;
 declare var Chart: any;
 function createMainWeeklyLineChart(league: League) {
     (window as any).myChart.destroy();
-    var ctx = document.getElementById("GRAPHCANVAS");
-    ctx.classList.toggle('mainChart', true);
-    var myWeekLabels = [];
-    for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
+    const ctx = document.getElementById("GRAPHCANVAS");
+    ctx.classList.toggle("mainChart", true);
+    const myWeekLabels = [];
+    for (let i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
         myWeekLabels.push("Week " + i);
     }
-    var weeklyScoreMap = new Map();
+    const weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
-    league.members.forEach(member => {
+    league.members.forEach((member) => {
         weeklyScoreMap.set(member.teamID, []);
     });
 
-
-    league.getSeasonPortionWeeks().forEach(week => {
+    league.getSeasonPortionWeeks().forEach((week) => {
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
-        week.matchups.forEach(matchup => {
+        week.matchups.forEach((matchup) => {
             weeklyScoreMap.get(matchup.home.teamID).push(matchup.home.score);
             if (!matchup.byeWeek) {
                 weeklyScoreMap.get(matchup.away.teamID).push(matchup.away.score);
@@ -25,20 +24,20 @@ function createMainWeeklyLineChart(league: League) {
         });
     });
 
-    var datasets = [];
+    const datasets = [];
     weeklyScoreMap.forEach((value: number[], key: number) => {
-        if (key == -1) {
+        if (key === -1) {
             datasets.push({
                 label: "League Average",
                 data: value,
-                borderColor: 'black',
-                backGroundColor: 'black',
+                borderColor: "black",
+                backGroundColor: "black",
                 fill: false,
                 lineTension: 0,
             });
         } else {
-            let curTeam = league.getMember(key);
-            var myColor = getMemberColor(key);
+            const curTeam = league.getMember(key);
+            const myColor = getMemberColor(key);
             datasets.push({
                 label: curTeam.nameToString(),
                 data: value,
@@ -52,7 +51,7 @@ function createMainWeeklyLineChart(league: League) {
     });
 
     (window as any).myChart = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
             labels: myWeekLabels,
             datasets
@@ -78,12 +77,12 @@ function createMainWeeklyLineChart(league: League) {
             plugins: {
                 deferred: {
                     xOffset: 150, // defer until 150px of the canvas width are inside the viewport
-                    yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+                    yOffset: "50%", // defer until 50% of the canvas height are inside the viewport
                     delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
                 },
 
                 datalabels: {
-                    formatter: (value, ctx) => {
+                    formatter: () => {
                         return "";
                     },
                 }
@@ -103,12 +102,12 @@ function createMainWeeklyLineChart(league: League) {
 }
 
 function createMemberWeeklyLineChart(league: League, member: Member) {
-    var weeklyScoreMap = new Map();
+    const weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
     weeklyScoreMap.set(-2, []);
     weeklyScoreMap.set(member.teamID, []);
 
-    league.weeks.forEach(week => {
+    league.weeks.forEach((week) => {
         if (!week.getTeamMatchup(member.teamID).byeWeek) {
             weeklyScoreMap.get(-2).push(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score);
         } else {
@@ -117,30 +116,30 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
         weeklyScoreMap.get(member.teamID).push(week.getTeam(member.teamID).score);
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
     });
-    var datasets = [];
+    const datasets = [];
     weeklyScoreMap.forEach((value: number[], key: number) => {
-        if (key == -1) {
+        if (key === -1) {
             datasets.push({
                 label: "League Average",
                 data: value,
-                borderColor: 'lightgrey',
-                backgroundColor: 'lightgrey',
-                pointBackgroundColor: 'lightgrey',
+                borderColor: "lightgrey",
+                backgroundColor: "lightgrey",
+                pointBackgroundColor: "lightgrey",
                 fill: false,
                 lineTension: 0,
             });
-        } else if (key == -2) {
+        } else if (key === -2) {
             datasets.push({
                 label: "Opponent",
                 data: value,
-                borderColor: 'darkgrey',
-                backgroundColor: 'darkgrey',
-                pointBackgroundColor: 'darkgrey',
+                borderColor: "darkgrey",
+                backgroundColor: "darkgrey",
+                pointBackgroundColor: "darkgrey",
                 fill: false,
                 lineTension: 0,
             });
         } else {
-            let curTeam = league.getMember(key);
+            const curTeam = league.getMember(key);
             datasets.push({
                 label: curTeam.nameToString(),
                 data: value,
@@ -152,16 +151,16 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
             });
         }
     });
-    if ((window as any).memberLineChart == undefined) {
-        var ctx = (document.getElementById("TEAM_LINE_CANVAS") as HTMLCanvasElement);
-        ctx.classList.toggle('team_weekly_line_chart', true);
-        var myWeekLabels = [];
-        for (var i = 1; i <= (league.weeks.length); i++) {
+    if ((window as any).memberLineChart === undefined) {
+        const ctx = (document.getElementById("TEAM_LINE_CANVAS") as HTMLCanvasElement);
+        ctx.classList.toggle("team_weekly_line_chart", true);
+        const myWeekLabels = [];
+        for (let i = 1; i <= (league.weeks.length); i++) {
             myWeekLabels.push("Week " + i);
         }
 
         (window as any).memberLineChart = new Chart(ctx, {
-            type: 'line',
+            type: "line",
             data: {
                 labels: myWeekLabels,
                 datasets
@@ -196,7 +195,7 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
                 plugins: {
                     deferred: {
                         xOffset: 150, // defer until 150px of the canvas width are inside the viewport
-                        yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+                        yOffset: "50%", // defer until 50% of the canvas height are inside the viewport
                         delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
                     }
                 },
@@ -219,24 +218,24 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
 }
 
 function createLeagueWeeklyLineChart(league: League) {
-    if ((window as any).leagueWeeklyLineChart == undefined) {
-        var ctx = (document.getElementById("league_weekly_line_canvas") as HTMLCanvasElement).getContext("2d");
-        var dataSets = getLeagueLineData(league);
-        var myWeekLabels = [];
-        for (var i = 1; i <= (league.weeks.length); i++) {
+    if ((window as any).leagueWeeklyLineChart === undefined) {
+        const ctx = (document.getElementById("league_weekly_line_canvas") as HTMLCanvasElement).getContext("2d");
+        const dataSets = getLeagueLineData(league);
+        const myWeekLabels = [];
+        for (let i = 1; i <= (league.weeks.length); i++) {
             myWeekLabels.push("Week " + i);
         }
 
         (window as any).leagueWeeklyLineChart = new Chart(ctx, {
-            type: 'line',
+            type: "line",
             data: {
                 labels: myWeekLabels,
                 datasets: dataSets
             },
-            backgroundColor: '#DCDCDC',
+            backgroundColor: "#DCDCDC",
             options: {
                 tooltips: {
-                    mode: 'point'
+                    mode: "point"
                 },
                 responsive: true,
                 maintainAspectRatio: false,
@@ -267,7 +266,7 @@ function createLeagueWeeklyLineChart(league: League) {
                 plugins: {
                     deferred: {
                         xOffset: 150, // defer until 150px of the canvas width are inside the viewport
-                        yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+                        yOffset: "50%", // defer until 50% of the canvas height are inside the viewport
                         delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
                     }
                 },
@@ -284,33 +283,32 @@ function createLeagueWeeklyLineChart(league: League) {
         });
         (window as any).leagueWeeklyLineChart.render();
     } else {
-        console.log("exists!");
         (window as any).leagueWeeklyLineChart.data.datasets = (window as any).leagueWeeklyLineChart.data.datasets;
         (window as any).leagueWeeklyLineChart.update();
     }
 }
 
-function getLeagueLineData(league: League): Object[]{
-    var weeklyScoreMap = new Map();
+function getLeagueLineData(league: League): object[] {
+    const weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
-    league.members.forEach(member => {
+    league.members.forEach((member) => {
         weeklyScoreMap.set(member.teamID, []);
     });
 
-    league.weeks.forEach(week => {
+    league.weeks.forEach((week) => {
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
-        week.matchups.forEach(matchup => {
+        week.matchups.forEach((matchup) => {
             weeklyScoreMap.get(matchup.home.teamID).push(roundToHundred(matchup.home.score));
             if (!matchup.byeWeek) {
                 weeklyScoreMap.get(matchup.away.teamID).push(roundToHundred(matchup.away.score));
             }
-        }); 
+        });
     });
 
-    var datasets = [];
+    const datasets = [];
     weeklyScoreMap.forEach((value: number[], key: number) => {
-        if (key != -1) {
-            let curTeam = league.getMember(key);
+        if (key !== -1) {
+            const curTeam = league.getMember(key);
             datasets.push({
                 fill: false,
                 data: value,

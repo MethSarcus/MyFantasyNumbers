@@ -1,5 +1,5 @@
-class Sleeper_Member implements Member {
-    public memberID: number;
+class SleeperMember implements Member {
+    public memberID: string;
     public name: string;
     public teamName: string;
     public teamAbbrev: string;
@@ -7,25 +7,29 @@ class Sleeper_Member implements Member {
     public logoURL: string;
     public stats: Stats;
     public division: string;
-    constructor(memberID: number, memberName: string, teamName: string, teamAvatar: string) {
+    constructor(memberID: string, memberName: string, teamName: string, teamAvatar: string) {
         this.memberID = memberID;
         this.name = memberName;
         this.teamName = teamName;
-        if (teamName != undefined) {
+        if (teamName) {
             this.teamAbbrev = teamName.substring(0, 4);
         } else {
             this.teamAbbrev = memberName.substring(0, 4);
         }
-        if (teamAvatar !== undefined && teamAvatar != null) {
+        if (teamAvatar !== undefined && teamAvatar !== null) {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         } else {
-            this.logoURL = "assets/user1.png";
+            this.logoURL = "../../../assets/user1.png";
         }
+    }
+
+    public getPictureURL(): string {
+        return this.logoURL;
     }
 
     public setAdvancedStats(weeks: Week[]): void {
         const scores = [];
-        weeks.forEach(week => {
+        weeks.forEach((week) => {
             scores.push(week.getTeam(this.teamID).score);
         });
 
@@ -42,7 +46,7 @@ class Sleeper_Member implements Member {
     }
 
     public recordToString(): string {
-        if (this.stats.ties != 0) {
+        if (this.stats.ties !== 0) {
             return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
         } else {
             return this.stats.wins + "-" + this.stats.losses;

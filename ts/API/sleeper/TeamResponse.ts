@@ -1,4 +1,4 @@
-interface Team_Response {
+interface TeamResponse {
     roster_id: number;
     points: number;
     players: string[];

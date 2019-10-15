@@ -85,7 +85,7 @@ function getPosition(eligibleSlots: number[]): POSITION {
 }
 
 function getLineupSlot(lineupSlotID: number): string {
-    switch(lineupSlotID) {
+    switch (lineupSlotID) {
         case 0: {
             return "QB";
         }
@@ -159,19 +159,19 @@ function getLineupSlot(lineupSlotID: number): string {
 }
 
 function includesPlayer(player: Player, lineup: Player[]): boolean {
-    var includes = false;
+    let includes = false;
     lineup.forEach((element) => {
-        if (player.playerID == element.playerID) {
+        if (player.playerID === element.playerID) {
             includes = true;
         }
     });
     return includes;
 }
 
-function calcStandardDeviation (scores: number[]): number {
-    var modified = [];
-    var mean = getMean(scores);
-    scores.forEach((score) =>{
+function calcStandardDeviation(scores: number[]): number {
+    const modified = [];
+    const mean = getMean(scores);
+    scores.forEach((score) => {
         modified.push(Math.pow(score - mean, 2));
     });
 
@@ -179,34 +179,34 @@ function calcStandardDeviation (scores: number[]): number {
 }
 
 function getMean(numbers: number[]): number {
-    var sum = 0;
-    numbers.forEach(num => {
+    let sum = 0;
+    numbers.forEach((num) => {
         sum += num;
     });
 
-    return roundToHundred(sum/numbers.length);
+    return roundToHundred(sum / numbers.length);
 }
 
 function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] {
-    var players = getSeasonPlayers(league, teamID);
-    var minSampleSize = 5;
+    const players = getSeasonPlayers(league, teamID);
+    let minSampleSize = 5;
     if (league.settings.isActive) {
         if (league.settings.currentMatchupPeriod <= 5) {
             minSampleSize = league.settings.currentMatchupPeriod - 1;
         }
     }
-    var mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
+    let mostConsistentPlayers = players.filter((player: SeasonPlayer) => {
         return (player.weeksPlayed >= minSampleSize);
     });
-    while (mostConsistentPlayers.length == 0) {
+    while (mostConsistentPlayers.length === 0) {
         minSampleSize -= 1;
-        mostConsistentPlayers = players.filter(function (player: SeasonPlayer) {
+        mostConsistentPlayers = players.filter((player: SeasonPlayer) => {
             return (player.weeksPlayed >= minSampleSize);
         });
     }
-    var mvp = players[0];
-    var lvp = players[0];
-    var mostConsistent = mostConsistentPlayers[0];
+    let mvp = players[0];
+    let lvp = players[0];
+    let mostConsistent = mostConsistentPlayers[0];
     players.forEach((seasonPlayer) => {
         if (seasonPlayer.seasonScore > mvp.seasonScore) {
             mvp = seasonPlayer;
@@ -215,11 +215,10 @@ function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] 
             lvp = seasonPlayer;
         }
     });
-    
 
     mostConsistentPlayers.forEach((seasonPlayer) => {
         if (calcStandardDeviation(seasonPlayer.getScores()) < calcStandardDeviation(mostConsistent.getScores()) &&
-        seasonPlayer.weeksPlayed >= minSampleSize && seasonPlayer.seasonScore != 0) {
+        seasonPlayer.weeksPlayed >= minSampleSize && seasonPlayer.seasonScore !== 0) {
             mostConsistent = seasonPlayer;
         }
     });
@@ -228,8 +227,8 @@ function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] 
 }
 
 function getMVP(league: League, teamID: number): SeasonPlayer {
-    var players = getSeasonPlayers(league, teamID);
-    var mvp = players[0];
+    const players = getSeasonPlayers(league, teamID);
+    let mvp = players[0];
     players.forEach((seasonPlayer) => {
         if (seasonPlayer.seasonScore > mvp.seasonScore) {
             mvp = seasonPlayer;
@@ -240,10 +239,10 @@ function getMVP(league: League, teamID: number): SeasonPlayer {
 }
 
 function getLVP(league: League, teamID: number): SeasonPlayer {
-    var players = getSeasonPlayers(league, teamID);
-    var lvp = players[0];
+    const players = getSeasonPlayers(league, teamID);
+    let lvp = players[0];
     players.forEach((seasonPlayer) => {
-        if (seasonPlayer.seasonScore == lvp.seasonScore) {
+        if (seasonPlayer.seasonScore === lvp.seasonScore) {
             if (seasonPlayer.weeksPlayed > lvp.weeksPlayed) {
                 lvp = seasonPlayer;
             }
@@ -256,11 +255,11 @@ function getLVP(league: League, teamID: number): SeasonPlayer {
 }
 
 function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
-    var players = [];
+    const players = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         week.getTeam(teamID).lineup.forEach((player) => {
-            var index = players.findIndex((existingPlayer) => 
-                existingPlayer.playerID == player.playerID
+            const index = players.findIndex((existingPlayer) =>
+                existingPlayer.playerID === player.playerID
             );
             if (index > -1) {
                 players[index].addPerformance(player);
@@ -274,12 +273,12 @@ function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
 }
 
 function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[] {
-    var players = [];
+    const players = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         if (!week.getTeamMatchup(teamID).byeWeek) {
             week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach((player) => {
-                var index = players.findIndex((existingPlayer) => 
-                    existingPlayer.playerID == player.playerID
+                const index = players.findIndex((existingPlayer) =>
+                    existingPlayer.playerID === player.playerID
                 );
                 if (index > -1) {
                     players[index].addPerformance(player);
@@ -294,12 +293,12 @@ function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[
 }
 
 function getAllSeasonPlayers(league: League): SeasonPlayer[] {
-    var players = [];
+    const players = [];
     league.getSeasonPortionWeeks().forEach((week) => {
-        week.matchups.forEach(matchup => {
+        week.matchups.forEach((matchup) => {
             matchup.home.lineup.forEach((player) => {
-                var index = players.findIndex((existingPlayer) => 
-                    existingPlayer.playerID == player.playerID
+                const index = players.findIndex((existingPlayer) =>
+                    existingPlayer.playerID === player.playerID
                 );
                 if (index > -1) {
                     players[index].addPerformance(player);
@@ -309,8 +308,8 @@ function getAllSeasonPlayers(league: League): SeasonPlayer[] {
             });
             if (!matchup.byeWeek) {
                 matchup.away.lineup.forEach((player) => {
-                    var index = players.findIndex((existingPlayer) => 
-                        existingPlayer.playerID == player.playerID
+                    const index = players.findIndex((existingPlayer) =>
+                        existingPlayer.playerID === player.playerID
                     );
                     if (index > -1) {
                         players[index].addPerformance(player);
@@ -326,33 +325,30 @@ function getAllSeasonPlayers(league: League): SeasonPlayer[] {
 }
 
 function getBestPositionPlayerAverageScore(league: League, position: any): number {
-    var players = [];
+    const players = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         players.push(week.getBestPositionPlayer(position));
     });
-    var totalScore = 0;
-    players.forEach(player => {
-        if (player != undefined) {
+    let totalScore = 0;
+    players.forEach((player) => {
+        if (player !== undefined) {
             totalScore += player.score;
         }
     });
 
-    return roundToTen(totalScore/players.length);
+    return roundToTen(totalScore / players.length);
 }
 
 function getMemberColor(memberID: number): string {
-    var colorCode = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00","#b82e2e","#316395",
-    "#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac",
-    "#b77322","#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
+    const colorCode = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395",
+    "#3366cc", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac",
+    "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
 
     return colorCode[memberID];
 }
 
-//Params: Int, team ID
-//Returns: String, Team Abbreviation
 function getRealTeamInitials(realteamID) {
-    var team = realteamID;
-    //console.log(realteamID);
+    let team = realteamID;
     switch (realteamID) {
         case 1:
             team = "Atl";
@@ -457,21 +453,21 @@ function getRealTeamInitials(realteamID) {
 function espn_request(t, d) {
     return $.ajax({
         type: t,
-        url: 'js/proxy/espn_proxy.php',
-        dataType: 'json',
+        url: "js/proxy/espn_proxy.php",
+        dataType: "json",
         data: d,
         cache: false,
         async: true,
-    })
+    });
 }
 
 function sleeper_request(t, d) {
     return $.ajax({
         type: t,
-        url: 'js/proxy/sleeper_proxy.php',
-        dataType: 'json',
+        url: "js/proxy/sleeper_proxy.php",
+        dataType: "json",
         data: d,
         cache: false,
         async: true,
-    })
+    });
 }

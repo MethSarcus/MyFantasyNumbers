@@ -1,4 +1,4 @@
-interface Sleeper_Player_Library_Entry {
+interface SleeperPlayerLibraryEntry {
         birth_country: string;
         search_full_name: string;
         sportradar_id: string;

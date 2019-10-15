@@ -4,6 +4,13 @@
         "tslint:recommended"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "max-line-length": false,
+        "trailing-comma": false,
+        "no-unused-expression": false,
+        "object-literal-sort-keys": false,
+        "interface-name": false,
+        "forin": false
+    },
     "rulesDirectory": []
 }
