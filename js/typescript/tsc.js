@@ -829,6 +829,56 @@ var EmptySlot = (function () {
     }
     return EmptySlot;
 }());
+var SEASON_PORTION;
+(function (SEASON_PORTION) {
+    SEASON_PORTION["REGULAR"] = "Regular Season";
+    SEASON_PORTION["POST"] = "Post-Season";
+    SEASON_PORTION["ALL"] = "Complete Season";
+})(SEASON_PORTION || (SEASON_PORTION = {}));
+var PLATFORM;
+(function (PLATFORM) {
+    PLATFORM[PLATFORM["SLEEPER"] = 0] = "SLEEPER";
+    PLATFORM[PLATFORM["ESPN"] = 1] = "ESPN";
+    PLATFORM[PLATFORM["NFL"] = 2] = "NFL";
+    PLATFORM[PLATFORM["YAHOO"] = 3] = "YAHOO";
+})(PLATFORM || (PLATFORM = {}));
+var DRAFT_TYPE;
+(function (DRAFT_TYPE) {
+    DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";
+    DRAFT_TYPE[DRAFT_TYPE["SNAKE"] = 1] = "SNAKE";
+    DRAFT_TYPE[DRAFT_TYPE["LINEAR"] = 2] = "LINEAR";
+})(DRAFT_TYPE || (DRAFT_TYPE = {}));
+var LEAGUE_TYPE;
+(function (LEAGUE_TYPE) {
+    LEAGUE_TYPE[LEAGUE_TYPE["DYNASTY"] = 0] = "DYNASTY";
+    LEAGUE_TYPE[LEAGUE_TYPE["REDRAFT"] = 1] = "REDRAFT";
+})(LEAGUE_TYPE || (LEAGUE_TYPE = {}));
+var SCORING_TYPE;
+(function (SCORING_TYPE) {
+    SCORING_TYPE[SCORING_TYPE["STANDARD"] = 0] = "STANDARD";
+    SCORING_TYPE[SCORING_TYPE["HALF_PPR"] = 1] = "HALF_PPR";
+    SCORING_TYPE[SCORING_TYPE["FULL_PPR"] = 2] = "FULL_PPR";
+})(SCORING_TYPE || (SCORING_TYPE = {}));
+var POSITION;
+(function (POSITION) {
+    POSITION["QB"] = "QB";
+    POSITION["RB"] = "RB";
+    POSITION["WR"] = "WR";
+    POSITION["TE"] = "TE";
+    POSITION["K"] = "K";
+    POSITION["DEF"] = "DEF";
+    POSITION["DL"] = "DL";
+    POSITION["DT"] = "DT";
+    POSITION["LB"] = "LB";
+    POSITION["DB"] = "DB";
+    POSITION["DE"] = "DE";
+    POSITION["DP"] = "DP";
+    POSITION["LT"] = "LT";
+    POSITION["CB"] = "CB";
+    POSITION["S"] = "S";
+    POSITION["P"] = "P";
+    POSITION["HC"] = "HC";
+})(POSITION || (POSITION = {}));
 var League = (function () {
     function League(id, season, weeks, members, settings, leagueName, leaguePlatform) {
         this.id = id;
@@ -2028,56 +2078,6 @@ function findOpponent(teams, rosterId, matchupId) {
     });
     return opponentRosterId;
 }
-var SEASON_PORTION;
-(function (SEASON_PORTION) {
-    SEASON_PORTION["REGULAR"] = "Regular Season";
-    SEASON_PORTION["POST"] = "Post-Season";
-    SEASON_PORTION["ALL"] = "Complete Season";
-})(SEASON_PORTION || (SEASON_PORTION = {}));
-var PLATFORM;
-(function (PLATFORM) {
-    PLATFORM[PLATFORM["SLEEPER"] = 0] = "SLEEPER";
-    PLATFORM[PLATFORM["ESPN"] = 1] = "ESPN";
-    PLATFORM[PLATFORM["NFL"] = 2] = "NFL";
-    PLATFORM[PLATFORM["YAHOO"] = 3] = "YAHOO";
-})(PLATFORM || (PLATFORM = {}));
-var DRAFT_TYPE;
-(function (DRAFT_TYPE) {
-    DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";
-    DRAFT_TYPE[DRAFT_TYPE["SNAKE"] = 1] = "SNAKE";
-    DRAFT_TYPE[DRAFT_TYPE["LINEAR"] = 2] = "LINEAR";
-})(DRAFT_TYPE || (DRAFT_TYPE = {}));
-var LEAGUE_TYPE;
-(function (LEAGUE_TYPE) {
-    LEAGUE_TYPE[LEAGUE_TYPE["DYNASTY"] = 0] = "DYNASTY";
-    LEAGUE_TYPE[LEAGUE_TYPE["REDRAFT"] = 1] = "REDRAFT";
-})(LEAGUE_TYPE || (LEAGUE_TYPE = {}));
-var SCORING_TYPE;
-(function (SCORING_TYPE) {
-    SCORING_TYPE[SCORING_TYPE["STANDARD"] = 0] = "STANDARD";
-    SCORING_TYPE[SCORING_TYPE["HALF_PPR"] = 1] = "HALF_PPR";
-    SCORING_TYPE[SCORING_TYPE["FULL_PPR"] = 2] = "FULL_PPR";
-})(SCORING_TYPE || (SCORING_TYPE = {}));
-var POSITION;
-(function (POSITION) {
-    POSITION["QB"] = "QB";
-    POSITION["RB"] = "RB";
-    POSITION["WR"] = "WR";
-    POSITION["TE"] = "TE";
-    POSITION["K"] = "K";
-    POSITION["DEF"] = "DEF";
-    POSITION["DL"] = "DL";
-    POSITION["DT"] = "DT";
-    POSITION["LB"] = "LB";
-    POSITION["DB"] = "DB";
-    POSITION["DE"] = "DE";
-    POSITION["DP"] = "DP";
-    POSITION["LT"] = "LT";
-    POSITION["CB"] = "CB";
-    POSITION["S"] = "S";
-    POSITION["P"] = "P";
-    POSITION["HC"] = "HC";
-})(POSITION || (POSITION = {}));
 function getPosition(eligibleSlots) {
     if (eligibleSlots[0] === 0) {
         return POSITION.QB;
@@ -2152,7 +2152,7 @@ function getLineupSlot(lineupSlotID) {
             return "TE";
         }
         case 7: {
-            return "OP";
+            return "SUPER_FLEX";
         }
         case 8: {
             return "DT";

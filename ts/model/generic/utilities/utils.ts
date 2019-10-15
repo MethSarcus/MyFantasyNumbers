@@ -1,53 +1,3 @@
-enum SEASON_PORTION {
-    REGULAR = "Regular Season",
-    POST = "Post-Season",
-    ALL = "Complete Season",
-}
-
-enum PLATFORM {
-    SLEEPER,
-    ESPN,
-    NFL,
-    YAHOO,
-}
-
-enum DRAFT_TYPE {
-    AUCTION,
-    SNAKE,
-    LINEAR,
-}
-
-enum LEAGUE_TYPE {
-    DYNASTY,
-    REDRAFT,
-}
-
-enum SCORING_TYPE {
-    STANDARD,
-    HALF_PPR,
-    FULL_PPR,
-}
-
-enum POSITION {
-    QB = "QB",
-    RB = "RB",
-    WR = "WR",
-    TE = "TE",
-    K = "K",
-    DEF = "DEF",
-    DL = "DL",
-    DT = "DT",
-    LB = "LB",
-    DB = "DB",
-    DE = "DE",
-    DP = "DP",
-    LT = "LT",
-    CB = "CB",
-    S = "S",
-    P = "P",
-    HC = "HC"
-}
-
 function getPosition(eligibleSlots: number[]): POSITION {
     if (eligibleSlots[0] === 0) {
         return POSITION.QB;
@@ -108,7 +58,7 @@ function getLineupSlot(lineupSlotID: number): string {
             return "TE";
         }
         case 7: {
-            return "OP";
+            return "SUPER_FLEX";
         }
         case 8: {
             return "DT";
