@@ -1683,7 +1683,7 @@ var Settings = (function () {
         var positions = this.activeLineupSlots.filter(function (slot) {
             return slot[0] !== 1 && slot[0] !== 3 && slot[0] !== 5 && slot[0] !== 7 && slot[0] !== 23;
         }).map(function (slot) {
-            return getLineupSlot(slot[0]);
+            return intToPosition.get(slot[0]);
         });
         return positions;
     };
@@ -1915,6 +1915,229 @@ function ordinal_suffix_of(i) {
     }
     return i + "th";
 }
+var eligibleSlotMap = new Map([
+    [0, [0, 1, 7, 20, 21]],
+    [1, [1, 7, 20, 21]],
+    [2, [2, 3, 7, 20, 21, 23]],
+    [4, [4, 3, 5, 7, 20, 21, 23]],
+    [6, [6, 5, 7, 20, 21, 23]],
+    [8, [8, 15, 20, 21]],
+    [9, [9, 15, 20, 21]],
+    [10, [10, 15, 20, 21]],
+    [11, [11, 15, 20, 21]],
+    [12, [12, 15, 20, 21]],
+    [13, [13, 15, 20, 21]],
+    [14, [14, 15, 20, 21]],
+    [16, [16, 20]],
+    [17, [17, 20, 21]],
+    [18, [18, 20, 21]],
+    [19, [19, 20]],
+]);
+var intToPosition = new Map([
+    [0, "QB"],
+    [1, "TQB"],
+    [2, "RB"],
+    [3, "RB/WR"],
+    [4, "WR"],
+    [5, "WR/TE"],
+    [6, "TE"],
+    [7, "OP"],
+    [8, "DT"],
+    [9, "DE"],
+    [10, "LB"],
+    [11, "DL"],
+    [12, "CB"],
+    [13, "S"],
+    [14, "DB"],
+    [15, "DP"],
+    [16, "DEF"],
+    [17, "K"],
+    [18, "P"],
+    [19, "HC"],
+    [20, "BN"],
+    [21, "IR"],
+    [23, "FLEX"],
+    [88, "TAXI"],
+]);
+var positionToInt = new Map([
+    ["QB", 0],
+    ["TQB", 1],
+    ["RB", 2],
+    ["RB/WR", 3],
+    ["WR", 4],
+    ["WR/TE", 5],
+    ["TE", 6],
+    ["SUPER_FLEX", 7],
+    ["OP", 7],
+    ["DT", 8],
+    ["DE", 9],
+    ["LB", 10],
+    ["DL", 11],
+    ["CB", 12],
+    ["S", 13],
+    ["DB", 14],
+    ["DP", 15],
+    ["DEF", 16],
+    ["K", 17],
+    ["P", 18],
+    ["HC", 19],
+    ["BN", 20],
+    ["IR", 21],
+    ["FLEX", 23],
+    ["TAXI", 88],
+]);
+function getPosition(eligibleSlots) {
+    if (eligibleSlots[0] === 0) {
+        return POSITION.QB;
+    }
+    else if (eligibleSlots[0] === 2) {
+        return POSITION.RB;
+    }
+    else if (eligibleSlots[0] === 3) {
+        return POSITION.WR;
+    }
+    else if (eligibleSlots[0] === 16) {
+        return POSITION.DEF;
+    }
+    else if (eligibleSlots[0] === 17) {
+        return POSITION.K;
+    }
+    else if (eligibleSlots[0] === 5) {
+        return POSITION.TE;
+    }
+    else if (eligibleSlots[0] === 8) {
+        return POSITION.DT;
+    }
+    else if (eligibleSlots[0] === 9) {
+        return POSITION.DE;
+    }
+    else if (eligibleSlots[0] === 10) {
+        return POSITION.LB;
+    }
+    else if (eligibleSlots[0] === 11) {
+        return POSITION.DL;
+    }
+    else if (eligibleSlots[0] === 12) {
+        return POSITION.CB;
+    }
+    else if (eligibleSlots[0] === 13) {
+        return POSITION.S;
+    }
+    else if (eligibleSlots[0] === 14) {
+        return POSITION.DB;
+    }
+    else if (eligibleSlots[0] === 15) {
+        return POSITION.DP;
+    }
+    else if (eligibleSlots[0] === 18) {
+        return POSITION.P;
+    }
+    else if (eligibleSlots[0] === 19) {
+        return POSITION.HC;
+    }
+}
+function getRealTeamInitials(realteamID) {
+    var team = realteamID;
+    switch (realteamID) {
+        case 1:
+            team = "Atl";
+            break;
+        case 2:
+            team = "Buf";
+            break;
+        case 3:
+            team = "Chi";
+            break;
+        case 4:
+            team = "Cin";
+            break;
+        case 5:
+            team = "Cle";
+            break;
+        case 6:
+            team = "Dal";
+            break;
+        case 7:
+            team = "Den";
+            break;
+        case 8:
+            team = "Det";
+            break;
+        case 9:
+            team = "GB";
+            break;
+        case 10:
+            team = "Ten";
+            break;
+        case 11:
+            team = "Ind";
+            break;
+        case 12:
+            team = "KC";
+            break;
+        case 13:
+            team = "Oak";
+            break;
+        case 14:
+            team = "Lar";
+            break;
+        case 15:
+            team = "Mia";
+            break;
+        case 16:
+            team = "Min";
+            break;
+        case 17:
+            team = "NE";
+            break;
+        case 18:
+            team = "NO";
+            break;
+        case 19:
+            team = "NYG";
+            break;
+        case 20:
+            team = "NYJ";
+            break;
+        case 21:
+            team = "Phi";
+            break;
+        case 22:
+            team = "Ari";
+            break;
+        case 23:
+            team = "Pit";
+            break;
+        case 24:
+            team = "LAC";
+            break;
+        case 25:
+            team = "SF";
+            break;
+        case 26:
+            team = "Sea";
+            break;
+        case 27:
+            team = "TB";
+            break;
+        case 28:
+            team = "Wsh";
+            break;
+        case 29:
+            team = "Car";
+            break;
+        case 30:
+            team = "Jax";
+            break;
+        case 33:
+            team = "Bal";
+            break;
+        case 34:
+            team = "Hou";
+            break;
+    }
+    return team;
+}
 function convertSleeperRoster(rosterPositions, numIR, numTaxi) {
     var activeCount = new Map();
     var benchCount = new Map();
@@ -1989,86 +2212,6 @@ function getSleeperWeekStats(numWeeks) {
         return sleeperStats;
     });
 }
-function assignSleeperPlayerAttributes(player, playerAttributes) {
-    player.firstName = playerAttributes.first_name;
-    player.lastName = playerAttributes.last_name;
-    player.position = playerAttributes.position;
-    player.playerID = player.playerID;
-    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
-    player.realTeamID = playerAttributes.team;
-    player.espnID = playerAttributes.espn_id;
-}
-var eligibleSlotMap = new Map([
-    [0, [0, 1, 7, 20, 21]],
-    [1, [1, 7, 20, 21]],
-    [2, [2, 3, 7, 20, 21, 23]],
-    [4, [4, 3, 5, 7, 20, 21, 23]],
-    [6, [6, 5, 7, 20, 21, 23]],
-    [8, [8, 15, 20, 21]],
-    [9, [9, 15, 20, 21]],
-    [10, [10, 15, 20, 21]],
-    [11, [11, 15, 20, 21]],
-    [12, [12, 15, 20, 21]],
-    [13, [13, 15, 20, 21]],
-    [14, [14, 15, 20, 21]],
-    [16, [16, 20]],
-    [17, [17, 20, 21]],
-    [18, [18, 20, 21]],
-    [19, [19, 20]],
-]);
-var intToPosition = new Map([
-    [0, "QB"],
-    [1, "TQB"],
-    [2, "RB"],
-    [3, "RB/WR"],
-    [4, "WR"],
-    [5, "WR/TE"],
-    [6, "TE"],
-    [7, "OP"],
-    [8, "DT"],
-    [9, "DE"],
-    [10, "LB"],
-    [11, "DL"],
-    [12, "CB"],
-    [13, "S"],
-    [14, "DB"],
-    [15, "DP"],
-    [16, "DEF"],
-    [17, "K"],
-    [18, "P"],
-    [19, "HC"],
-    [20, "BN"],
-    [21, "IR"],
-    [23, "FLEX"],
-    [88, "TAXI"],
-]);
-var positionToInt = new Map([
-    ["QB", 0],
-    ["TQB", 1],
-    ["RB", 2],
-    ["RB/WR", 3],
-    ["WR", 4],
-    ["WR/TE", 5],
-    ["TE", 6],
-    ["SUPER_FLEX", 7],
-    ["OP", 7],
-    ["DT", 8],
-    ["DE", 9],
-    ["LB", 10],
-    ["DL", 11],
-    ["CB", 12],
-    ["S", 13],
-    ["DB", 14],
-    ["DP", 15],
-    ["DEF", 16],
-    ["K", 17],
-    ["P", 18],
-    ["HC", 19],
-    ["BN", 20],
-    ["IR", 21],
-    ["FLEX", 23],
-    ["TAXI", 88],
-]);
 function findOpponent(teams, rosterId, matchupId) {
     var opponentRosterId = -1;
     teams.forEach(function (team) {
@@ -2078,128 +2221,14 @@ function findOpponent(teams, rosterId, matchupId) {
     });
     return opponentRosterId;
 }
-function getPosition(eligibleSlots) {
-    if (eligibleSlots[0] === 0) {
-        return POSITION.QB;
-    }
-    else if (eligibleSlots[0] === 2) {
-        return POSITION.RB;
-    }
-    else if (eligibleSlots[0] === 3) {
-        return POSITION.WR;
-    }
-    else if (eligibleSlots[0] === 16) {
-        return POSITION.DEF;
-    }
-    else if (eligibleSlots[0] === 17) {
-        return POSITION.K;
-    }
-    else if (eligibleSlots[0] === 5) {
-        return POSITION.TE;
-    }
-    else if (eligibleSlots[0] === 8) {
-        return POSITION.DT;
-    }
-    else if (eligibleSlots[0] === 9) {
-        return POSITION.DE;
-    }
-    else if (eligibleSlots[0] === 10) {
-        return POSITION.LB;
-    }
-    else if (eligibleSlots[0] === 11) {
-        return POSITION.DL;
-    }
-    else if (eligibleSlots[0] === 12) {
-        return POSITION.CB;
-    }
-    else if (eligibleSlots[0] === 13) {
-        return POSITION.S;
-    }
-    else if (eligibleSlots[0] === 14) {
-        return POSITION.DB;
-    }
-    else if (eligibleSlots[0] === 15) {
-        return POSITION.DP;
-    }
-    else if (eligibleSlots[0] === 18) {
-        return POSITION.P;
-    }
-    else if (eligibleSlots[0] === 19) {
-        return POSITION.HC;
-    }
-}
-function getLineupSlot(lineupSlotID) {
-    switch (lineupSlotID) {
-        case 0: {
-            return "QB";
-        }
-        case 1: {
-            return "TQB";
-        }
-        case 2: {
-            return "RB";
-        }
-        case 3: {
-            return "RB/WR";
-        }
-        case 4: {
-            return "WR";
-        }
-        case 5: {
-            return "WR/TE";
-        }
-        case 6: {
-            return "TE";
-        }
-        case 7: {
-            return "SUPER_FLEX";
-        }
-        case 8: {
-            return "DT";
-        }
-        case 9: {
-            return "DE";
-        }
-        case 10: {
-            return "LB";
-        }
-        case 11: {
-            return "DL";
-        }
-        case 12: {
-            return "CB";
-        }
-        case 13: {
-            return "S";
-        }
-        case 14: {
-            return "DB";
-        }
-        case 15: {
-            return "DP";
-        }
-        case 16: {
-            return "DEF";
-        }
-        case 17: {
-            return "K";
-        }
-        case 18: {
-            return "P";
-        }
-        case 19: {
-            return "HC";
-        }
-        case 20: {
-            return "BN";
-        }
-        case 21: {
-            return "IR";
-        }
-        case 23: {
-            return "FLEX";
-        }
-    }
+function assignSleeperPlayerAttributes(player, playerAttributes) {
+    player.firstName = playerAttributes.first_name;
+    player.lastName = playerAttributes.last_name;
+    player.position = playerAttributes.position;
+    player.playerID = player.playerID;
+    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
+    player.realTeamID = playerAttributes.team;
+    player.espnID = playerAttributes.espn_id;
 }
 function includesPlayer(player, lineup) {
     var includes = false;
@@ -2372,108 +2401,6 @@ function getMemberColor(memberID) {
         "#3366cc", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac",
         "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
     return colorCode[memberID];
-}
-function getRealTeamInitials(realteamID) {
-    var team = realteamID;
-    switch (realteamID) {
-        case 1:
-            team = "Atl";
-            break;
-        case 2:
-            team = "Buf";
-            break;
-        case 3:
-            team = "Chi";
-            break;
-        case 4:
-            team = "Cin";
-            break;
-        case 5:
-            team = "Cle";
-            break;
-        case 6:
-            team = "Dal";
-            break;
-        case 7:
-            team = "Den";
-            break;
-        case 8:
-            team = "Det";
-            break;
-        case 9:
-            team = "GB";
-            break;
-        case 10:
-            team = "Ten";
-            break;
-        case 11:
-            team = "Ind";
-            break;
-        case 12:
-            team = "KC";
-            break;
-        case 13:
-            team = "Oak";
-            break;
-        case 14:
-            team = "Lar";
-            break;
-        case 15:
-            team = "Mia";
-            break;
-        case 16:
-            team = "Min";
-            break;
-        case 17:
-            team = "NE";
-            break;
-        case 18:
-            team = "NO";
-            break;
-        case 19:
-            team = "NYG";
-            break;
-        case 20:
-            team = "NYJ";
-            break;
-        case 21:
-            team = "Phi";
-            break;
-        case 22:
-            team = "Ari";
-            break;
-        case 23:
-            team = "Pit";
-            break;
-        case 24:
-            team = "LAC";
-            break;
-        case 25:
-            team = "SF";
-            break;
-        case 26:
-            team = "Sea";
-            break;
-        case 27:
-            team = "TB";
-            break;
-        case 28:
-            team = "Wsh";
-            break;
-        case 29:
-            team = "Car";
-            break;
-        case 30:
-            team = "Jax";
-            break;
-        case 33:
-            team = "Bal";
-            break;
-        case 34:
-            team = "Hou";
-            break;
-    }
-    return team;
 }
 var SleeperMember = (function () {
     function SleeperMember(memberID, memberName, teamName, teamAvatar) {

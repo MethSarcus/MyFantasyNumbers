@@ -79,90 +79,6 @@ function getSleeperWeekStats(numWeeks: number): Promise<any> {
     });
 }
 
-function assignSleeperPlayerAttributes(player: SleeperPlayer, playerAttributes: SleeperPlayerLibraryEntry) {
-    player.firstName = playerAttributes.first_name;
-    player.lastName = playerAttributes.last_name;
-    player.position = playerAttributes.position;
-    player.playerID = player.playerID;
-    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
-    player.realTeamID = playerAttributes.team;
-    player.espnID = playerAttributes.espn_id;
-}
-
-const eligibleSlotMap = new Map([
-    [0, [0, 1, 7, 20, 21]],
-    [1, [1, 7, 20, 21]],
-    [2, [2, 3, 7, 20, 21, 23]],
-    [4, [4, 3, 5, 7, 20, 21, 23]],
-    [6, [6, 5, 7, 20, 21, 23]],
-    [8, [8, 15, 20, 21]],
-    [9, [9, 15, 20, 21]],
-    [10, [10, 15, 20, 21]],
-    [11, [11, 15, 20, 21]],
-    [12, [12, 15, 20, 21]],
-    [13, [13, 15, 20, 21]],
-    [14, [14, 15, 20, 21]],
-    [16, [16, 20]],
-    [17, [17, 20, 21]],
-    [18, [18, 20, 21]],
-    [19, [19, 20]],
-]);
-
-const intToPosition = new Map([
-    [0, "QB"],
-    [1, "TQB"],
-    [2, "RB"],
-    [3, "RB/WR"],
-    [4, "WR"],
-    [5, "WR/TE"],
-    [6, "TE"],
-    [7, "OP"],
-    [8, "DT"],
-    [9, "DE"],
-    [10, "LB"],
-    [11, "DL"],
-    [12, "CB"],
-    [13, "S"],
-    [14, "DB"],
-    [15, "DP"],
-    [16, "DEF"],
-    [17, "K"],
-    [18, "P"],
-    [19, "HC"],
-    [20, "BN"],
-    [21, "IR"],
-    [23, "FLEX"],
-    [88, "TAXI"],
-]);
-
-const positionToInt = new Map([
-    ["QB", 0],
-    ["TQB", 1],
-    ["RB", 2],
-    ["RB/WR", 3],
-    ["WR", 4],
-    ["WR/TE", 5],
-    ["TE", 6],
-    ["SUPER_FLEX", 7],
-    ["OP", 7],
-    ["DT", 8],
-    ["DE", 9],
-    ["LB", 10],
-    ["DL", 11],
-    ["CB", 12],
-    ["S", 13],
-    ["DB", 14],
-    ["DP", 15],
-    ["DEF", 16],
-    ["K", 17],
-    ["P", 18],
-    ["HC", 19],
-    ["BN", 20],
-    ["IR", 21],
-    ["FLEX", 23],
-    ["TAXI", 88],
-]);
-
 function findOpponent(teams: SleeperTeamResponse[], rosterId: number, matchupId: number): number {
     let opponentRosterId = -1;
     teams.forEach((team) => {
@@ -172,4 +88,14 @@ function findOpponent(teams: SleeperTeamResponse[], rosterId: number, matchupId:
     });
 
     return opponentRosterId;
+}
+
+function assignSleeperPlayerAttributes(player: SleeperPlayer, playerAttributes: SleeperPlayerLibraryEntry) {
+    player.firstName = playerAttributes.first_name;
+    player.lastName = playerAttributes.last_name;
+    player.position = playerAttributes.position;
+    player.playerID = player.playerID;
+    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
+    player.realTeamID = playerAttributes.team;
+    player.espnID = playerAttributes.espn_id;
 }
