@@ -117,7 +117,7 @@ function makeRequest(url: string): Promise<XMLHttpRequest> {
 }
 
 function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: Settings, leagueID, seasonID, members, leagueName) {
-    makeRequest('../../ts/API_responses/sleeper/player_library.json').then(result => {
+    makeRequest("js/typescript/player_library.json").then(result => {
         const lib = (result.response as Sleeper_Player_Library_Entry[]);
         weeks.forEach(week => {
             week.matchups.forEach(matchup => {

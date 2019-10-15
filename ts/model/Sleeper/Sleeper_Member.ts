@@ -16,14 +16,16 @@ class Sleeper_Member implements Member {
         } else {
             this.teamAbbrev = memberName.substring(0, 4);
         }
-        this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
+        if (teamAvatar !== undefined && teamAvatar != null) {
+            this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
+        } else {
+            this.logoURL = "assets/user1.png";
+        }
     }
 
     public setAdvancedStats(weeks: Week[]): void {
         const scores = [];
         weeks.forEach(week => {
-            console.log(week);
-            console.log(this);
             scores.push(week.getTeam(this.teamID).score);
         });
 

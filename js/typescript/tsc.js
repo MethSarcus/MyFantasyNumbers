@@ -406,7 +406,7 @@ function makeRequest(url) {
     });
 }
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
-    makeRequest('../../ts/API_responses/sleeper/player_library.json').then(function (result) {
+    makeRequest("js/typescript/player_library.json").then(function (result) {
         var lib = result.response;
         weeks.forEach(function (week) {
             week.matchups.forEach(function (matchup) {
@@ -2477,14 +2477,17 @@ var Sleeper_Member = (function () {
         else {
             this.teamAbbrev = memberName.substring(0, 4);
         }
-        this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
+        if (teamAvatar !== undefined && teamAvatar != null) {
+            this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
+        }
+        else {
+            this.logoURL = "assets/user1.png";
+        }
     }
     Sleeper_Member.prototype.setAdvancedStats = function (weeks) {
         var _this = this;
         var scores = [];
         weeks.forEach(function (week) {
-            console.log(week);
-            console.log(_this);
             scores.push(week.getTeam(_this.teamID).score);
         });
         this.stats.standardDeviation = calcStandardDeviation(scores);
