@@ -10,7 +10,7 @@ class Week {
     }
 
     public getTeam(teamID: number): Team {
-        var team: Team;
+        let team: Team;
         this.matchups.forEach( (matchup) => {
             if (matchup.hasTeam(teamID)) {
                 team = matchup.getTeam(teamID);
@@ -21,15 +21,15 @@ class Week {
 
     public getTeamScoreFinish(teamID: number): number {
         let finish = 1;
-        let score = this.getTeam(teamID).score;
+        const score = this.getTeam(teamID).score;
         this.matchups.forEach((matchup) => {
-            if (matchup.home.teamID != teamID) {
+            if (matchup.home.teamID !== teamID) {
                 if (matchup.home.score > score) {
                     finish += 1;
                 }
             }
             if (!matchup.byeWeek) {
-                if (matchup.away.score > score && matchup.away.teamID != teamID) {
+                if (matchup.away.score > score && matchup.away.teamID !== teamID) {
                     finish += 1;
                 }
             }
@@ -64,14 +64,14 @@ class Week {
     }
 
     public getBestPositionPlayer(position: string): Player {
-        var positionPlayers = [];
+        let positionPlayers = [];
         this.matchups.forEach((matchup) => {
             positionPlayers = positionPlayers.concat(matchup.home.getPositionalPlayers(position));
             if (!matchup.byeWeek) {
                 positionPlayers = positionPlayers.concat(matchup.away.getPositionalPlayers(position));
             }
         });
-        var bestPlayer = positionPlayers[0];
+        let bestPlayer = positionPlayers[0];
         positionPlayers.forEach((player) => {
             if (player.score > bestPlayer.score) {
                 bestPlayer = player;

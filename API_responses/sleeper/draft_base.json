@@ -1,0 +1,56 @@
+{
+    "type": "snake",
+    "status": "complete",
+    "start_time": 1567373400000,
+    "sport": "nfl",
+    "slot_to_roster_id": {
+        "8": 5,
+        "7": 1,
+        "6": 6,
+        "5": 3,
+        "4": 4,
+        "3": 2,
+        "2": 7,
+        "1": 8
+    },
+    "settings": {
+        "teams": 8,
+        "slots_wr": 3,
+        "slots_te": 1,
+        "slots_rb": 2,
+        "slots_qb": 1,
+        "slots_k": 1,
+        "slots_flex": 2,
+        "slots_def": 1,
+        "slots_bn": 9,
+        "rounds": 20,
+        "player_type": 0,
+        "pick_timer": 0,
+        "cpu_autopick": 1,
+        "alpha_sort": 0
+    },
+    "season_type": "regular",
+    "season": "2019",
+    "metadata": {
+        "scoring_type": "half_ppr",
+        "name": "7530 Leagus under the Seahawks",
+        "description": ""
+    },
+    "league_id": "392828910842220544",
+    "last_picked": 1567374301956,
+    "last_message_time": 1567374302309,
+    "last_message_id": "474005815460622336",
+    "draft_order": {
+        "461698758137081856": 1,
+        "459103601663406080": 2,
+        "458802353168969728": 8,
+        "442170452933079040": 4,
+        "442166387868168192": 5,
+        "395027646271983616": 6,
+        "392828450697707520": 3,
+        "206902201266733056": 7
+    },
+    "draft_id": "392828911987204096",
+    "creators": ["206902201266733056"],
+    "created": 1548020220312
+}

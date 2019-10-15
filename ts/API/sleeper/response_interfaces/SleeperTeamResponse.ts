@@ -1,4 +1,5 @@
-interface TeamResponse {
+// Entry for a team when hitting matchup endpoint
+interface SleeperTeamResponse {
     roster_id: number;
     points: number;
     players: string[];

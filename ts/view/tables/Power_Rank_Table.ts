@@ -1,15 +1,15 @@
 function createPowerRankTable(league: League) {
-    var tableBody: HTMLTableElement = <HTMLTableElement> document.getElementById("power_rank_table_body");
-    league.members.forEach(member => {
-        var row = document.createElement('tr');
-        var teamName = document.createElement('td');
-        var powerRank = document.createElement('td');
-        var powerRecord = document.createElement('td');
-        var winPct = document.createElement('td');
-        var potentialRecord = document.createElement('td');
-        var potentialWinPct = document.createElement('td');
-        
-        let image = document.createElement('img');
+    const tableBody: HTMLTableElement = document.getElementById("power_rank_table_body") as HTMLTableElement;
+    league.members.forEach((member) => {
+        const row = document.createElement("tr");
+        const teamName = document.createElement("td");
+        const powerRank = document.createElement("td");
+        const powerRecord = document.createElement("td");
+        const winPct = document.createElement("td");
+        const potentialRecord = document.createElement("td");
+        const potentialWinPct = document.createElement("td");
+        const image = document.createElement("img");
+
         image.src = member.logoURL;
         image.style.width = "25px";
         image.style.height = "25px";
@@ -18,13 +18,13 @@ function createPowerRankTable(league: League) {
         image.style.marginRight = "8px";
 
         teamName.appendChild(image);
-        teamName.appendChild(document.createTextNode(member.nameToString())); 
+        teamName.appendChild(document.createTextNode(member.nameToString()));
         powerRank.innerText = member.stats.powerRank.toString();
         powerRecord.innerText = member.powerRecordToString();
         potentialRecord.innerText = member.potentialPowerRecordToString();
         winPct.innerText = member.stats.getPowerWinPct() + "%";
         potentialWinPct.innerText = member.stats.getPotentialPowerWinPct() + "%";
-        
+
         row.appendChild(powerRank);
         row.appendChild(teamName);
         row.appendChild(powerRecord);
@@ -34,11 +34,4 @@ function createPowerRankTable(league: League) {
         tableBody.appendChild(row);
 
     });
-    
-
-    // powerRanks.forEach(weekPowerRanks => {
-    //     weekPowerRanks.powerStats.forEach(teamPowerStats => {
-            
-    //     });
-    // });
 }

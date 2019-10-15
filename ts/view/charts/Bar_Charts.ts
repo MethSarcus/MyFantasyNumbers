@@ -2,7 +2,7 @@ declare var myChart: any;
 declare var Chart: any;
 
 function createTeamBarChart(league: League, member: Member) {
-    if ((window as any).memberBarChart != undefined) {
+    if ((window as any).memberBarChart !== undefined) {
         (window as any).memberBarChart.data.datasets = [];
         (window as any).memberBarChart.data.datasets.push({
             label: member.nameToString(),
@@ -21,10 +21,8 @@ function createTeamBarChart(league: League, member: Member) {
         });
         (window as any).memberBarChart.update();
     } else {
-        var ctx = (document.getElementById("member_bar_chart_canvas") as HTMLCanvasElement).getContext('2d');
-        //ctx.classList.toggle('team_weekly_line_chart', true);
-
-        var chartData = {
+        const ctx = (document.getElementById("member_bar_chart_canvas") as HTMLCanvasElement).getContext("2d");
+        const chartData = {
             labels: league.settings.getPositions(),
             datasets: [{
                 label: member.nameToString(),
@@ -42,7 +40,7 @@ function createTeamBarChart(league: League, member: Member) {
         };
 
         (window as any).memberBarChart = new Chart(ctx, {
-            type: 'bar',
+            type: "bar",
             data: chartData,
             options: {
                 responsive: true,
@@ -66,7 +64,7 @@ function createTeamBarChart(league: League, member: Member) {
                 plugins: {
                     deferred: {
                         xOffset: 150, // defer until 150px of the canvas width are inside the viewport
-                        yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+                        yOffset: "50%", // defer until 50% of the canvas height are inside the viewport
                         delay: 500 // delay of 500 ms after the canvas is considered inside the viewport
                     }
                 },
@@ -87,14 +85,14 @@ function createTeamBarChart(league: League, member: Member) {
 }
 
 function createLeagueStackedGraph(league: League): void {
-    if ((window as any).leagueStackedChart != undefined) {
+    if ((window as any).leagueStackedChart !== undefined) {
         (window as any).leagueStackedChart.datasets = [];
         (window as any).leagueStackedChart.datasets = getLeagueStackedDatasets(league);
         (window as any).leagueStackedChart.update();
     } else {
-        var ctx = (document.getElementById("league_stacked_graph_canvas") as HTMLCanvasElement).getContext('2d');
+        const ctx = (document.getElementById("league_stacked_graph_canvas") as HTMLCanvasElement).getContext("2d");
         (window as any).leagueStackedChart = new Chart(ctx, {
-            type: 'bar',
+            type: "bar",
             data: {
                 labels: makeMemberLabels(league),
                 datasets: getLeagueStackedDatasets(league),
@@ -119,7 +117,7 @@ function createLeagueStackedGraph(league: League): void {
 
                 },
                 tooltips: {
-                    mode: 'index',
+                    mode: "index",
                     intersect: false
                 },
                 scales: {
@@ -145,26 +143,26 @@ function createLeagueStackedGraph(league: League): void {
     }
 }
 
-function getLeagueStackedDatasets(league: League): Object[] {
-    var datasets = [];
-    var backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
-    var positions = league.settings.getPositions();
-    var labels = [];
-    var increment = 0;
-    positions.forEach(position => {
-        var dataset = {
+function getLeagueStackedDatasets(league: League): object[] {
+    const datasets = [];
+    const backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
+    const positions = league.settings.getPositions();
+    const labels = [];
+    let increment = 0;
+    positions.forEach((position) => {
+        const dataset = {
             label: position,
             backgroundColor: backgroundColors[increment],
             data: []
-        }
+        };
         datasets.push(dataset);
         increment += 1;
     });
 
-    league.members.forEach(member => {
+    league.members.forEach((member) => {
         labels.push(member.nameToString);
-        var positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
-        for (var i = 0; i < datasets.length; i++){
+        const positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
+        for (let i = 0; i < datasets.length; i++) {
             datasets[i].data.push(positionPoints[i]);
         }
     });
@@ -173,8 +171,8 @@ function getLeagueStackedDatasets(league: League): Object[] {
 }
 
 function makeMemberLabels(league: League): string[] {
-    var labels = [];
-    league.members.forEach(member => {
+    const labels = [];
+    league.members.forEach((member) => {
         labels.push(member.nameToString());
     });
 

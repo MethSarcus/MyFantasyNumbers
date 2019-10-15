@@ -72,7 +72,7 @@ function getSleeperWeekStats(numWeeks: number): Promise<any> {
         });
 
         for (let i = 0; i < stats.length; i++) {
-            sleeperStats.push(new Sleeper_Week_Stats(projections[i], stats[i], i + 1));
+            sleeperStats.push(new SleeperWeekStats(projections[i], stats[i], i + 1));
         }
 
         return sleeperStats;
@@ -163,7 +163,7 @@ const positionToInt = new Map([
     ["TAXI", 88],
 ]);
 
-function findOpponent(teams: TeamResponse[], rosterId: number, matchupId: number): number {
+function findOpponent(teams: SleeperTeamResponse[], rosterId: number, matchupId: number): number {
     let opponentRosterId = -1;
     teams.forEach((team) => {
         if (team.matchup_id === matchupId && team.roster_id !== rosterId) {

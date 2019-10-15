@@ -1,4 +1,4 @@
-class ESPN_Player implements Player {
+class ESPNPlayer implements Player {
     public firstName: string;
     public lastName: string;
     public eligibleSlots: any;
@@ -24,9 +24,9 @@ class ESPN_Player implements Player {
     }
 
     public isEligible(slot: number): boolean {
-        var isEligible = false;
+        let isEligible = false;
         this.eligibleSlots.forEach((eligibleSlot) => {
-            if (eligibleSlot == slot) {
+            if (eligibleSlot === slot) {
                 isEligible = true;
             }
         });

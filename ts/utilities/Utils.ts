@@ -34,7 +34,7 @@ enum POSITION {
     WR = "WR",
     TE = "TE",
     K = "K",
-    D_ST = "DEF",
+    DEF = "DEF",
     DL = "DL",
     DT = "DT",
     LB = "LB",
@@ -56,7 +56,7 @@ function getPosition(eligibleSlots: number[]): POSITION {
     } else if (eligibleSlots[0] === 3) {
         return POSITION.WR;
     } else if (eligibleSlots[0] === 16) {
-        return POSITION.D_ST;
+        return POSITION.DEF;
     } else if (eligibleSlots[0] === 17) {
         return POSITION.K;
     } else if (eligibleSlots[0] === 5) {
@@ -147,7 +147,7 @@ function getLineupSlot(lineupSlotID: number): string {
             return "HC";
         }
         case 20: {
-            return "BENCH";
+            return "BN";
         }
         case 21: {
             return "IR";
@@ -450,24 +450,3 @@ function getRealTeamInitials(realteamID) {
     return team;
 }
 
-function espn_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "js/proxy/espn_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}
-
-function sleeper_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "js/proxy/sleeper_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}

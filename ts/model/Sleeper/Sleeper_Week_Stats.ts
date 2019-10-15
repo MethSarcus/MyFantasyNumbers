@@ -1,31 +1,31 @@
-class Sleeper_Week_Stats {
+class SleeperWeekStats {
     public stats: object;
-    public projected_stats: object;
-    public week_number: number;
+    public projectedStats: object;
+    public weekNumber: number;
 
-    constructor(projected_stats: object, stats: object, week_number: number) {
+    constructor(projectedStats: object, stats: object, weekNumber: number) {
         this.stats = stats;
-        this.projected_stats = projected_stats;
-        this.week_number = week_number;
+        this.projectedStats = projectedStats;
+        this.weekNumber = weekNumber;
     }
 
     public calculatePlayerScore(settings: object, player: Player): void {
-        const player_stats = this.stats[player.playerID];
-        if (player_stats != undefined) {
-            Object.keys(player_stats).forEach(stat_name => {
-                if (settings.hasOwnProperty(stat_name)) {
-                    player.score += settings[stat_name] * player_stats[stat_name];
+        const playerStats = this.stats[player.playerID];
+        if (playerStats !== undefined) {
+            Object.keys(playerStats).forEach((statName) => {
+                if (settings.hasOwnProperty(statName)) {
+                    player.score += settings[statName] * playerStats[statName];
                 }
             });
         }
     }
 
     public calculateProjectedPlayerScore(settings: object, player: Player): void {
-        const player_projected_stats = this.projected_stats[player.playerID];
-        if (player_projected_stats != undefined) {
-            Object.keys(player_projected_stats).forEach(stat_name => {
-                if (settings.hasOwnProperty(stat_name)) {
-                    player.projectedScore += settings[stat_name] * player_projected_stats[stat_name];
+        const playerProjectedStats = this.projectedStats[player.playerID];
+        if (playerProjectedStats !== undefined) {
+            Object.keys(playerProjectedStats).forEach((statName) => {
+                if (settings.hasOwnProperty(statName)) {
+                    player.projectedScore += settings[statName] * playerProjectedStats[statName];
                 }
             });
         }

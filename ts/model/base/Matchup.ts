@@ -16,7 +16,7 @@ class Matchup {
         this.home = home;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
-        if (away == undefined || away == null) {
+        if (away === undefined || away === null) {
             this.byeWeek = true;
             this.isUpset = false;
             this.isTie = false;
@@ -58,28 +58,28 @@ class Matchup {
 
     public hasTeam(teamID: number): boolean {
         if (this.byeWeek !== true) {
-            if (this.home.teamID == teamID || this.away.teamID == teamID) {
+            if (this.home.teamID === teamID || this.away.teamID === teamID) {
                 return true;
-                } 
-            } else {
-                if (this.home.teamID == teamID) {
-                    return true;
+            }
+        } else {
+            if (this.home.teamID === teamID) {
+                return true;
             }
         }
     }
 
     public getTeam(teamID: number): Team {
-        if (this.home.teamID == teamID) {
+        if (this.home.teamID === teamID) {
             return this.home;
-        } else if (this.away.teamID == teamID) {
+        } else if (this.away.teamID === teamID) {
             return this.away;
         }
     }
 
     public getOpponent(teamID: number): Team {
-        if (this.home.teamID == teamID && this.byeWeek == false) {
+        if (this.home.teamID === teamID && this.byeWeek === false) {
             return this.away;
-        } else if (this.away.teamID == teamID) {
+        } else if (this.away.teamID === teamID) {
             return this.home;
         } else {
             return null;
@@ -87,8 +87,8 @@ class Matchup {
     }
 
     public gutHadImpact(teamID): boolean {
-        var team = this.getTeam(teamID);
-        if (this.marginOfVictory > Math.abs(team.gutDifference)){
+        const team = this.getTeam(teamID);
+        if (this.marginOfVictory > Math.abs(team.gutDifference)) {
             return false;
         } else {
             return true;
@@ -96,14 +96,14 @@ class Matchup {
     }
 
     public setPoorLineupDecisions(): void {
-        var whiffedChoices = 0;
-        var team = this.home;
+        let whiffedChoices = 0;
+        let team = this.home;
         if (this.home.score > this.away.score) {
             team = this.away;
         }
-        team.lineup.forEach(startingPlayer => {
-            team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(benchedPlayer => {
-                let diff = benchedPlayer.score - startingPlayer.score
+        team.lineup.forEach((startingPlayer) => {
+            team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach((benchedPlayer) => {
+                const diff = benchedPlayer.score - startingPlayer.score;
                 if (diff > this.marginOfVictory) {
                     whiffedChoices += 1;
                 }

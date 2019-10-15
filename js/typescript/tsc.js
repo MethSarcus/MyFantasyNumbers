@@ -40,7 +40,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                         var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         var playerID = curPlayer.playerId;
                         var lineupSlotID = curPlayer.lineupSlotId;
-                        homePlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        homePlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                     }
                     var awayTeam = void 0;
                     if (curWeek.away !== null && curWeek.away !== undefined) {
@@ -69,7 +69,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                             var playerID = curPlayer.playerId;
                             var lineupSlotID = curPlayer.lineupSlotId;
-                            awayPlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                            awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
@@ -169,10 +169,21 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
         getESPNMatchups(settings, members, leagueID, seasonID, leagueName);
     });
 }
+function espn_request(t, d) {
+    return $.ajax({
+        type: t,
+        url: "js/proxy/espn_proxy.php",
+        dataType: "json",
+        data: d,
+        cache: false,
+        async: true,
+    });
+}
 function getSleeperLeagueSettings(leagueID, seasonID) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done(function (json) {
+        json = json;
         var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
         var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
         var leagueName = json.name;
@@ -196,6 +207,7 @@ function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineup
     sleeper_request("get", {
         path: "league/" + leagueID.toString() + "/users"
     }).done(function (json) {
+        json = json;
         var members = [];
         json.forEach(function (member) {
             var memberName = member.display_name;
@@ -211,6 +223,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
     sleeper_request("get", {
         path: "league/" + leagueID.toString() + "/rosters/"
     }).done(function (json) {
+        json = json;
         json.forEach(function (roster) {
             var teamID = parseInt(roster.roster_id, 10);
             var wins = roster.settings.wins;
@@ -299,111 +312,6 @@ function getSleeperWeekMatchups(teams, activeLineupSlots, weekNumber, isPlayoff,
     }
     return matchups;
 }
-function findOpponent(teams, rosterId, matchupId) {
-    var opponentRosterId = -1;
-    teams.forEach(function (team) {
-        if (team.matchup_id === matchupId && team.roster_id !== rosterId) {
-            opponentRosterId = team.roster_id;
-        }
-    });
-    return opponentRosterId;
-}
-function convertSleeperRoster(rosterPositions, numIR, numTaxi) {
-    var activeCount = new Map();
-    var benchCount = new Map();
-    var activeLineupSlots = [];
-    var benchSlots = [];
-    var active = rosterPositions.filter(function (it) {
-        return it = "BN";
-    }).map(function (slot) { return positionToInt.get(slot); });
-    active.forEach(function (slot) {
-        if (activeCount.has(slot)) {
-            var newCount = activeCount.get(slot) + 1;
-            activeCount.set(slot, newCount);
-        }
-        else {
-            activeCount.set(slot, 1);
-        }
-    });
-    var bench = rosterPositions.filter(function (it) {
-        return it === "BN";
-    }).map(function (slot) { return positionToInt.get(slot); });
-    for (var i = 0; i < numIR; i++) {
-        bench.push(positionToInt.get("IR"));
-    }
-    for (var i = 0; i < numTaxi; i++) {
-        bench.push(positionToInt.get("TAXI"));
-    }
-    bench.forEach(function (slot) {
-        if (benchCount.has(slot)) {
-            var newCount = benchCount.get(slot) + 1;
-            benchCount.set(slot, newCount);
-        }
-        else {
-            benchCount.set(slot, 1);
-        }
-    });
-    activeCount.forEach(function (value, key) {
-        activeLineupSlots.push([key, value]);
-    });
-    benchCount.forEach(function (value, key) {
-        benchSlots.push([key, value]);
-    });
-    return [activeLineupSlots, benchSlots];
-}
-function makeSleeperPlayers(players) {
-    var sleeperPlayers = [];
-    players.forEach(function (player) {
-        sleeperPlayers.push(player);
-    });
-    return sleeperPlayers;
-}
-function getSleeperWeekStats(numWeeks) {
-    var statPromises = [];
-    for (var i = 1; i <= numWeeks; i++) {
-        statPromises.push(makeRequest("https://api.sleeper.app/v1/stats/nfl/regular/2019/" + i));
-    }
-    var projectionPromises = [];
-    for (var i = 1; i <= numWeeks; i++) {
-        projectionPromises.push(makeRequest("https://api.sleeper.app/v1/projections/nfl/regular/2019/" + i));
-    }
-    var allPromises = statPromises.concat(projectionPromises);
-    return Promise.all(allPromises).then(function (result) {
-        var sleeperStats = [];
-        var stats = result.slice(0, statPromises.length).map(function (obj) {
-            return obj.response;
-        });
-        var projections = result.slice(statPromises.length, allPromises.length).map(function (obj) {
-            return obj.response;
-        });
-        for (var i = 0; i < stats.length; i++) {
-            sleeperStats.push(new Sleeper_Week_Stats(projections[i], stats[i], i + 1));
-        }
-        return sleeperStats;
-    });
-}
-function makeRequest(url) {
-    var request = new XMLHttpRequest();
-    request.responseType = "json";
-    return new Promise(function (resolve, reject) {
-        request.onreadystatechange = function () {
-            if (request.readyState !== 4) {
-                return;
-            }
-            if (request.status >= 200 && request.status < 300) {
-                resolve(request);
-            }
-            else {
-                reject({
-                    status: request.status,
-                    statusText: request.statusText,
-                });
-            }
-        };
-        request.open("GET", url, true);
-        request.send();
-    });
-}
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
     makeRequest("js/typescript/player_library.json").then(function (result) {
         var lib = result.response;
@@ -440,631 +348,37 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
         setPage(league);
     });
 }
-function assignSleeperPlayerAttributes(player, playerAttributes) {
-    player.firstName = playerAttributes.first_name;
-    player.lastName = playerAttributes.last_name;
-    player.position = playerAttributes.position;
-    player.playerID = player.playerID;
-    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
-    player.realTeamID = playerAttributes.team;
-    player.espnID = playerAttributes.espn_id;
-}
-var eligibleSlotMap = new Map([
-    [0, [0, 1, 7, 20, 21]],
-    [1, [1, 7, 20, 21]],
-    [2, [2, 3, 7, 20, 21, 23]],
-    [4, [4, 3, 5, 7, 20, 21, 23]],
-    [6, [6, 5, 7, 20, 21, 23]],
-    [8, [8, 15, 20, 21]],
-    [9, [9, 15, 20, 21]],
-    [10, [10, 15, 20, 21]],
-    [11, [11, 15, 20, 21]],
-    [12, [12, 15, 20, 21]],
-    [13, [13, 15, 20, 21]],
-    [14, [14, 15, 20, 21]],
-    [16, [16, 20]],
-    [17, [17, 20, 21]],
-    [18, [18, 20, 21]],
-    [19, [19, 20]],
-]);
-var intToPosition = new Map([
-    [0, "QB"],
-    [1, "TQB"],
-    [2, "RB"],
-    [3, "RB/WR"],
-    [4, "WR"],
-    [5, "WR/TE"],
-    [6, "TE"],
-    [7, "OP"],
-    [8, "DT"],
-    [9, "DE"],
-    [10, "LB"],
-    [11, "DL"],
-    [12, "CB"],
-    [13, "S"],
-    [14, "DB"],
-    [15, "DP"],
-    [16, "DEF"],
-    [17, "K"],
-    [18, "P"],
-    [19, "HC"],
-    [20, "BN"],
-    [21, "IR"],
-    [23, "FLEX"],
-    [88, "TAXI"],
-]);
-var positionToInt = new Map([
-    ["QB", 0],
-    ["TQB", 1],
-    ["RB", 2],
-    ["RB/WR", 3],
-    ["WR", 4],
-    ["WR/TE", 5],
-    ["TE", 6],
-    ["SUPER_FLEX", 7],
-    ["OP", 7],
-    ["DT", 8],
-    ["DE", 9],
-    ["LB", 10],
-    ["DL", 11],
-    ["CB", 12],
-    ["S", 13],
-    ["DB", 14],
-    ["DP", 15],
-    ["DEF", 16],
-    ["K", 17],
-    ["P", 18],
-    ["HC", 19],
-    ["BN", 20],
-    ["IR", 21],
-    ["FLEX", 23],
-    ["TAXI", 88],
-]);
-function createTeamBarChart(league, member) {
-    if (window.memberBarChart != undefined) {
-        window.memberBarChart.data.datasets = [];
-        window.memberBarChart.data.datasets.push({
-            label: member.nameToString(),
-            backgroundColor: getMemberColor(member.teamID),
-            data: league.getMemberTotalPointsPerPosition(member.teamID)
-        });
-        window.memberBarChart.data.datasets.push({
-            label: "All Opponents",
-            backgroundColor: "lightgrey",
-            data: league.getLeaguePointsPerPosition()
-        });
-        window.memberBarChart.data.datasets.push({
-            label: "League Average",
-            backgroundColor: "darkgrey",
-            data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
-        });
-        window.memberBarChart.update();
-    }
-    else {
-        var ctx = document.getElementById("member_bar_chart_canvas").getContext('2d');
-        var chartData = {
-            labels: league.settings.getPositions(),
-            datasets: [{
-                    label: member.nameToString(),
-                    backgroundColor: getMemberColor(member.teamID),
-                    data: league.getMemberTotalPointsPerPosition(member.teamID)
-                }, {
-                    label: "All Opponents",
-                    backgroundColor: "lightgrey",
-                    data: league.getLeaguePointsPerPosition()
-                }, {
-                    label: "League Average",
-                    backgroundColor: "darkgrey",
-                    data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
-                }]
+function makeRequest(url) {
+    var request = new XMLHttpRequest();
+    request.responseType = "json";
+    return new Promise(function (resolve, reject) {
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) {
+                return;
+            }
+            if (request.status >= 200 && request.status < 300) {
+                resolve(request);
+            }
+            else {
+                reject({
+                    status: request.status,
+                    statusText: request.statusText,
+                });
+            }
         };
-        window.memberBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: chartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                title: {
-                    display: true,
-                    position: "top",
-                    text: "Total points by position",
-                    fontSize: 20,
-                    fontColor: "#111",
-                },
-                scales: {
-                    yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                            }
-                        }]
-                },
-                plugins: {
-                    deferred: {
-                        xOffset: 150,
-                        yOffset: '50%',
-                        delay: 500
-                    }
-                },
-                legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                        fontColor: "#333",
-                        fontSize: 12
-                    },
-                }
-            }
-        });
-        window.memberBarChart.render();
-    }
-}
-function createLeagueStackedGraph(league) {
-    if (window.leagueStackedChart != undefined) {
-        window.leagueStackedChart.datasets = [];
-        window.leagueStackedChart.datasets = getLeagueStackedDatasets(league);
-        window.leagueStackedChart.update();
-    }
-    else {
-        var ctx = document.getElementById("league_stacked_graph_canvas").getContext('2d');
-        window.leagueStackedChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: makeMemberLabels(league),
-                datasets: getLeagueStackedDatasets(league),
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-                labels: {
-                    fontColor: "#333",
-                    fontSize: 16
-                }
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                title: {
-                    display: true,
-                    position: "top",
-                    text: "Total Points Scored",
-                    fontSize: 36,
-                    fontColor: "#111",
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false
-                },
-                scales: {
-                    xAxes: [{
-                            stacked: true
-                        }],
-                    yAxes: [{
-                            stacked: true,
-                            beginAtZero: true,
-                        }],
-                },
-                legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                        fontColor: "#333",
-                        fontSize: 16
-                    }
-                }
-            },
-        });
-        window.leagueStackedChart.render();
-    }
-}
-function getLeagueStackedDatasets(league) {
-    var datasets = [];
-    var backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
-    var positions = league.settings.getPositions();
-    var labels = [];
-    var increment = 0;
-    positions.forEach(function (position) {
-        var dataset = {
-            label: position,
-            backgroundColor: backgroundColors[increment],
-            data: []
-        };
-        datasets.push(dataset);
-        increment += 1;
-    });
-    league.members.forEach(function (member) {
-        labels.push(member.nameToString);
-        var positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
-        for (var i = 0; i < datasets.length; i++) {
-            datasets[i].data.push(positionPoints[i]);
-        }
-    });
-    return datasets;
-}
-function makeMemberLabels(league) {
-    var labels = [];
-    league.members.forEach(function (member) {
-        labels.push(member.nameToString());
-    });
-    return labels;
-}
-function createMainWeeklyLineChart(league) {
-    window.myChart.destroy();
-    var ctx = document.getElementById("GRAPHCANVAS");
-    ctx.classList.toggle("mainChart", true);
-    var myWeekLabels = [];
-    for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
-        myWeekLabels.push("Week " + i);
-    }
-    var weeklyScoreMap = new Map();
-    weeklyScoreMap.set(-1, []);
-    league.members.forEach(function (member) {
-        weeklyScoreMap.set(member.teamID, []);
-    });
-    league.getSeasonPortionWeeks().forEach(function (week) {
-        weeklyScoreMap.get(-1).push(week.getWeekAverage());
-        week.matchups.forEach(function (matchup) {
-            weeklyScoreMap.get(matchup.home.teamID).push(matchup.home.score);
-            if (!matchup.byeWeek) {
-                weeklyScoreMap.get(matchup.away.teamID).push(matchup.away.score);
-            }
-        });
-    });
-    var datasets = [];
-    weeklyScoreMap.forEach(function (value, key) {
-        if (key === -1) {
-            datasets.push({
-                label: "League Average",
-                data: value,
-                borderColor: "black",
-                backGroundColor: "black",
-                fill: false,
-                lineTension: 0,
-            });
-        }
-        else {
-            var curTeam = league.getMember(key);
-            var myColor = getMemberColor(key);
-            datasets.push({
-                label: curTeam.nameToString(),
-                data: value,
-                borderColor: myColor,
-                backGroundColor: myColor,
-                fill: false,
-                lineTension: 0,
-            });
-        }
-    });
-    window.myChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: myWeekLabels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            title: {
-                display: true,
-                position: "top",
-                text: "Points Scored By Week",
-                fontSize: 20,
-                fontColor: "#111",
-            },
-            scales: {
-                yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                        }
-                    }]
-            },
-            plugins: {
-                deferred: {
-                    xOffset: 150,
-                    yOffset: "50%",
-                    delay: 500
-                },
-                datalabels: {
-                    formatter: function () {
-                        return "";
-                    },
-                }
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-                labels: {
-                    fontColor: "#333",
-                    fontSize: 12
-                },
-            }
-        }
+        request.open("GET", url, true);
+        request.send();
     });
 }
-function createMemberWeeklyLineChart(league, member) {
-    var weeklyScoreMap = new Map();
-    weeklyScoreMap.set(-1, []);
-    weeklyScoreMap.set(-2, []);
-    weeklyScoreMap.set(member.teamID, []);
-    league.weeks.forEach(function (week) {
-        if (!week.getTeamMatchup(member.teamID).byeWeek) {
-            weeklyScoreMap.get(-2).push(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score);
-        }
-        else {
-            weeklyScoreMap.get(-2).push(null);
-        }
-        weeklyScoreMap.get(member.teamID).push(week.getTeam(member.teamID).score);
-        weeklyScoreMap.get(-1).push(week.getWeekAverage());
+function sleeper_request(t, d) {
+    return $.ajax({
+        type: t,
+        url: "js/proxy/sleeper_proxy.php",
+        dataType: "json",
+        data: d,
+        cache: false,
+        async: true,
     });
-    var datasets = [];
-    weeklyScoreMap.forEach(function (value, key) {
-        if (key === -1) {
-            datasets.push({
-                label: "League Average",
-                data: value,
-                borderColor: "lightgrey",
-                backgroundColor: "lightgrey",
-                pointBackgroundColor: "lightgrey",
-                fill: false,
-                lineTension: 0,
-            });
-        }
-        else if (key === -2) {
-            datasets.push({
-                label: "Opponent",
-                data: value,
-                borderColor: "darkgrey",
-                backgroundColor: "darkgrey",
-                pointBackgroundColor: "darkgrey",
-                fill: false,
-                lineTension: 0,
-            });
-        }
-        else {
-            var curTeam = league.getMember(key);
-            datasets.push({
-                label: curTeam.nameToString(),
-                data: value,
-                borderColor: getMemberColor(key),
-                backgroundColor: getMemberColor(key),
-                pointBackgroundColor: getMemberColor(key),
-                fill: false,
-                lineTension: 0,
-            });
-        }
-    });
-    if (window.memberLineChart === undefined) {
-        var ctx = document.getElementById("TEAM_LINE_CANVAS");
-        ctx.classList.toggle("team_weekly_line_chart", true);
-        var myWeekLabels = [];
-        for (var i = 1; i <= (league.weeks.length); i++) {
-            myWeekLabels.push("Week " + i);
-        }
-        window.memberLineChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: myWeekLabels,
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                title: {
-                    display: true,
-                    position: "top",
-                    text: "Points Scored By Week",
-                    fontSize: 20,
-                    fontColor: "#111",
-                },
-                scales: {
-                    yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                            }
-                        }],
-                    xAxes: [{
-                            ticks: {
-                                padding: 40,
-                            },
-                            gridLines: {
-                                display: false
-                            }
-                        }],
-                },
-                plugins: {
-                    deferred: {
-                        xOffset: 150,
-                        yOffset: "50%",
-                        delay: 500
-                    }
-                },
-                legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                        fontColor: "#333",
-                        fontSize: 12
-                    },
-                }
-            }
-        });
-        window.memberLineChart.render();
-    }
-    else {
-        window.memberLineChart.data.datasets = [];
-        window.memberLineChart.data.datasets = datasets;
-        window.memberLineChart.update();
-    }
-}
-function createLeagueWeeklyLineChart(league) {
-    if (window.leagueWeeklyLineChart === undefined) {
-        var ctx = document.getElementById("league_weekly_line_canvas").getContext("2d");
-        var dataSets = getLeagueLineData(league);
-        var myWeekLabels = [];
-        for (var i = 1; i <= (league.weeks.length); i++) {
-            myWeekLabels.push("Week " + i);
-        }
-        window.leagueWeeklyLineChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: myWeekLabels,
-                datasets: dataSets
-            },
-            backgroundColor: "#DCDCDC",
-            options: {
-                tooltips: {
-                    mode: "point"
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                showLines: false,
-                title: {
-                    display: true,
-                    position: "top",
-                    text: "Points Scored By Week",
-                    fontSize: 20,
-                    fontColor: "#111",
-                },
-                scales: {
-                    yAxes: [{
-                            ticks: {
-                                padding: 40,
-                            }
-                        }],
-                    xAxes: [{
-                            ticks: {
-                                padding: 40,
-                            },
-                            gridLines: {
-                                display: false
-                            }
-                        }],
-                },
-                plugins: {
-                    deferred: {
-                        xOffset: 150,
-                        yOffset: "50%",
-                        delay: 500
-                    }
-                },
-                legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                        fontColor: "#333",
-                        fontSize: 12
-                    },
-                }
-            }
-        });
-        window.leagueWeeklyLineChart.render();
-    }
-    else {
-        window.leagueWeeklyLineChart.data.datasets = window.leagueWeeklyLineChart.data.datasets;
-        window.leagueWeeklyLineChart.update();
-    }
-}
-function getLeagueLineData(league) {
-    var weeklyScoreMap = new Map();
-    weeklyScoreMap.set(-1, []);
-    league.members.forEach(function (member) {
-        weeklyScoreMap.set(member.teamID, []);
-    });
-    league.weeks.forEach(function (week) {
-        weeklyScoreMap.get(-1).push(week.getWeekAverage());
-        week.matchups.forEach(function (matchup) {
-            weeklyScoreMap.get(matchup.home.teamID).push(roundToHundred(matchup.home.score));
-            if (!matchup.byeWeek) {
-                weeklyScoreMap.get(matchup.away.teamID).push(roundToHundred(matchup.away.score));
-            }
-        });
-    });
-    var datasets = [];
-    weeklyScoreMap.forEach(function (value, key) {
-        if (key !== -1) {
-            var curTeam = league.getMember(key);
-            datasets.push({
-                fill: false,
-                data: value,
-                borderColor: getMemberColor(key),
-                backgroundColor: getMemberColor(key),
-                pointBackgroundColor: getMemberColor(key),
-                lineTension: 0,
-                label: curTeam.nameToString()
-            });
-        }
-    });
-    return datasets;
-}
-function createTeamRadarChart(league, member) {
-    if (window.myRadarChart != undefined) {
-        window.myRadarChart.data.datasets = [];
-        window.myRadarChart.data.datasets.push({
-            label: "Average",
-            fill: true,
-            backgroundColor: "rgba(179,181,198,0.2)",
-            borderColor: "rgba(179,181,198,1)",
-            pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(179,181,198,1)",
-            data: league.getLeagueAveragePointsPerPosition()
-        });
-        window.myRadarChart.data.datasets.push({
-            label: member.nameToString(),
-            fill: true,
-            backgroundColor: "rgba(255,99,132,0.2)",
-            borderColor: "rgba(255,99,132,1)",
-            pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(255,99,132,1)",
-            data: league.getTeamAveragePointsPerPosition(member.teamID)
-        });
-        window.myRadarChart.update();
-    }
-    else {
-        window.myRadarChart = new Chart(document.getElementById("radar_chart_canvas").getContext('2d'), {
-            type: 'radar',
-            data: {
-                labels: league.settings.positions,
-                datasets: [
-                    {
-                        label: "Average",
-                        fill: true,
-                        backgroundColor: "rgba(179,181,198,0.2)",
-                        borderColor: "rgba(179,181,198,1)",
-                        pointBorderColor: "#fff",
-                        pointBackgroundColor: "rgba(179,181,198,1)",
-                        data: league.getLeagueAveragePointsPerPosition()
-                    }, {
-                        label: member.nameToString(),
-                        fill: true,
-                        backgroundColor: "rgba(255,99,132,0.2)",
-                        borderColor: "rgba(255,99,132,1)",
-                        pointBorderColor: "#fff",
-                        pointBackgroundColor: "rgba(255,99,132,1)",
-                        data: league.getTeamAveragePointsPerPosition(member.teamID)
-                    }
-                ]
-            },
-            options: {
-                title: {
-                    display: false,
-                    text: 'Point Per Position',
-                    position: 'bottom'
-                },
-                legend: {
-                    position: 'bottom'
-                },
-                scale: {
-                    ticks: {
-                        beginAtZero: true,
-                        max: 1,
-                        min: 0,
-                        stepSize: .25,
-                        display: false,
-                    }
-                }
-            }
-        });
-        window.myRadarChart.render();
-    }
 }
 function setPage(league) {
     document.getElementById("league_name_header").innerHTML = league.leagueName;
@@ -1278,7 +592,7 @@ var League = (function () {
             week.matchups.forEach(function (matchup) {
                 var homeRoster = [];
                 matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(function (player) {
-                    homeRoster.push(new ESPN_Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                    homeRoster.push(new ESPNPlayer(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
                 var awayTeamId = -1;
                 var away;
@@ -1286,7 +600,7 @@ var League = (function () {
                     var awayRoster_1 = [];
                     awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(function (player) {
-                        awayRoster_1.push(new ESPN_Player(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                        awayRoster_1.push(new ESPNPlayer(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                     });
                     away = new ESPNTeam(matchup.away.teamID, awayRoster_1, object.settings.activeLineupSlots, matchup.home.teamID);
                 }
@@ -1858,7 +1172,7 @@ var Matchup = (function () {
         this.home = home;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
-        if (away == undefined || away == null) {
+        if (away === undefined || away === null) {
             this.byeWeek = true;
             this.isUpset = false;
             this.isTie = false;
@@ -1905,29 +1219,29 @@ var Matchup = (function () {
     };
     Matchup.prototype.hasTeam = function (teamID) {
         if (this.byeWeek !== true) {
-            if (this.home.teamID == teamID || this.away.teamID == teamID) {
+            if (this.home.teamID === teamID || this.away.teamID === teamID) {
                 return true;
             }
         }
         else {
-            if (this.home.teamID == teamID) {
+            if (this.home.teamID === teamID) {
                 return true;
             }
         }
     };
     Matchup.prototype.getTeam = function (teamID) {
-        if (this.home.teamID == teamID) {
+        if (this.home.teamID === teamID) {
             return this.home;
         }
-        else if (this.away.teamID == teamID) {
+        else if (this.away.teamID === teamID) {
             return this.away;
         }
     };
     Matchup.prototype.getOpponent = function (teamID) {
-        if (this.home.teamID == teamID && this.byeWeek == false) {
+        if (this.home.teamID === teamID && this.byeWeek === false) {
             return this.away;
         }
-        else if (this.away.teamID == teamID) {
+        else if (this.away.teamID === teamID) {
             return this.home;
         }
         else {
@@ -1970,24 +1284,24 @@ var Matchup = (function () {
 }());
 var PositionalStats = (function () {
     function PositionalStats() {
-        this.qb_points = 0;
-        this.rb_points = 0;
-        this.wr_points = 0;
-        this.te_points = 0;
-        this.k_points = 0;
-        this.d_st_points = 0;
-        this.qb_potential_points = 0;
-        this.rb_potential_points = 0;
-        this.wr_potential_points = 0;
-        this.te_potential_points = 0;
-        this.k_potential_points = 0;
-        this.d_st_potential_points = 0;
+        this.qbPoints = 0;
+        this.rbPoints = 0;
+        this.wrPoints = 0;
+        this.tePoints = 0;
+        this.kPoints = 0;
+        this.defPoints = 0;
+        this.qbPotentialPoints = 0;
+        this.rbPotentialPoints = 0;
+        this.wrPotentialPoints = 0;
+        this.tePotentialPoints = 0;
+        this.kPotentialPoints = 0;
+        this.defPotentialPoints = 0;
     }
     PositionalStats.prototype.getPositionalScores = function () {
-        return [this.qb_points, this.rb_points, this.wr_points, this.te_points, this.k_points, this.d_st_points];
+        return [this.qbPoints, this.rbPoints, this.wrPoints, this.tePoints, this.kPoints, this.defPoints];
     };
     PositionalStats.prototype.getPositionalPotentialScores = function () {
-        return [this.qb_points, this.rb_points, this.wr_points, this.te_points, this.k_points, this.d_st_points];
+        return [this.qbPoints, this.rbPoints, this.wrPoints, this.tePoints, this.kPoints, this.defPoints];
     };
     return PositionalStats;
 }());
@@ -2093,7 +1407,7 @@ var Stats = (function () {
         this.averageMOV = 0;
     }
     Stats.prototype.getWinPct = function () {
-        if (this.wins == 0) {
+        if (this.wins === 0) {
             return 0.00;
         }
         else {
@@ -2101,7 +1415,7 @@ var Stats = (function () {
         }
     };
     Stats.prototype.getPowerWinPct = function () {
-        if (this.powerWins == 0) {
+        if (this.powerWins === 0) {
             return 0.00;
         }
         else {
@@ -2109,7 +1423,7 @@ var Stats = (function () {
         }
     };
     Stats.prototype.getPotentialPowerWinPct = function () {
-        if (this.potentialPowerWins == 0) {
+        if (this.potentialPowerWins === 0) {
             return 0.00;
         }
         else {
@@ -2145,13 +1459,13 @@ var Week = (function () {
         var finish = 1;
         var score = this.getTeam(teamID).score;
         this.matchups.forEach(function (matchup) {
-            if (matchup.home.teamID != teamID) {
+            if (matchup.home.teamID !== teamID) {
                 if (matchup.home.score > score) {
                     finish += 1;
                 }
             }
             if (!matchup.byeWeek) {
-                if (matchup.away.score > score && matchup.away.teamID != teamID) {
+                if (matchup.away.score > score && matchup.away.teamID !== teamID) {
                     finish += 1;
                 }
             }
@@ -2251,8 +1565,8 @@ var ESPNMember = (function () {
     };
     return ESPNMember;
 }());
-var ESPN_Player = (function () {
-    function ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
+var ESPNPlayer = (function () {
+    function ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eligibleSlots = eligibleSlots;
@@ -2264,16 +1578,16 @@ var ESPN_Player = (function () {
         this.lineupSlotID = lineupSlotID;
         this.weekNumber = weekNumber;
     }
-    ESPN_Player.prototype.isEligible = function (slot) {
+    ESPNPlayer.prototype.isEligible = function (slot) {
         var isEligible = false;
         this.eligibleSlots.forEach(function (eligibleSlot) {
-            if (eligibleSlot == slot) {
+            if (eligibleSlot === slot) {
                 isEligible = true;
             }
         });
         return isEligible;
     };
-    return ESPN_Player;
+    return ESPNPlayer;
 }());
 var ESPNTeam = (function () {
     function ESPNTeam(teamID, players, activeLineupSlots, opponentID) {
@@ -2457,6 +1771,53 @@ var ESPNTeam = (function () {
         return [gutPlayers, satPlayers];
     };
     return ESPNTeam;
+}());
+var PowerStats = (function () {
+    function PowerStats(teamID, weekNumber, pf, pp, projected) {
+        this.teamID = teamID;
+        this.weekNumber = weekNumber;
+        this.wins = 0;
+        this.losses = 0;
+        this.ties = 0;
+        this.pf = pf;
+        this.projected = projected;
+        this.pp = pp;
+    }
+    return PowerStats;
+}());
+var WeeklyPowerRanks = (function () {
+    function WeeklyPowerRanks(weekNumber, isPlayoffs) {
+        this.powerStats = new Map();
+        this.weekNumber = weekNumber;
+        this.isPlayoffs = isPlayoffs;
+    }
+    WeeklyPowerRanks.prototype.addMatchup = function (matchup) {
+        var homeTeam = matchup.home;
+        this.powerStats.set(homeTeam.teamID, new PowerStats(homeTeam.teamID, matchup.weekNumber, homeTeam.score, homeTeam.projectedScore, homeTeam.potentialPoints));
+        if (!matchup.byeWeek) {
+            var awayTeam = matchup.away;
+            this.powerStats.set(awayTeam.teamID, new PowerStats(awayTeam.teamID, matchup.weekNumber, awayTeam.score, awayTeam.projectedScore, awayTeam.potentialPoints));
+        }
+    };
+    WeeklyPowerRanks.prototype.setRanks = function () {
+        var _this = this;
+        this.powerStats.forEach(function (powerStat) {
+            _this.powerStats.forEach(function (innerStat) {
+                if (powerStat.teamID !== innerStat.teamID) {
+                    if (powerStat.pf > innerStat.pf) {
+                        powerStat.wins += 1;
+                    }
+                    else if (powerStat.pf < innerStat.pf) {
+                        powerStat.losses += 1;
+                    }
+                    else {
+                        powerStat.ties += 1;
+                    }
+                }
+            });
+        });
+    };
+    return WeeklyPowerRanks;
 }());
 var SleeperMember = (function () {
     function SleeperMember(memberID, memberName, teamName, teamAvatar) {
@@ -2717,198 +2078,242 @@ var SleeperTeam = (function () {
     };
     return SleeperTeam;
 }());
-var Sleeper_Week_Stats = (function () {
-    function Sleeper_Week_Stats(projected_stats, stats, week_number) {
+var SleeperWeekStats = (function () {
+    function SleeperWeekStats(projectedStats, stats, weekNumber) {
         this.stats = stats;
-        this.projected_stats = projected_stats;
-        this.week_number = week_number;
-    }
-    Sleeper_Week_Stats.prototype.calculatePlayerScore = function (settings, player) {
-        var player_stats = this.stats[player.playerID];
-        if (player_stats != undefined) {
-            Object.keys(player_stats).forEach(function (stat_name) {
-                if (settings.hasOwnProperty(stat_name)) {
-                    player.score += settings[stat_name] * player_stats[stat_name];
-                }
-            });
-        }
-    };
-    Sleeper_Week_Stats.prototype.calculateProjectedPlayerScore = function (settings, player) {
-        var player_projected_stats = this.projected_stats[player.playerID];
-        if (player_projected_stats != undefined) {
-            Object.keys(player_projected_stats).forEach(function (stat_name) {
-                if (settings.hasOwnProperty(stat_name)) {
-                    player.projectedScore += settings[stat_name] * player_projected_stats[stat_name];
-                }
-            });
-        }
-    };
-    return Sleeper_Week_Stats;
-}());
-var PowerStats = (function () {
-    function PowerStats(teamID, weekNumber, pf, pp, projected) {
-        this.teamID = teamID;
+        this.projectedStats = projectedStats;
         this.weekNumber = weekNumber;
-        this.wins = 0;
-        this.losses = 0;
-        this.ties = 0;
-        this.pf = pf;
-        this.projected = projected;
-        this.pp = pp;
     }
-    return PowerStats;
-}());
-var WeeklyPowerRanks = (function () {
-    function WeeklyPowerRanks(weekNumber, isPlayoffs) {
-        this.powerStats = new Map();
-        this.weekNumber = weekNumber;
-        this.isPlayoffs = isPlayoffs;
-    }
-    WeeklyPowerRanks.prototype.addMatchup = function (matchup) {
-        var homeTeam = matchup.home;
-        this.powerStats.set(homeTeam.teamID, new PowerStats(homeTeam.teamID, matchup.weekNumber, homeTeam.score, homeTeam.projectedScore, homeTeam.potentialPoints));
-        if (!matchup.byeWeek) {
-            var awayTeam = matchup.away;
-            this.powerStats.set(awayTeam.teamID, new PowerStats(awayTeam.teamID, matchup.weekNumber, awayTeam.score, awayTeam.projectedScore, awayTeam.potentialPoints));
-        }
-    };
-    WeeklyPowerRanks.prototype.setRanks = function () {
-        var _this = this;
-        this.powerStats.forEach(function (powerStat) {
-            _this.powerStats.forEach(function (innerStat) {
-                if (powerStat.teamID != innerStat.teamID) {
-                    if (powerStat.pf > innerStat.pf) {
-                        powerStat.wins += 1;
-                    }
-                    else if (powerStat.pf < innerStat.pf) {
-                        powerStat.losses += 1;
-                    }
-                    else {
-                        powerStat.ties += 1;
-                    }
+    SleeperWeekStats.prototype.calculatePlayerScore = function (settings, player) {
+        var playerStats = this.stats[player.playerID];
+        if (playerStats !== undefined) {
+            Object.keys(playerStats).forEach(function (statName) {
+                if (settings.hasOwnProperty(statName)) {
+                    player.score += settings[statName] * playerStats[statName];
                 }
             });
-        });
+        }
     };
-    return WeeklyPowerRanks;
+    SleeperWeekStats.prototype.calculateProjectedPlayerScore = function (settings, player) {
+        var playerProjectedStats = this.projectedStats[player.playerID];
+        if (playerProjectedStats !== undefined) {
+            Object.keys(playerProjectedStats).forEach(function (statName) {
+                if (settings.hasOwnProperty(statName)) {
+                    player.projectedScore += settings[statName] * playerProjectedStats[statName];
+                }
+            });
+        }
+    };
+    return SleeperWeekStats;
 }());
-function createLeagueStatsTable(league) {
-    var tableBody = document.getElementById('league_stats_table_body');
-    league.members.forEach(function (member) {
-        tableBody.appendChild(createLeagueStatsTableRow(member));
-    });
+function roundToHundred(x) {
+    return Math.round(x * 100) / 100;
 }
-function createLeagueStatsTableRow(member) {
-    var row = document.createElement('tr');
-    var rankCell = document.createElement('td');
-    var teamNameCell = document.createElement('td');
-    var recordCell = document.createElement('td');
-    var pfCell = document.createElement('td');
-    var paCell = document.createElement('td');
-    var ppCell = document.createElement('td');
-    var pctCell = document.createElement('td');
-    var pctText = "%";
-    rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
-    pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
-    paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
-    ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
-    recordCell.appendChild(document.createTextNode(member.recordToString()));
-    teamNameCell.appendChild(document.createTextNode(member.nameToString()));
-    if (member.stats.getWinPct() == 0 || member.stats.getWinPct() == 1) {
-        pctText = ".00" + pctText;
+function roundToTen(x) {
+    return Math.round(x * 10) / 10;
+}
+function getColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,60%)"].join("");
+}
+function getLightColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,95%)"].join("");
+}
+function getLightCardColor(rank, outOf) {
+    return getLightColor(rank / outOf);
+}
+function getCardColor(rank, outOf) {
+    return getColor(rank / outOf);
+}
+function getInverseCardColor(rank, outOf) {
+    return getColor((1 + (outOf - rank)) / outOf);
+}
+function getTextColor(rank, outOf) {
+    var o = rank / outOf;
+    if (o < .75) {
+        return "black";
     }
-    pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
-    row.appendChild(rankCell);
-    row.appendChild(teamNameCell);
-    row.appendChild(recordCell);
-    row.appendChild(pctCell);
-    row.appendChild(pfCell);
-    row.appendChild(paCell);
-    row.appendChild(ppCell);
-    return row;
+    else {
+        return "white";
+    }
 }
-function updateMemberWeekTable(league, member) {
-    $('#member_week_table_body').empty();
-    var weekTable = document.getElementById('memberWeekTable');
-    var tableBody = document.getElementById('member_week_table_body');
-    league.weeks.forEach(function (week) {
-        var scoreColor = getLightCardColor(week.getTeamScoreFinish(member.teamID), league.members.length);
-        var curMatchup = week.getTeamMatchup(member.teamID);
-        var curTeam = week.getTeam(member.teamID);
-        var row = document.createElement('tr');
-        var weekCell = document.createElement('td');
-        var scoreCell = document.createElement('td');
-        var vsCell = document.createElement('td');
-        var marginCell = document.createElement('td');
-        weekCell.appendChild(document.createTextNode(week.weekNumber.toString()));
-        scoreCell.appendChild(document.createTextNode(roundToHundred(curTeam.score).toString()));
-        scoreCell.style.background = scoreColor;
-        weekCell.style.background = scoreColor;
-        vsCell.style.background = scoreColor;
-        if (!curMatchup.byeWeek) {
-            vsCell.appendChild(document.createTextNode(league.getMember(curMatchup.getOpponent(member.teamID).teamID).teamAbbrev));
-            marginCell.appendChild(document.createTextNode(roundToHundred(curTeam.score - curMatchup.getOpponent(member.teamID).score).toString()));
+function ordinal_suffix_of(i) {
+    var j = i % 10;
+    var k = i % 100;
+    if (j === 1 && k !== 11) {
+        return i + "st";
+    }
+    if (j === 2 && k !== 12) {
+        return i + "nd";
+    }
+    if (j === 3 && k !== 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+function convertSleeperRoster(rosterPositions, numIR, numTaxi) {
+    var activeCount = new Map();
+    var benchCount = new Map();
+    var activeLineupSlots = [];
+    var benchSlots = [];
+    var active = rosterPositions.filter(function (it) {
+        return it = "BN";
+    }).map(function (slot) { return positionToInt.get(slot); });
+    active.forEach(function (slot) {
+        if (activeCount.has(slot)) {
+            var newCount = activeCount.get(slot) + 1;
+            activeCount.set(slot, newCount);
         }
         else {
-            vsCell.appendChild(document.createTextNode("N/A"));
-            marginCell.appendChild(document.createTextNode("N/A"));
+            activeCount.set(slot, 1);
         }
-        if (!curMatchup.byeWeek) {
-            marginCell.style.background = getLightCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2);
-        }
-        row.appendChild(weekCell);
-        row.appendChild(scoreCell);
-        row.appendChild(vsCell);
-        row.appendChild(marginCell);
-        tableBody.appendChild(row);
     });
-    weekTable.appendChild(tableBody);
-}
-function createMemberWeekTable(league) {
-    var weekTable = document.getElementById('memberWeekTable');
-    var tableBody = document.getElementById('member_week_table_body');
-    for (var i = 1; i <= league.settings.regularSeasonLength; i++) {
-        var row = document.createElement('tr');
-        var weekCell = document.createElement('td');
-        var scoreCell = document.createElement('td');
-        var vsCell = document.createElement('td');
-        var marginCell = document.createElement('td');
-        marginCell.id = "week_" + i + "_margin";
-        weekCell.appendChild(document.createTextNode(i.toString()));
+    var bench = rosterPositions.filter(function (it) {
+        return it === "BN";
+    }).map(function (slot) { return positionToInt.get(slot); });
+    for (var i = 0; i < numIR; i++) {
+        bench.push(positionToInt.get("IR"));
     }
-}
-function createPowerRankTable(league) {
-    var tableBody = document.getElementById("power_rank_table_body");
-    league.members.forEach(function (member) {
-        var row = document.createElement('tr');
-        var teamName = document.createElement('td');
-        var powerRank = document.createElement('td');
-        var powerRecord = document.createElement('td');
-        var winPct = document.createElement('td');
-        var potentialRecord = document.createElement('td');
-        var potentialWinPct = document.createElement('td');
-        var image = document.createElement('img');
-        image.src = member.logoURL;
-        image.style.width = "25px";
-        image.style.height = "25px";
-        image.style.borderRadius = "25px";
-        image.addEventListener("error", fixNoImage);
-        image.style.marginRight = "8px";
-        teamName.appendChild(image);
-        teamName.appendChild(document.createTextNode(member.nameToString()));
-        powerRank.innerText = member.stats.powerRank.toString();
-        powerRecord.innerText = member.powerRecordToString();
-        potentialRecord.innerText = member.potentialPowerRecordToString();
-        winPct.innerText = member.stats.getPowerWinPct() + "%";
-        potentialWinPct.innerText = member.stats.getPotentialPowerWinPct() + "%";
-        row.appendChild(powerRank);
-        row.appendChild(teamName);
-        row.appendChild(powerRecord);
-        row.appendChild(winPct);
-        row.appendChild(potentialRecord);
-        row.appendChild(potentialWinPct);
-        tableBody.appendChild(row);
+    for (var i = 0; i < numTaxi; i++) {
+        bench.push(positionToInt.get("TAXI"));
+    }
+    bench.forEach(function (slot) {
+        if (benchCount.has(slot)) {
+            var newCount = benchCount.get(slot) + 1;
+            benchCount.set(slot, newCount);
+        }
+        else {
+            benchCount.set(slot, 1);
+        }
     });
+    activeCount.forEach(function (value, key) {
+        activeLineupSlots.push([key, value]);
+    });
+    benchCount.forEach(function (value, key) {
+        benchSlots.push([key, value]);
+    });
+    return [activeLineupSlots, benchSlots];
+}
+function makeSleeperPlayers(players) {
+    var sleeperPlayers = [];
+    players.forEach(function (player) {
+        sleeperPlayers.push(player);
+    });
+    return sleeperPlayers;
+}
+function getSleeperWeekStats(numWeeks) {
+    var statPromises = [];
+    for (var i = 1; i <= numWeeks; i++) {
+        statPromises.push(makeRequest("https://api.sleeper.app/v1/stats/nfl/regular/2019/" + i));
+    }
+    var projectionPromises = [];
+    for (var i = 1; i <= numWeeks; i++) {
+        projectionPromises.push(makeRequest("https://api.sleeper.app/v1/projections/nfl/regular/2019/" + i));
+    }
+    var allPromises = statPromises.concat(projectionPromises);
+    return Promise.all(allPromises).then(function (result) {
+        var sleeperStats = [];
+        var stats = result.slice(0, statPromises.length).map(function (obj) {
+            return obj.response;
+        });
+        var projections = result.slice(statPromises.length, allPromises.length).map(function (obj) {
+            return obj.response;
+        });
+        for (var i = 0; i < stats.length; i++) {
+            sleeperStats.push(new SleeperWeekStats(projections[i], stats[i], i + 1));
+        }
+        return sleeperStats;
+    });
+}
+function assignSleeperPlayerAttributes(player, playerAttributes) {
+    player.firstName = playerAttributes.first_name;
+    player.lastName = playerAttributes.last_name;
+    player.position = playerAttributes.position;
+    player.playerID = player.playerID;
+    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
+    player.realTeamID = playerAttributes.team;
+    player.espnID = playerAttributes.espn_id;
+}
+var eligibleSlotMap = new Map([
+    [0, [0, 1, 7, 20, 21]],
+    [1, [1, 7, 20, 21]],
+    [2, [2, 3, 7, 20, 21, 23]],
+    [4, [4, 3, 5, 7, 20, 21, 23]],
+    [6, [6, 5, 7, 20, 21, 23]],
+    [8, [8, 15, 20, 21]],
+    [9, [9, 15, 20, 21]],
+    [10, [10, 15, 20, 21]],
+    [11, [11, 15, 20, 21]],
+    [12, [12, 15, 20, 21]],
+    [13, [13, 15, 20, 21]],
+    [14, [14, 15, 20, 21]],
+    [16, [16, 20]],
+    [17, [17, 20, 21]],
+    [18, [18, 20, 21]],
+    [19, [19, 20]],
+]);
+var intToPosition = new Map([
+    [0, "QB"],
+    [1, "TQB"],
+    [2, "RB"],
+    [3, "RB/WR"],
+    [4, "WR"],
+    [5, "WR/TE"],
+    [6, "TE"],
+    [7, "OP"],
+    [8, "DT"],
+    [9, "DE"],
+    [10, "LB"],
+    [11, "DL"],
+    [12, "CB"],
+    [13, "S"],
+    [14, "DB"],
+    [15, "DP"],
+    [16, "DEF"],
+    [17, "K"],
+    [18, "P"],
+    [19, "HC"],
+    [20, "BN"],
+    [21, "IR"],
+    [23, "FLEX"],
+    [88, "TAXI"],
+]);
+var positionToInt = new Map([
+    ["QB", 0],
+    ["TQB", 1],
+    ["RB", 2],
+    ["RB/WR", 3],
+    ["WR", 4],
+    ["WR/TE", 5],
+    ["TE", 6],
+    ["SUPER_FLEX", 7],
+    ["OP", 7],
+    ["DT", 8],
+    ["DE", 9],
+    ["LB", 10],
+    ["DL", 11],
+    ["CB", 12],
+    ["S", 13],
+    ["DB", 14],
+    ["DP", 15],
+    ["DEF", 16],
+    ["K", 17],
+    ["P", 18],
+    ["HC", 19],
+    ["BN", 20],
+    ["IR", 21],
+    ["FLEX", 23],
+    ["TAXI", 88],
+]);
+function findOpponent(teams, rosterId, matchupId) {
+    var opponentRosterId = -1;
+    teams.forEach(function (team) {
+        if (team.matchup_id === matchupId && team.roster_id !== rosterId) {
+            opponentRosterId = team.roster_id;
+        }
+    });
+    return opponentRosterId;
 }
 var SEASON_PORTION;
 (function (SEASON_PORTION) {
@@ -2947,7 +2352,7 @@ var POSITION;
     POSITION["WR"] = "WR";
     POSITION["TE"] = "TE";
     POSITION["K"] = "K";
-    POSITION["D_ST"] = "DEF";
+    POSITION["DEF"] = "DEF";
     POSITION["DL"] = "DL";
     POSITION["DT"] = "DT";
     POSITION["LB"] = "LB";
@@ -2971,7 +2376,7 @@ function getPosition(eligibleSlots) {
         return POSITION.WR;
     }
     else if (eligibleSlots[0] === 16) {
-        return POSITION.D_ST;
+        return POSITION.DEF;
     }
     else if (eligibleSlots[0] === 17) {
         return POSITION.K;
@@ -3073,7 +2478,7 @@ function getLineupSlot(lineupSlotID) {
             return "HC";
         }
         case 20: {
-            return "BENCH";
+            return "BN";
         }
         case 21: {
             return "IR";
@@ -3357,72 +2762,6 @@ function getRealTeamInitials(realteamID) {
     }
     return team;
 }
-function espn_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "js/proxy/espn_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}
-function sleeper_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "js/proxy/sleeper_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}
-function roundToHundred(x) {
-    return Math.round(x * 100) / 100;
-}
-function roundToTen(x) {
-    return Math.round(x * 10) / 10;
-}
-function getColor(value) {
-    var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,60%)"].join("");
-}
-function getLightColor(value) {
-    var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,95%)"].join("");
-}
-function getLightCardColor(rank, outOf) {
-    return getLightColor(rank / outOf);
-}
-function getCardColor(rank, outOf) {
-    return getColor(rank / outOf);
-}
-function getInverseCardColor(rank, outOf) {
-    return getColor((1 + (outOf - rank)) / outOf);
-}
-function getTextColor(rank, outOf) {
-    var o = rank / outOf;
-    if (o < .75) {
-        return "black";
-    }
-    else {
-        return "white";
-    }
-}
-function ordinal_suffix_of(i) {
-    var j = i % 10;
-    var k = i % 100;
-    if (j === 1 && k !== 11) {
-        return i + "st";
-    }
-    if (j === 2 && k !== 12) {
-        return i + "nd";
-    }
-    if (j === 3 && k !== 13) {
-        return i + "rd";
-    }
-    return i + "th";
-}
 function updateTeamPill(league, teamID) {
     var member = league.getMember(teamID);
     updateTeamCard(league, member);
@@ -3705,5 +3044,669 @@ function fixNoImage() {
     this.src = "assets/user1.png";
     this.style.backgroundColor = "white";
     this.onerror = null;
+}
+function createTeamBarChart(league, member) {
+    if (window.memberBarChart !== undefined) {
+        window.memberBarChart.data.datasets = [];
+        window.memberBarChart.data.datasets.push({
+            label: member.nameToString(),
+            backgroundColor: getMemberColor(member.teamID),
+            data: league.getMemberTotalPointsPerPosition(member.teamID)
+        });
+        window.memberBarChart.data.datasets.push({
+            label: "All Opponents",
+            backgroundColor: "lightgrey",
+            data: league.getLeaguePointsPerPosition()
+        });
+        window.memberBarChart.data.datasets.push({
+            label: "League Average",
+            backgroundColor: "darkgrey",
+            data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
+        });
+        window.memberBarChart.update();
+    }
+    else {
+        var ctx = document.getElementById("member_bar_chart_canvas").getContext("2d");
+        var chartData = {
+            labels: league.settings.getPositions(),
+            datasets: [{
+                    label: member.nameToString(),
+                    backgroundColor: getMemberColor(member.teamID),
+                    data: league.getMemberTotalPointsPerPosition(member.teamID)
+                }, {
+                    label: "All Opponents",
+                    backgroundColor: "lightgrey",
+                    data: league.getLeaguePointsPerPosition()
+                }, {
+                    label: "League Average",
+                    backgroundColor: "darkgrey",
+                    data: league.getMemberOpponentTotalPointsPerPosition(member.teamID)
+                }]
+        };
+        window.memberBarChart = new Chart(ctx, {
+            type: "bar",
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: {
+                    display: true,
+                    position: "top",
+                    text: "Total points by position",
+                    fontSize: 20,
+                    fontColor: "#111",
+                },
+                scales: {
+                    yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                            }
+                        }]
+                },
+                plugins: {
+                    deferred: {
+                        xOffset: 150,
+                        yOffset: "50%",
+                        delay: 500
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#333",
+                        fontSize: 12
+                    },
+                }
+            }
+        });
+        window.memberBarChart.render();
+    }
+}
+function createLeagueStackedGraph(league) {
+    if (window.leagueStackedChart !== undefined) {
+        window.leagueStackedChart.datasets = [];
+        window.leagueStackedChart.datasets = getLeagueStackedDatasets(league);
+        window.leagueStackedChart.update();
+    }
+    else {
+        var ctx = document.getElementById("league_stacked_graph_canvas").getContext("2d");
+        window.leagueStackedChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: makeMemberLabels(league),
+                datasets: getLeagueStackedDatasets(league),
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                    fontColor: "#333",
+                    fontSize: 16
+                }
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: {
+                    display: true,
+                    position: "top",
+                    text: "Total Points Scored",
+                    fontSize: 36,
+                    fontColor: "#111",
+                },
+                tooltips: {
+                    mode: "index",
+                    intersect: false
+                },
+                scales: {
+                    xAxes: [{
+                            stacked: true
+                        }],
+                    yAxes: [{
+                            stacked: true,
+                            beginAtZero: true,
+                        }],
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#333",
+                        fontSize: 16
+                    }
+                }
+            },
+        });
+        window.leagueStackedChart.render();
+    }
+}
+function getLeagueStackedDatasets(league) {
+    var datasets = [];
+    var backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
+    var positions = league.settings.getPositions();
+    var labels = [];
+    var increment = 0;
+    positions.forEach(function (position) {
+        var dataset = {
+            label: position,
+            backgroundColor: backgroundColors[increment],
+            data: []
+        };
+        datasets.push(dataset);
+        increment += 1;
+    });
+    league.members.forEach(function (member) {
+        labels.push(member.nameToString);
+        var positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
+        for (var i = 0; i < datasets.length; i++) {
+            datasets[i].data.push(positionPoints[i]);
+        }
+    });
+    return datasets;
+}
+function makeMemberLabels(league) {
+    var labels = [];
+    league.members.forEach(function (member) {
+        labels.push(member.nameToString());
+    });
+    return labels;
+}
+function createMainWeeklyLineChart(league) {
+    window.myChart.destroy();
+    var ctx = document.getElementById("GRAPHCANVAS");
+    ctx.classList.toggle("mainChart", true);
+    var myWeekLabels = [];
+    for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
+        myWeekLabels.push("Week " + i);
+    }
+    var weeklyScoreMap = new Map();
+    weeklyScoreMap.set(-1, []);
+    league.members.forEach(function (member) {
+        weeklyScoreMap.set(member.teamID, []);
+    });
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        weeklyScoreMap.get(-1).push(week.getWeekAverage());
+        week.matchups.forEach(function (matchup) {
+            weeklyScoreMap.get(matchup.home.teamID).push(matchup.home.score);
+            if (!matchup.byeWeek) {
+                weeklyScoreMap.get(matchup.away.teamID).push(matchup.away.score);
+            }
+        });
+    });
+    var datasets = [];
+    weeklyScoreMap.forEach(function (value, key) {
+        if (key === -1) {
+            datasets.push({
+                label: "League Average",
+                data: value,
+                borderColor: "black",
+                backGroundColor: "black",
+                fill: false,
+                lineTension: 0,
+            });
+        }
+        else {
+            var curTeam = league.getMember(key);
+            var myColor = getMemberColor(key);
+            datasets.push({
+                label: curTeam.nameToString(),
+                data: value,
+                borderColor: myColor,
+                backGroundColor: myColor,
+                fill: false,
+                lineTension: 0,
+            });
+        }
+    });
+    window.myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: myWeekLabels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            title: {
+                display: true,
+                position: "top",
+                text: "Points Scored By Week",
+                fontSize: 20,
+                fontColor: "#111",
+            },
+            scales: {
+                yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                        }
+                    }]
+            },
+            plugins: {
+                deferred: {
+                    xOffset: 150,
+                    yOffset: "50%",
+                    delay: 500
+                },
+                datalabels: {
+                    formatter: function () {
+                        return "";
+                    },
+                }
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                    fontColor: "#333",
+                    fontSize: 12
+                },
+            }
+        }
+    });
+}
+function createMemberWeeklyLineChart(league, member) {
+    var weeklyScoreMap = new Map();
+    weeklyScoreMap.set(-1, []);
+    weeklyScoreMap.set(-2, []);
+    weeklyScoreMap.set(member.teamID, []);
+    league.weeks.forEach(function (week) {
+        if (!week.getTeamMatchup(member.teamID).byeWeek) {
+            weeklyScoreMap.get(-2).push(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score);
+        }
+        else {
+            weeklyScoreMap.get(-2).push(null);
+        }
+        weeklyScoreMap.get(member.teamID).push(week.getTeam(member.teamID).score);
+        weeklyScoreMap.get(-1).push(week.getWeekAverage());
+    });
+    var datasets = [];
+    weeklyScoreMap.forEach(function (value, key) {
+        if (key === -1) {
+            datasets.push({
+                label: "League Average",
+                data: value,
+                borderColor: "lightgrey",
+                backgroundColor: "lightgrey",
+                pointBackgroundColor: "lightgrey",
+                fill: false,
+                lineTension: 0,
+            });
+        }
+        else if (key === -2) {
+            datasets.push({
+                label: "Opponent",
+                data: value,
+                borderColor: "darkgrey",
+                backgroundColor: "darkgrey",
+                pointBackgroundColor: "darkgrey",
+                fill: false,
+                lineTension: 0,
+            });
+        }
+        else {
+            var curTeam = league.getMember(key);
+            datasets.push({
+                label: curTeam.nameToString(),
+                data: value,
+                borderColor: getMemberColor(key),
+                backgroundColor: getMemberColor(key),
+                pointBackgroundColor: getMemberColor(key),
+                fill: false,
+                lineTension: 0,
+            });
+        }
+    });
+    if (window.memberLineChart === undefined) {
+        var ctx = document.getElementById("TEAM_LINE_CANVAS");
+        ctx.classList.toggle("team_weekly_line_chart", true);
+        var myWeekLabels = [];
+        for (var i = 1; i <= (league.weeks.length); i++) {
+            myWeekLabels.push("Week " + i);
+        }
+        window.memberLineChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: myWeekLabels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: {
+                    display: true,
+                    position: "top",
+                    text: "Points Scored By Week",
+                    fontSize: 20,
+                    fontColor: "#111",
+                },
+                scales: {
+                    yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                            }
+                        }],
+                    xAxes: [{
+                            ticks: {
+                                padding: 40,
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }],
+                },
+                plugins: {
+                    deferred: {
+                        xOffset: 150,
+                        yOffset: "50%",
+                        delay: 500
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#333",
+                        fontSize: 12
+                    },
+                }
+            }
+        });
+        window.memberLineChart.render();
+    }
+    else {
+        window.memberLineChart.data.datasets = [];
+        window.memberLineChart.data.datasets = datasets;
+        window.memberLineChart.update();
+    }
+}
+function createLeagueWeeklyLineChart(league) {
+    if (window.leagueWeeklyLineChart === undefined) {
+        var ctx = document.getElementById("league_weekly_line_canvas").getContext("2d");
+        var dataSets = getLeagueLineData(league);
+        var myWeekLabels = [];
+        for (var i = 1; i <= (league.weeks.length); i++) {
+            myWeekLabels.push("Week " + i);
+        }
+        window.leagueWeeklyLineChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: myWeekLabels,
+                datasets: dataSets
+            },
+            backgroundColor: "#DCDCDC",
+            options: {
+                tooltips: {
+                    mode: "point"
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                showLines: false,
+                title: {
+                    display: true,
+                    position: "top",
+                    text: "Points Scored By Week",
+                    fontSize: 20,
+                    fontColor: "#111",
+                },
+                scales: {
+                    yAxes: [{
+                            ticks: {
+                                padding: 40,
+                            }
+                        }],
+                    xAxes: [{
+                            ticks: {
+                                padding: 40,
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }],
+                },
+                plugins: {
+                    deferred: {
+                        xOffset: 150,
+                        yOffset: "50%",
+                        delay: 500
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#333",
+                        fontSize: 12
+                    },
+                }
+            }
+        });
+        window.leagueWeeklyLineChart.render();
+    }
+    else {
+        window.leagueWeeklyLineChart.data.datasets = window.leagueWeeklyLineChart.data.datasets;
+        window.leagueWeeklyLineChart.update();
+    }
+}
+function getLeagueLineData(league) {
+    var weeklyScoreMap = new Map();
+    weeklyScoreMap.set(-1, []);
+    league.members.forEach(function (member) {
+        weeklyScoreMap.set(member.teamID, []);
+    });
+    league.weeks.forEach(function (week) {
+        weeklyScoreMap.get(-1).push(week.getWeekAverage());
+        week.matchups.forEach(function (matchup) {
+            weeklyScoreMap.get(matchup.home.teamID).push(roundToHundred(matchup.home.score));
+            if (!matchup.byeWeek) {
+                weeklyScoreMap.get(matchup.away.teamID).push(roundToHundred(matchup.away.score));
+            }
+        });
+    });
+    var datasets = [];
+    weeklyScoreMap.forEach(function (value, key) {
+        if (key !== -1) {
+            var curTeam = league.getMember(key);
+            datasets.push({
+                fill: false,
+                data: value,
+                borderColor: getMemberColor(key),
+                backgroundColor: getMemberColor(key),
+                pointBackgroundColor: getMemberColor(key),
+                lineTension: 0,
+                label: curTeam.nameToString()
+            });
+        }
+    });
+    return datasets;
+}
+function createTeamRadarChart(league, member) {
+    if (window.myRadarChart !== undefined) {
+        window.myRadarChart.data.datasets = [];
+        window.myRadarChart.data.datasets.push({
+            label: "Average",
+            fill: true,
+            backgroundColor: "rgba(179,181,198,0.2)",
+            borderColor: "rgba(179,181,198,1)",
+            pointBorderColor: "#fff",
+            pointBackgroundColor: "rgba(179,181,198,1)",
+            data: league.getLeagueAveragePointsPerPosition()
+        });
+        window.myRadarChart.data.datasets.push({
+            label: member.nameToString(),
+            fill: true,
+            backgroundColor: "rgba(255,99,132,0.2)",
+            borderColor: "rgba(255,99,132,1)",
+            pointBorderColor: "#fff",
+            pointBackgroundColor: "rgba(255,99,132,1)",
+            data: league.getTeamAveragePointsPerPosition(member.teamID)
+        });
+        window.myRadarChart.update();
+    }
+    else {
+        window.myRadarChart = new Chart(document.getElementById("radar_chart_canvas").getContext("2d"), {
+            type: "radar",
+            data: {
+                labels: league.settings.positions,
+                datasets: [
+                    {
+                        label: "Average",
+                        fill: true,
+                        backgroundColor: "rgba(179,181,198,0.2)",
+                        borderColor: "rgba(179,181,198,1)",
+                        pointBorderColor: "#fff",
+                        pointBackgroundColor: "rgba(179,181,198,1)",
+                        data: league.getLeagueAveragePointsPerPosition()
+                    }, {
+                        label: member.nameToString(),
+                        fill: true,
+                        backgroundColor: "rgba(255,99,132,0.2)",
+                        borderColor: "rgba(255,99,132,1)",
+                        pointBorderColor: "#fff",
+                        pointBackgroundColor: "rgba(255,99,132,1)",
+                        data: league.getTeamAveragePointsPerPosition(member.teamID)
+                    }
+                ]
+            },
+            options: {
+                title: {
+                    display: false,
+                    text: "Point Per Position",
+                    position: "bottom"
+                },
+                legend: {
+                    position: "bottom"
+                },
+                scale: {
+                    ticks: {
+                        beginAtZero: true,
+                        max: 1,
+                        min: 0,
+                        stepSize: .25,
+                        display: false,
+                    }
+                }
+            }
+        });
+        window.myRadarChart.render();
+    }
+}
+function createLeagueStatsTable(league) {
+    var tableBody = document.getElementById("league_stats_table_body");
+    league.members.forEach(function (member) {
+        tableBody.appendChild(createLeagueStatsTableRow(member));
+    });
+}
+function createLeagueStatsTableRow(member) {
+    var row = document.createElement("tr");
+    var rankCell = document.createElement("td");
+    var teamNameCell = document.createElement("td");
+    var recordCell = document.createElement("td");
+    var pfCell = document.createElement("td");
+    var paCell = document.createElement("td");
+    var ppCell = document.createElement("td");
+    var pctCell = document.createElement("td");
+    var pctText = "%";
+    rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
+    pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
+    paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
+    ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
+    recordCell.appendChild(document.createTextNode(member.recordToString()));
+    teamNameCell.appendChild(document.createTextNode(member.nameToString()));
+    if (member.stats.getWinPct() === 0 || member.stats.getWinPct() === 1) {
+        pctText = ".00" + pctText;
+    }
+    pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
+    row.appendChild(rankCell);
+    row.appendChild(teamNameCell);
+    row.appendChild(recordCell);
+    row.appendChild(pctCell);
+    row.appendChild(pfCell);
+    row.appendChild(paCell);
+    row.appendChild(ppCell);
+    return row;
+}
+function updateMemberWeekTable(league, member) {
+    $("#member_week_table_body").empty();
+    var weekTable = document.getElementById("memberWeekTable");
+    var tableBody = document.getElementById("member_week_table_body");
+    league.weeks.forEach(function (week) {
+        var scoreColor = getLightCardColor(week.getTeamScoreFinish(member.teamID), league.members.length);
+        var curMatchup = week.getTeamMatchup(member.teamID);
+        var curTeam = week.getTeam(member.teamID);
+        var row = document.createElement("tr");
+        var weekCell = document.createElement("td");
+        var scoreCell = document.createElement("td");
+        var vsCell = document.createElement("td");
+        var marginCell = document.createElement("td");
+        weekCell.appendChild(document.createTextNode(week.weekNumber.toString()));
+        scoreCell.appendChild(document.createTextNode(roundToHundred(curTeam.score).toString()));
+        scoreCell.style.background = scoreColor;
+        weekCell.style.background = scoreColor;
+        vsCell.style.background = scoreColor;
+        if (!curMatchup.byeWeek) {
+            vsCell.appendChild(document.createTextNode(league.getMember(curMatchup.getOpponent(member.teamID).teamID).teamAbbrev));
+            marginCell.appendChild(document.createTextNode(roundToHundred(curTeam.score - curMatchup.getOpponent(member.teamID).score).toString()));
+        }
+        else {
+            vsCell.appendChild(document.createTextNode("N/A"));
+            marginCell.appendChild(document.createTextNode("N/A"));
+        }
+        if (!curMatchup.byeWeek) {
+            marginCell.style.background = getLightCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2);
+        }
+        row.appendChild(weekCell);
+        row.appendChild(scoreCell);
+        row.appendChild(vsCell);
+        row.appendChild(marginCell);
+        tableBody.appendChild(row);
+    });
+    weekTable.appendChild(tableBody);
+}
+function createMemberWeekTable(league) {
+    var weekTable = document.getElementById("memberWeekTable");
+    var tableBody = document.getElementById("member_week_table_body");
+    for (var i = 1; i <= league.settings.regularSeasonLength; i++) {
+        var row = document.createElement("tr");
+        var weekCell = document.createElement("td");
+        var scoreCell = document.createElement("td");
+        var vsCell = document.createElement("td");
+        var marginCell = document.createElement("td");
+        marginCell.id = "week_" + i + "_margin";
+        weekCell.appendChild(document.createTextNode(i.toString()));
+    }
+}
+function createPowerRankTable(league) {
+    var tableBody = document.getElementById("power_rank_table_body");
+    league.members.forEach(function (member) {
+        var row = document.createElement("tr");
+        var teamName = document.createElement("td");
+        var powerRank = document.createElement("td");
+        var powerRecord = document.createElement("td");
+        var winPct = document.createElement("td");
+        var potentialRecord = document.createElement("td");
+        var potentialWinPct = document.createElement("td");
+        var image = document.createElement("img");
+        image.src = member.logoURL;
+        image.style.width = "25px";
+        image.style.height = "25px";
+        image.style.borderRadius = "25px";
+        image.addEventListener("error", fixNoImage);
+        image.style.marginRight = "8px";
+        teamName.appendChild(image);
+        teamName.appendChild(document.createTextNode(member.nameToString()));
+        powerRank.innerText = member.stats.powerRank.toString();
+        powerRecord.innerText = member.powerRecordToString();
+        potentialRecord.innerText = member.potentialPowerRecordToString();
+        winPct.innerText = member.stats.getPowerWinPct() + "%";
+        potentialWinPct.innerText = member.stats.getPotentialPowerWinPct() + "%";
+        row.appendChild(powerRank);
+        row.appendChild(teamName);
+        row.appendChild(powerRecord);
+        row.appendChild(winPct);
+        row.appendChild(potentialRecord);
+        row.appendChild(potentialWinPct);
+        tableBody.appendChild(row);
+    });
 }
 //# sourceMappingURL=tsc.js.map

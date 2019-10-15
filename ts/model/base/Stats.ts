@@ -53,14 +53,14 @@ class Stats {
     }
 
     public getWinPct(): number {
-        if (this.wins == 0) {
+        if (this.wins === 0) {
             return 0.00;
         } else {
             return roundToHundred(this.wins / (this.wins + this.losses + this.ties));
         }
     }
     public getPowerWinPct(): number {
-        if (this.powerWins == 0) {
+        if (this.powerWins === 0) {
             return 0.00;
         } else {
             return roundToHundred(this.powerWins / (this.powerWins + this.powerLosses + this.powerTies));
@@ -68,7 +68,7 @@ class Stats {
     }
 
     public getPotentialPowerWinPct(): number {
-        if (this.potentialPowerWins == 0) {
+        if (this.potentialPowerWins === 0) {
             return 0.00;
         } else {
             return roundToHundred(this.potentialPowerWins / (this.potentialPowerWins + this.potentialPowerLosses + this.potentialPowerTies));
@@ -82,6 +82,6 @@ class Stats {
     }
 
     public getEfficiency(): number {
-        return this.pf/this.pp;
+        return this.pf / this.pp;
     }
 }

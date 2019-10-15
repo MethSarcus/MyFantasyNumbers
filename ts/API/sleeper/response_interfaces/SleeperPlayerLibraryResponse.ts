@@ -1,3 +1,4 @@
+// Individual entry in the sleeper player library
 interface SleeperPlayerLibraryEntry {
         birth_country: string;
         search_full_name: string;

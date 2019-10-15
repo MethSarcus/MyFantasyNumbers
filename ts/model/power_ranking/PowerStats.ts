@@ -4,7 +4,7 @@ class PowerStats {
     public ties: number;
     public pf: number;
     public projected: number;
-    public pp: number
+    public pp: number;
     public teamID: number;
     public weekNumber: number;
 

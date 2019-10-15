@@ -2,6 +2,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done((json) => {
+        json = json as SleeperLeagueResponse;
         const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
         const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
         const leagueName = json.name;
@@ -26,6 +27,7 @@ function getSleeperMembers(leagueID: string, seasonID: number, settings: Setting
     sleeper_request("get", {
         path: "league/" + leagueID.toString() + "/users"
     }).done((json) => {
+        json = json as SleeperUserResponse;
         const members = [];
         json.forEach((member) => {
             const memberName = member.display_name;
@@ -42,6 +44,7 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
     sleeper_request("get", {
         path: "league/" + leagueID.toString() + "/rosters/"
     }).done((json) => {
+        json = json as SleeperRosterResponse;
         json.forEach((roster) => {
             const teamID = parseInt(roster.roster_id, 10);
             const wins = roster.settings.wins;
@@ -85,22 +88,22 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
             for (let y = 0; y < result.length; y++) {
                 (Weeks as Week[])[y].matchups.forEach((matchup) => {
                     matchup.home.lineup.forEach((player) => {
-                        (result[y] as Sleeper_Week_Stats).calculatePlayerScore(scoringSettings, player);
-                        (result[y] as Sleeper_Week_Stats).calculateProjectedPlayerScore(scoringSettings, player);
+                        (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
+                        (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
                     });
                     matchup.home.bench.forEach((player) => {
-                        (result[y] as Sleeper_Week_Stats).calculatePlayerScore(scoringSettings, player);
-                        (result[y] as Sleeper_Week_Stats).calculateProjectedPlayerScore(scoringSettings, player);
+                        (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
+                        (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
                     });
 
                     if (!matchup.byeWeek) {
                         matchup.away.lineup.forEach((player) => {
-                            (result[y] as Sleeper_Week_Stats).calculatePlayerScore(scoringSettings, player);
-                            (result[y] as Sleeper_Week_Stats).calculateProjectedPlayerScore(scoringSettings, player);
+                            (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
+                            (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
                         });
                         matchup.away.bench.forEach((player) => {
-                            (result[y] as Sleeper_Week_Stats).calculatePlayerScore(scoringSettings, player);
-                            (result[y] as Sleeper_Week_Stats).calculateProjectedPlayerScore(scoringSettings, player);
+                            (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
+                            (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
                         });
                     }
                 });
@@ -110,8 +113,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
     });
 }
 
-function getSleeperWeekMatchups(teams: TeamResponse[], activeLineupSlots, weekNumber: number, isPlayoff: boolean, lineupOrder: string[]): Matchup[] {
-
+function getSleeperWeekMatchups(teams: SleeperTeamResponse[], activeLineupSlots, weekNumber: number, isPlayoff: boolean, lineupOrder: string[]): Matchup[] {
     const allTeams = (teams as any).map((team) => {
         return new SleeperTeam(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, activeLineupSlots, lineupOrder);
     });
@@ -165,41 +167,5 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: S
         const league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         league.setMemberStats(league.getSeasonPortionWeeks());
         setPage(league);
-
-    });
-}
-
-function makeRequest(url: string): Promise<XMLHttpRequest> {
-    // Create the XHR request
-    const request = new XMLHttpRequest();
-    request.responseType = "json";
-
-    // Return it as a Promise
-    return new Promise((resolve, reject) => {
-        // Setup our listener to process compeleted requests
-        request.onreadystatechange = () => {
-
-            // Only run if the request is complete
-            if (request.readyState !== 4) { return; }
-
-            // Process the response
-            if (request.status >= 200 && request.status < 300) {
-                // If successful
-                resolve(request);
-            } else {
-                // If failed
-                reject({
-                    status: request.status,
-                    statusText: request.statusText,
-                });
-            }
-        };
-
-        // Setup our HTTP request
-        request.open("GET", url, true);
-
-        // Send the request
-        request.send();
-
     });
 }

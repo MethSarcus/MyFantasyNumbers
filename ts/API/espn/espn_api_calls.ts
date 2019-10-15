@@ -39,7 +39,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
                         const realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         const playerID = curPlayer.playerId;
                         const lineupSlotID = curPlayer.lineupSlotId;
-                        homePlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        homePlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                     }
 
                     let awayTeam;
@@ -66,7 +66,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
                             const realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                             const playerID = curPlayer.playerId;
                             const lineupSlotID = curPlayer.lineupSlotId;
-                            awayPlayers.push(new ESPN_Player(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                            awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }

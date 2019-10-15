@@ -17,7 +17,7 @@ class League {
             week.matchups.forEach((matchup) => {
                 const homeRoster = [];
                 matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach((player) => {
-                    homeRoster.push(new ESPN_Player(player.firstName, player.lastName,
+                    homeRoster.push(new ESPNPlayer(player.firstName, player.lastName,
                         player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
                         player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                 });
@@ -27,7 +27,7 @@ class League {
                     const awayRoster = [];
                     awayTeamId = matchup.away.teamID;
                     matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach((player) => {
-                        awayRoster.push(new ESPN_Player(player.firstName, player.lastName,
+                        awayRoster.push(new ESPNPlayer(player.firstName, player.lastName,
                             player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
                             player.lineupSlotID, player.eligibleSlots, player.weekNumber));
                     });
