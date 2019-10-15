@@ -449,4 +449,3 @@ function getRealTeamInitials(realteamID) {
     }
     return team;
 }
-
