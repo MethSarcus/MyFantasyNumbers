@@ -39,7 +39,9 @@
         "mathjs": "^6.0.4",
         "mysql": "^2.17.1",
         "node": "^12.8.0",
-        "rainbowvis.js": "^1.0.1"
+        "rainbowvis.js": "^1.0.1",
+        "tslint": "^5.20.0",
+        "typescript": "^3.6.4"
     },
     "devDependencies": {
         "browser-sync": "^2.26.7",

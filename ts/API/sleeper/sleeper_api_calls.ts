@@ -130,13 +130,76 @@ function getSleeperWeekMatchups(teams: TeamResponse[], activeLineupSlots, weekNu
     return matchups;
 }
 
-function findOpponent(teams: TeamResponse[], rosterId: number, matchupId: number): number {
-    let opponentRosterId = -1;
-    teams.forEach((team) => {
-        if (team.matchup_id === matchupId && team.roster_id !== rosterId) {
-            opponentRosterId = team.roster_id;
-        }
-    });
+function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: Settings, leagueID, seasonID, members, leagueName) {
+    makeRequest("js/typescript/player_library.json").then((result) => {
+        const lib = (result.response as SleeperPlayerLibraryEntry[]);
+        weeks.forEach((week) => {
+            week.matchups.forEach((matchup) => {
+                matchup.home.lineup.forEach((player) => {
+                    assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
+                });
+                matchup.home.bench.forEach((player) => {
+                    assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
+                });
+                matchup.home.IR.forEach((player) => {
+                    assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
+                });
+                (matchup.home as SleeperTeam).setTeamMetrics(activeLineupSlots);
+                if (!matchup.byeWeek) {
+                    matchup.away.lineup.forEach((player) => {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.bench.forEach((player) => {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.IR.forEach((player) => {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    (matchup.away as SleeperTeam).setTeamMetrics(activeLineupSlots);
+                    matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
+                    matchup.setPoorLineupDecisions();
+                }
+            });
+        });
 
-    return opponentRosterId;
+        const league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
+        league.setMemberStats(league.getSeasonPortionWeeks());
+        setPage(league);
+
+    });
+}
+
+function makeRequest(url: string): Promise<XMLHttpRequest> {
+    // Create the XHR request
+    const request = new XMLHttpRequest();
+    request.responseType = "json";
+
+    // Return it as a Promise
+    return new Promise((resolve, reject) => {
+        // Setup our listener to process compeleted requests
+        request.onreadystatechange = () => {
+
+            // Only run if the request is complete
+            if (request.readyState !== 4) { return; }
+
+            // Process the response
+            if (request.status >= 200 && request.status < 300) {
+                // If successful
+                resolve(request);
+            } else {
+                // If failed
+                reject({
+                    status: request.status,
+                    statusText: request.statusText,
+                });
+            }
+        };
+
+        // Setup our HTTP request
+        request.open("GET", url, true);
+
+        // Send the request
+        request.send();
+
+    });
 }
