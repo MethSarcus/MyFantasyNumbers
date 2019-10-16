@@ -39,6 +39,7 @@
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <link href="css/custom.css" rel="stylesheet">
   <link href="css/tables.css" rel="stylesheet">
+  <link href="css/forms.css" rel="stylesheet">
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="vendor/datatables/jquery.dataTables.js"></script>
@@ -66,6 +67,57 @@
     }
   </script>
 </head>
+<div id="league_input_page">
+  <div class="container h-100">
+    <div class="row h-100 my-auto">
+      <div class="col-4 mx-auto mt-5 p-2">
+        <div class="card">
+          <h3 class="card-title mx-auto py-2">
+              My Fantasy Numbers
+          </h3>
+          <div class="card-body">
+              <form onsubmit="doTheThing()">
+                  <div class="form-group row">
+                    <label class="col-4 col-form-label" for="league_id_input">League ID</label> 
+                    <div class="col-8">
+                      <input id="league_id_input" name="league_id_input" placeholder="383472092907233280" type="text" required="required" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="select" class="col-4 col-form-label">Season</label> 
+                    <div class="col-8">
+                      <select id="select" name="select" required="required" class="custom-select">
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-4">Platform</label> 
+                    <div class="col-8">
+                      <div class="custom-control custom-radio custom-control-inline">
+                        <input name="platform_input" id="platform_input_0" type="radio" required="required" class="custom-control-input" value="sleeper"> 
+                        <label for="platform_input_0" class="custom-control-label">Sleeper</label>
+                      </div>
+                      <div class="custom-control custom-radio custom-control-inline">
+                        <input name="platform_input" id="platform_input_1" type="radio" required="required" class="custom-control-input" value="espn"> 
+                        <label for="platform_input_1" class="custom-control-label">ESPN</label>
+                      </div>
+                    </div>
+                  </div> 
+                  <div class="form-group row">
+                    <div class="offset-4 col-8">
+                      <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </div>
+                </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+</div>
 <header>
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
     <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i
@@ -296,11 +348,6 @@
                       </tbody>
                     </table>
                 </div>
-              <!-- <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                <div class="px-4" id="radar_chart_container">
-                  <canvas id="radar_chart_canvas"></canvas>
-                </div>
-              </div> -->
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row py-1">
                   <div class="col-12 card-deck">
@@ -375,21 +422,6 @@
                       <canvas id="radar_chart_canvas"></canvas>
                     </div>
                   </div>
-              <!-- <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                <table class="table table-sm hover" id="memberWeekTable">
-                  <thead>
-                    <tr id="member_week_table_head_row">
-                      <th scope="col">Week</th>
-                      <th scope="col">Score</th>
-                      <th scope="col">VS</th>
-                      <th scope="col">Margin</th>
-                    </tr>
-                  </thead>
-                  <tbody id="member_week_table_body">
-
-                  </tbody>
-                </table> -->
-              <!-- </div> -->
               <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
                 <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
                   <div id="member_bar_chart_container" style="height: 250px;"><canvas
