@@ -7,7 +7,7 @@ function doTheThing() {
     const leagueID = leagueIDInput.value.replace(/\D/g, "");
     const seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
     if (leagueID !== undefined && seasonID !== undefined) {
-        initBar();
+        initCube();
         if (sleeperButton.checked) {
             getSleeperLeagueSettings(leagueID, seasonID);
         } else if (espnButton.checked) {
@@ -161,10 +161,17 @@ function setPage(league: League) {
     });
 
     const particles = document.getElementById("particles-js");
-    const promptScreen = document.getElementById("prompt_screen");
+    // const promptScreen = document.getElementById("prompt_screen");
     particles.style.display = "none";
-    promptScreen.style.display = "none";
-    updateBarValue(2, "Finished!");
-    document.getElementById("page_header").style.display = "flex";
-    document.getElementById("page_container").style.display = "inline-block";
+    // promptScreen.style.display = "none";
+    updateLoadingText("Finished");
+    transitionToLeaguePage();
+    // document.getElementById("page_header").style.display = "flex";
+    // document.getElementById("page_container").style.display = "inline-block";
+}
+
+function transitionToLeaguePage() {
+    $("#prompt_screen").stop(true, true).fadeOut(200, () => {
+        unfadeLeaguePage();
+    });
 }

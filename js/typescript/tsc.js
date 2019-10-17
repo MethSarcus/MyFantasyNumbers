@@ -200,7 +200,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
         var settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16, 16 - playoffStartWeek, "", currentMatchupPeriod, isActive, [seasonID]);
-        updateBarValue(20, "Getting Members");
+        updateLoadingText("Getting Members");
         getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -212,13 +212,12 @@ function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineup
         var members = [];
         json.forEach(function (member) {
             var memberName = member.display_name;
-            updateBarValue(12 / json.length, "Got " + memberName);
             var memberID = member.user_id;
             var teamName = member.metadata.team_name;
             var teamAvatar = member.avatar;
             members.push(new SleeperMember(memberID, memberName, teamName, teamAvatar));
         });
-        updateBarValue(8, "Getting Rosters");
+        updateLoadingText("Getting Rosters");
         getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -228,7 +227,6 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
     }).done(function (json) {
         json = json;
         json.forEach(function (roster) {
-            updateBarValue(8 / json.length, "Getting Rosters");
             var teamID = parseInt(roster.roster_id, 10);
             var wins = roster.settings.wins;
             var totalMoves = roster.settings.totalMoves;
@@ -241,7 +239,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
                 }
             });
         });
-        updateBarValue(12, "Getting Matchups");
+        updateLoadingText("Getting Matchups");
         getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID !== undefined; }), settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -257,9 +255,9 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettin
     for (var i = 1; i <= weeksToGet; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
+    updateLoadingText("Getting weekly stats");
     var weekCounter = 1;
     var Weeks = [];
-    updateBarValue(10 / weeksToGet, "Getting weekly stats");
     Promise.all(promises).then(function (weeks) {
         weeks.forEach(function (week) {
             var isPlayoffs = (weekCounter > settings.regularSeasonLength);
@@ -319,11 +317,10 @@ function getSleeperWeekMatchups(teams, activeLineupSlots, weekNumber, isPlayoff,
     return matchups;
 }
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
-    updateBarValue(20, "Getting Player Stats");
+    updateLoadingText("Getting Player Stats");
     makeRequest("js/typescript/player_library.json").then(function (result) {
         var lib = result.response;
         weeks.forEach(function (week) {
-            updateBarValue(6 / weeks.length, "Computing week " + week.weekNumber.toString());
             week.matchups.forEach(function (matchup) {
                 matchup.home.lineup.forEach(function (player) {
                     assignSleeperPlayerAttributes(player, lib[player.playerID]);
@@ -352,7 +349,7 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
             });
         });
         var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
-        updateBarValue(13, "Setting up page");
+        updateLoadingText("Setting Page");
         league.setMemberStats(league.getSeasonPortionWeeks());
         setPage(league);
     });
@@ -389,17 +386,20 @@ function sleeper_request(t, d) {
         async: true,
     });
 }
-function updateBarValue(increase, labelText) {
+function updateLoadingText(labelText) {
     var label = document.getElementById("loading_text");
     label.innerText = labelText;
 }
-function initBar() {
+function initCube() {
     var cube = document.getElementById("cube_spinner_container");
     var container = document.getElementById("loading_container");
     var form = document.getElementById("info_form");
     form.style.display = "none";
-    container.style.display = "inline-block";
+    container.style.display = "inline";
+    var label = document.getElementById("loading_text");
+    label.style.display = "inline";
     cube.style.display = "inline-block";
+    updateLoadingText("Getting Settings");
 }
 function doTheThing() {
     var sleeperButton = document.getElementById("platform_input_0");
@@ -409,7 +409,7 @@ function doTheThing() {
     var leagueID = leagueIDInput.value.replace(/\D/g, "");
     var seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
     if (leagueID !== undefined && seasonID !== undefined) {
-        initBar();
+        initCube();
         if (sleeperButton.checked) {
             getSleeperLeagueSettings(leagueID, seasonID);
         }
@@ -551,12 +551,14 @@ function setPage(league) {
         $('[data-toggle="tooltip"]').tooltip();
     });
     var particles = document.getElementById("particles-js");
-    var promptScreen = document.getElementById("prompt_screen");
     particles.style.display = "none";
-    promptScreen.style.display = "none";
-    updateBarValue(2, "Finished!");
-    document.getElementById("page_header").style.display = "flex";
-    document.getElementById("page_container").style.display = "inline-block";
+    updateLoadingText("Finished");
+    transitionToLeaguePage();
+}
+function transitionToLeaguePage() {
+    $("#prompt_screen").stop(true, true).fadeOut(200, function () {
+        unfadeLeaguePage();
+    });
 }
 var ESPNMember = (function () {
     function ESPNMember(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
@@ -2599,8 +2601,8 @@ function convertSleeperRoster(rosterPositions, numIR, numTaxi) {
     var benchCount = new Map();
     var activeLineupSlots = [];
     var benchSlots = [];
-    var active = rosterPositions.filter(function (it) {
-        return it = "BN";
+    var active = rosterPositions.filter(function (slot) {
+        return slot !== "BN";
     }).map(function (slot) { return positionToInt.get(slot); });
     active.forEach(function (slot) {
         if (activeCount.has(slot)) {
@@ -2991,6 +2993,10 @@ function fadeToLeaguePage() {
 }
 function unfadeTeam() {
     $("#teamPill").stop(true, true).fadeIn(200);
+}
+function unfadeLeaguePage() {
+    document.getElementById("page_header").style.display = "flex";
+    document.getElementById("page_container").style.display = "inline-block";
 }
 function fixNoImage() {
     this.src = "assets/user1.png";

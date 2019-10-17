@@ -3,8 +3,8 @@ function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi:
     const benchCount = new Map();
     const activeLineupSlots = [];
     const benchSlots = [];
-    const active = rosterPositions.filter((it) => {
-        return it = "BN";
+    const active = rosterPositions.filter((slot) => {
+        return slot !== "BN";
     }).map((slot) => positionToInt.get(slot));
     active.forEach((slot) => {
         if (activeCount.has(slot)) {

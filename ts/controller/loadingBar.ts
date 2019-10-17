@@ -1,20 +1,17 @@
 declare var ldBar: any;
-function updateBarValue(increase: number, labelText: string) {
-    // const bar = (document.getElementById("loading_bar") as any).ldBar;
+function updateLoadingText(labelText: string) {
     const label = document.getElementById("loading_text");
-    // bar.set(increase + bar.value);
     label.innerText = labelText;
 }
 
-function initBar() {
+function initCube() {
     const cube = document.getElementById("cube_spinner_container");
     const container = document.getElementById("loading_container");
     const form = document.getElementById("info_form");
     form.style.display = "none";
-    // const loader = document.querySelector(".ldBar");
-    // const bar = new ldBar(loader);
-    // bar.set(3);
-    container.style.display = "inline-block";
+    container.style.display = "inline";
+    const label = document.getElementById("loading_text");
+    label.style.display = "inline";
     cube.style.display = "inline-block";
-    // updateBarValue(0, "Getting Settings");
+    updateLoadingText("Getting Settings");
 }

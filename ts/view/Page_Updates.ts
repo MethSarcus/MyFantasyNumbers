@@ -303,6 +303,11 @@ function unfadeTeam() {
     $("#teamPill").stop(true, true).fadeIn(200);
 }
 
+function unfadeLeaguePage() {
+    document.getElementById("page_header").style.display = "flex";
+    document.getElementById("page_container").style.display = "inline-block";
+}
+
 function fixNoImage() {
     this.src = "assets/user1.png";
     this.style.backgroundColor = "white";
