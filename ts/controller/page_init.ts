@@ -17,6 +17,7 @@ function doTheThing() {
 }
 
 function setPage(league: League) {
+    // tslint:disable-next-line: no-console
     console.log(league);
     document.getElementById("league_name_header").innerHTML = league.leagueName;
     document.getElementById("league_name_header").onclick = () => {
@@ -161,13 +162,9 @@ function setPage(league: League) {
     });
 
     const particles = document.getElementById("particles-js");
-    // const promptScreen = document.getElementById("prompt_screen");
     particles.style.display = "none";
-    // promptScreen.style.display = "none";
     updateLoadingText("Finished");
     transitionToLeaguePage();
-    // document.getElementById("page_header").style.display = "flex";
-    // document.getElementById("page_container").style.display = "inline-block";
 }
 
 function transitionToLeaguePage() {

@@ -184,6 +184,11 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
         path: "league/" + leagueID.toString()
     }).done(function (json) {
         json = json;
+        if (json == null) {
+            alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
+            location.reload();
+            return;
+        }
         var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
         var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
         var leagueName = json.name;
