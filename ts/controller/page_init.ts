@@ -1,4 +1,22 @@
+function doTheThing() {
+    console.log("doing thing");
+    const sleeperButton = document.getElementById("platform_input_0") as any;
+    const espnButton = document.getElementById("platform_input_1") as any;
+    const leagueIDInput = document.getElementById("league_id_input") as HTMLInputElement;
+    const seasonIDSelector = document.getElementById("select_year_input") as HTMLSelectElement;
+
+    const leagueID = leagueIDInput.value.replace(/\D/g, "");
+    const seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
+
+    if (sleeperButton.checked) {
+        getSleeperLeagueSettings(leagueID, seasonID);
+    } else if (espnButton.checked) {
+        getESPNSettings(leagueID, seasonID);
+    }
+}
+
 function setPage(league: League) {
+    console.log(league);
     document.getElementById("league_name_header").innerHTML = league.leagueName;
     document.getElementById("league_name_header").onclick = () => {
         $(".nav-link").removeClass("active");
@@ -140,4 +158,11 @@ function setPage(league: League) {
     $(() => {
         $('[data-toggle="tooltip"]').tooltip();
     });
+
+    const particles = document.getElementById("particles-js");
+    const promptScreen = document.getElementById("prompt_screen");
+    particles.style.display = "none";
+    promptScreen.style.display = "none";
+    document.getElementById("page_header").style.display = "flex";
+    document.getElementById("page_container").style.display = "inline-block";
 }

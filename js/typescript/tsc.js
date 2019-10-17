@@ -380,7 +380,23 @@ function sleeper_request(t, d) {
         async: true,
     });
 }
+function doTheThing() {
+    console.log("doing thing");
+    var sleeperButton = document.getElementById("platform_input_0");
+    var espnButton = document.getElementById("platform_input_1");
+    var leagueIDInput = document.getElementById("league_id_input");
+    var seasonIDSelector = document.getElementById("select_year_input");
+    var leagueID = leagueIDInput.value.replace(/\D/g, "");
+    var seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
+    if (sleeperButton.checked) {
+        getSleeperLeagueSettings(leagueID, seasonID);
+    }
+    else if (espnButton.checked) {
+        getESPNSettings(leagueID, seasonID);
+    }
+}
 function setPage(league) {
+    console.log(league);
     document.getElementById("league_name_header").innerHTML = league.leagueName;
     document.getElementById("league_name_header").onclick = function () {
         $(".nav-link").removeClass("active");
@@ -511,28 +527,13 @@ function setPage(league) {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
+    var particles = document.getElementById("particles-js");
+    var promptScreen = document.getElementById("prompt_screen");
+    particles.style.display = "none";
+    promptScreen.style.display = "none";
+    document.getElementById("page_header").style.display = "flex";
+    document.getElementById("page_container").style.display = "inline-block";
 }
-$(document).ready(function () {
-    var input = prompt("Please enter League ID", "2319896");
-    var season = prompt("Please enter year", "2018");
-    if (input != null) {
-        var leagueID = input;
-        if (localStorage.getItem(leagueID + season)) {
-            var year = JSON.parse(localStorage.getItem(leagueID + season));
-            var restoredLeague = League.convertESPNFromJson(year);
-            setPage(restoredLeague);
-        }
-        else {
-            localStorage.clear();
-            if (leagueID.length > 9) {
-                getSleeperLeagueSettings(leagueID, parseInt(season, 10));
-            }
-            else {
-                getESPNSettings(leagueID, season);
-            }
-        }
-    }
-});
 var ESPNMember = (function () {
     function ESPNMember(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
         this.memberID = memberID;
