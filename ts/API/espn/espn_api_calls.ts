@@ -10,6 +10,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
         espn_request("get", {
             path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
         }).done((json) => {
+            updateLoadingText("Getting week " + q + " matchups");
             const matchups = [];
             for (const i in Object.keys(json.schedule)) { // increments through each matchup
                 const curWeek = json.schedule[i];
@@ -97,6 +98,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
 }
 
 function getESPNSettings(leagueID, seasonID) {
+    updateLoadingText("Getting Settings");
     espn_request("get", {
         path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mSettings"
     }).done((json) => {
@@ -133,6 +135,7 @@ function getESPNSettings(leagueID, seasonID) {
 }
 
 function getESPNMembers(settings, leagueID, seasonID, leagueName) {
+    updateLoadingText("Getting Members");
     espn_request("get", {
         path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mTeam"
     }).done((json) => {

@@ -11,6 +11,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
         espn_request("get", {
             path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
         }).done(function (json) {
+            updateLoadingText("Getting week " + q + " matchups");
             var matchups = [];
             for (var i in Object.keys(json.schedule)) {
                 var curWeek = json.schedule[i];
@@ -102,6 +103,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
     }
 }
 function getESPNSettings(leagueID, seasonID) {
+    updateLoadingText("Getting Settings");
     espn_request("get", {
         path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mSettings"
     }).done(function (json) {
@@ -137,6 +139,7 @@ function getESPNSettings(leagueID, seasonID) {
     });
 }
 function getESPNMembers(settings, leagueID, seasonID, leagueName) {
+    updateLoadingText("Getting Members");
     espn_request("get", {
         path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mTeam"
     }).done(function (json) {
