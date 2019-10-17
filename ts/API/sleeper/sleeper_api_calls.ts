@@ -19,6 +19,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
         const settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16, 16 - playoffStartWeek, "", currentMatchupPeriod, isActive, [seasonID]);
+        updateBarValue(20, "Getting Members");
         getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -31,11 +32,13 @@ function getSleeperMembers(leagueID: string, seasonID: number, settings: Setting
         const members = [];
         json.forEach((member) => {
             const memberName = member.display_name;
+            updateBarValue(12 / json.length, "Got " + memberName);
             const memberID = member.user_id;
             const teamName = member.metadata.team_name;
             const teamAvatar = member.avatar;
             members.push(new SleeperMember(memberID, memberName, teamName, teamAvatar));
         });
+        updateBarValue(8, "Getting Rosters");
         getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -46,6 +49,7 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
     }).done((json) => {
         json = json as SleeperRosterResponse;
         json.forEach((roster) => {
+            updateBarValue(8 / json.length, "Getting Rosters");
             const teamID = parseInt(roster.roster_id, 10);
             const wins = roster.settings.wins;
             const totalMoves = roster.settings.totalMoves;
@@ -58,7 +62,7 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
                 }
             });
         });
-
+        updateBarValue(12, "Getting Matchups");
         getSleeperMatchups(leagueID, seasonID, members.filter((member) => member.teamID !== undefined), settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -76,6 +80,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
     }
     let weekCounter = 1;
     const Weeks = [];
+    updateBarValue(10 / weeksToGet, "Getting weekly stats");
     Promise.all(promises).then((weeks) => {
         weeks.forEach((week) => {
             const isPlayoffs = (weekCounter > settings.regularSeasonLength);
@@ -133,9 +138,11 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], activeLineupSlots,
 }
 
 function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: Settings, leagueID, seasonID, members, leagueName) {
+    updateBarValue(20, "Getting Player Stats");
     makeRequest("js/typescript/player_library.json").then((result) => {
         const lib = (result.response as SleeperPlayerLibraryEntry[]);
         weeks.forEach((week) => {
+            updateBarValue(6 / weeks.length, "Computing week " + week.weekNumber.toString());
             week.matchups.forEach((matchup) => {
                 matchup.home.lineup.forEach((player) => {
                     assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
@@ -165,6 +172,7 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots, settings: S
         });
 
         const league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
+        updateBarValue(13, "Setting up page");
         league.setMemberStats(league.getSeasonPortionWeeks());
         setPage(league);
     });

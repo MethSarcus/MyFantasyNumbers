@@ -30,6 +30,7 @@
   <!-- <script src="Charts\c3-0.6.12\c3.min.js"></script> -->
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="css/cubeSpinner.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
@@ -44,6 +45,8 @@
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="vendor/datatables/jquery.dataTables.js"></script>
   <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+  <script src="vendor/loading-bar/loading-bar.js"></script>
+  <link href="vendor/loading-bar/loading-bar.css" rel="stylesheet">
 
   <script>
     function toggleNav() {
@@ -71,12 +74,29 @@
 <div id="particles-js"></div>
 <div class="container h-100" id="prompt_screen">
   <div class="row h-100">
-      <div class="col-4 mx-auto my-auto p-2">
+      <div class="col-4 offset-7 my-auto p-2">
         <div class="card">
-          <h3 class="card-title mx-auto py-2">
+          <h4 class="card-title mx-auto my-2 p-2">
             My Fantasy Numbers
-          </h3>
+          </h4>
           <div class="card-body">
+            <div id="loading_container" style="display: none;" class="mx-auto my-auto col-10">
+              <div class="row">
+                  <div class="sk-cube-grid" id="cube_spinner_container" class="mx-auto my-auto col-12">
+                      <div class="sk-cube sk-cube1"></div>
+                      <div class="sk-cube sk-cube2"></div>
+                      <div class="sk-cube sk-cube3"></div>
+                      <div class="sk-cube sk-cube4"></div>
+                      <div class="sk-cube sk-cube5"></div>
+                      <div class="sk-cube sk-cube6"></div>
+                      <div class="sk-cube sk-cube7"></div>
+                      <div class="sk-cube sk-cube8"></div>
+                      <div class="sk-cube sk-cube9"></div>
+                    </div>
+                <!-- <div id="loading_bar" data-duration=".2s" class="ldBar label-bottom" data-aspect-ratio="none" data-preset="energy" data-value="1" style="width:100%;"></div> -->
+                  <div class="col-6 mx-auto" id="loading_text"><b>Fetching Settings</b></div>
+                </div>
+            </div>
             <div id="info_form">
               <div class="form-group row">
                 <label class="col-4 col-form-label" for="league_id_input">League ID</label>

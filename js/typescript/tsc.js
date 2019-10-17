@@ -200,6 +200,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
         var settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16, 16 - playoffStartWeek, "", currentMatchupPeriod, isActive, [seasonID]);
+        updateBarValue(20, "Getting Members");
         getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -211,11 +212,13 @@ function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineup
         var members = [];
         json.forEach(function (member) {
             var memberName = member.display_name;
+            updateBarValue(12 / json.length, "Got " + memberName);
             var memberID = member.user_id;
             var teamName = member.metadata.team_name;
             var teamAvatar = member.avatar;
             members.push(new SleeperMember(memberID, memberName, teamName, teamAvatar));
         });
+        updateBarValue(8, "Getting Rosters");
         getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -225,6 +228,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
     }).done(function (json) {
         json = json;
         json.forEach(function (roster) {
+            updateBarValue(8 / json.length, "Getting Rosters");
             var teamID = parseInt(roster.roster_id, 10);
             var wins = roster.settings.wins;
             var totalMoves = roster.settings.totalMoves;
@@ -237,6 +241,7 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
                 }
             });
         });
+        updateBarValue(12, "Getting Matchups");
         getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID !== undefined; }), settings, scoringSettings, lineupOrder, leagueName);
     });
 }
@@ -254,6 +259,7 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettin
     }
     var weekCounter = 1;
     var Weeks = [];
+    updateBarValue(10 / weeksToGet, "Getting weekly stats");
     Promise.all(promises).then(function (weeks) {
         weeks.forEach(function (week) {
             var isPlayoffs = (weekCounter > settings.regularSeasonLength);
@@ -313,9 +319,11 @@ function getSleeperWeekMatchups(teams, activeLineupSlots, weekNumber, isPlayoff,
     return matchups;
 }
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
+    updateBarValue(20, "Getting Player Stats");
     makeRequest("js/typescript/player_library.json").then(function (result) {
         var lib = result.response;
         weeks.forEach(function (week) {
+            updateBarValue(6 / weeks.length, "Computing week " + week.weekNumber.toString());
             week.matchups.forEach(function (matchup) {
                 matchup.home.lineup.forEach(function (player) {
                     assignSleeperPlayerAttributes(player, lib[player.playerID]);
@@ -344,6 +352,7 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
             });
         });
         var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
+        updateBarValue(13, "Setting up page");
         league.setMemberStats(league.getSeasonPortionWeeks());
         setPage(league);
     });
@@ -380,19 +389,33 @@ function sleeper_request(t, d) {
         async: true,
     });
 }
+function updateBarValue(increase, labelText) {
+    var label = document.getElementById("loading_text");
+    label.innerText = labelText;
+}
+function initBar() {
+    var cube = document.getElementById("cube_spinner_container");
+    var container = document.getElementById("loading_container");
+    var form = document.getElementById("info_form");
+    form.style.display = "none";
+    container.style.display = "inline-block";
+    cube.style.display = "inline-block";
+}
 function doTheThing() {
-    console.log("doing thing");
     var sleeperButton = document.getElementById("platform_input_0");
     var espnButton = document.getElementById("platform_input_1");
     var leagueIDInput = document.getElementById("league_id_input");
     var seasonIDSelector = document.getElementById("select_year_input");
     var leagueID = leagueIDInput.value.replace(/\D/g, "");
     var seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
-    if (sleeperButton.checked) {
-        getSleeperLeagueSettings(leagueID, seasonID);
-    }
-    else if (espnButton.checked) {
-        getESPNSettings(leagueID, seasonID);
+    if (leagueID !== undefined && seasonID !== undefined) {
+        initBar();
+        if (sleeperButton.checked) {
+            getSleeperLeagueSettings(leagueID, seasonID);
+        }
+        else if (espnButton.checked) {
+            getESPNSettings(leagueID, seasonID);
+        }
     }
 }
 function setPage(league) {
@@ -531,6 +554,7 @@ function setPage(league) {
     var promptScreen = document.getElementById("prompt_screen");
     particles.style.display = "none";
     promptScreen.style.display = "none";
+    updateBarValue(2, "Finished!");
     document.getElementById("page_header").style.display = "flex";
     document.getElementById("page_container").style.display = "inline-block";
 }

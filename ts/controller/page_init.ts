@@ -1,5 +1,4 @@
 function doTheThing() {
-    console.log("doing thing");
     const sleeperButton = document.getElementById("platform_input_0") as any;
     const espnButton = document.getElementById("platform_input_1") as any;
     const leagueIDInput = document.getElementById("league_id_input") as HTMLInputElement;
@@ -7,11 +6,13 @@ function doTheThing() {
 
     const leagueID = leagueIDInput.value.replace(/\D/g, "");
     const seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
-
-    if (sleeperButton.checked) {
-        getSleeperLeagueSettings(leagueID, seasonID);
-    } else if (espnButton.checked) {
-        getESPNSettings(leagueID, seasonID);
+    if (leagueID !== undefined && seasonID !== undefined) {
+        initBar();
+        if (sleeperButton.checked) {
+            getSleeperLeagueSettings(leagueID, seasonID);
+        } else if (espnButton.checked) {
+            getESPNSettings(leagueID, seasonID);
+        }
     }
 }
 
@@ -163,6 +164,7 @@ function setPage(league: League) {
     const promptScreen = document.getElementById("prompt_screen");
     particles.style.display = "none";
     promptScreen.style.display = "none";
+    updateBarValue(2, "Finished!");
     document.getElementById("page_header").style.display = "flex";
     document.getElementById("page_container").style.display = "inline-block";
 }
