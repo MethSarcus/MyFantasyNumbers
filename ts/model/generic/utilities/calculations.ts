@@ -22,6 +22,12 @@ function getLightColor(value: number): string {
     return ["hsl(", hue, ",100%,95%)"].join("");
 }
 
+function getDarkColor(value: number): string {
+    // value from 0 to 1
+    const hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,43%)"].join("");
+}
+
 function getLightCardColor(rank, outOf) {
     return getLightColor(rank / outOf);
 }

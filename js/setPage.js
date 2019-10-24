@@ -49,7 +49,7 @@ function setPage(league) {
     };
     var l = new Color("#FF0000");
     var r = new Color("#00FF00");
-    var nav = document.getElementById("sideNav");
+    var nav = document.getElementById("team_dropdown");
     var tabsList = document.getElementById('tabs-content');
     
     //adds teams to sidebar

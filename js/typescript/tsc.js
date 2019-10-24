@@ -409,7 +409,7 @@ function initCube() {
     cube.style.display = "inline-block";
     updateLoadingText("Getting Settings");
 }
-function doTheThing() {
+function main() {
     var sleeperButton = document.getElementById("platform_input_0");
     var espnButton = document.getElementById("platform_input_1");
     var leagueIDInput = document.getElementById("league_id_input");
@@ -422,7 +422,15 @@ function doTheThing() {
             getSleeperLeagueSettings(leagueID, seasonID);
         }
         else if (espnButton.checked) {
-            getESPNSettings(leagueID, seasonID);
+            if (localStorage.getItem(leagueID + seasonID)) {
+                var jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
+                var restoredLeague = League.convertESPNFromJson(jsonLeague);
+                setPage(restoredLeague);
+            }
+            else {
+                localStorage.clear();
+                getESPNSettings(leagueID, seasonID);
+            }
         }
     }
 }
@@ -488,7 +496,7 @@ function setPage(league) {
         }
         yearSelector.add(option);
     });
-    var nav = document.getElementById("sideNav");
+    var nav = document.getElementById("team_dropdown");
     var tabsList = document.getElementById("tabs-content");
     for (var i in league.members) {
         var a = document.createElement("li");
@@ -554,6 +562,74 @@ function setPage(league) {
     $("#power_rank_table").DataTable({
         paging: false,
         searching: false,
+        columns: [
+            { data: "Team" },
+            { data: "Actual Rank",
+                render: function (data, type, row) {
+                    if (type === "display") {
+                        data = ordinal_suffix_of(data);
+                    }
+                    return data;
+                } },
+            { data: "Power Rank",
+                render: function (data, type, row) {
+                    if (type === "display") {
+                        data = ordinal_suffix_of(data);
+                    }
+                    return data;
+                } },
+            { data: "Difference",
+                render: function (data, type, row) {
+                    if (type === "display" && parseInt(data, 10) > 0) {
+                        data = "+" + data;
+                    }
+                    return data;
+                } },
+            { data: "Power Record",
+                sort: function (x, y) {
+                    var xWins = parseInt(x.split("-")[0], 10);
+                    var xLosses = parseInt(x.split("-")[1], 10);
+                    var yWins = parseInt(y.split("-")[0], 10);
+                    var yLosses = parseInt(x.split("-")[1], 10);
+                    if (xWins > yWins) {
+                        return 1;
+                    }
+                    else if (xWins > yWins) {
+                        return -1;
+                    }
+                    else {
+                        if (xLosses < yLosses) {
+                            return 1;
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                } },
+            { data: "Potential Record",
+                sort: function (x, y) {
+                    var xWins = parseInt(x.split("-")[0], 10);
+                    var xLosses = parseInt(x.split("-")[1], 10);
+                    var yWins = parseInt(y.split("-")[0], 10);
+                    var yLosses = parseInt(x.split("-")[1], 10);
+                    if (xWins > yWins) {
+                        return 1;
+                    }
+                    else if (xWins > yWins) {
+                        return -1;
+                    }
+                    else {
+                        if (xLosses < yLosses) {
+                            return 1;
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                } },
+            { data: "Power Win %" },
+            { data: "Potential Win %" },
+        ],
     });
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
@@ -567,6 +643,27 @@ function transitionToLeaguePage() {
     $("#prompt_screen").stop(true, true).fadeOut(200, function () {
         unfadeLeaguePage();
     });
+}
+function selectedPlatform(button) {
+    var seasonIDSelector = document.getElementById("select_year_input");
+    var children = seasonIDSelector.childNodes;
+    if (button.value === "espn") {
+        children.forEach(function (option) {
+            if (option.value !== "2019") {
+                option.disabled = true;
+            }
+            else {
+                option.disabled = false;
+                option.setAttribute("checked", "checked");
+                option.setAttribute("selected", "true");
+            }
+        });
+    }
+    else {
+        children.forEach(function (option) {
+            option.disabled = false;
+        });
+    }
 }
 var ESPNMember = (function () {
     function ESPNMember(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
@@ -1441,6 +1538,16 @@ var League = (function () {
         });
         return finish;
     };
+    League.prototype.getPowerRankDiffFinish = function (teamID) {
+        var finish = 1;
+        var pwrRankDiff = this.getMember(teamID).stats.rank - this.getMember(teamID).stats.powerRank;
+        this.members.forEach(function (member) {
+            if (pwrRankDiff < (member.stats.rank - member.stats.powerRank) && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
     League.prototype.setAverageMargins = function (teamID) {
         var member = this.getMember(teamID);
         this.getSeasonPortionWeeks().forEach(function (week) {
@@ -1917,6 +2024,10 @@ function getColor(value) {
 function getLightColor(value) {
     var hue = ((1 - value) * 120).toString(10);
     return ["hsl(", hue, ",100%,95%)"].join("");
+}
+function getDarkColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,43%)"].join("");
 }
 function getLightCardColor(rank, outOf) {
     return getLightColor(rank / outOf);
@@ -3652,7 +3763,9 @@ function createPowerRankTable(league) {
         var winPct = document.createElement("td");
         var potentialRecord = document.createElement("td");
         var potentialWinPct = document.createElement("td");
+        var actualRank = document.createElement("td");
         var image = document.createElement("img");
+        var diffRow = document.createElement("td");
         image.src = member.logoURL;
         image.style.width = "25px";
         image.style.height = "25px";
@@ -3661,16 +3774,24 @@ function createPowerRankTable(league) {
         image.style.marginRight = "8px";
         teamName.appendChild(image);
         teamName.appendChild(document.createTextNode(member.nameToString()));
-        powerRank.innerText = member.stats.powerRank.toString();
+        powerRank.innerText = member.stats.powerRank + "";
         powerRecord.innerText = member.powerRecordToString();
         potentialRecord.innerText = member.potentialPowerRecordToString();
         winPct.innerText = member.stats.getPowerWinPct() + "%";
         potentialWinPct.innerText = member.stats.getPotentialPowerWinPct() + "%";
-        row.appendChild(powerRank);
+        actualRank.innerText = member.stats.rank + "";
+        var diffText = member.stats.rank - member.stats.powerRank;
+        if (diffText !== 0) {
+            diffRow.style.backgroundColor = getDarkColor(league.getPowerRankDiffFinish(member.teamID) / league.members.length);
+        }
+        diffRow.innerText = diffText;
         row.appendChild(teamName);
+        row.appendChild(actualRank);
+        row.appendChild(powerRank);
+        row.appendChild(diffRow);
         row.appendChild(powerRecord);
-        row.appendChild(winPct);
         row.appendChild(potentialRecord);
+        row.appendChild(winPct);
         row.appendChild(potentialWinPct);
         tableBody.appendChild(row);
     });

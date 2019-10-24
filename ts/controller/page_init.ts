@@ -1,4 +1,4 @@
-function doTheThing() {
+function main() {
     const sleeperButton = document.getElementById("platform_input_0") as any;
     const espnButton = document.getElementById("platform_input_1") as any;
     const leagueIDInput = document.getElementById("league_id_input") as HTMLInputElement;
@@ -11,7 +11,14 @@ function doTheThing() {
         if (sleeperButton.checked) {
             getSleeperLeagueSettings(leagueID, seasonID);
         } else if (espnButton.checked) {
-            getESPNSettings(leagueID, seasonID);
+            if (localStorage.getItem(leagueID + seasonID)) {
+                const jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
+                const restoredLeague = League.convertESPNFromJson(jsonLeague);
+                setPage(restoredLeague);
+            } else {
+                localStorage.clear();
+                getESPNSettings(leagueID, seasonID);
+            }
         }
     }
 }
@@ -82,7 +89,7 @@ function setPage(league: League) {
         (yearSelector as HTMLSelectElement).add(option);
     });
 
-    const nav = document.getElementById("sideNav");
+    const nav = document.getElementById("team_dropdown");
     const tabsList = document.getElementById("tabs-content");
 
     for (const i in league.members) {
@@ -152,10 +159,92 @@ function setPage(league: League) {
     $("#league_stats_table").DataTable({
         paging: false,
         searching: false,
+        // render(data, type, row) {
+        //     console.log(data);
+        //     console.log(type);
+        //     console.log(row);
+        //     // if (type === "display" && row) {
+        //     //     data = "$" + data.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + " " + "USD";
+        //     // }
+        //     return data;
+        // },
     });
     $("#power_rank_table").DataTable({
         paging: false,
         searching: false,
+        columns: [
+            {data: "Team"},
+            {data: "Actual Rank",
+            render(data, type, row) {
+                if (type === "display") {
+                    data = ordinal_suffix_of(data);
+                }
+                return data;
+              }},
+            {data: "Power Rank",
+            render(data, type, row) {
+                if (type === "display") {
+                    data = ordinal_suffix_of(data);
+                }
+                return data;
+              }},
+            {data: "Difference",
+            render(data, type, row) {
+                if (type === "display" && parseInt(data, 10) > 0) {
+                    data = "+" + data;
+                }
+                return data;
+              }},
+            {data: "Power Record",
+            sort(x, y) {
+                const xWins = parseInt(x.split("-")[0], 10);
+                const xLosses = parseInt(x.split("-")[1], 10);
+                const yWins = parseInt(y.split("-")[0], 10);
+                const yLosses = parseInt(x.split("-")[1], 10);
+
+                if ( xWins > yWins) {
+                    return 1;
+                } else if ( xWins > yWins ) {
+                    return -1;
+                } else {
+                    if (xLosses < yLosses) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+              }},
+            {data: "Potential Record",
+            sort(x, y) {
+                const xWins = parseInt(x.split("-")[0], 10);
+                const xLosses = parseInt(x.split("-")[1], 10);
+                const yWins = parseInt(y.split("-")[0], 10);
+                const yLosses = parseInt(x.split("-")[1], 10);
+
+                if ( xWins > yWins) {
+                    return 1;
+                } else if ( xWins > yWins ) {
+                    return -1;
+                } else {
+                    if (xLosses < yLosses) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+              }},
+            {data: "Power Win %"},
+            {data: "Potential Win %"},
+        ],
+        // render(data, type, row) {
+        //     console.log(data);
+        //     console.log(type);
+        //     console.log(row);
+        //     // if (type === "display" && row) {
+        //     //     data = "$" + data.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + " " + "USD";
+        //     // }
+        //     return data;
+        // },
     });
     $(() => {
         $('[data-toggle="tooltip"]').tooltip();
@@ -171,4 +260,24 @@ function transitionToLeaguePage() {
     $("#prompt_screen").stop(true, true).fadeOut(200, () => {
         unfadeLeaguePage();
     });
+}
+
+function selectedPlatform(button): void {
+    const seasonIDSelector = document.getElementById("select_year_input") as HTMLSelectElement;
+    const children = seasonIDSelector.childNodes;
+    if (button.value === "espn") {
+        children.forEach((option) => {
+            if ((option as HTMLSelectElement).value !== "2019") {
+                (option as HTMLSelectElement).disabled = true;
+            } else {
+                (option as HTMLSelectElement).disabled = false;
+                (option as HTMLSelectElement).setAttribute("checked", "checked");
+                (option as HTMLSelectElement).setAttribute("selected", "true");
+            }
+        });
+    } else {
+        children.forEach((option) => {
+            (option as HTMLSelectElement).disabled = false;
+        });
+    }
 }

@@ -42,11 +42,13 @@
 .dropdown {
     /* width: 400px; */
     height: auto;
+    width: auto;
 
 }
 
 .dropdown-menu {
     background-color: #343a40;
+    column-count: 2;
 }
 
 .side-item {
@@ -78,8 +80,13 @@
 
 }
 
+.nav-link {
+    color: white !important;
+}
+
 a .nav-link {
     margin-top: auto;
+
 }
 
 .padMe {
@@ -314,12 +321,14 @@ img.resize {
     text-decoration: none;
     -webkit-appearance: none;
     color: rgba(255, 255, 255, 1) !important;
+    animation-duration: .2ms;
 }
 
 .navBut:hover {
     -webkit-appearance: none;
     background-color: blue;
     border-radius: 10px;
+    animation-duration: .2ms;
 }
 
 .navbar-dark {
@@ -337,10 +346,11 @@ table.dataTable thead .sorting_desc {
 
 .dataTables_info {
     visibility: hidden;
-}
+} 
+/*
 #power_rank_table {
     align-content: left;
-}
+} */
 
 .page-footer {
     margin-top: 70px;
@@ -350,7 +360,7 @@ table.dataTable thead .sorting_desc {
     margin-left: -15px;
     margin-right: -15px;
 }
-
+/* 
 table {
     color: #333;
     font-family: Helvetica, Arial, sans-serif;
@@ -358,44 +368,44 @@ table {
     border-collapse:
         collapse;
     border-spacing: 0;
-}
+} */
 
-td,
+/* td,
 th {
-    border: 1px solid transparent;
+    border: 1px solid transparent; */
     /* No more visible border */
-    height: 30px;
-    transition: all 0.3s;
+    /* height: 30px;
+    transition: all 0.3s; */
     /* Simple transition for hover effect */
-}
+/* } */
 
 header {
     overflow: auto;
 }
-
+/* 
 th {
     background: #DFDFDF;
     /* Darken header a bit */
-    font-weight: bold;
-    text-align: left;
-}
+    /* font-weight: bold;
+    text-align: left; */
+/* } */
 
-td {
+/* td {
     background: #FAFAFA;
     text-align: left;
 }
 
 .thead {
     text-align: center;
-}
+} */
 
 /* Cells in even rows (2,4,6...) are one color */
-tr:nth-child(even) td {
+/* tr:nth-child(even) td {
     background: #F1F1F1;
 }
 
 /* Cells in odd rows (1,3,5...) are another (excludes header cells)  */
-tr:nth-child(odd) td {
+/* tr:nth-child(odd) td {
     background: #FEFEFE;
 }
 
@@ -407,9 +417,9 @@ tr:nth-child(odd):hover td {
 tr:nth-child(even):hover td {
     background: darkgray;
     color: #FFF;
-}
+} */
 
-/*tr:hover { background-color: #666 !important; color: #FFF !important; }  */
+tr:hover { background-color: #666 !important; color: #FFF !important; } 
 /* Hover cell effect! */
 
 .maincard {
@@ -435,6 +445,11 @@ img.newresize {
     /* max-width:85px;
     max-height:85px;
     float: left; */
+}
+
+#teamPill {
+    padding-left: 3em;
+    padding-right: 3em;
 }
 
 .nomarg {
@@ -554,3 +569,41 @@ div.statWidget > div:nth-child(1) > h5:nth-child(1) {
     padding-right: 1em !important;
   }
   
+.dropdown-menu li:hover .sub-menu {
+    visibility: visible;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: inline-block;
+}
+
+#team_dropdown {
+    flex-direction: column;
+}
+
+#dropdownMenuButton {
+    color: white !important;
+    background-color: transparent !important;
+    border: none;
+    animation-duration: .2ms;
+}
+#dropdownMenuButton:hover {
+    background-color: blue !important;
+    animation-duration: .2ms;
+}
+
+#member_week_table_body .tr{
+    margin-top: .25em;
+    margin-bottom: .25em;
+}
+#member_week_table_body .tr:hover{
+    color: black;
+    box-shadow: inset 0px 0px 10px #000000;
+}
+
+
+/* table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > td.sorting_asc, table.dataTable thead > tr > td.sorting_desc, table.dataTable thead > tr > td.sorting {
+    font-size: 1em;
+
+    padding: .25em;
+} */

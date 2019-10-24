@@ -622,6 +622,18 @@ class League {
         return finish;
     }
 
+    public getPowerRankDiffFinish(teamID: number): number {
+        let finish = 1;
+        const pwrRankDiff = this.getMember(teamID).stats.rank - this.getMember(teamID).stats.powerRank;
+        this.members.forEach((member) => {
+            if (pwrRankDiff < (member.stats.rank - member.stats.powerRank) && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+
     public setAverageMargins(teamID: number): void {
         const member = this.getMember(teamID);
         this.getSeasonPortionWeeks().forEach((week) => {

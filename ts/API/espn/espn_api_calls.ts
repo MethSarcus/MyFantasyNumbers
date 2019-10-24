@@ -18,12 +18,10 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
                     const homeTeamID = curWeek.home.teamId;
                     const homePlayers = [];
                     for (const z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
-                        // (firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID
                         const curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
                         const firstName = curPlayer.playerPoolEntry.player.firstName;
                         const lastName = curPlayer.playerPoolEntry.player.lastName;
                         const score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
-                        // console.log(curPlayer);
                         let projectedScore = 0;
                         if (curPlayer.playerPoolEntry.player.stats.length === 0) {
                             projectedScore = 0;
