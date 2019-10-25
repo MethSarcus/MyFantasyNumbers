@@ -73,37 +73,41 @@ const positionToInt = new Map([
 ]);
 
 function getPosition(eligibleSlots: number[]): POSITION {
-    if (eligibleSlots[0] === 0) {
+    let slotNum = eligibleSlots[0];
+    if (slotNum === 25) {
+        slotNum = eligibleSlots[1];
+    }
+    if (slotNum === 0) {
         return POSITION.QB;
-    } else if (eligibleSlots[0] === 2) {
+    } else if (slotNum === 2) {
         return POSITION.RB;
-    } else if (eligibleSlots[0] === 3) {
+    } else if (slotNum === 3) {
         return POSITION.WR;
-    } else if (eligibleSlots[0] === 16) {
+    } else if (slotNum === 16) {
         return POSITION.DEF;
-    } else if (eligibleSlots[0] === 17) {
+    } else if (slotNum === 17) {
         return POSITION.K;
-    } else if (eligibleSlots[0] === 5) {
+    } else if (slotNum === 5) {
         return POSITION.TE;
-    } else if (eligibleSlots[0] === 8) {
+    } else if (slotNum === 8) {
         return POSITION.DT;
-    } else if (eligibleSlots[0] === 9) {
+    } else if (slotNum === 9) {
         return POSITION.DE;
-    } else if (eligibleSlots[0] === 10) {
+    } else if (slotNum === 10) {
         return POSITION.LB;
-    } else if (eligibleSlots[0] === 11) {
+    } else if (slotNum === 11) {
         return POSITION.DL;
-    } else if (eligibleSlots[0] === 12) {
+    } else if (slotNum === 12) {
         return POSITION.CB;
-    } else if (eligibleSlots[0] === 13) {
+    } else if (slotNum === 13) {
         return POSITION.S;
-    } else if (eligibleSlots[0] === 14) {
+    } else if (slotNum === 14) {
         return POSITION.DB;
-    } else if (eligibleSlots[0] === 15) {
+    } else if (slotNum === 15) {
         return POSITION.DP;
-    } else if (eligibleSlots[0] === 18) {
+    } else if (slotNum === 18) {
         return POSITION.P;
-    } else if (eligibleSlots[0] === 19) {
+    } else if (slotNum === 19) {
         return POSITION.HC;
     }
 }

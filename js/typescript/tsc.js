@@ -1953,7 +1953,7 @@ function getLightColor(value) {
 }
 function getDarkColor(value) {
     var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,43%)"].join("");
+    return ["hsl(", hue, ",100%,47%)"].join("");
 }
 function getLightCardColor(rank, outOf) {
     return getLightColor(rank / outOf);
@@ -2065,52 +2065,56 @@ var positionToInt = new Map([
     ["TAXI", 88],
 ]);
 function getPosition(eligibleSlots) {
-    if (eligibleSlots[0] === 0) {
+    var slotNum = eligibleSlots[0];
+    if (slotNum === 25) {
+        slotNum = eligibleSlots[1];
+    }
+    if (slotNum === 0) {
         return POSITION.QB;
     }
-    else if (eligibleSlots[0] === 2) {
+    else if (slotNum === 2) {
         return POSITION.RB;
     }
-    else if (eligibleSlots[0] === 3) {
+    else if (slotNum === 3) {
         return POSITION.WR;
     }
-    else if (eligibleSlots[0] === 16) {
+    else if (slotNum === 16) {
         return POSITION.DEF;
     }
-    else if (eligibleSlots[0] === 17) {
+    else if (slotNum === 17) {
         return POSITION.K;
     }
-    else if (eligibleSlots[0] === 5) {
+    else if (slotNum === 5) {
         return POSITION.TE;
     }
-    else if (eligibleSlots[0] === 8) {
+    else if (slotNum === 8) {
         return POSITION.DT;
     }
-    else if (eligibleSlots[0] === 9) {
+    else if (slotNum === 9) {
         return POSITION.DE;
     }
-    else if (eligibleSlots[0] === 10) {
+    else if (slotNum === 10) {
         return POSITION.LB;
     }
-    else if (eligibleSlots[0] === 11) {
+    else if (slotNum === 11) {
         return POSITION.DL;
     }
-    else if (eligibleSlots[0] === 12) {
+    else if (slotNum === 12) {
         return POSITION.CB;
     }
-    else if (eligibleSlots[0] === 13) {
+    else if (slotNum === 13) {
         return POSITION.S;
     }
-    else if (eligibleSlots[0] === 14) {
+    else if (slotNum === 14) {
         return POSITION.DB;
     }
-    else if (eligibleSlots[0] === 15) {
+    else if (slotNum === 15) {
         return POSITION.DP;
     }
-    else if (eligibleSlots[0] === 18) {
+    else if (slotNum === 18) {
         return POSITION.P;
     }
-    else if (eligibleSlots[0] === 19) {
+    else if (slotNum === 19) {
         return POSITION.HC;
     }
 }
@@ -3143,7 +3147,7 @@ function createLeagueStackedGraph(league) {
         window.leagueStackedChart = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: makeMemberLabels(league),
+                labels: makeDescendingMemberLabels(league),
                 datasets: getLeagueStackedDatasets(league),
             },
             legend: {
@@ -3205,7 +3209,7 @@ function getLeagueStackedDatasets(league) {
         datasets.push(dataset);
         increment += 1;
     });
-    league.members.forEach(function (member) {
+    league.members.sort(function (a, b) { return (a.stats.pf < b.stats.pf) ? 1 : -1; }).forEach(function (member) {
         labels.push(member.nameToString);
         var positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
         for (var i = 0; i < datasets.length; i++) {
@@ -3213,6 +3217,13 @@ function getLeagueStackedDatasets(league) {
         }
     });
     return datasets;
+}
+function makeDescendingMemberLabels(league) {
+    var labels = [];
+    league.members.sort(function (a, b) { return (a.stats.pf < b.stats.pf) ? 1 : -1; }).forEach(function (member) {
+        labels.push(member.nameToString());
+    });
+    return labels;
 }
 function makeMemberLabels(league) {
     var labels = [];
@@ -3647,13 +3658,21 @@ function createLeagueStatsTableRow(league, member) {
     var paCell = document.createElement("td");
     var ppCell = document.createElement("td");
     var pctCell = document.createElement("td");
+    var image = document.createElement("img");
     var pctText = "%";
+    image.src = member.logoURL;
+    image.style.width = "25px";
+    image.style.height = "25px";
+    image.style.borderRadius = "25px";
+    image.addEventListener("error", fixNoImage);
+    image.style.marginRight = "8px";
+    teamNameCell.appendChild(image);
+    teamNameCell.appendChild(document.createTextNode(member.nameToString()));
     rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
     ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
     recordCell.appendChild(document.createTextNode(member.recordToString()));
-    teamNameCell.appendChild(document.createTextNode(member.nameToString()));
     if (member.stats.getWinPct() === 0 || member.stats.getWinPct() === 1) {
         pctText = ".00" + pctText;
     }

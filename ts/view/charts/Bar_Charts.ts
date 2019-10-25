@@ -94,7 +94,7 @@ function createLeagueStackedGraph(league: League): void {
         (window as any).leagueStackedChart = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: makeMemberLabels(league),
+                labels: makeDescendingMemberLabels(league),
                 datasets: getLeagueStackedDatasets(league),
             },
             legend: {
@@ -158,8 +158,7 @@ function getLeagueStackedDatasets(league: League): object[] {
         datasets.push(dataset);
         increment += 1;
     });
-
-    league.members.forEach((member) => {
+    league.members.sort((a, b) => (a.stats.pf < b.stats.pf) ? 1 : -1).forEach((member) => {
         labels.push(member.nameToString);
         const positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
         for (let i = 0; i < datasets.length; i++) {
@@ -168,6 +167,15 @@ function getLeagueStackedDatasets(league: League): object[] {
     });
 
     return datasets;
+}
+
+function makeDescendingMemberLabels(league: League): string[] {
+    const labels = [];
+    league.members.sort((a, b) => (a.stats.pf < b.stats.pf) ? 1 : -1).forEach((member) => {
+        labels.push(member.nameToString());
+    });
+
+    return labels;
 }
 
 function makeMemberLabels(league: League): string[] {
