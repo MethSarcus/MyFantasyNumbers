@@ -5,13 +5,13 @@ function createMainWeeklyLineChart(league: League) {
     const ctx = document.getElementById("GRAPHCANVAS");
     ctx.classList.toggle("mainChart", true);
     const myWeekLabels = [];
-    for (let i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
+    for (let i = 0; i <= (league.getSeasonPortionWeeks().length); i++) {
         myWeekLabels.push("Week " + i);
     }
     const weeklyScoreMap = new Map();
-    weeklyScoreMap.set(-1, []);
+    weeklyScoreMap.set(-1, [0]);
     league.members.forEach((member) => {
-        weeklyScoreMap.set(member.teamID, []);
+        weeklyScoreMap.set(member.teamID, [0]);
     });
 
     league.getSeasonPortionWeeks().forEach((week) => {
@@ -217,11 +217,14 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
     }
 }
 
-function createLeagueWeeklyLineChart(league: League) {
+function createLeagueWeeklyLineChart(league: League, accumulates: boolean) {
     if ((window as any).leagueWeeklyLineChart === undefined) {
         const ctx = (document.getElementById("league_weekly_line_canvas") as HTMLCanvasElement).getContext("2d");
-        const dataSets = getLeagueLineData(league);
+        const dataSets = getLeagueLineData(league, accumulates);
         const myWeekLabels = [];
+        if (accumulates) {
+            myWeekLabels.push();
+        }
         for (let i = 1; i <= (league.weeks.length); i++) {
             myWeekLabels.push("Week " + i);
         }
@@ -239,7 +242,7 @@ function createLeagueWeeklyLineChart(league: League) {
                 },
                 responsive: true,
                 maintainAspectRatio: false,
-                showLines: false,
+                showLines: true,
                 title: {
                     display: true,
                     position: "top",
@@ -288,9 +291,12 @@ function createLeagueWeeklyLineChart(league: League) {
     }
 }
 
-function getLeagueLineData(league: League): object[] {
+function getLeagueLineData(league: League, accumulates: boolean): object[] {
     const weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
+    league.members.forEach((member) => {
+        weeklyScoreMap.set(member.teamID, []);
+    });
     league.members.forEach((member) => {
         weeklyScoreMap.set(member.teamID, []);
     });
@@ -309,17 +315,57 @@ function getLeagueLineData(league: League): object[] {
     weeklyScoreMap.forEach((value: number[], key: number) => {
         if (key !== -1) {
             const curTeam = league.getMember(key);
+            let seasonTotal = 0;
             datasets.push({
                 fill: false,
-                data: value,
+                data: value.map((weekScore) => {
+                    if (accumulates) {
+                        seasonTotal += weekScore;
+                        return seasonTotal;
+                    } else {
+                        return weekScore;
+                    }
+                }),
                 borderColor: getMemberColor(key),
                 backgroundColor: getMemberColor(key),
                 pointBackgroundColor: getMemberColor(key),
                 lineTension: 0,
+                borderWidth: 2,
                 label: curTeam.nameToString()
             });
         }
     });
-
     return datasets;
+}
+
+function deselectLeagueLineData(labelName: string) {
+    const data = (window as any).leagueWeeklyLineChart.data.datasets;
+    data.forEach((dataset) => {
+        if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
+            const newColor = dataset.backgroundColor + "1A";
+            dataset.backgroundColor = newColor;
+            dataset.borderColor = newColor;
+            dataset.pointBackgroundColor = newColor;
+        } else {
+            dataset.hidden = false;
+        }
+    });
+
+    (window as any).leagueWeeklyLineChart.data.datasets = data;
+    (window as any).leagueWeeklyLineChart.update();
+}
+
+function reselectLeagueLineData() {
+    const data = (window as any).leagueWeeklyLineChart.data.datasets;
+    data.forEach((dataset) => {
+        const color = dataset.backgroundColor;
+        if (color.length === 9) {
+            dataset.backgroundColor = color.substring(0, color.length - 2);
+            dataset.borderColor = color.substring(0, color.length - 2);
+            dataset.pointBackgroundColor = color.substring(0, color.length - 2);
+        }
+    });
+
+    (window as any).leagueWeeklyLineChart.data.datasets = data;
+    (window as any).leagueWeeklyLineChart.update();
 }

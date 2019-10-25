@@ -111,8 +111,8 @@ function createLeagueStackedGraph(league: League): void {
                 title: {
                     display: true,
                     position: "top",
-                    text: "Total Points Scored",
-                    fontSize: 36,
+                    text: "Points Scored by Position",
+                    fontSize: 24,
                     fontColor: "#111",
 
                 },

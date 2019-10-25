@@ -126,8 +126,6 @@
   </div>
   <header style="display: none;" id="page_header">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-      <span style="font-size:23px; color: white; cursor: pointer;" onclick="toggleNav()"><i
-          class="fas fa-bars"></i></span>
       <a id="league_name_header" class="navbar-brand nav-link" data-toggle="pill" href="#leaguePage"></a>
       <ul class="navbar-nav ml-2 w-100">
         <!-- <li class="nav-item ml-2">
@@ -177,14 +175,14 @@
   <div class="container-fluid" style="display: none;" id="page_container">
     <div id="mySidenav" class="sidenav">
     </div>
-    <div id="wrapper">
+    <div id="wrapper" class="px-5">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
           <div id="leaguePage" class="tab-pane fade active show">
             <div class="row">
               <div class="col-6">
-                <h3>Current Basic Stats</h3>
-                <table class="table table-sm hover" id="league_stats_table">
+                <h3>League Stats</h3>
+                <table class="table table-sm compact hover" id="league_stats_table">
                   <thead>
                     <tr role="row">
                       <th scope="col">Team</th>

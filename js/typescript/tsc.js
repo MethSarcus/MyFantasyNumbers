@@ -552,13 +552,20 @@ function setPage(league) {
     graphRow.appendChild(graphContainer);
     graphPage.appendChild(graphRow);
     tabsList.appendChild(graphPage);
-    createLeagueWeeklyLineChart(league);
+    createLeagueWeeklyLineChart(league, true);
     createLeagueStatsTable(league);
     createLeagueStackedGraph(league);
     initLeagueStatsTable();
     initPowerRankTable();
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
+    });
+    $("#league_stats_table tr").hover(function () {
+        $(this).addClass("hover");
+        deselectLeagueLineData($(this).find("td:first-child").text());
+    }, function () {
+        $(this).removeClass("hover");
+        reselectLeagueLineData();
     });
     var particles = document.getElementById("particles-js");
     particles.style.display = "none";
@@ -3164,8 +3171,8 @@ function createLeagueStackedGraph(league) {
                 title: {
                     display: true,
                     position: "top",
-                    text: "Total Points Scored",
-                    fontSize: 36,
+                    text: "Points Scored by Position",
+                    fontSize: 24,
                     fontColor: "#111",
                 },
                 tooltips: {
@@ -3237,13 +3244,13 @@ function createMainWeeklyLineChart(league) {
     var ctx = document.getElementById("GRAPHCANVAS");
     ctx.classList.toggle("mainChart", true);
     var myWeekLabels = [];
-    for (var i = 1; i <= (league.getSeasonPortionWeeks().length); i++) {
+    for (var i = 0; i <= (league.getSeasonPortionWeeks().length); i++) {
         myWeekLabels.push("Week " + i);
     }
     var weeklyScoreMap = new Map();
-    weeklyScoreMap.set(-1, []);
+    weeklyScoreMap.set(-1, [0]);
     league.members.forEach(function (member) {
-        weeklyScoreMap.set(member.teamID, []);
+        weeklyScoreMap.set(member.teamID, [0]);
     });
     league.getSeasonPortionWeeks().forEach(function (week) {
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
@@ -3440,11 +3447,14 @@ function createMemberWeeklyLineChart(league, member) {
         window.memberLineChart.update();
     }
 }
-function createLeagueWeeklyLineChart(league) {
+function createLeagueWeeklyLineChart(league, accumulates) {
     if (window.leagueWeeklyLineChart === undefined) {
         var ctx = document.getElementById("league_weekly_line_canvas").getContext("2d");
-        var dataSets = getLeagueLineData(league);
+        var dataSets = getLeagueLineData(league, accumulates);
         var myWeekLabels = [];
+        if (accumulates) {
+            myWeekLabels.push();
+        }
         for (var i = 1; i <= (league.weeks.length); i++) {
             myWeekLabels.push("Week " + i);
         }
@@ -3461,7 +3471,7 @@ function createLeagueWeeklyLineChart(league) {
                 },
                 responsive: true,
                 maintainAspectRatio: false,
-                showLines: false,
+                showLines: true,
                 title: {
                     display: true,
                     position: "top",
@@ -3508,9 +3518,12 @@ function createLeagueWeeklyLineChart(league) {
         window.leagueWeeklyLineChart.update();
     }
 }
-function getLeagueLineData(league) {
+function getLeagueLineData(league, accumulates) {
     var weeklyScoreMap = new Map();
     weeklyScoreMap.set(-1, []);
+    league.members.forEach(function (member) {
+        weeklyScoreMap.set(member.teamID, []);
+    });
     league.members.forEach(function (member) {
         weeklyScoreMap.set(member.teamID, []);
     });
@@ -3527,18 +3540,57 @@ function getLeagueLineData(league) {
     weeklyScoreMap.forEach(function (value, key) {
         if (key !== -1) {
             var curTeam = league.getMember(key);
+            var seasonTotal_1 = 0;
             datasets.push({
                 fill: false,
-                data: value,
+                data: value.map(function (weekScore) {
+                    if (accumulates) {
+                        seasonTotal_1 += weekScore;
+                        return seasonTotal_1;
+                    }
+                    else {
+                        return weekScore;
+                    }
+                }),
                 borderColor: getMemberColor(key),
                 backgroundColor: getMemberColor(key),
                 pointBackgroundColor: getMemberColor(key),
                 lineTension: 0,
+                borderWidth: 2,
                 label: curTeam.nameToString()
             });
         }
     });
     return datasets;
+}
+function deselectLeagueLineData(labelName) {
+    var data = window.leagueWeeklyLineChart.data.datasets;
+    data.forEach(function (dataset) {
+        if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
+            var newColor = dataset.backgroundColor + "1A";
+            dataset.backgroundColor = newColor;
+            dataset.borderColor = newColor;
+            dataset.pointBackgroundColor = newColor;
+        }
+        else {
+            dataset.hidden = false;
+        }
+    });
+    window.leagueWeeklyLineChart.data.datasets = data;
+    window.leagueWeeklyLineChart.update();
+}
+function reselectLeagueLineData() {
+    var data = window.leagueWeeklyLineChart.data.datasets;
+    data.forEach(function (dataset) {
+        var color = dataset.backgroundColor;
+        if (color.length === 9) {
+            dataset.backgroundColor = color.substring(0, color.length - 2);
+            dataset.borderColor = color.substring(0, color.length - 2);
+            dataset.pointBackgroundColor = color.substring(0, color.length - 2);
+        }
+    });
+    window.leagueWeeklyLineChart.data.datasets = data;
+    window.leagueWeeklyLineChart.update();
 }
 function createTeamRadarChart(league, member) {
     if (window.myRadarChart !== undefined) {

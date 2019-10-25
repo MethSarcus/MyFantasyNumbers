@@ -153,7 +153,7 @@ function setPage(league: League) {
     graphPage.appendChild(graphRow);
 
     tabsList.appendChild(graphPage);
-    createLeagueWeeklyLineChart(league);
+    createLeagueWeeklyLineChart(league, true);
     createLeagueStatsTable(league);
     createLeagueStackedGraph(league);
     initLeagueStatsTable();
@@ -162,6 +162,14 @@ function setPage(league: League) {
 
     $(() => {
         $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    $("#league_stats_table tr").hover(function() {
+        $(this).addClass("hover");
+        deselectLeagueLineData($(this).find("td:first-child").text());
+    }, function() {
+        $(this).removeClass("hover");
+        reselectLeagueLineData();
     });
 
     const particles = document.getElementById("particles-js");
