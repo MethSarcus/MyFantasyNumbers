@@ -156,96 +156,10 @@ function setPage(league: League) {
     createLeagueWeeklyLineChart(league);
     createLeagueStatsTable(league);
     createLeagueStackedGraph(league);
-    $("#league_stats_table").DataTable({
-        paging: false,
-        searching: false,
-        // render(data, type, row) {
-        //     console.log(data);
-        //     console.log(type);
-        //     console.log(row);
-        //     // if (type === "display" && row) {
-        //     //     data = "$" + data.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + " " + "USD";
-        //     // }
-        //     return data;
-        // },
-    });
-    $("#power_rank_table").DataTable({
-        paging: false,
-        searching: false,
-        columns: [
-            {data: "Team"},
-            {data: "Actual Rank",
-            render(data, type, row) {
-                if (type === "display") {
-                    data = ordinal_suffix_of(data);
-                }
-                return data;
-              }},
-            {data: "Power Rank",
-            render(data, type, row) {
-                if (type === "display") {
-                    data = ordinal_suffix_of(data);
-                }
-                return data;
-              }},
-            {data: "Difference",
-            render(data, type, row) {
-                if (type === "display" && parseInt(data, 10) > 0) {
-                    data = "+" + data;
-                }
-                return data;
-              }},
-            {data: "Power Record",
-            sort(x, y) {
-                const xWins = parseInt(x.split("-")[0], 10);
-                const xLosses = parseInt(x.split("-")[1], 10);
-                const yWins = parseInt(y.split("-")[0], 10);
-                const yLosses = parseInt(x.split("-")[1], 10);
+    initLeagueStatsTable();
 
-                if ( xWins > yWins) {
-                    return 1;
-                } else if ( xWins > yWins ) {
-                    return -1;
-                } else {
-                    if (xLosses < yLosses) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-              }},
-            {data: "Potential Record",
-            sort(x, y) {
-                const xWins = parseInt(x.split("-")[0], 10);
-                const xLosses = parseInt(x.split("-")[1], 10);
-                const yWins = parseInt(y.split("-")[0], 10);
-                const yLosses = parseInt(x.split("-")[1], 10);
+    initPowerRankTable();
 
-                if ( xWins > yWins) {
-                    return 1;
-                } else if ( xWins > yWins ) {
-                    return -1;
-                } else {
-                    if (xLosses < yLosses) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-              }},
-            {data: "Power Win %"},
-            {data: "Potential Win %"},
-        ],
-        // render(data, type, row) {
-        //     console.log(data);
-        //     console.log(type);
-        //     console.log(row);
-        //     // if (type === "display" && row) {
-        //     //     data = "$" + data.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + " " + "USD";
-        //     // }
-        //     return data;
-        // },
-    });
     $(() => {
         $('[data-toggle="tooltip"]').tooltip();
     });

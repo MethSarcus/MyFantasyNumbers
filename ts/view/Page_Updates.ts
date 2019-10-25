@@ -47,7 +47,7 @@ function updateWeekAverage(league: League, member: Member): void {
         avgDiffText = avgDiff + "";
     }
     avgVsLeague.innerText = avgDiffText + " Average";
-    weekCard.style.backgroundColor = getCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
+    weekCard.style.backgroundColor = getDarkCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
 }
 
 function updateBestWeek(league: League, member: Member): void {
@@ -60,7 +60,7 @@ function updateBestWeek(league: League, member: Member): void {
     const finish = league.getBestWeekFinish(member.teamID);
     bestWeekScore.innerText = roundToHundred(bestWeek.score) + " Points";
     bestWeekFinish.innerText = ordinal_suffix_of(finish) + " Highest";
-    bestWeekCard.style.backgroundColor = getCardColor(finish, league.members.length);
+    bestWeekCard.style.backgroundColor = getDarkCardColor(finish, league.members.length);
     bestWeekNumber.innerText = "Week " + league.getBestWeek(member.teamID).weekNumber;
 }
 
@@ -82,7 +82,7 @@ function updateEfficiency(league: League, member: Member): void {
 
     efficiencyVsLeague.innerText = diff;
     efficiencyFinish.innerText = ordinal_suffix_of(finish) + " Most Efficient";
-    efficiencyCard.style.backgroundColor = getCardColor(finish, league.members.length);
+    efficiencyCard.style.backgroundColor = getDarkCardColor(finish, league.members.length);
     efficiencyPercentage.innerText = roundToHundred(efficiency * 100) + "%";
 }
 
@@ -102,7 +102,7 @@ function updateTeamStandardDeviation(league: League, member: Member): void {
         stdDiffText = stdDiff + "";
     }
     stdVsLeague.innerText = stdDiffText + " Average";
-    stdCard.style.backgroundColor = getCardColor(league.getStandardDeviationFinish(member.teamID), league.members.length);
+    stdCard.style.backgroundColor = getDarkCardColor(league.getStandardDeviationFinish(member.teamID), league.members.length);
 }
 
 function updateTeamCard(league: League, member: Member): void {
@@ -148,7 +148,7 @@ function updateMiniStatCards(league: League, member: Member): void {
     } else {
         pfLeagueDiff.innerHTML = pfDiff + " League Average";
     }
-    pfBackground.style.backgroundColor = getCardColor(
+    pfBackground.style.backgroundColor = getDarkCardColor(
         league.getPointsScoredFinish(member.teamID), league.members.length);
 
     paFinish.innerHTML = ordinal_suffix_of(league.getPointsAgainstFinish(member.teamID));
@@ -159,7 +159,7 @@ function updateMiniStatCards(league: League, member: Member): void {
     } else {
         paLeagueDiff.innerHTML = paDiff + " League Average";
     }
-    paBackground.style.backgroundColor = getCardColor(
+    paBackground.style.backgroundColor = getInverseDarkCardColor(
         league.getPointsAgainstFinish(member.teamID), league.members.length);
     ppFinish.innerHTML = ordinal_suffix_of(league.getPotentialPointsFinish(member.teamID));
     ppScore.innerHTML = member.stats.pp.toString();
@@ -170,7 +170,7 @@ function updateMiniStatCards(league: League, member: Member): void {
         ppLeagueDiff.innerHTML = ppDiff + " League Average";
     }
 
-    ppBackground.style.backgroundColor = getCardColor(
+    ppBackground.style.backgroundColor = getDarkCardColor(
         league.getPotentialPointsFinish(member.teamID), league.members.length);
 }
 
@@ -234,7 +234,7 @@ function updateGutWinCard(league: League, member: Member) {
     const gutPoints = roundToHundred(league.getMember(teamID).stats.gutPoints / league.getMember(teamID).stats.gutPlayersPlayed);
     gutPointsTotalNumber.innerText = gutWins + " Gut points earned";
     gutPointsNumber.innerText = gutPoints + " average points when starting player with lower projection";
-    gutCard.style.backgroundColor = getCardColor(league.getGutAverageFinish(teamID), league.members.length);
+    gutCard.style.backgroundColor = getDarkCardColor(league.getGutAverageFinish(teamID), league.members.length);
 }
 
 function updateMargins(league: League, member: Member) {

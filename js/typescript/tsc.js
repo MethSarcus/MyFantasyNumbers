@@ -555,82 +555,8 @@ function setPage(league) {
     createLeagueWeeklyLineChart(league);
     createLeagueStatsTable(league);
     createLeagueStackedGraph(league);
-    $("#league_stats_table").DataTable({
-        paging: false,
-        searching: false,
-    });
-    $("#power_rank_table").DataTable({
-        paging: false,
-        searching: false,
-        columns: [
-            { data: "Team" },
-            { data: "Actual Rank",
-                render: function (data, type, row) {
-                    if (type === "display") {
-                        data = ordinal_suffix_of(data);
-                    }
-                    return data;
-                } },
-            { data: "Power Rank",
-                render: function (data, type, row) {
-                    if (type === "display") {
-                        data = ordinal_suffix_of(data);
-                    }
-                    return data;
-                } },
-            { data: "Difference",
-                render: function (data, type, row) {
-                    if (type === "display" && parseInt(data, 10) > 0) {
-                        data = "+" + data;
-                    }
-                    return data;
-                } },
-            { data: "Power Record",
-                sort: function (x, y) {
-                    var xWins = parseInt(x.split("-")[0], 10);
-                    var xLosses = parseInt(x.split("-")[1], 10);
-                    var yWins = parseInt(y.split("-")[0], 10);
-                    var yLosses = parseInt(x.split("-")[1], 10);
-                    if (xWins > yWins) {
-                        return 1;
-                    }
-                    else if (xWins > yWins) {
-                        return -1;
-                    }
-                    else {
-                        if (xLosses < yLosses) {
-                            return 1;
-                        }
-                        else {
-                            return -1;
-                        }
-                    }
-                } },
-            { data: "Potential Record",
-                sort: function (x, y) {
-                    var xWins = parseInt(x.split("-")[0], 10);
-                    var xLosses = parseInt(x.split("-")[1], 10);
-                    var yWins = parseInt(y.split("-")[0], 10);
-                    var yLosses = parseInt(x.split("-")[1], 10);
-                    if (xWins > yWins) {
-                        return 1;
-                    }
-                    else if (xWins > yWins) {
-                        return -1;
-                    }
-                    else {
-                        if (xLosses < yLosses) {
-                            return 1;
-                        }
-                        else {
-                            return -1;
-                        }
-                    }
-                } },
-            { data: "Power Win %" },
-            { data: "Potential Win %" },
-        ],
-    });
+    initLeagueStatsTable();
+    initPowerRankTable();
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -2035,8 +1961,14 @@ function getLightCardColor(rank, outOf) {
 function getCardColor(rank, outOf) {
     return getColor(rank / outOf);
 }
+function getDarkCardColor(rank, outOf) {
+    return getDarkColor(rank / outOf);
+}
 function getInverseCardColor(rank, outOf) {
     return getColor((1 + (outOf - rank)) / outOf);
+}
+function getInverseDarkCardColor(rank, outOf) {
+    return getDarkColor((1 + (outOf - rank)) / outOf);
 }
 function getTextColor(rank, outOf) {
     var o = rank / outOf;
@@ -2879,7 +2811,7 @@ function updateWeekAverage(league, member) {
         avgDiffText = avgDiff + "";
     }
     avgVsLeague.innerText = avgDiffText + " Average";
-    weekCard.style.backgroundColor = getCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
+    weekCard.style.backgroundColor = getDarkCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
 }
 function updateBestWeek(league, member) {
     var bestWeekScore = document.getElementById("team_best_week_score");
@@ -2890,7 +2822,7 @@ function updateBestWeek(league, member) {
     var finish = league.getBestWeekFinish(member.teamID);
     bestWeekScore.innerText = roundToHundred(bestWeek.score) + " Points";
     bestWeekFinish.innerText = ordinal_suffix_of(finish) + " Highest";
-    bestWeekCard.style.backgroundColor = getCardColor(finish, league.members.length);
+    bestWeekCard.style.backgroundColor = getDarkCardColor(finish, league.members.length);
     bestWeekNumber.innerText = "Week " + league.getBestWeek(member.teamID).weekNumber;
 }
 function updateEfficiency(league, member) {
@@ -2910,7 +2842,7 @@ function updateEfficiency(league, member) {
     }
     efficiencyVsLeague.innerText = diff;
     efficiencyFinish.innerText = ordinal_suffix_of(finish) + " Most Efficient";
-    efficiencyCard.style.backgroundColor = getCardColor(finish, league.members.length);
+    efficiencyCard.style.backgroundColor = getDarkCardColor(finish, league.members.length);
     efficiencyPercentage.innerText = roundToHundred(efficiency * 100) + "%";
 }
 function updateTeamStandardDeviation(league, member) {
@@ -2929,7 +2861,7 @@ function updateTeamStandardDeviation(league, member) {
         stdDiffText = stdDiff + "";
     }
     stdVsLeague.innerText = stdDiffText + " Average";
-    stdCard.style.backgroundColor = getCardColor(league.getStandardDeviationFinish(member.teamID), league.members.length);
+    stdCard.style.backgroundColor = getDarkCardColor(league.getStandardDeviationFinish(member.teamID), league.members.length);
 }
 function updateTeamCard(league, member) {
     var picture = document.getElementById("team_image");
@@ -2971,7 +2903,7 @@ function updateMiniStatCards(league, member) {
     else {
         pfLeagueDiff.innerHTML = pfDiff + " League Average";
     }
-    pfBackground.style.backgroundColor = getCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
+    pfBackground.style.backgroundColor = getDarkCardColor(league.getPointsScoredFinish(member.teamID), league.members.length);
     paFinish.innerHTML = ordinal_suffix_of(league.getPointsAgainstFinish(member.teamID));
     paScore.innerHTML = member.stats.pa.toString();
     var paDiff = roundToTen(member.stats.pa - league.getLeaguePA());
@@ -2981,7 +2913,7 @@ function updateMiniStatCards(league, member) {
     else {
         paLeagueDiff.innerHTML = paDiff + " League Average";
     }
-    paBackground.style.backgroundColor = getCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
+    paBackground.style.backgroundColor = getInverseDarkCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
     ppFinish.innerHTML = ordinal_suffix_of(league.getPotentialPointsFinish(member.teamID));
     ppScore.innerHTML = member.stats.pp.toString();
     var ppDiff = roundToTen(member.stats.pp - league.getLeaguePP());
@@ -2991,7 +2923,7 @@ function updateMiniStatCards(league, member) {
     else {
         ppLeagueDiff.innerHTML = ppDiff + " League Average";
     }
-    ppBackground.style.backgroundColor = getCardColor(league.getPotentialPointsFinish(member.teamID), league.members.length);
+    ppBackground.style.backgroundColor = getDarkCardColor(league.getPotentialPointsFinish(member.teamID), league.members.length);
 }
 function updateMVP(teamMVP) {
     var mvpImage = document.getElementById("mvp_image");
@@ -3049,7 +2981,7 @@ function updateGutWinCard(league, member) {
     var gutPoints = roundToHundred(league.getMember(teamID).stats.gutPoints / league.getMember(teamID).stats.gutPlayersPlayed);
     gutPointsTotalNumber.innerText = gutWins + " Gut points earned";
     gutPointsNumber.innerText = gutPoints + " average points when starting player with lower projection";
-    gutCard.style.backgroundColor = getCardColor(league.getGutAverageFinish(teamID), league.members.length);
+    gutCard.style.backgroundColor = getDarkCardColor(league.getGutAverageFinish(teamID), league.members.length);
 }
 function updateMargins(league, member) {
     var teamID = member.teamID;
@@ -3668,13 +3600,45 @@ function createTeamRadarChart(league, member) {
         window.myRadarChart.render();
     }
 }
+function sortTableByRecord(x, y) {
+    var xWins = parseInt(x.split("-")[0], 10);
+    var xLosses = parseInt(x.split("-")[1], 10);
+    var yWins = parseInt(y.split("-")[0], 10);
+    var yLosses = parseInt(x.split("-")[1], 10);
+    if (xWins > yWins) {
+        return 1;
+    }
+    else if (xWins > yWins) {
+        return -1;
+    }
+    else {
+        if (xLosses < yLosses) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+}
+function renderTableOrdinalNumber(data, type) {
+    if (type === "display") {
+        data = ordinal_suffix_of(data);
+    }
+    return data;
+}
+function renderTableDifferenceNumber(data, type) {
+    if (type === "display" && parseInt(data, 10) > 0) {
+        data = "+" + data;
+    }
+    return data;
+}
 function createLeagueStatsTable(league) {
     var tableBody = document.getElementById("league_stats_table_body");
     league.members.forEach(function (member) {
-        tableBody.appendChild(createLeagueStatsTableRow(member));
+        tableBody.appendChild(createLeagueStatsTableRow(league, member));
     });
 }
-function createLeagueStatsTableRow(member) {
+function createLeagueStatsTableRow(league, member) {
     var row = document.createElement("tr");
     var rankCell = document.createElement("td");
     var teamNameCell = document.createElement("td");
@@ -3694,14 +3658,48 @@ function createLeagueStatsTableRow(member) {
         pctText = ".00" + pctText;
     }
     pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
-    row.appendChild(rankCell);
+    rankCell.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
+    pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
+    paCell.style.backgroundColor = getInverseCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
+    ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
     row.appendChild(teamNameCell);
+    row.appendChild(rankCell);
     row.appendChild(recordCell);
     row.appendChild(pctCell);
     row.appendChild(pfCell);
     row.appendChild(paCell);
     row.appendChild(ppCell);
     return row;
+}
+function initLeagueStatsTable() {
+    $("#league_stats_table").DataTable({
+        paging: false,
+        searching: false,
+        order: [[1, "asc"]],
+        columns: [
+            { data: "Team" },
+            {
+                data: "Rank",
+                render: renderTableOrdinalNumber
+            },
+            {
+                data: "Record",
+                sort: sortTableByRecord
+            },
+            {
+                data: "Pct",
+            },
+            {
+                data: "PF"
+            },
+            {
+                data: "PA"
+            },
+            {
+                data: "PP"
+            },
+        ],
+    });
 }
 function updateMemberWeekTable(league, member) {
     $("#member_week_table_body").empty();
@@ -3760,9 +3758,7 @@ function createPowerRankTable(league) {
         var teamName = document.createElement("td");
         var powerRank = document.createElement("td");
         var powerRecord = document.createElement("td");
-        var winPct = document.createElement("td");
         var potentialRecord = document.createElement("td");
-        var potentialWinPct = document.createElement("td");
         var actualRank = document.createElement("td");
         var image = document.createElement("img");
         var diffRow = document.createElement("td");
@@ -3777,23 +3773,46 @@ function createPowerRankTable(league) {
         powerRank.innerText = member.stats.powerRank + "";
         powerRecord.innerText = member.powerRecordToString();
         potentialRecord.innerText = member.potentialPowerRecordToString();
-        winPct.innerText = member.stats.getPowerWinPct() + "%";
-        potentialWinPct.innerText = member.stats.getPotentialPowerWinPct() + "%";
         actualRank.innerText = member.stats.rank + "";
         var diffText = member.stats.rank - member.stats.powerRank;
         if (diffText !== 0) {
             diffRow.style.backgroundColor = getDarkColor(league.getPowerRankDiffFinish(member.teamID) / league.members.length);
         }
+        actualRank.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
+        powerRank.style.backgroundColor = getDarkColor(member.stats.powerRank / league.members.length);
         diffRow.innerText = diffText;
         row.appendChild(teamName);
-        row.appendChild(actualRank);
         row.appendChild(powerRank);
+        row.appendChild(actualRank);
         row.appendChild(diffRow);
         row.appendChild(powerRecord);
-        row.appendChild(potentialRecord);
-        row.appendChild(winPct);
-        row.appendChild(potentialWinPct);
         tableBody.appendChild(row);
+    });
+}
+function initPowerRankTable() {
+    $("#power_rank_table").DataTable({
+        paging: false,
+        searching: false,
+        order: [[1, "asc"]],
+        columns: [
+            { data: "Team" },
+            {
+                data: "Power Rank",
+                render: renderTableOrdinalNumber
+            },
+            {
+                data: "Actual Rank",
+                render: renderTableOrdinalNumber
+            },
+            {
+                data: "Difference",
+                render: renderTableDifferenceNumber
+            },
+            {
+                data: "Power Record",
+                sort: sortTableByRecord
+            },
+        ],
     });
 }
 //# sourceMappingURL=tsc.js.map

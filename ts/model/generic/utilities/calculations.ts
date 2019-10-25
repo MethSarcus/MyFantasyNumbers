@@ -36,8 +36,15 @@ function getCardColor(rank, outOf) {
     return getColor(rank / outOf);
 }
 
+function getDarkCardColor(rank, outOf) {
+    return getDarkColor(rank / outOf);
+}
+
 function getInverseCardColor(rank, outOf) {
     return getColor((1 + (outOf - rank)) / outOf);
+}
+function getInverseDarkCardColor(rank, outOf) {
+    return getDarkColor((1 + (outOf - rank)) / outOf);
 }
 
 function getTextColor(rank: number, outOf: number): string {

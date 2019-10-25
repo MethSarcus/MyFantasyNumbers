@@ -52,9 +52,9 @@
 }
 
 .side-item {
-    width: 250px;
-    font-size: 1.1rem;
-    /*padding-left: 2px;*/
+    width: auto;
+    font-size: 1rem;
+    padding-left: 2px;
     /*margin: 0;*/
 }
 
@@ -382,44 +382,8 @@ th {
 header {
     overflow: auto;
 }
-/* 
-th {
-    background: #DFDFDF;
-    /* Darken header a bit */
-    /* font-weight: bold;
-    text-align: left; */
-/* } */
 
-/* td {
-    background: #FAFAFA;
-    text-align: left;
-}
-
-.thead {
-    text-align: center;
-} */
-
-/* Cells in even rows (2,4,6...) are one color */
-/* tr:nth-child(even) td {
-    background: #F1F1F1;
-}
-
-/* Cells in odd rows (1,3,5...) are another (excludes header cells)  */
-/* tr:nth-child(odd) td {
-    background: #FEFEFE;
-}
-
-tr:nth-child(odd):hover td {
-    background: darkgray;
-    color: #FFF;
-}
-
-tr:nth-child(even):hover td {
-    background: darkgray;
-    color: #FFF;
-} */
-
-tr:hover { background-color: #666 !important; color: #FFF !important; } 
+#power_rank_table tr:hover { background-color: #666 !important;color: rgb(240, 240, 240);  color-adjust: economy!important; } 
 /* Hover cell effect! */
 
 .maincard {
@@ -569,16 +533,17 @@ div.statWidget > div:nth-child(1) > h5:nth-child(1) {
     padding-right: 1em !important;
   }
   
-.dropdown-menu li:hover .sub-menu {
+#team_dropdown .dropdown-menu li:hover .sub-menu {
     visibility: visible;
 }
 
-.dropdown:hover .dropdown-menu {
+#team_dropdown .dropdown:hover .dropdown-menu {
     display: inline-block;
 }
 
 #team_dropdown {
     flex-direction: column;
+    width: max-content;
 }
 
 #dropdownMenuButton {

@@ -5,9 +5,7 @@ function createPowerRankTable(league: League) {
         const teamName = document.createElement("td");
         const powerRank = document.createElement("td");
         const powerRecord = document.createElement("td");
-        const winPct = document.createElement("td");
         const potentialRecord = document.createElement("td");
-        const potentialWinPct = document.createElement("td");
         const actualRank = document.createElement("td");
         const image = document.createElement("img");
         const diffRow = document.createElement("td");
@@ -22,25 +20,48 @@ function createPowerRankTable(league: League) {
         teamName.appendChild(image);
         teamName.appendChild(document.createTextNode(member.nameToString()));
         powerRank.innerText = member.stats.powerRank + "";
-        powerRecord.innerText =  member.powerRecordToString();
+        powerRecord.innerText = member.powerRecordToString();
         potentialRecord.innerText = member.potentialPowerRecordToString();
-        winPct.innerText = member.stats.getPowerWinPct() + "%";
-        potentialWinPct.innerText = member.stats.getPotentialPowerWinPct() + "%";
         actualRank.innerText = member.stats.rank + "";
         const diffText = member.stats.rank - member.stats.powerRank;
         if (diffText !== 0) {
             diffRow.style.backgroundColor = getDarkColor(league.getPowerRankDiffFinish(member.teamID) / league.members.length);
         }
+        actualRank.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
+        powerRank.style.backgroundColor = getDarkColor(member.stats.powerRank / league.members.length);
         diffRow.innerText = (diffText as unknown as string);
         row.appendChild(teamName);
-        row.appendChild(actualRank);
         row.appendChild(powerRank);
+        row.appendChild(actualRank);
         row.appendChild(diffRow);
         row.appendChild(powerRecord);
-        row.appendChild(potentialRecord);
-        row.appendChild(winPct);
-        row.appendChild(potentialWinPct);
         tableBody.appendChild(row);
+    });
+}
 
+function initPowerRankTable() {
+    $("#power_rank_table").DataTable({
+        paging: false,
+        searching: false,
+        order: [[1, "asc"]],
+        columns: [
+            { data: "Team" },
+            {
+                data: "Power Rank",
+                render: renderTableOrdinalNumber
+            },
+            {
+                data: "Actual Rank",
+                render: renderTableOrdinalNumber
+            },
+            {
+                data: "Difference",
+                render: renderTableDifferenceNumber
+            },
+            {
+                data: "Power Record",
+                sort: sortTableByRecord
+            },
+        ],
     });
 }

@@ -1,11 +1,11 @@
 function createLeagueStatsTable(league: League): void {
     const tableBody = document.getElementById("league_stats_table_body");
     league.members.forEach((member) => {
-        tableBody.appendChild(createLeagueStatsTableRow(member));
+        tableBody.appendChild(createLeagueStatsTableRow(league, member));
     });
 }
 
-function createLeagueStatsTableRow(member: Member): HTMLTableRowElement {
+function createLeagueStatsTableRow(league: League, member: Member): HTMLTableRowElement {
     const row = document.createElement("tr");
     const rankCell = document.createElement("td");
     const teamNameCell = document.createElement("td");
@@ -26,9 +26,12 @@ function createLeagueStatsTableRow(member: Member): HTMLTableRowElement {
         pctText = ".00" + pctText;
     }
     pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
-
-    row.appendChild(rankCell);
+    rankCell.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
+    pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
+    paCell.style.backgroundColor = getInverseCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
+    ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
     row.appendChild(teamNameCell);
+    row.appendChild(rankCell);
     row.appendChild(recordCell);
     row.appendChild(pctCell);
     row.appendChild(pfCell);
@@ -36,4 +39,35 @@ function createLeagueStatsTableRow(member: Member): HTMLTableRowElement {
     row.appendChild(ppCell);
 
     return row;
+}
+
+function initLeagueStatsTable() {
+    $("#league_stats_table").DataTable({
+        paging: false,
+        searching: false,
+        order: [[1, "asc"]],
+        columns: [
+            { data: "Team" },
+            {
+                data: "Rank",
+                render: renderTableOrdinalNumber
+            },
+            {
+                data: "Record",
+                sort: sortTableByRecord
+            },
+            {
+                data: "Pct",
+            },
+            {
+                data: "PF"
+            },
+            {
+                data: "PA"
+            },
+            {
+                data: "PP"
+            },
+        ],
+    });
 }
