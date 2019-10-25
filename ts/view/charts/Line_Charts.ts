@@ -340,17 +340,18 @@ function getLeagueLineData(league: League, accumulates: boolean): object[] {
 
 function deselectLeagueLineData(labelName: string) {
     const data = (window as any).leagueWeeklyLineChart.data.datasets;
-    data.forEach((dataset) => {
-        if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
-            const newColor = dataset.backgroundColor + "1A";
-            dataset.backgroundColor = newColor;
-            dataset.borderColor = newColor;
-            dataset.pointBackgroundColor = newColor;
-        } else {
-            dataset.hidden = false;
-        }
-    });
-
+    if (labelName !== "") {
+        data.forEach((dataset) => {
+            if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
+                const newColor = dataset.backgroundColor + "1A";
+                dataset.backgroundColor = newColor;
+                dataset.borderColor = newColor;
+                dataset.pointBackgroundColor = newColor;
+            } else {
+                dataset.hidden = false;
+            }
+        });
+    }
     (window as any).leagueWeeklyLineChart.data.datasets = data;
     (window as any).leagueWeeklyLineChart.update();
 }

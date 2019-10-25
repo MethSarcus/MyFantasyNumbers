@@ -3565,17 +3565,19 @@ function getLeagueLineData(league, accumulates) {
 }
 function deselectLeagueLineData(labelName) {
     var data = window.leagueWeeklyLineChart.data.datasets;
-    data.forEach(function (dataset) {
-        if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
-            var newColor = dataset.backgroundColor + "1A";
-            dataset.backgroundColor = newColor;
-            dataset.borderColor = newColor;
-            dataset.pointBackgroundColor = newColor;
-        }
-        else {
-            dataset.hidden = false;
-        }
-    });
+    if (labelName !== "") {
+        data.forEach(function (dataset) {
+            if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
+                var newColor = dataset.backgroundColor + "1A";
+                dataset.backgroundColor = newColor;
+                dataset.borderColor = newColor;
+                dataset.pointBackgroundColor = newColor;
+            }
+            else {
+                dataset.hidden = false;
+            }
+        });
+    }
     window.leagueWeeklyLineChart.data.datasets = data;
     window.leagueWeeklyLineChart.update();
 }
