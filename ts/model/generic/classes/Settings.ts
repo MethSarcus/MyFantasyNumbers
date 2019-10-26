@@ -25,7 +25,7 @@ class Settings {
 
     public getPositions(): string[] {
         const positions = this.activeLineupSlots.filter((slot) => {
-            return slot[0] !== 1 && slot[0] !== 3 && slot[0] !== 5 && slot[0] !== 7 && slot[0] !== 23;
+            return slot[0] !== 1 && slot[0] !== 3 && slot[0] !== 5 && slot[0] !== 7 && slot[0] !== 23 && slot[0] !== 25;
         }).map((slot) => {
             return intToPosition.get(slot[0]);
         });

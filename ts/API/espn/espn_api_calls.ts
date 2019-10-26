@@ -34,7 +34,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
                         }
 
                         const eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                        const position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                        const position = getPosition(eligibleSlots);
                         const realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         const playerID = curPlayer.playerId;
                         const lineupSlotID = curPlayer.lineupSlotId;
@@ -71,7 +71,9 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
                     }
                     const isPlayoff = (q > settings.regularSeasonLength);
                     const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam);
-                    matchups.push(new Matchup(homeTeam, awayTeam, q, isPlayoff));
+                    const matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
+                    matchup.setPoorLineupDecisions();
+                    matchups.push(matchup);
                 }
             }
             const isPlayoffs = (q > settings.regularSeasonLength);

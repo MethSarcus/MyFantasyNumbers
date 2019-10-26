@@ -72,44 +72,12 @@ const positionToInt = new Map([
     ["TAXI", 88],
 ]);
 
-function getPosition(eligibleSlots: number[]): POSITION {
+function getPosition(eligibleSlots: number[]): string {
     let slotNum = eligibleSlots[0];
-    if (slotNum === 25) {
+    if (slotNum.toString() === "25" || slotNum.toString() === "23") {
         slotNum = eligibleSlots[1];
     }
-    if (slotNum === 0) {
-        return POSITION.QB;
-    } else if (slotNum === 2) {
-        return POSITION.RB;
-    } else if (slotNum === 3) {
-        return POSITION.WR;
-    } else if (slotNum === 16) {
-        return POSITION.DEF;
-    } else if (slotNum === 17) {
-        return POSITION.K;
-    } else if (slotNum === 5) {
-        return POSITION.TE;
-    } else if (slotNum === 8) {
-        return POSITION.DT;
-    } else if (slotNum === 9) {
-        return POSITION.DE;
-    } else if (slotNum === 10) {
-        return POSITION.LB;
-    } else if (slotNum === 11) {
-        return POSITION.DL;
-    } else if (slotNum === 12) {
-        return POSITION.CB;
-    } else if (slotNum === 13) {
-        return POSITION.S;
-    } else if (slotNum === 14) {
-        return POSITION.DB;
-    } else if (slotNum === 15) {
-        return POSITION.DP;
-    } else if (slotNum === 18) {
-        return POSITION.P;
-    } else if (slotNum === 19) {
-        return POSITION.HC;
-    }
+    return intToPosition.get(slotNum);
 }
 
 function getRealTeamInitials(realteamID) {

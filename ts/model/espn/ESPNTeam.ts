@@ -61,7 +61,7 @@ class ESPNTeam {
                 }
             }
 
-            if (bestPlayer != null) {
+            if (bestPlayer !== null && bestPlayer !== undefined) {
                 optimalLineup.push(bestPlayer);
                 highScore = 0;
             }
@@ -72,7 +72,7 @@ class ESPNTeam {
     public getTeamScore(players: Player[]): number {
         let score = 0;
         for (const i in players) {
-            if (players[i].score != null && players[i].score !== undefined) {
+            if (players[i].score !== null && players[i].score !== undefined) {
                 score += players[i].score;
             }
         }
@@ -82,7 +82,7 @@ class ESPNTeam {
     public getProjectedScore(players: Player[]): number {
         let projectedScore = 0;
         for (const i in players) {
-            if (players[i].projectedScore != null && players[i].projectedScore !== undefined) {
+            if (players[i].projectedScore !== null && players[i].projectedScore !== undefined) {
                 projectedScore += players[i].projectedScore;
             }
         }

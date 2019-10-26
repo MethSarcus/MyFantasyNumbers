@@ -41,8 +41,9 @@ class League {
                     homeRoster,
                     object.settings.activeLineupSlots,
                     awayTeamId);
-
-                matchups.push(new Matchup(home, away, week.weekNumber, week.isPlayoffs));
+                const recreatedMatchup = new Matchup(home, away, week.weekNumber, week.isPlayoffs);
+                recreatedMatchup.setPoorLineupDecisions();
+                matchups.push(recreatedMatchup);
             });
             weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
         });
@@ -694,4 +695,19 @@ class League {
         });
         return [underdogCount, upsetCount];
     }
+
+    // public calculateOwnerScore(memberID: number) {
+    //     // Things that influence owner score:
+    //     // Gut Points, Efficiency, PF, Record
+    // }
+
+    // public calculateTeamScore() {
+    //     // Things that influence owner score:
+    //     // Potential Points, Power Record, Margin of Victory
+
+    // }
+
+    // public calculateSuperScore() {
+
+    // }
 }

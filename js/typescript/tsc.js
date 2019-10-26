@@ -37,7 +37,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
                         }
                         var eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                        var position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                        var position = getPosition(eligibleSlots);
                         var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
                         var playerID = curPlayer.playerId;
                         var lineupSlotID = curPlayer.lineupSlotId;
@@ -76,7 +76,9 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                     }
                     var isPlayoff = (q > settings.regularSeasonLength);
                     var homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam);
-                    matchups.push(new Matchup(homeTeam, awayTeam, q, isPlayoff));
+                    var matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
+                    matchup.setPoorLineupDecisions();
+                    matchups.push(matchup);
                 }
             }
             var isPlayoffs = (q > settings.regularSeasonLength);
@@ -616,6 +618,7 @@ var ESPNMember = (function () {
         var _this = this;
         var scores = [];
         weeks.forEach(function (week) {
+            console.log(week);
             scores.push(week.getTeam(_this.teamID).score);
         });
         this.stats.standardDeviation = calcStandardDeviation(scores);
@@ -707,6 +710,7 @@ var ESPNTeam = (function () {
             }
         }
         var optimalLineup = new Array();
+        console.log(rosterSlots);
         for (var x in rosterSlots) {
             var highScore = 0;
             var bestPlayer = null;
@@ -725,7 +729,7 @@ var ESPNTeam = (function () {
                     bestPlayer = eligibleWeekPlayers[z];
                 }
             }
-            if (bestPlayer != null) {
+            if (bestPlayer !== null && bestPlayer !== undefined) {
                 optimalLineup.push(bestPlayer);
                 highScore = 0;
             }
@@ -735,7 +739,7 @@ var ESPNTeam = (function () {
     ESPNTeam.prototype.getTeamScore = function (players) {
         var score = 0;
         for (var i in players) {
-            if (players[i].score != null && players[i].score !== undefined) {
+            if (players[i].score !== null && players[i].score !== undefined) {
                 score += players[i].score;
             }
         }
@@ -744,7 +748,7 @@ var ESPNTeam = (function () {
     ESPNTeam.prototype.getProjectedScore = function (players) {
         var projectedScore = 0;
         for (var i in players) {
-            if (players[i].projectedScore != null && players[i].projectedScore !== undefined) {
+            if (players[i].projectedScore !== null && players[i].projectedScore !== undefined) {
                 projectedScore += players[i].projectedScore;
             }
         }
@@ -978,7 +982,9 @@ var League = (function () {
                     away = new ESPNTeam(matchup.away.teamID, awayRoster_1, object.settings.activeLineupSlots, matchup.home.teamID);
                 }
                 var home = new ESPNTeam(matchup.home.teamID, homeRoster, object.settings.activeLineupSlots, awayTeamId);
-                matchups.push(new Matchup(home, away, week.weekNumber, week.isPlayoffs));
+                var recreatedMatchup = new Matchup(home, away, week.weekNumber, week.isPlayoffs);
+                recreatedMatchup.setPoorLineupDecisions();
+                matchups.push(recreatedMatchup);
             });
             weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
         });
@@ -1756,7 +1762,7 @@ var Settings = (function () {
     }
     Settings.prototype.getPositions = function () {
         var positions = this.activeLineupSlots.filter(function (slot) {
-            return slot[0] !== 1 && slot[0] !== 3 && slot[0] !== 5 && slot[0] !== 7 && slot[0] !== 23;
+            return slot[0] !== 1 && slot[0] !== 3 && slot[0] !== 5 && slot[0] !== 7 && slot[0] !== 23 && slot[0] !== 25;
         }).map(function (slot) {
             return intToPosition.get(slot[0]);
         });
@@ -2073,57 +2079,10 @@ var positionToInt = new Map([
 ]);
 function getPosition(eligibleSlots) {
     var slotNum = eligibleSlots[0];
-    if (slotNum === 25) {
+    if (slotNum.toString() === "25" || slotNum.toString() === "23") {
         slotNum = eligibleSlots[1];
     }
-    if (slotNum === 0) {
-        return POSITION.QB;
-    }
-    else if (slotNum === 2) {
-        return POSITION.RB;
-    }
-    else if (slotNum === 3) {
-        return POSITION.WR;
-    }
-    else if (slotNum === 16) {
-        return POSITION.DEF;
-    }
-    else if (slotNum === 17) {
-        return POSITION.K;
-    }
-    else if (slotNum === 5) {
-        return POSITION.TE;
-    }
-    else if (slotNum === 8) {
-        return POSITION.DT;
-    }
-    else if (slotNum === 9) {
-        return POSITION.DE;
-    }
-    else if (slotNum === 10) {
-        return POSITION.LB;
-    }
-    else if (slotNum === 11) {
-        return POSITION.DL;
-    }
-    else if (slotNum === 12) {
-        return POSITION.CB;
-    }
-    else if (slotNum === 13) {
-        return POSITION.S;
-    }
-    else if (slotNum === 14) {
-        return POSITION.DB;
-    }
-    else if (slotNum === 15) {
-        return POSITION.DP;
-    }
-    else if (slotNum === 18) {
-        return POSITION.P;
-    }
-    else if (slotNum === 19) {
-        return POSITION.HC;
-    }
+    return intToPosition.get(slotNum);
 }
 function getRealTeamInitials(realteamID) {
     var team = realteamID;
@@ -3855,8 +3814,8 @@ function createPowerRankTable(league) {
         powerRank.style.backgroundColor = getDarkColor(member.stats.powerRank / league.members.length);
         diffRow.innerText = diffText;
         row.appendChild(teamName);
-        row.appendChild(powerRank);
         row.appendChild(actualRank);
+        row.appendChild(powerRank);
         row.appendChild(diffRow);
         row.appendChild(powerRecord);
         tableBody.appendChild(row);
