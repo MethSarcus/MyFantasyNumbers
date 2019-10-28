@@ -1254,7 +1254,6 @@ var League = (function () {
     League.prototype.getTeamAveragePointsPerPosition = function (teamID) {
         var _this = this;
         var allPlayers = getSeasonPlayers(this, teamID);
-        console.log(allPlayers);
         var positions = this.settings.getPositions();
         var scoreDict = new Map();
         var timesPlayedDict = new Map();
@@ -2434,6 +2433,7 @@ var SleeperMember = (function () {
 var SleeperPlayer = (function () {
     function SleeperPlayer(playerID, weekNumber, lineupSlotID) {
         this.espnID = playerID;
+        this.playerID = playerID;
         this.score = 0;
         this.projectedScore = 0;
         this.weekNumber = weekNumber;
