@@ -12,7 +12,7 @@ class SleeperPlayer implements Player {
     public espnID: any;
 
     constructor(playerID: string, weekNumber: number, lineupSlotID: number) {
-        this.playerID = playerID;
+        this.espnID = playerID;
         this.score = 0;
         this.projectedScore = 0;
         this.weekNumber = weekNumber;

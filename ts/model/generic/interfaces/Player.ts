@@ -6,9 +6,10 @@ interface Player {
     projectedScore: number;
     position: string;
     realTeamID: number;
-    playerID: string;
+    espnID: string;
     weekNumber: number;
     lineupSlotID: number;
+    playerID: string;
 
     isEligible: (slot: number) => boolean;
 }

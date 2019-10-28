@@ -309,7 +309,7 @@ img.resize {
 }
 
 #league_name_header {
-    width: auto;
+    width: max-content;
     line-height: auto;
 }
 

@@ -6,9 +6,10 @@ class ESPNPlayer implements Player {
     public projectedScore: any;
     public position: any;
     public realTeamID: any;
-    public playerID: any;
+    public espnID: string;
     public lineupSlotID: any;
-    public weekNumber: any;
+    public weekNumber: number;
+    public playerID: string;
     constructor(firstName, lastName, score, projectedScore,
                 position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
         this.firstName = firstName;
@@ -21,6 +22,7 @@ class ESPNPlayer implements Player {
         this.playerID = playerID;
         this.lineupSlotID = lineupSlotID;
         this.weekNumber = weekNumber;
+        this.espnID = playerID;
     }
 
     public isEligible(slot: number): boolean {

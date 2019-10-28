@@ -10,8 +10,6 @@ interface Team {
     gutDifference: number;
     gutPlayers: number;
 
-    getOptimalLineup: (activeLineupSlots: number[]) => Player[];
-
     getTeamScore: (players: Player[]) => number;
 
     getProjectedScore: (players: Player[]) => number;
@@ -25,8 +23,6 @@ interface Team {
     getEligibleSlotPlayers: (slot: number) => Player[];
 
     getEligibleSlotBenchPlayers: (slot: number) => Player[];
-
-    getProjectedOptimalLineup: (activeLineupSlots: number[]) => Player[];
 
     getGutPoints: (activeLineupSlots: number[]) => [number, number];
 

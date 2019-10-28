@@ -1,7 +1,44 @@
+function getOptimalLineupDepreciated(activeLineupSlots: number[]): Player[] {
+    const rosterSlots = [];
+    // tslint:disable-next-line: forin
+    for (const i in activeLineupSlots) {
+        for (let w = 0; w < activeLineupSlots[i][1]; w++) {
+            rosterSlots.push(activeLineupSlots[i][0]);
+        }
+    }
+    const optimalLineup = new Array<SleeperPlayer>();
+    // tslint:disable-next-line: forin
+    for (const x in rosterSlots) {
+        let highScore = 0;
+        let bestPlayer = new EmptySlot(rosterSlots[x]);
+        const eligibleWeekPlayers = [];
+        const players = this.lineup.concat(this.bench, this.IR);
+        for (const y in players) {
+            if (!includesPlayer(players[y], optimalLineup)) {
+                if (players[y].isEligible(rosterSlots[x])) {
+                    eligibleWeekPlayers.push(players[y]);
+                }
+            }
+        }
+        for (const z in eligibleWeekPlayers) {
+            if (eligibleWeekPlayers[z].score > highScore) {
+                highScore = eligibleWeekPlayers[z].score;
+                bestPlayer = eligibleWeekPlayers[z];
+            }
+        }
+
+        if (bestPlayer != null) {
+            optimalLineup.push(bestPlayer);
+            highScore = 0;
+        }
+    }
+    return optimalLineup;
+}
+
 function includesPlayer(player: Player, lineup: Player[]): boolean {
     let includes = false;
     lineup.forEach((element) => {
-        if (player.playerID === element.playerID) {
+        if (player.espnID === element.espnID) {
             includes = true;
         }
     });
@@ -99,7 +136,7 @@ function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
     league.getSeasonPortionWeeks().forEach((week) => {
         week.getTeam(teamID).lineup.forEach((player) => {
             const index = players.findIndex((existingPlayer) =>
-                existingPlayer.playerID === player.playerID
+                existingPlayer.playerID === player.espnID
             );
             if (index > -1) {
                 players[index].addPerformance(player);
@@ -118,7 +155,7 @@ function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[
         if (!week.getTeamMatchup(teamID).byeWeek) {
             week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach((player) => {
                 const index = players.findIndex((existingPlayer) =>
-                    existingPlayer.playerID === player.playerID
+                    existingPlayer.playerID === player.espnID
                 );
                 if (index > -1) {
                     players[index].addPerformance(player);

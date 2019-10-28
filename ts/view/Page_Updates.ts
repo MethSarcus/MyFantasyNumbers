@@ -263,7 +263,7 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
     if (biggestBoom.position === "D/ST") {
         biggestBoomImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(biggestBoom.realTeamID) + ".png&h=150&w=150";
     } else {
-        biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.playerID + ".png";
+        biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.espnID + ".png";
     }
     let outcomeText = "";
     const boomMatchup = league.weeks[biggestBoom.weekNumber - 1].getTeamMatchup(teamID);

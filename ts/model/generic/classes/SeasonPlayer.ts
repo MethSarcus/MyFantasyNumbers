@@ -7,6 +7,7 @@ class SeasonPlayer {
     public position: any;
     public realTeamID: number;
     public playerID: string;
+    public espnID: string;
     public weeksPlayed: number;
     public averageScore: number;
     public scores: [[number, number]];
@@ -27,7 +28,7 @@ class SeasonPlayer {
         if (platform === PLATFORM.SLEEPER) {
             this.pictureID = (player as SleeperPlayer).espnID;
         } else {
-            this.pictureID = player.playerID;
+            this.pictureID = player.espnID;
         }
         this.setPictureURL();
     }
@@ -50,13 +51,7 @@ class SeasonPlayer {
     }
 
     public isEligible(slot: number): boolean {
-        let isEligible = false;
-        this.eligibleSlots.forEach((eligibleSlot) => {
-            if (eligibleSlot === slot) {
-                isEligible = true;
-            }
-        });
-        return isEligible;
+        return this.eligibleSlots.includes(slot);
     }
 
     public setPictureURL(): void {

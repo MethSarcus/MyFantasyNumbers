@@ -25,7 +25,7 @@ const intToPosition = new Map([
     [4, "WR"],
     [5, "WR/TE"],
     [6, "TE"],
-    [7, "OP"],
+    [7, "SUPER_FLEX"],
     [8, "DT"],
     [9, "DE"],
     [10, "LB"],
@@ -41,6 +41,7 @@ const intToPosition = new Map([
     [20, "BN"],
     [21, "IR"],
     [23, "FLEX"],
+    [25, "???"],
     [88, "TAXI"],
 ]);
 
@@ -70,12 +71,15 @@ const positionToInt = new Map([
     ["IR", 21],
     ["FLEX", 23],
     ["TAXI", 88],
+    ["???", 25],
 ]);
 
 function getPosition(eligibleSlots: number[]): string {
     let slotNum = eligibleSlots[0];
-    if (slotNum.toString() === "25" || slotNum.toString() === "23") {
-        slotNum = eligibleSlots[1];
+    let i = 0;
+    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5") {
+        i += 1;
+        slotNum = eligibleSlots[i];
     }
     return intToPosition.get(slotNum);
 }
