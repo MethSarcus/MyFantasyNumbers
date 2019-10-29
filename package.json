@@ -2,6 +2,7 @@
     "title": "My Fantasy Numbers",
     "name": "my-fantasy-numbers",
     "version": "1.0.1",
+    "private": true,
     "description": "A site for in depth fantasy football stats",
     "keywords": [
         "css",
@@ -13,6 +14,10 @@
         "league",
         "app"
     ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack"
+    },
     "homepage": "https://myfantasynumbers.com",
     "bugs": {
         "url": "https://sethmarcus.dev/",
@@ -36,11 +41,14 @@
         "datatables.net-bs4": "1.10.19",
         "jquery": "^3.4.1",
         "jquery.easing": "^1.4.1",
+        "lodash": "^4.17.15",
         "mathjs": "^6.0.4",
         "node": "^12.8.0"
     },
     "devDependencies": {
         "tslint": "^5.20.0",
-        "typescript": "^3.6.4"
+        "typescript": "^3.6.4",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.9"
     }
 }
