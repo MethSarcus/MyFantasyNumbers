@@ -1,31 +1,31 @@
 {
-    "title": "SB Admin",
-    "name": "startbootstrap-sb-admin",
-    "version": "5.0.3",
-    "description": "A one page app landing page HTML theme for Bootstrap.",
+    "title": "My Fantasy Numbers",
+    "name": "my-fantasy-numbers",
+    "version": "1.0.1",
+    "description": "A site for in depth fantasy football stats",
     "keywords": [
         "css",
         "sass",
         "html",
-        "responsive",
-        "theme",
-        "template",
-        "admin",
+        "fantasy",
+        "stats",
+        "football",
+        "league",
         "app"
     ],
-    "homepage": "https://startbootstrap.com/template-overviews/sb-admin",
+    "homepage": "https://myfantasynumbers.com",
     "bugs": {
-        "url": "https://github.com/BlackrockDigital/startbootstrap-sb-admin/issues",
-        "email": "feedback@startbootstrap.com"
+        "url": "https://sethmarcus.dev/",
+        "email": "sem4140@rit.edu"
     },
-    "license": "MIT",
-    "author": "Start Bootstrap",
+    "license": "CC BY-NC-ND",
+    "author": "Seth Marcus",
     "contributors": [
-        "David Miller (http://davidmiller.io/)"
+        "Seth Marcus (https://sethmarcus.dev/)"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/BlackrockDigital/startbootstrap-sb-admin.git"
+        "url": "https://github.com/sem4140/MyFantasyNumbers_V1"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "5.7.0",
@@ -37,21 +37,10 @@
         "jquery": "^3.4.1",
         "jquery.easing": "^1.4.1",
         "mathjs": "^6.0.4",
-        "mysql": "^2.17.1",
-        "node": "^12.8.0",
-        "rainbowvis.js": "^1.0.1",
-        "tslint": "^5.20.0",
-        "typescript": "^3.6.4"
+        "node": "^12.8.0"
     },
     "devDependencies": {
-        "browser-sync": "^2.26.7",
-        "gulp": "^4.0.0",
-        "gulp-autoprefixer": "^6.0.0",
-        "gulp-clean-css": "4.0.0",
-        "gulp-header": "2.0.7",
-        "gulp-plumber": "^1.2.1",
-        "gulp-rename": "1.4.0",
-        "gulp-sass": "4.0.2",
-        "gulp-uglify": "3.0.1"
+        "tslint": "^5.20.0",
+        "typescript": "^3.6.4"
     }
 }
