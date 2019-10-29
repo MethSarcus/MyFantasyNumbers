@@ -200,7 +200,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
         var leagueAvatar = json.avatar;
         var draftId = json.draft_id;
         var playoffStartWeek = json.settings.playoff_week_start;
-        var currentMatchupPeriod = json.settings.leg;
+        var currentMatchupPeriod = json.settings.last_scored_leg;
         var previousLeagueId = json.previous_league_id;
         var numDivisions = json.settings.divisions;
         var isActive = (json.status === "in_season");
@@ -254,15 +254,8 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
     });
 }
 function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName) {
-    var weeksToGet;
-    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
-        weeksToGet = settings.currentMatchupPeriod - 1;
-    }
-    else {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
-    }
     var promises = [];
-    for (var i = 1; i <= weeksToGet; i++) {
+    for (var i = 1; i <= settings.currentMatchupPeriod; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
     updateLoadingText("Getting weekly stats");
@@ -275,7 +268,7 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettin
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
             weekCounter += 1;
         });
-        getSleeperWeekStats(weeksToGet).then(function (result) {
+        getSleeperWeekStats(settings.currentMatchupPeriod).then(function (result) {
             var _loop_2 = function (y) {
                 Weeks[y].matchups.forEach(function (matchup) {
                     matchup.home.lineup.forEach(function (player) {
@@ -1046,12 +1039,12 @@ var League = (function () {
         var weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs === false && it.weekNumber < _this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === false && it.weekNumber <= _this.settings.currentMatchupPeriod;
             });
         }
         else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs === true && it.weekNumber < _this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === true && it.weekNumber <= _this.settings.currentMatchupPeriod;
             });
         }
         return weekPortion;

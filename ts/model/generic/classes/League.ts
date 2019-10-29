@@ -207,11 +207,11 @@ class League {
         let weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === false && it.weekNumber < this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === false && it.weekNumber <= this.settings.currentMatchupPeriod;
             });
         } else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === true && it.weekNumber < this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === true && it.weekNumber <= this.settings.currentMatchupPeriod;
             });
         }
         return weekPortion;

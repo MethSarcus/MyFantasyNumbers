@@ -14,7 +14,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
         const leagueAvatar = json.avatar;
         const draftId = json.draft_id;
         const playoffStartWeek = json.settings.playoff_week_start;
-        const currentMatchupPeriod = json.settings.leg;
+        const currentMatchupPeriod = json.settings.last_scored_leg;
         const previousLeagueId = json.previous_league_id;
         const numDivisions = json.settings.divisions;
         const isActive = (json.status === "in_season");
@@ -71,14 +71,8 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
 }
 
 function getSleeperMatchups(leagueID: string, seasonID: number, members: SleeperMember[], settings: Settings, scoringSettings: object, lineupOrder: string[], leagueName: string) {
-    let weeksToGet;
-    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
-        weeksToGet = settings.currentMatchupPeriod - 1;
-    } else {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
-    }
     const promises = [];
-    for (let i = 1; i <= weeksToGet; i++) {
+    for (let i = 1; i <= settings.currentMatchupPeriod; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
     updateLoadingText("Getting weekly stats");
@@ -92,7 +86,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
             weekCounter += 1;
         });
 
-        getSleeperWeekStats(weeksToGet).then((result) => {
+        getSleeperWeekStats(settings.currentMatchupPeriod).then((result) => {
             for (let y = 0; y < result.length; y++) {
                 (Weeks as Week[])[y].matchups.forEach((matchup) => {
                     matchup.home.lineup.forEach((player) => {
