@@ -22,6 +22,7 @@ class SeasonPlayer {
         this.position = player.position;
         this.realTeamID = player.realTeamID;
         this.playerID = player.playerID;
+        this.espnID = player.espnID;
         this.weeksPlayed = 1;
         this.averageScore = player.score;
         this.scores = [[player.score, player.weekNumber]];

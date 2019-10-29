@@ -1,0 +1,374 @@
+{
+    "draftDetail": {
+        "completeDate": 1567011809758,
+        "drafted": true,
+        "inProgress": false
+    },
+    "gameId": 1,
+    "id": 1185453,
+    "members": [
+        {
+            "displayName": "ESPNFAN4246206354",
+            "firstName": "Tom",
+            "id": "{2429ABF3-5AB3-480D-8A13-EFAA81256290}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Baumgartner"
+        },
+        {
+            "displayName": "amosci6655992",
+            "firstName": "Amanda",
+            "id": "{2455C816-9EE6-4C7B-9F55-8088F710FDF0}",
+            "isLeagueCreator": false,
+            "isLeagueManager": true,
+            "lastName": "Moscicki"
+        },
+        {
+            "displayName": "joe_spadoni",
+            "firstName": "joe",
+            "id": "{38982F75-3D7F-4A44-A753-31A508B19FC5}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "spadoni"
+        },
+        {
+            "displayName": "Audie491",
+            "firstName": "Audra ",
+            "id": "{3EECAEEC-06B9-4D19-AA34-56B1FAF5A25A}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Huber"
+        },
+        {
+            "displayName": "kmonti1700786",
+            "firstName": "Kimberly",
+            "id": "{3FD9C669-44AA-4B20-B003-5A8F0DCB8EE1}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Montinarello"
+        },
+        {
+            "displayName": "lmacdo7822272",
+            "firstName": "Lauren",
+            "id": "{40E845C4-7C5E-4A81-91D6-802D5BF750F5}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "MacDonough"
+        },
+        {
+            "displayName": "DocKruck",
+            "firstName": "Seth",
+            "id": "{44756CF7-F317-45E0-9BE8-A932B80545FE}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Marcus"
+        },
+        {
+            "displayName": "ESPNFAN37683913",
+            "firstName": "Christan",
+            "id": "{507C09A2-5322-4F15-B18D-0309F9B0B899}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Brown"
+        },
+        {
+            "displayName": "kateed2505961",
+            "firstName": "Kate",
+            "id": "{57A5E434-DA9C-441A-BC73-F61FADDD6046}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Edgerton"
+        },
+        {
+            "displayName": "scasev7969753",
+            "firstName": "Sue",
+            "id": "{5ABDD471-3999-4220-B80A-9883E21C25C8}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Case"
+        },
+        {
+            "displayName": "ESPNFAN30215936",
+            "firstName": "Mike",
+            "id": "{64C8B454-5300-40B8-AEB1-926B61430F12}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Venanzi"
+        },
+        {
+            "displayName": "ccy7160334154",
+            "firstName": "FFL",
+            "id": "{8F0447A0-B28F-4B46-A494-BC17AB1A4D01}",
+            "isLeagueCreator": true,
+            "isLeagueManager": false,
+            "lastName": "Dude"
+        },
+        {
+            "displayName": "fallpe9126718",
+            "firstName": "Kate",
+            "id": "{9080E558-9847-4A2D-9584-7417C8552EEC}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Fall"
+        },
+        {
+            "displayName": "roderic_burrill@yahoo.com",
+            "firstName": "Rebekah",
+            "id": "{9F97BD2E-8837-4F8C-94B8-A5234998DC16}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Burrill"
+        },
+        {
+            "displayName": "TmmyG",
+            "firstName": "Tim",
+            "id": "{AAAA07BC-6EDF-11D4-820C-00A0C9E58E2D}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Galvin"
+        },
+        {
+            "displayName": "nstein2",
+            "firstName": "Nate",
+            "id": "{CC21A076-E8DC-4B94-BBD8-270ED7167B6D}",
+            "isLeagueCreator": false,
+            "isLeagueManager": false,
+            "lastName": "Stein"
+        }
+    ],
+    "scoringPeriodId": 8,
+    "seasonId": 2019,
+    "segmentId": 0,
+    "settings": {
+        "acquisitionSettings": {
+            "isUsingAcquisitionBudget": false
+        },
+        "draftSettings": {
+            "keeperCount": 0
+        },
+        "isCustomizable": true,
+        "isPublic": true,
+        "name": "VisualDx",
+        "rosterSettings": {
+            "isUsingUndroppableList": true
+        },
+        "scoringSettings": {
+            "scoringType": "H2H_POINTS"
+        }
+    },
+    "status": {
+        "activatedDate": 1558460263068,
+        "createdAsLeagueType": 0,
+        "currentLeagueType": 0,
+        "currentMatchupPeriod": 8,
+        "finalScoringPeriod": 16,
+        "firstScoringPeriod": 1,
+        "isActive": true,
+        "isExpired": false,
+        "isFull": true,
+        "isPlayoffMatchupEdited": false,
+        "isToBeDeleted": false,
+        "isViewable": false,
+        "isWaiverOrderEdited": false,
+        "latestScoringPeriod": 8,
+        "previousSeasons": [
+            2017,
+            2018
+        ],
+        "standingsUpdateDate": 1572250646996,
+        "teamsJoined": 16,
+        "transactionScoringPeriod": 8,
+        "waiverLastExecutionDate": 1572250646954,
+        "waiverProcessStatus": {
+            "2019-08-30T07:21:21.370+0000": 4,
+            "2019-09-11T07:51:59.208+0000": 2,
+            "2019-09-18T08:08:50.905+0000": 8,
+            "2019-09-19T08:02:44.918+0000": 2,
+            "2019-09-25T07:36:29.995+0000": 5,
+            "2019-09-29T07:10:28.991+0000": 1,
+            "2019-10-02T07:12:50.519+0000": 4,
+            "2019-10-03T07:00:24.671+0000": 1,
+            "2019-10-09T08:12:03.018+0000": 5,
+            "2019-10-11T07:52:52.203+0000": 2,
+            "2019-10-16T07:06:38.243+0000": 4,
+            "2019-10-19T07:34:09.421+0000": 0,
+            "2019-10-23T07:26:42.057+0000": 6
+        }
+    },
+    "teams": [
+        {
+            "abbrev": "DUDE",
+            "id": 1,
+            "location": "The ",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-02.svg",
+            "logoType": "VECTOR",
+            "nickname": "Dude",
+            "owners": [
+                "{8F0447A0-B28F-4B46-A494-BC17AB1A4D01}"
+            ]
+        },
+        {
+            "abbrev": "BURR",
+            "id": 2,
+            "location": "Team",
+            "logo": "https://g.espncdn.com/s/ffllm/logos/Mascots/mascots-3.svg",
+            "logoType": "VECTOR",
+            "nickname": "Rusty Buckets",
+            "owners": [
+                "{9F97BD2E-8837-4F8C-94B8-A5234998DC16}"
+            ]
+        },
+        {
+            "abbrev": "CASE",
+            "id": 3,
+            "location": "Kelly",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/TeamKinny-MartinLaksman/TeamKinny-03.svg",
+            "logoType": "VECTOR",
+            "nickname": "Tough",
+            "owners": [
+                "{5ABDD471-3999-4220-B80A-9883E21C25C8}"
+            ]
+        },
+        {
+            "abbrev": "EDGE",
+            "id": 4,
+            "location": "The",
+            "logo": "https://g.espncdn.com/s/ffllm/logos/SmackTalk-LeoEspinosa/Fail_Mary-19.svg",
+            "logoType": "VECTOR",
+            "nickname": "Edge",
+            "owners": [
+                "{57A5E434-DA9C-441A-BC73-F61FADDD6046}"
+            ]
+        },
+        {
+            "abbrev": "FALL",
+            "id": 5,
+            "location": "The",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/core/AnimalHeads/animal_heads-14.svg",
+            "logoType": "VECTOR",
+            "nickname": "Fall Guys",
+            "owners": [
+                "{9080E558-9847-4A2D-9584-7417C8552EEC}"
+            ]
+        },
+        {
+            "abbrev": "NATE",
+            "id": 6,
+            "location": "KMax",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/HelmetAlphabet-ESPN/Helmet-K.svg",
+            "logoType": "VECTOR",
+            "nickname": "Krushers",
+            "owners": [
+                "{CC21A076-E8DC-4B94-BBD8-270ED7167B6D}"
+            ]
+        },
+        {
+            "abbrev": "MCM",
+            "id": 7,
+            "location": "The McDermott",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/flea_flicker-15.svg",
+            "logoType": "VECTOR",
+            "nickname": "Mulroneys",
+            "owners": [
+                "{3FD9C669-44AA-4B20-B003-5A8F0DCB8EE1}"
+            ]
+        },
+        {
+            "abbrev": "MOSC",
+            "id": 9,
+            "location": "The Shady",
+            "logo": "https://g.espncdn.com/s/ffllm/logos/SmackTalk-LeoEspinosa/All_the_way-04.svg",
+            "logoType": "VECTOR",
+            "nickname": "Bunch ",
+            "owners": [
+                "{2455C816-9EE6-4C7B-9F55-8088F710FDF0}"
+            ]
+        },
+        {
+            "abbrev": "MACD",
+            "id": 10,
+            "location": "I Got Bills",
+            "logo": "https://g.espncdn.com/s/ffllm/logos/AtTheStadium-RobbHarskamp/At_The_Stadium_03.svg",
+            "logoType": "VECTOR",
+            "nickname": "I Gotta Play",
+            "owners": [
+                "{40E845C4-7C5E-4A81-91D6-802D5BF750F5}"
+            ]
+        },
+        {
+            "abbrev": "HUBE",
+            "id": 11,
+            "location": "Straight",
+            "nickname": "Cash Homie",
+            "owners": [
+                "{3EECAEEC-06B9-4D19-AA34-56B1FAF5A25A}"
+            ]
+        },
+        {
+            "abbrev": "MV2",
+            "id": 12,
+            "location": "Flying ",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/Talent-ChipWass/talent-matt-hasselbeck.svg",
+            "logoType": "VECTOR",
+            "nickname": "Bills",
+            "owners": [
+                "{64C8B454-5300-40B8-AEB1-926B61430F12}"
+            ]
+        },
+        {
+            "abbrev": "LBT",
+            "id": 13,
+            "location": "Little Bobby",
+            "logo": "https://www.explainxkcd.com/wiki/images/5/5f/Little_Bobby_Tables.PNG",
+            "logoType": "CUSTOM_VALID",
+            "nickname": "Tables",
+            "owners": [
+                "{38982F75-3D7F-4A44-A753-31A508B19FC5}"
+            ]
+        },
+        {
+            "abbrev": "SETH",
+            "id": 14,
+            "location": "Beat Up",
+            "logo": "https://i.imgur.com/LPwVo32.png",
+            "logoType": "CUSTOM_VALID",
+            "nickname": "The Intern",
+            "owners": [
+                "{44756CF7-F317-45E0-9BE8-A932B80545FE}"
+            ]
+        },
+        {
+            "abbrev": "TDP",
+            "id": 15,
+            "location": "The",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/CrazyHelmets-ToddDetwiler/Helmets_06.svg",
+            "logoType": "VECTOR",
+            "nickname": "Dawg Pound",
+            "owners": [
+                "{AAAA07BC-6EDF-11D4-820C-00A0C9E58E2D}"
+            ]
+        },
+        {
+            "abbrev": "TOM",
+            "id": 16,
+            "location": "Saskatchewan",
+            "logo": "https://g.espncdn.com/lm-static/ffl/images/default_logos/19.svg",
+            "logoType": "VECTOR",
+            "nickname": "Roughriders",
+            "owners": [
+                "{2429ABF3-5AB3-480D-8A13-EFAA81256290}"
+            ]
+        },
+        {
+            "abbrev": "PINK",
+            "id": 17,
+            "location": "Pink ",
+            "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/CrazyHelmets-ToddDetwiler/Helmets_09.svg",
+            "logoType": "VECTOR",
+            "nickname": "Panthers ",
+            "owners": [
+                "{507C09A2-5322-4F15-B18D-0309F9B0B899}"
+            ]
+        }
+    ]
+}

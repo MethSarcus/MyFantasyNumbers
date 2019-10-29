@@ -1,0 +1,243 @@
+{
+    "gameId": 1,
+    "id": 1185453,
+    "members": [
+        {
+            "displayName": "ESPNFAN4246206354",
+            "id": "{2429ABF3-5AB3-480D-8A13-EFAA81256290}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "amosci6655992",
+            "id": "{2455C816-9EE6-4C7B-9F55-8088F710FDF0}",
+            "isLeagueManager": true
+        },
+        {
+            "displayName": "joe_spadoni",
+            "id": "{38982F75-3D7F-4A44-A753-31A508B19FC5}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "Audie491",
+            "id": "{3EECAEEC-06B9-4D19-AA34-56B1FAF5A25A}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "kmonti1700786",
+            "id": "{3FD9C669-44AA-4B20-B003-5A8F0DCB8EE1}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "lmacdo7822272",
+            "id": "{40E845C4-7C5E-4A81-91D6-802D5BF750F5}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "DocKruck",
+            "id": "{44756CF7-F317-45E0-9BE8-A932B80545FE}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "ESPNFAN37683913",
+            "id": "{507C09A2-5322-4F15-B18D-0309F9B0B899}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "kateed2505961",
+            "id": "{57A5E434-DA9C-441A-BC73-F61FADDD6046}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "scasev7969753",
+            "id": "{5ABDD471-3999-4220-B80A-9883E21C25C8}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "ESPNFAN30215936",
+            "id": "{64C8B454-5300-40B8-AEB1-926B61430F12}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "ccy7160334154",
+            "id": "{8F0447A0-B28F-4B46-A494-BC17AB1A4D01}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "fallpe9126718",
+            "id": "{9080E558-9847-4A2D-9584-7417C8552EEC}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "roderic_burrill@yahoo.com",
+            "id": "{9F97BD2E-8837-4F8C-94B8-A5234998DC16}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "TmmyG",
+            "id": "{AAAA07BC-6EDF-11D4-820C-00A0C9E58E2D}",
+            "isLeagueManager": false
+        },
+        {
+            "displayName": "nstein2",
+            "id": "{CC21A076-E8DC-4B94-BBD8-270ED7167B6D}",
+            "isLeagueManager": false
+        }
+    ],
+    "scoringPeriodId": 8,
+    "seasonId": 2019,
+    "segmentId": 0,
+    "settings": {
+        "name": "VisualDx"
+    },
+    "status": {
+        "currentMatchupPeriod": 8,
+        "isActive": true,
+        "latestScoringPeriod": 8
+    },
+    "teams": [
+        {
+            "abbrev": "DUDE",
+            "id": 1,
+            "location": "The ",
+            "nickname": "Dude",
+            "owners": [
+                "{8F0447A0-B28F-4B46-A494-BC17AB1A4D01}"
+            ]
+        },
+        {
+            "abbrev": "BURR",
+            "id": 2,
+            "location": "Team",
+            "nickname": "Rusty Buckets",
+            "owners": [
+                "{9F97BD2E-8837-4F8C-94B8-A5234998DC16}"
+            ]
+        },
+        {
+            "abbrev": "CASE",
+            "id": 3,
+            "location": "Kelly",
+            "nickname": "Tough",
+            "owners": [
+                "{5ABDD471-3999-4220-B80A-9883E21C25C8}"
+            ]
+        },
+        {
+            "abbrev": "EDGE",
+            "id": 4,
+            "location": "The",
+            "nickname": "Edge",
+            "owners": [
+                "{57A5E434-DA9C-441A-BC73-F61FADDD6046}"
+            ]
+        },
+        {
+            "abbrev": "FALL",
+            "id": 5,
+            "location": "The",
+            "nickname": "Fall Guys",
+            "owners": [
+                "{9080E558-9847-4A2D-9584-7417C8552EEC}"
+            ]
+        },
+        {
+            "abbrev": "NATE",
+            "id": 6,
+            "location": "KMax",
+            "nickname": "Krushers",
+            "owners": [
+                "{CC21A076-E8DC-4B94-BBD8-270ED7167B6D}"
+            ]
+        },
+        {
+            "abbrev": "MCM",
+            "id": 7,
+            "location": "The McDermott",
+            "nickname": "Mulroneys",
+            "owners": [
+                "{3FD9C669-44AA-4B20-B003-5A8F0DCB8EE1}"
+            ]
+        },
+        {
+            "abbrev": "MOSC",
+            "id": 9,
+            "location": "The Shady",
+            "nickname": "Bunch ",
+            "owners": [
+                "{2455C816-9EE6-4C7B-9F55-8088F710FDF0}"
+            ]
+        },
+        {
+            "abbrev": "MACD",
+            "id": 10,
+            "location": "I Got Bills",
+            "nickname": "I Gotta Play",
+            "owners": [
+                "{40E845C4-7C5E-4A81-91D6-802D5BF750F5}"
+            ]
+        },
+        {
+            "abbrev": "HUBE",
+            "id": 11,
+            "location": "Straight",
+            "nickname": "Cash Homie",
+            "owners": [
+                "{3EECAEEC-06B9-4D19-AA34-56B1FAF5A25A}"
+            ]
+        },
+        {
+            "abbrev": "MV2",
+            "id": 12,
+            "location": "Flying ",
+            "nickname": "Bills",
+            "owners": [
+                "{64C8B454-5300-40B8-AEB1-926B61430F12}"
+            ]
+        },
+        {
+            "abbrev": "LBT",
+            "id": 13,
+            "location": "Little Bobby",
+            "nickname": "Tables",
+            "owners": [
+                "{38982F75-3D7F-4A44-A753-31A508B19FC5}"
+            ]
+        },
+        {
+            "abbrev": "SETH",
+            "id": 14,
+            "location": "Beat Up",
+            "nickname": "The Intern",
+            "owners": [
+                "{44756CF7-F317-45E0-9BE8-A932B80545FE}"
+            ]
+        },
+        {
+            "abbrev": "TDP",
+            "id": 15,
+            "location": "The",
+            "nickname": "Dawg Pound",
+            "owners": [
+                "{AAAA07BC-6EDF-11D4-820C-00A0C9E58E2D}"
+            ]
+        },
+        {
+            "abbrev": "TOM",
+            "id": 16,
+            "location": "Saskatchewan",
+            "nickname": "Roughriders",
+            "owners": [
+                "{2429ABF3-5AB3-480D-8A13-EFAA81256290}"
+            ]
+        },
+        {
+            "abbrev": "PINK",
+            "id": 17,
+            "location": "Pink ",
+            "nickname": "Panthers ",
+            "owners": [
+                "{507C09A2-5322-4F15-B18D-0309F9B0B899}"
+            ]
+        }
+    ]
+}

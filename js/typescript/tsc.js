@@ -1641,6 +1641,7 @@ var SeasonPlayer = (function () {
         this.position = player.position;
         this.realTeamID = player.realTeamID;
         this.playerID = player.playerID;
+        this.espnID = player.espnID;
         this.weeksPlayed = 1;
         this.averageScore = player.score;
         this.scores = [[player.score, player.weekNumber]];
@@ -2203,7 +2204,7 @@ function getOptimalLineupDepreciated(activeLineupSlots) {
 function includesPlayer(player, lineup) {
     var includes = false;
     lineup.forEach(function (element) {
-        if (player.espnID === element.espnID) {
+        if (player.playerID === element.playerID) {
             includes = true;
         }
     });
@@ -2290,7 +2291,7 @@ function getSeasonPlayers(league, teamID) {
     league.getSeasonPortionWeeks().forEach(function (week) {
         week.getTeam(teamID).lineup.forEach(function (player) {
             var index = players.findIndex(function (existingPlayer) {
-                return existingPlayer.playerID === player.espnID;
+                return existingPlayer.playerID === player.playerID;
             });
             if (index > -1) {
                 players[index].addPerformance(player);
@@ -2308,7 +2309,7 @@ function getSeasonOpponentPlayers(league, teamID) {
         if (!week.getTeamMatchup(teamID).byeWeek) {
             week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach(function (player) {
                 var index = players.findIndex(function (existingPlayer) {
-                    return existingPlayer.playerID === player.espnID;
+                    return existingPlayer.playerID === player.playerID;
                 });
                 if (index > -1) {
                     players[index].addPerformance(player);
@@ -2432,7 +2433,6 @@ var SleeperMember = (function () {
 }());
 var SleeperPlayer = (function () {
     function SleeperPlayer(playerID, weekNumber, lineupSlotID) {
-        this.espnID = playerID;
         this.playerID = playerID;
         this.score = 0;
         this.projectedScore = 0;
@@ -2471,7 +2471,7 @@ var SleeperTeam = (function () {
     SleeperTeam.prototype.getTeamScore = function (players) {
         var score = 0;
         for (var i in players) {
-            if (players[i].score != null && players[i].score !== "undefined") {
+            if (players[i].score != null && players[i].score !== undefined) {
                 score += players[i].score;
             }
         }
@@ -2480,7 +2480,7 @@ var SleeperTeam = (function () {
     SleeperTeam.prototype.getProjectedScore = function (players) {
         var projectedScore = 0;
         for (var i in players) {
-            if (players[i].projectedScore != null && players[i].projectedScore !== "undefined") {
+            if (players[i].projectedScore != null && players[i].projectedScore !== undefined) {
                 projectedScore += players[i].projectedScore;
             }
         }
@@ -2653,10 +2653,14 @@ function assignSleeperPlayerAttributes(player, playerAttributes) {
     player.firstName = playerAttributes.first_name;
     player.lastName = playerAttributes.last_name;
     player.position = playerAttributes.position;
-    player.espnID = player.espnID;
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
     player.realTeamID = playerAttributes.team;
-    player.espnID = playerAttributes.espn_id;
+    if (playerAttributes.espn_id) {
+        player.espnID = playerAttributes.espn_id.toString();
+    }
+    else {
+        player.espnID = player.playerID;
+    }
 }
 var SleeperWeekStats = (function () {
     function SleeperWeekStats(projectedStats, stats, weekNumber) {
@@ -2665,7 +2669,7 @@ var SleeperWeekStats = (function () {
         this.weekNumber = weekNumber;
     }
     SleeperWeekStats.prototype.calculatePlayerScore = function (settings, player) {
-        var playerStats = this.stats[player.espnID];
+        var playerStats = this.stats[player.playerID];
         if (playerStats !== undefined) {
             Object.keys(playerStats).forEach(function (statName) {
                 if (settings.hasOwnProperty(statName)) {
@@ -2675,7 +2679,7 @@ var SleeperWeekStats = (function () {
         }
     };
     SleeperWeekStats.prototype.calculateProjectedPlayerScore = function (settings, player) {
-        var playerProjectedStats = this.projectedStats[player.espnID];
+        var playerProjectedStats = this.projectedStats[player.playerID];
         if (playerProjectedStats !== undefined) {
             Object.keys(playerProjectedStats).forEach(function (statName) {
                 if (settings.hasOwnProperty(statName)) {

@@ -29,7 +29,7 @@ class SleeperTeam implements Team {
     public getTeamScore(players: SleeperPlayer[]): number {
         let score = 0;
         for (const i in players) {
-            if (players[i].score != null && players[i].score !== "undefined") {
+            if (players[i].score != null && players[i].score !== undefined) {
                 score += players[i].score;
             }
         }
@@ -39,7 +39,7 @@ class SleeperTeam implements Team {
     public getProjectedScore(players: SleeperPlayer[]): number {
         let projectedScore = 0;
         for (const i in players) {
-            if (players[i].projectedScore != null && players[i].projectedScore !== "undefined") {
+            if (players[i].projectedScore != null && players[i].projectedScore !== undefined) {
                 projectedScore += players[i].projectedScore;
             }
         }

@@ -94,8 +94,11 @@ function assignSleeperPlayerAttributes(player: SleeperPlayer, playerAttributes: 
     player.firstName = playerAttributes.first_name;
     player.lastName = playerAttributes.last_name;
     player.position = playerAttributes.position;
-    player.espnID = player.espnID;
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
     player.realTeamID = playerAttributes.team;
-    player.espnID = playerAttributes.espn_id;
+    if (playerAttributes.espn_id) {
+        player.espnID = playerAttributes.espn_id.toString();
+    } else {
+        player.espnID = player.playerID;
+    }
 }
