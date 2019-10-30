@@ -1,18 +1,18 @@
 class SleeperWeekStats {
-    public stats: object;
-    public projectedStats: object;
+    public stats: SleeperStatsResponse;
+    public projectedStats: SleeperStatsResponse;
     public weekNumber: number;
 
-    constructor(projectedStats: object, stats: object, weekNumber: number) {
+    constructor(projectedStats: SleeperStatsResponse, stats: SleeperStatsResponse, weekNumber: number) {
         this.stats = stats;
         this.projectedStats = projectedStats;
         this.weekNumber = weekNumber;
     }
 
-    public calculatePlayerScore(settings: object, player: Player): void {
-        const playerStats = this.stats[player.playerID];
+    public calculatePlayerScore(settings: SleeperScoringSettings, player: SleeperPlayer): void {
+        const playerStats: SleeperStatsEntry = this.stats[player.playerID];
         if (playerStats !== undefined) {
-            Object.keys(playerStats).forEach((statName) => {
+            Object.keys(playerStats).forEach((statName: string) => {
                 if (settings.hasOwnProperty(statName)) {
                     player.score += settings[statName] * playerStats[statName];
                 }
@@ -20,8 +20,8 @@ class SleeperWeekStats {
         }
     }
 
-    public calculateProjectedPlayerScore(settings: object, player: Player): void {
-        const playerProjectedStats = this.projectedStats[player.playerID];
+    public calculateProjectedPlayerScore(settings: SleeperScoringSettings, player: Player): void {
+        const playerProjectedStats: SleeperStatsEntry = this.projectedStats[player.playerID];
         if (playerProjectedStats !== undefined) {
             Object.keys(playerProjectedStats).forEach((statName) => {
                 if (settings.hasOwnProperty(statName)) {

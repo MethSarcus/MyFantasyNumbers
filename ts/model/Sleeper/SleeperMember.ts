@@ -28,7 +28,7 @@ class SleeperMember implements Member {
     }
 
     public setAdvancedStats(weeks: Week[]): void {
-        const scores = [];
+        const scores: number[] = [];
         weeks.forEach((week) => {
             scores.push(week.getTeam(this.teamID).score);
         });

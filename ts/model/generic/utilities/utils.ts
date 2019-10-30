@@ -1,4 +1,4 @@
-function getOptimalLineupDepreciated(activeLineupSlots: number[]): Player[] {
+function getOptimalLineupDepreciated(activeLineupSlots: [number[]]): Player[] {
     const rosterSlots = [];
     // tslint:disable-next-line: forin
     for (const i in activeLineupSlots) {
@@ -46,7 +46,7 @@ function includesPlayer(player: Player, lineup: Player[]): boolean {
 }
 
 function calcStandardDeviation(scores: number[]): number {
-    const modified = [];
+    const modified: number[] = [];
     const mean = getMean(scores);
     scores.forEach((score) => {
         modified.push(Math.pow(score - mean, 2));
@@ -132,7 +132,7 @@ function getLVP(league: League, teamID: number): SeasonPlayer {
 }
 
 function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
-    const players = [];
+    const players: SeasonPlayer[] = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         week.getTeam(teamID).lineup.forEach((player) => {
             const index = players.findIndex((existingPlayer) =>
@@ -150,7 +150,7 @@ function getSeasonPlayers(league: League, teamID: number): SeasonPlayer[] {
 }
 
 function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[] {
-    const players = [];
+    const players: SeasonPlayer[] = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         if (!week.getTeamMatchup(teamID).byeWeek) {
             week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach((player) => {
@@ -170,7 +170,7 @@ function getSeasonOpponentPlayers(league: League, teamID: number): SeasonPlayer[
 }
 
 function getAllSeasonPlayers(league: League): SeasonPlayer[] {
-    const players = [];
+    const players: SeasonPlayer[] = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         week.matchups.forEach((matchup) => {
             matchup.home.lineup.forEach((player) => {
@@ -184,7 +184,7 @@ function getAllSeasonPlayers(league: League): SeasonPlayer[] {
                 }
             });
             if (!matchup.byeWeek) {
-                matchup.away.lineup.forEach((player) => {
+                matchup.away.lineup.forEach((player: Player) => {
                     const index = players.findIndex((existingPlayer) =>
                         existingPlayer.playerID === player.playerID
                     );
@@ -202,7 +202,7 @@ function getAllSeasonPlayers(league: League): SeasonPlayer[] {
 }
 
 function getBestPositionPlayerAverageScore(league: League, position: any): number {
-    const players = [];
+    const players: Player[]  = [];
     league.getSeasonPortionWeeks().forEach((week) => {
         players.push(week.getBestPositionPlayer(position));
     });

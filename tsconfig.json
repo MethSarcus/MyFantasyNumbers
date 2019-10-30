@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "outDir": "js/typescript",
-        "outFile": "js/typescript/tsc.js",
+        "outDir": "src/js",
+        "noImplicitAny": true,
+        "module": "es6",
         "allowJs": true,
         "target": "es5",
         "removeComments": true,

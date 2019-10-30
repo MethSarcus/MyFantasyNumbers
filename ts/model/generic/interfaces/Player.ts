@@ -5,7 +5,7 @@ interface Player {
     score: number;
     projectedScore: number;
     position: string;
-    realTeamID: number;
+    realTeamID: string;
     espnID: string;
     weekNumber: number;
     lineupSlotID: number;

@@ -1,6 +1,6 @@
-function getESPNMatchups(settings: Settings, members: Member[], leagueID: number, seasonID: string, leagueName: string) {
-    const weeks = [];
-    let weeksToGet;
+function getESPNMatchups(settings: Settings, members: Member[], leagueID: string, seasonID: number, leagueName: string) {
+    const weeks: Week[] = [];
+    let weeksToGet: number;
     if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
         weeksToGet = settings.currentMatchupPeriod - 1;
     } else {
@@ -9,7 +9,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
     for (let q = 1; q <= weeksToGet; q++) {
         espn_request("get", {
             path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
-        }).done((json) => {
+        }).done((json: any) => {
             updateLoadingText("Getting week " + q + " matchups");
             const matchups = [];
             for (const i in Object.keys(json.schedule)) { // increments through each matchup
@@ -70,7 +70,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
                         awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
                     const isPlayoff = (q > settings.regularSeasonLength);
-                    const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam);
+                    const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam.teamID);
                     const matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
                     matchup.setPoorLineupDecisions();
                     matchups.push(matchup);
@@ -97,11 +97,11 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: number
     }
 }
 
-function getESPNSettings(leagueID, seasonID) {
+function getESPNSettings(leagueID: string, seasonID: number) {
     updateLoadingText("Getting Settings");
     espn_request("get", {
         path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mSettings"
-    }).done((json) => {
+    }).done((json: any) => {
         if (json.hasOwnProperty("messages") && json.messages[0] === "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
         }
@@ -118,9 +118,9 @@ function getESPNSettings(leagueID, seasonID) {
         const isActive = json.status.isActive;
         const playoffLength = totalMatchupCount - regularSeasonMatchupCount;
         const DRAFT_TYPE = json.settings.draftSettings.type;
-        const lineupSlots = Object.entries(json.settings.rosterSettings.lineupSlotCounts);
+        const lineupSlots: number[][] = Object.entries(json.settings.rosterSettings.lineupSlotCounts) as any;
         const lineup = lineupSlots.map((slot) => {
-            return [parseInt(slot[0], 10), slot[1]];
+            return [parseInt(slot[0].toString(), 10), parseInt(slot[1].toString(), 10)];
         }).filter((slot) => {
             return slot[1] !== 0;
         });
@@ -134,14 +134,14 @@ function getESPNSettings(leagueID, seasonID) {
     });
 }
 
-function getESPNMembers(settings, leagueID, seasonID, leagueName) {
+function getESPNMembers(settings: Settings, leagueID: string, seasonID: number, leagueName: string) {
     updateLoadingText("Getting Members");
     espn_request("get", {
         path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mTeam"
-    }).done((json) => {
+    }).done((json: any) => {
         const members = [];
         const teams = json.teams;
-        const seasonLength = settings.regularSeasonMatchupCount + settings.playoffLength;
+        const seasonLength = settings.regularSeasonLength + settings.playoffLength;
         for (const i in Object.keys(json.members)) {
             const member = json.members[i];
             const firstName = member.firstName;

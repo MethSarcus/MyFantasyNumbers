@@ -3,13 +3,13 @@ class DraftPick {
     public overallPickNumber: number;
     public roundID: number;
     public roundPickNumber: number;
-    public playerID: number;
+    public playerID: string;
     public playerAuctionCost: number;
     public owningTeamIDs: number[];
     public nominatingTeamID: number;
     public autoDraftTeamID: number;
-    constructor(teamID, overrallPickNumber, roundID,
-                roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
+    constructor(teamID: number, overrallPickNumber: number, roundID: number,
+                roundPickNumber: number, playerID: string, playerAuctionCost: number, owningTeamIDs: number[], nominatingTeamID: number, autoDraftTeamID: number) {
         this.teamID = teamID;
         this.overallPickNumber = overrallPickNumber;
         this.roundID = roundID;

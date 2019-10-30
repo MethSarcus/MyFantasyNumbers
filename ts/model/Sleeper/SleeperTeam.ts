@@ -10,7 +10,7 @@ class SleeperTeam implements Team {
     public opponentID: number;
     public gutDifference: number;
     public gutPlayers: number;
-    constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber, activeLineupSlots, lineupOrder: string[]) {
+    constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber: number, lineupOrder: string[]) {
         this.lineup = lineup.map((playerID, index) => {
             return new SleeperPlayer(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
         });
@@ -72,7 +72,7 @@ class SleeperTeam implements Team {
 
     public getPositionalPlayers(position: string): SleeperPlayer[] {
         const players = this.lineup;
-        const positionPlayers = [];
+        const positionPlayers: Player[] = [];
         players.forEach((player) => {
             if (player.position === position) {
                 positionPlayers.push(player);
@@ -99,7 +99,7 @@ class SleeperTeam implements Team {
         return eligiblePlayers;
     }
 
-    public getGutPoints(activeLineupSlots: number[]): [number, number] {
+    public getGutPoints(activeLineupSlots: number[][]): number[] {
         const players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
         const gutPlayers = players[0];
         const satPlayers = players[1];
@@ -109,9 +109,9 @@ class SleeperTeam implements Team {
         return [diff, playerNum];
     }
 
-    public getProjectedLinupPlayerDifference(activeLineupSlots: number[]): [SleeperPlayer[], SleeperPlayer[]] {
-        const gutPlayers = [];
-        const satPlayers = [];
+    public getProjectedLinupPlayerDifference(activeLineupSlots: number[][]): SleeperPlayer[][] {
+        const gutPlayers: Player[] = [];
+        const satPlayers: Player[] = [];
         const projectedLineup = getOptimalProjectedLineup(activeLineupSlots,  this.lineup.concat(this.bench, this.IR));
         this.lineup.forEach((player) => {
             if (!includesPlayer(player, projectedLineup)) {
@@ -127,7 +127,7 @@ class SleeperTeam implements Team {
         return [gutPlayers, satPlayers];
     }
 
-    public setTeamMetrics(activeLineupSlots): void {
+    public setTeamMetrics(activeLineupSlots: number[][]): void {
         this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         this.projectedScore = this.getProjectedScore(this.lineup);
         const gutArray = this.getGutPoints(activeLineupSlots);

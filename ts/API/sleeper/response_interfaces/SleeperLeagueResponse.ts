@@ -3,14 +3,14 @@ interface SleeperLeagueResponse {
     status: string;
     sport: string;
     shard: number;
-    settings: Settings;
+    settings: SleeperSettingsResponse;
     season_type: string;
     season: string;
-    scoring_settings: SleeperScoringSettingsResponse;
+    scoring_settings: SleeperScoringSettings;
     roster_positions: string[];
     previous_league_id?: string;
     name: string;
-    metadata: object[];
+    metadata: SleeperMetaDataResponse;
     loser_bracket_id?: string;
     league_id: string;
     last_read_id?: string;
@@ -191,4 +191,12 @@ interface SleeperDatumResponse {
 interface SleeperLastMessageAttachmentResponse {
     type: string;
     data: SleeperDatumResponse[];
+}
+
+interface SleeperMetaDataResponse {
+    [key: string]: string;
+}
+
+interface SleeperScoringSettings {
+    [key: string]: number;
 }

@@ -4,8 +4,8 @@ class SleeperPlayer implements Player {
     public eligibleSlots: number[];
     public score: number;
     public projectedScore: number;
-    public position: any;
-    public realTeamID: any;
+    public position: string;
+    public realTeamID: string;
     public playerID: string;
     public weekNumber: number;
     public lineupSlotID: number;

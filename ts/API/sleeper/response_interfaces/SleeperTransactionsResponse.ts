@@ -12,7 +12,7 @@ interface Transaction {
 interface SleeperTransactionDrops { [playerID: string]: Transaction; }
 interface SleeperTransactionAdds { [playerID: string]: Transaction; }
 
-interface Settings {
+interface SleeperTransactionSettings {
     waiver_bid: number;
     seq: number;
     priority?: number;
@@ -37,7 +37,7 @@ interface SleeperDraftPickTradeResponse {
     transaction_id: string;
     status_updated: any;
     status: string;
-    settings: Settings;
+    settings: SleeperTransactionSettings;
     roster_ids: number[];
     metadata: Metadata;
     leg: number;

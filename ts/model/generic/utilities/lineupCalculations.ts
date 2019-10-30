@@ -1,5 +1,5 @@
-function getOptimalLineup(activeLineupSlots: number[], players: Player[]): Player[] {
-    let optimalLineup = [];
+function getOptimalLineup(activeLineupSlots: number[][], players: Player[]): Player[] {
+    let optimalLineup: Player[] = [];
     activeLineupSlots.forEach((slot) => {
         optimalLineup = optimalLineup.concat(getHighestPlayersForSlot(slot[0], slot[1], players, optimalLineup));
     });
@@ -23,8 +23,8 @@ function getHighestPlayersForSlot(slotID: number, numPlayers: number, players: P
     }
 }
 
-function getOptimalProjectedLineup(activeLineupSlots: number[], players: Player[]): Player[] {
-    let optimalLineup = [];
+function getOptimalProjectedLineup(activeLineupSlots: number[][], players: Player[]): Player[] {
+    let optimalLineup: Player[] = [];
     activeLineupSlots.forEach((slot) => {
         optimalLineup = optimalLineup.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineup));
     });

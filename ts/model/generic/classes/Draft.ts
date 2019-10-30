@@ -1,11 +1,11 @@
 class Draft {
-    public leagueID: number;
+    public leagueID: string;
     public year: number;
     public draftType: DRAFT_TYPE;
     public auctionBudget: number;
     public pickOrder: number[];
     public draftPicks: DraftPick[];
-    constructor(leagueID, year, draftType, pickOrder, draftPicks, auctionBudget) {
+    constructor(leagueID: string, year: number, draftType: DRAFT_TYPE, pickOrder: number[], draftPicks: DraftPick[], auctionBudget: number) {
         this.leagueID = leagueID;
         this.year = year;
         this.draftType = draftType;

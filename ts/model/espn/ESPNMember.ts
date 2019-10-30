@@ -11,7 +11,7 @@ class ESPNMember implements Member {
     public transactions: any;
     public stats: Stats;
     constructor(memberID: string, firstName: string, lastName: string, teamLocation: string,
-                teamNickname: string, teamAbbrev: string, division: string, teamID: number, logoURL: string, transactions, stats: Stats) {
+                teamNickname: string, teamAbbrev: string, division: string, teamID: number, logoURL: string, transactions: any, stats: Stats) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -26,7 +26,7 @@ class ESPNMember implements Member {
     }
 
     public setAdvancedStats(weeks: Week[]): void {
-        const scores = [];
+        const scores: number[] = [];
         weeks.forEach((week) => {
             scores.push(week.getTeam(this.teamID).score);
         });

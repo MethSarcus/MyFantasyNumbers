@@ -1,4 +1,4 @@
-class ESPNTeam {
+class ESPNTeam implements Team {
     public lineup: Player[];
     public bench: Player[];
     public IR: Player[];
@@ -9,7 +9,7 @@ class ESPNTeam {
     public opponentID: number;
     public gutDifference: number;
     public gutPlayers: number;
-    constructor(teamID, players, activeLineupSlots, opponentID) {
+    constructor(teamID: number, players: Player[], activeLineupSlots: number[][], opponentID: number) {
         this.lineup = [];
         this.bench = [];
         this.IR = [];
@@ -78,7 +78,7 @@ class ESPNTeam {
 
     public getPositionalPlayers(position: string): Player[] {
         const players = this.lineup;
-        const positionPlayers = [];
+        const positionPlayers: Player[] = [];
         players.forEach((player) => {
             if (player.position === position) {
                 positionPlayers.push(player);
@@ -105,7 +105,7 @@ class ESPNTeam {
         return eligiblePlayers;
     }
 
-    public getGutPoints(activeLineupSlots: number[]): [number, number] {
+    public getGutPoints(activeLineupSlots: number[][]): number[] {
         const players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
         const gutPlayers = players[0];
         const satPlayers = players[1];
@@ -115,9 +115,9 @@ class ESPNTeam {
         return [diff, playerNum];
     }
 
-    public getProjectedLinupPlayerDifference(activeLineupSlots: number[]): [Player[], Player[]] {
-        const gutPlayers = [];
-        const satPlayers = [];
+    public getProjectedLinupPlayerDifference(activeLineupSlots: number[][]): Player[][] {
+        const gutPlayers: Player[] = [];
+        const satPlayers: Player[] = [];
         const projectedLineup = getOptimalProjectedLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR));
         this.lineup.forEach((player) => {
             if (!includesPlayer(player, projectedLineup)) {

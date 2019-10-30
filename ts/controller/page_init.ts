@@ -184,7 +184,7 @@ function transitionToLeaguePage() {
     });
 }
 
-function selectedPlatform(button): void {
+function selectedPlatform(button: HTMLButtonElement): void {
     const seasonIDSelector = document.getElementById("select_year_input") as HTMLSelectElement;
     const children = seasonIDSelector.childNodes;
     if (button.value === "espn") {

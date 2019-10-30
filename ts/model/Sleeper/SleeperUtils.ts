@@ -1,8 +1,8 @@
-function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi: number): [number[], number[]] {
+function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi: number): number[][][] {
     const activeCount = new Map();
     const benchCount = new Map();
-    const activeLineupSlots = [];
-    const benchSlots = [];
+    const activeLineupSlots: number[][] = new Array();
+    const benchSlots: number[][] = new Array();
     const active = rosterPositions.filter((slot) => {
         return slot !== "BN";
     }).map((slot) => positionToInt.get(slot));
@@ -43,8 +43,8 @@ function convertSleeperRoster(rosterPositions: string[], numIR: number, numTaxi:
     return [activeLineupSlots, benchSlots];
 }
 
-function makeSleeperPlayers(players: string[]): SleeperPlayer[] {
-    const sleeperPlayers = [];
+function makeSleeperPlayers(players: Player[]): SleeperPlayer[] {
+    const sleeperPlayers: SleeperPlayer[] = [];
     players.forEach((player) => {
         sleeperPlayers.push(player);
     });

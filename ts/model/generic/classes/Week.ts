@@ -3,7 +3,7 @@ class Week {
     public isPlayoffs: boolean;
     public matchups: Matchup[];
 
-    constructor(weekNumber, isPlayoffs, matchups) {
+    constructor(weekNumber: number, isPlayoffs: boolean, matchups: Matchup[]) {
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoffs;
         this.matchups = matchups;
@@ -64,7 +64,7 @@ class Week {
     }
 
     public getBestPositionPlayer(position: string): Player {
-        let positionPlayers = [];
+        let positionPlayers: Player[] = [];
         this.matchups.forEach((matchup) => {
             positionPlayers = positionPlayers.concat(matchup.home.getPositionalPlayers(position));
             if (!matchup.byeWeek) {
