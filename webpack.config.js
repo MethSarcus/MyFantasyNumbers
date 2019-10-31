@@ -2,6 +2,9 @@ const path = require('path');
 
 module.exports = {
   entry: "./src/ts/**/*",
+  optimization: {
+    minimize: false
+  },
   module: {
     rules: [
       {

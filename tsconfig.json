@@ -1,15 +1,16 @@
 {
     "compilerOptions": {
-        "outDir": "src/js/",
+        "outDir": "dist",
         "noImplicitAny": true,
-        "module": "es6",
+        "outFile": "dist/js/app.js",
         "allowJs": false,
         "target": "es5",
         "removeComments": true,
-        "sourceMap": true,
+        "sourceMap": false,
+        "rootDir": ".",
         "lib": ["es5", "es6", "dom"],
     },
     "include": [
-        "src/ts/**/*"
+        "ts/**/*"
     ]
 }
