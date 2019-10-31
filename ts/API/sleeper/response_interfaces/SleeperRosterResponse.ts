@@ -18,7 +18,7 @@ interface SleeperRosterResponse {
     taxi: string[];
     starters: string[];
     settings: SleeperRosterSettings;
-    roster_id: number;
+    roster_id: string;
     reserve: string[];
     players: string[];
     player_map?: any;

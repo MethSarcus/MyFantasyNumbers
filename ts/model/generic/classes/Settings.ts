@@ -1,6 +1,6 @@
 class Settings {
-    public activeLineupSlots: number[];
-    public lineupSlots: number[];
+    public activeLineupSlots: number[][];
+    public lineupSlots: number[][];
     public regularSeasonLength: number;
     public playoffLength: number;
     public draftType: DRAFT_TYPE;
@@ -11,7 +11,7 @@ class Settings {
     public isActive: boolean;
     public yearsActive: number[];
 
-    constructor(activeLineupSlots, lineupSlots, regularSeasonLength, playoffLength, draftType, currentMatchupPeriod, isActive, yearsActive: number[]) {
+    constructor(activeLineupSlots: number[][], lineupSlots: number[][], regularSeasonLength: number, playoffLength: number, draftType: DRAFT_TYPE, currentMatchupPeriod: number, isActive: boolean, yearsActive: number[]) {
         this.activeLineupSlots = activeLineupSlots;
         this.lineupSlots = lineupSlots;
         this.regularSeasonLength = regularSeasonLength;

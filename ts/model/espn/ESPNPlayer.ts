@@ -1,19 +1,23 @@
 class ESPNPlayer implements Player {
     public firstName: string;
     public lastName: string;
-    public eligibleSlots: any;
-    public score: any;
+    public eligibleSlots: number[];
+    public score: number;
     public projectedScore: any;
-    public position: any;
-    public realTeamID: any;
+    public position: string;
+    public realTeamID: string;
     public espnID: string;
-    public lineupSlotID: any;
+    public lineupSlotID: number;
     public weekNumber: number;
     public playerID: string;
-    constructor(firstName, lastName, score, projectedScore,
-                position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
+    constructor(firstName: string, lastName: string, score: number, projectedScore: number,
+                position: string, realTeamID: string, playerID: string, lineupSlotID: number, eligibleSlots: number[], weekNumber: number) {
         this.firstName = firstName;
-        this.lastName = lastName;
+        if (lastName === "D/ST") {
+            this.lastName = "DEF";
+        } else {
+            this.lastName = lastName;
+        }
         this.eligibleSlots = eligibleSlots;
         this.score = score;
         this.projectedScore = projectedScore;

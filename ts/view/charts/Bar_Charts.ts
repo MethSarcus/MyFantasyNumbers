@@ -144,7 +144,7 @@ function createLeagueStackedGraph(league: League): void {
 }
 
 function getLeagueStackedDatasets(league: League): object[] {
-    const datasets = [];
+    const datasets: any[] = [];
     const backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
     const positions = league.settings.getPositions();
     const labels = [];
@@ -153,7 +153,7 @@ function getLeagueStackedDatasets(league: League): object[] {
         const dataset = {
             label: position,
             backgroundColor: backgroundColors[increment],
-            data: []
+            data: Array<any>()
         };
         datasets.push(dataset);
         increment += 1;
@@ -170,7 +170,7 @@ function getLeagueStackedDatasets(league: League): object[] {
 }
 
 function makeDescendingMemberLabels(league: League): string[] {
-    const labels = [];
+    const labels: string[] = [];
     league.members.sort((a, b) => (a.stats.pf < b.stats.pf) ? 1 : -1).forEach((member) => {
         labels.push(member.nameToString());
     });
@@ -179,7 +179,7 @@ function makeDescendingMemberLabels(league: League): string[] {
 }
 
 function makeMemberLabels(league: League): string[] {
-    const labels = [];
+    const labels: string[] = [];
     league.members.forEach((member) => {
         labels.push(member.nameToString());
     });

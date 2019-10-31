@@ -27,7 +27,7 @@ class Stats {
     public gameLostDueToSingleChoice: number;
     public choicesThatCouldHaveWonMatchup: number;
     public positionalStats: PositionalStats;
-    constructor(finalStanding) {
+    constructor(finalStanding: number) {
         this.finalStanding = finalStanding;
         this.wins = 0;
         this.losses = 0;

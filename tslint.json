@@ -3,7 +3,9 @@
     "extends": [
         "tslint:recommended"
     ],
-    "jsRules": {},
+    "jsRules": {
+        "no-duplicate-super": false
+    },
     "rules": {
         "max-line-length": false,
         "trailing-comma": false,

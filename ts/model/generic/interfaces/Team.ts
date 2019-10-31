@@ -24,7 +24,7 @@ interface Team {
 
     getEligibleSlotBenchPlayers: (slot: number) => Player[];
 
-    getGutPoints: (activeLineupSlots: number[]) => [number, number];
+    getGutPoints: (activeLineupSlots: number[][]) => number[];
 
-    getProjectedLinupPlayerDifference: (activeLineupSlots: number[]) => [Player[], Player[]];
+    getProjectedLinupPlayerDifference: (activeLineupSlots: number[][]) => Player[][];
 }

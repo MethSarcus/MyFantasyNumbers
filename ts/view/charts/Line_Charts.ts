@@ -24,7 +24,7 @@ function createMainWeeklyLineChart(league: League) {
         });
     });
 
-    const datasets = [];
+    const datasets: any[] = [];
     weeklyScoreMap.forEach((value: number[], key: number) => {
         if (key === -1) {
             datasets.push({
@@ -116,7 +116,7 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
         weeklyScoreMap.get(member.teamID).push(week.getTeam(member.teamID).score);
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
     });
-    const datasets = [];
+    const datasets: any = [];
     weeklyScoreMap.forEach((value: number[], key: number) => {
         if (key === -1) {
             datasets.push({
@@ -311,7 +311,7 @@ function getLeagueLineData(league: League, accumulates: boolean): object[] {
         });
     });
 
-    const datasets = [];
+    const datasets: any[] = [];
     weeklyScoreMap.forEach((value: number[], key: number) => {
         if (key !== -1) {
             const curTeam = league.getMember(key);
@@ -339,9 +339,9 @@ function getLeagueLineData(league: League, accumulates: boolean): object[] {
 }
 
 function deselectLeagueLineData(labelName: string) {
-    const data = (window as any).leagueWeeklyLineChart.data.datasets;
+    const data: any = (window as any).leagueWeeklyLineChart.data.datasets;
     if (labelName !== "") {
-        data.forEach((dataset) => {
+        data.forEach((dataset: any) => {
             if (dataset.label.replace(/^\s+|\s+$/g, "") !== labelName.replace(/^\s+|\s+$/g, "")) {
                 const newColor = dataset.backgroundColor + "1A";
                 dataset.backgroundColor = newColor;
@@ -358,7 +358,7 @@ function deselectLeagueLineData(labelName: string) {
 
 function reselectLeagueLineData() {
     const data = (window as any).leagueWeeklyLineChart.data.datasets;
-    data.forEach((dataset) => {
+    data.forEach((dataset: any) => {
         const color = dataset.backgroundColor;
         if (color.length === 9) {
             dataset.backgroundColor = color.substring(0, color.length - 2);

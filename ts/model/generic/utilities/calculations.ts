@@ -28,22 +28,22 @@ function getDarkColor(value: number): string {
     return ["hsl(", hue, ",100%,47%)"].join("");
 }
 
-function getLightCardColor(rank, outOf) {
+function getLightCardColor(rank: number, outOf: number) {
     return getLightColor(rank / outOf);
 }
 
-function getCardColor(rank, outOf) {
+function getCardColor(rank: number, outOf: number) {
     return getColor(rank / outOf);
 }
 
-function getDarkCardColor(rank, outOf) {
+function getDarkCardColor(rank: number, outOf: number) {
     return getDarkColor(rank / outOf);
 }
 
-function getInverseCardColor(rank, outOf) {
+function getInverseCardColor(rank: number, outOf: number) {
     return getColor((1 + (outOf - rank)) / outOf);
 }
-function getInverseDarkCardColor(rank, outOf) {
+function getInverseDarkCardColor(rank: number, outOf: number) {
     return getDarkColor((1 + (outOf - rank)) / outOf);
 }
 

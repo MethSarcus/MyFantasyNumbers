@@ -1,4 +1,4 @@
-function sortTableByRecord(x, y) {
+function sortTableByRecord(x: string, y: string) {
     const xWins = parseInt(x.split("-")[0], 10);
     const xLosses = parseInt(x.split("-")[1], 10);
     const yWins = parseInt(y.split("-")[0], 10);
@@ -17,14 +17,14 @@ function sortTableByRecord(x, y) {
     }
 }
 
-function renderTableOrdinalNumber(data, type) {
+function renderTableOrdinalNumber(data: string, type: string) {
     if (type === "display") {
-        data = ordinal_suffix_of(data);
+        data = ordinal_suffix_of(parseInt(data, 10));
     }
     return data;
 }
 
-function renderTableDifferenceNumber(data, type) {
+function renderTableDifferenceNumber(data: string, type: string) {
     if (type === "display" && parseInt(data, 10) > 0) {
         data = "+" + data;
     }

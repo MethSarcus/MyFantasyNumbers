@@ -8,7 +8,7 @@ class PowerStats {
     public teamID: number;
     public weekNumber: number;
 
-    constructor(teamID, weekNumber, pf, pp, projected) {
+    constructor(teamID: number, weekNumber: number, pf: number, pp: number, projected: number) {
         this.teamID = teamID;
         this.weekNumber = weekNumber;
         this.wins = 0;

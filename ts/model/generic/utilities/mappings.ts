@@ -84,103 +84,103 @@ function getPosition(eligibleSlots: number[]): string {
     return intToPosition.get(slotNum);
 }
 
-function getRealTeamInitials(realteamID) {
-    let team = realteamID;
-    switch (realteamID) {
-        case 1:
+function getRealTeamInitials(realteamID: string) {
+    let team = realteamID.toString();
+    switch (team) {
+        case "1":
             team = "Atl";
             break;
-        case 2:
+        case "2":
             team = "Buf";
             break;
-        case 3:
+        case "3":
             team = "Chi";
             break;
-        case 4:
+        case "4":
             team = "Cin";
             break;
-        case 5:
+        case "5":
             team = "Cle";
             break;
-        case 6:
+        case "6":
             team = "Dal";
             break;
-        case 7:
+        case "7":
             team = "Den";
             break;
-        case 8:
+        case "8":
             team = "Det";
             break;
-        case 9:
+        case "9":
             team = "GB";
             break;
-        case 10:
+        case "10":
             team = "Ten";
             break;
-        case 11:
+        case "11":
             team = "Ind";
             break;
-        case 12:
+        case "12":
             team = "KC";
             break;
-        case 13:
+        case "13":
             team = "Oak";
             break;
-        case 14:
+        case "14":
             team = "Lar";
             break;
-        case 15:
+        case "15":
             team = "Mia";
             break;
-        case 16:
+        case "16":
             team = "Min";
             break;
-        case 17:
+        case "17":
             team = "NE";
             break;
-        case 18:
+        case "18":
             team = "NO";
             break;
-        case 19:
+        case "19":
             team = "NYG";
             break;
-        case 20:
+        case "20":
             team = "NYJ";
             break;
-        case 21:
+        case "21":
             team = "Phi";
             break;
-        case 22:
+        case "22":
             team = "Ari";
             break;
-        case 23:
+        case "23":
             team = "Pit";
             break;
-        case 24:
+        case "24":
             team = "LAC";
             break;
-        case 25:
+        case "25":
             team = "SF";
             break;
-        case 26:
+        case "26":
             team = "Sea";
             break;
-        case 27:
+        case "27":
             team = "TB";
             break;
-        case 28:
+        case "28":
             team = "Wsh";
             break;
-        case 29:
+        case "29":
             team = "Car";
             break;
-        case 30:
+        case "30":
             team = "Jax";
             break;
-        case 33:
+        case "33":
             team = "Bal";
             break;
-        case 34:
+        case "34":
             team = "Hou";
             break;
     }

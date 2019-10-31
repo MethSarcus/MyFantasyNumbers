@@ -12,7 +12,7 @@ class Matchup {
     public marginOfVictory: number;
     public loserPotentialWinningSingleMoves: number;
     public withinSingleMoveOfWinning: boolean;
-    constructor(home, away, weekNumber, isPlayoff) {
+    constructor(home: Team, away: Team, weekNumber: number, isPlayoff: boolean) {
         this.home = home;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
@@ -86,7 +86,7 @@ class Matchup {
         }
     }
 
-    public gutHadImpact(teamID): boolean {
+    public gutHadImpact(teamID: number): boolean {
         const team = this.getTeam(teamID);
         if (this.marginOfVictory > Math.abs(team.gutDifference)) {
             return false;

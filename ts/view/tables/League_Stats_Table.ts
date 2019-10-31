@@ -36,7 +36,7 @@ function createLeagueStatsTableRow(league: League, member: Member): HTMLTableRow
     pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
     rankCell.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
     pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
-    paCell.style.backgroundColor = getInverseCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
+    paCell.style.backgroundColor = getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length);
     ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
     row.appendChild(teamNameCell);
     row.appendChild(rankCell);

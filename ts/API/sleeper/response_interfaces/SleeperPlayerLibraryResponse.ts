@@ -44,3 +44,12 @@ interface SleeperPlayerLibraryEntry {
         status: string;
         last_name: string;
 }
+
+interface SleeperPlayerLibrary {
+        [key: string]: SleeperPlayerLibraryEntry;
+}
+
+interface SleeperPlayerLibraryKey {
+        type: string;
+        data: SleeperPlayerLibraryEntry;
+    }

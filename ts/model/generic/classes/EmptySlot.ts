@@ -8,7 +8,7 @@ class EmptySlot implements Player {
     public actualScore = 0;
     public projectedScore = 0;
     public position = "EMPTY";
-    public realTeamID = -1;
+    public realTeamID = "-1";
     public jerseyNumber = -1;
     public espnID = "-1";
     public playerID = "-1";

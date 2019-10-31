@@ -5,7 +5,7 @@ class SeasonPlayer {
     public seasonScore: number;
     public projectedSeasonScore: number;
     public position: any;
-    public realTeamID: number;
+    public realTeamID: string;
     public playerID: string;
     public espnID: string;
     public weeksPlayed: number;
@@ -43,7 +43,7 @@ class SeasonPlayer {
     }
 
     public getScores(): number[] {
-        const points = [];
+        const points: number[] = [];
         this.scores.forEach((tup) => {
             points.push(tup[0]);
         });
