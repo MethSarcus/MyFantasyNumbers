@@ -177,7 +177,7 @@ function getESPNMembers(settings, leagueID, seasonID, leagueName) {
 function espn_request(t, d) {
     return $.ajax({
         type: t,
-        url: "js/proxy/espn_proxy.php",
+        url: "./proxies/espn_proxy.php",
         dataType: "json",
         data: d,
         cache: false,
@@ -318,7 +318,7 @@ function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder) {
 }
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
     updateLoadingText("Getting Player Stats");
-    makeRequest("js/typescript/player_library.json").then(function (result) {
+    makeRequest("./assets/player_library.json").then(function (result) {
         var lib = result.response;
         weeks.forEach(function (week) {
             week.matchups.forEach(function (matchup) {
@@ -379,7 +379,7 @@ function makeRequest(url) {
 function sleeper_request(t, d) {
     return $.ajax({
         type: t,
-        url: "js/proxy/sleeper_proxy.php",
+        url: "./proxies/sleeper_proxy.php",
         dataType: "json",
         data: d,
         cache: false,
@@ -644,7 +644,12 @@ var ESPNMember = (function () {
 var ESPNPlayer = (function () {
     function ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
         this.firstName = firstName;
-        this.lastName = lastName;
+        if (lastName === "D/ST") {
+            this.lastName = "DEF";
+        }
+        else {
+            this.lastName = lastName;
+        }
         this.eligibleSlots = eligibleSlots;
         this.score = score;
         this.projectedScore = projectedScore;
@@ -2058,7 +2063,7 @@ function getPosition(eligibleSlots) {
 }
 function getRealTeamInitials(realteamID) {
     var team = realteamID.toString();
-    switch (realteamID) {
+    switch (team) {
         case "1":
             team = "Atl";
             break;
@@ -2378,7 +2383,7 @@ var SleeperMember = (function () {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         }
         else {
-            this.logoURL = "../assets/images/user1.png";
+            this.logoURL = "./assets/images/user1.png";
         }
     }
     SleeperMember.prototype.getPictureURL = function () {
@@ -2826,7 +2831,7 @@ function updateMiniStatCards(league, member) {
     else {
         paLeagueDiff.innerHTML = paDiff + " League Average";
     }
-    paBackground.style.backgroundColor = getInverseDarkCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
+    paBackground.style.backgroundColor = getDarkCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
     ppFinish.innerHTML = ordinal_suffix_of(league.getPotentialPointsFinish(member.teamID));
     ppScore.innerHTML = member.stats.pp.toString();
     var ppDiff = roundToTen(member.stats.pp - league.getLeaguePP());
@@ -2917,7 +2922,7 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
     var biggestBoomName = document.getElementById("team_most_consistent_name");
     var biggestBoomPoints = document.getElementById("team_most_consistent_points");
     biggestBoomTitle.innerText = "Biggest Boom";
-    if (biggestBoom.position === "D/ST") {
+    if (biggestBoom.position === "D/ST" || biggestBoom.position === "DEF") {
         biggestBoomImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(biggestBoom.realTeamID) + ".png&h=150&w=150";
     }
     else {
@@ -2963,7 +2968,7 @@ function unfadeLeaguePage() {
     document.getElementById("page_container").style.display = "inline-block";
 }
 function fixNoImage() {
-    this.src = "../assets/images/user1.png";
+    this.src = "./assets/images/user1.png";
     this.style.backgroundColor = "white";
     this.onerror = null;
 }
@@ -3635,7 +3640,7 @@ function createLeagueStatsTableRow(league, member) {
     pctCell.appendChild(document.createTextNode(member.stats.getWinPct() + pctText));
     rankCell.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
     pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
-    paCell.style.backgroundColor = getInverseCardColor(league.getPointsAgainstFinish(member.teamID), league.members.length);
+    paCell.style.backgroundColor = getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length);
     ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
     row.appendChild(teamNameCell);
     row.appendChild(rankCell);

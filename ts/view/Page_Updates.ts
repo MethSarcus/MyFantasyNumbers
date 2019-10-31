@@ -159,7 +159,7 @@ function updateMiniStatCards(league: League, member: Member): void {
     } else {
         paLeagueDiff.innerHTML = paDiff + " League Average";
     }
-    paBackground.style.backgroundColor = getInverseDarkCardColor(
+    paBackground.style.backgroundColor = getDarkCardColor(
         league.getPointsAgainstFinish(member.teamID), league.members.length);
     ppFinish.innerHTML = ordinal_suffix_of(league.getPotentialPointsFinish(member.teamID));
     ppScore.innerHTML = member.stats.pp.toString();
@@ -260,7 +260,7 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
     const biggestBoomName = document.getElementById("team_most_consistent_name");
     const biggestBoomPoints = document.getElementById("team_most_consistent_points");
     biggestBoomTitle.innerText = "Biggest Boom";
-    if (biggestBoom.position === "D/ST") {
+    if (biggestBoom.position === "D/ST" || biggestBoom.position === "DEF") {
         biggestBoomImage.src = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(biggestBoom.realTeamID) + ".png&h=150&w=150";
     } else {
         biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.espnID + ".png";
@@ -309,7 +309,7 @@ function unfadeLeaguePage() {
 }
 
 function fixNoImage() {
-    this.src = "../assets/images/user1.png";
+    this.src = "./assets/images/user1.png";
     this.style.backgroundColor = "white";
     this.onerror = null;
 }

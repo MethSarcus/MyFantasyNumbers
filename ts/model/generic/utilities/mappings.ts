@@ -86,7 +86,7 @@ function getPosition(eligibleSlots: number[]): string {
 
 function getRealTeamInitials(realteamID: string) {
     let team = realteamID.toString();
-    switch (realteamID) {
+    switch (team) {
         case "1":
             team = "Atl";
             break;
