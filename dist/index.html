@@ -3,49 +3,57 @@
 
 <head>
   <meta charset="utf-8">
+  <title>MFN</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="Seth Marcus" content="Fantasy App">
+  <meta name="Seth Marcus" content="Fantasy Stats APP">
+  <!-- Favicon imports -->
   <link rel="shortcut icon" href="assets/favicon/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
   <link rel="manifest" href="assets/favicon/site.webmanifest">
-  <title>MFN</title>
+
+  <!-- Font Imports -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Changa+One" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Bitter:700" rel="stylesheet">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <script src="vendor/jquery/jquery.min.js"></script>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js"></script>
-  <script src="https://www.amcharts.com/lib/4/core.js"></script>
-  <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-  <script src="https://www.amcharts.com/lib/4/maps.js"></script>
-  <script type="text/javascript" src="js/app.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
-  <!-- Load d3.js and c3.js -->
-  <!-- <script src="Charts\c3-0.6.12\c3.min.js"></script> -->
-  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="css/cubeSpinner.css">
+  <!-- Bootstrap Imports -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"> -->
-  <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <link href="css/custom.css?v=3" rel="stylesheet">
-  <link href="css/tables.css?v=3" rel="stylesheet">
-  <link href="css/forms.css?v=3" rel="stylesheet">
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  <!-- Jquery Imports -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+
+  <!-- Dependency Imports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+
+  <!-- Chart Imports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
+  <!-- Plugin Imports -->
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="css/cubeSpinner.css">
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="vendor/datatables/jquery.dataTables.js"></script>
   <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+
+  <!-- Custom CSS Imports -->
+  <link href="css/custom.css?v=3" rel="stylesheet">
+  <link href="css/tables.css?v=3" rel="stylesheet">
+  <link href="css/forms.css?v=3" rel="stylesheet">
+
+  <!-- Main JS Import -->
+  <script type="text/javascript" src="js/app.js"></script>
 </head>
 
 
@@ -197,13 +205,13 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-6 py-2 pb-5 pt-2" id="league_weekly_line_chart_container" >
-                  <canvas id="league_weekly_line_canvas"></canvas>
-                </div>
+              <div class="col-6 py-2 pb-5 pt-2" id="league_weekly_line_chart_container">
+                <canvas id="league_weekly_line_canvas"></canvas>
+              </div>
               <div class="col-12" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas" style="min-height: 600px;"></canvas>
               </div>
-              
+
             </div>
           </div>
           <div id="power_ranks_page" class="tab-pane">
@@ -231,9 +239,11 @@
                       <h5 class="card-title">Highest Score</h5>
                       <blockquote class="card-blockquote">
                         <div></div>
-                        <h3 id="league_best_week_team"><img src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3" class="resize">Owner</h4>
-                        <h4 id="league_best_week_score">Score</h4>
-                        <footer><small id="team_best_finish_week_number">Week 1</small></footer>
+                        <h3 id="league_best_week_team"><img
+                            src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3" class="resize">Owner
+                          </h4>
+                          <h4 id="league_best_week_score">Score</h4>
+                          <footer><small id="team_best_finish_week_number">Week 1</small></footer>
                       </blockquote>
                     </div>
                   </div>
