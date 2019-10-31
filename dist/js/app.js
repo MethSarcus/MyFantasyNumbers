@@ -2378,7 +2378,7 @@ var SleeperMember = (function () {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         }
         else {
-            this.logoURL = "../../../assets/user1.png";
+            this.logoURL = "../assets/images/user1.png";
         }
     }
     SleeperMember.prototype.getPictureURL = function () {
@@ -2963,7 +2963,7 @@ function unfadeLeaguePage() {
     document.getElementById("page_container").style.display = "inline-block";
 }
 function fixNoImage() {
-    this.src = "assets/user1.png";
+    this.src = "../assets/images/user1.png";
     this.style.backgroundColor = "white";
     this.onerror = null;
 }
