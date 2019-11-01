@@ -351,6 +351,21 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
         var league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         updateLoadingText("Setting Page");
         league.setMemberStats(league.getSeasonPortionWeeks());
+        getSleeperTrades(league);
+    });
+}
+function getSleeperTrades(league) {
+    var promises = [];
+    for (var i = 1; i <= league.settings.currentMatchupPeriod; i++) {
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
+    }
+    updateLoadingText("Getting Transactions");
+    Promise.all(promises).then(function (transactionArray) {
+        transactionArray.map(function (it) { return it.response; }).forEach(function (week) {
+            week.filter(function (it) { return it.type === "trade" && it.status === "complete"; }).forEach(function (trade) {
+                league.trades.push(new SleeperTrade(trade));
+            });
+        });
         setPage(league);
     });
 }
@@ -386,6 +401,12 @@ function sleeper_request(t, d) {
         async: true,
     });
 }
+var TransactionMetadata;
+(function (TransactionMetadata) {
+    TransactionMetadata["SUCCESS_PLAYER_CLAIMED"] = "Your waiver claim was processed successfully!";
+    TransactionMetadata["FAILED_CLAIMED_BY_OTHER_OWNER"] = "This player was claimed by another owner.";
+    TransactionMetadata["FAILED_TOO_MANY_PLAYERS"] = "Unfortunately, your roster will have too many players after this transaction.";
+})(TransactionMetadata || (TransactionMetadata = {}));
 function updateLoadingText(labelText) {
     var label = document.getElementById("loading_text");
     label.innerText = labelText;
@@ -882,6 +903,7 @@ var POSITION;
 })(POSITION || (POSITION = {}));
 var League = (function () {
     function League(id, season, weeks, members, settings, leagueName, leaguePlatform) {
+        this.trades = [];
         this.id = id;
         this.weeks = weeks;
         this.season = season;
@@ -2368,6 +2390,16 @@ function getMemberColor(memberID) {
         "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
     return colorCode[memberID];
 }
+var SleeperDraftPick = (function () {
+    function SleeperDraftPick(season, round, currentOwnerId, sellingOwnerId, associatedRosterId) {
+        this.season = season;
+        this.round = round;
+        this.currentOwnerId = currentOwnerId;
+        this.sellingOwnerId = sellingOwnerId;
+        this.associatedRosterId = associatedRosterId;
+    }
+    return SleeperDraftPick;
+}());
 var SleeperMember = (function () {
     function SleeperMember(memberID, memberName, teamName, teamAvatar) {
         this.memberID = memberID;
@@ -2560,6 +2592,60 @@ var SleeperTeam = (function () {
         this.gutPlayers = gutArray[1];
     };
     return SleeperTeam;
+}());
+var SleeperTrade = (function () {
+    function SleeperTrade(trade) {
+        this.playersTraded = new Map();
+        this.faabTraded = new Map();
+        this.draftPicksInvolved = [];
+        this.playersReceived = new Map();
+        this.initiatingMemberId = trade.creator;
+        this.consentingTeamIds = trade.consenter_ids;
+        this.week = trade.leg;
+        this.transactionId = trade.transaction_id;
+        this.initTradeMaps();
+        this.createTradeMaps(trade);
+    }
+    SleeperTrade.prototype.createTradeMaps = function (trade) {
+        var _this = this;
+        if (trade.adds) {
+            Object.keys(trade.adds).forEach(function (playerId) {
+                var teamID = trade.adds[playerId];
+                _this.playersReceived.get(teamID).push(playerId);
+            });
+        }
+        if (trade.drops) {
+            Object.keys(trade.drops).forEach(function (playerId) {
+                var teamID = trade.drops[playerId];
+                _this.playersTraded.get(teamID).push(playerId);
+            });
+        }
+        if (trade.draft_picks.length > 0) {
+            trade.draft_picks.forEach(function (pickResponse) {
+                var tradingTeamID = pickResponse.previous_owner_id;
+                var receivingTeamID = pickResponse.owner_id;
+                var originalOwnerId = pickResponse.roster_id;
+                var season = parseInt(pickResponse.season);
+                var round = pickResponse.round;
+                _this.draftPicksInvolved.push(new SleeperDraftPick(season, round, receivingTeamID, tradingTeamID, originalOwnerId));
+            });
+        }
+        if (trade.waiver_budget.length > 0) {
+            trade.waiver_budget.forEach(function (faabTransaction) {
+                _this.faabTraded.set(faabTransaction.receiver, _this.faabTraded.get(faabTransaction.receiver += faabTransaction.amount));
+                _this.faabTraded.set(faabTransaction.sender, _this.faabTraded.get(faabTransaction.receiver -= faabTransaction.amount));
+            });
+        }
+    };
+    SleeperTrade.prototype.initTradeMaps = function () {
+        var _this = this;
+        this.consentingTeamIds.forEach(function (teamID) {
+            _this.playersTraded.set(teamID, []);
+            _this.playersReceived.set(teamID, []);
+            _this.faabTraded.set(teamID, 0);
+        });
+    };
+    return SleeperTrade;
 }());
 function convertSleeperRoster(rosterPositions, numIR, numTaxi) {
     var activeCount = new Map();

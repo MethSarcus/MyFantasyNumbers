@@ -1,5 +1,4 @@
 class League {
-
     public static convertESPNFromJson(object: any): League {
         const members: Member[] = [];
         const weeks: Week[] = [];
@@ -72,6 +71,7 @@ class League {
     public weeks: Week[];
     public season: number;
     public members: Member[];
+    public trades: SleeperTrade[] = [];
     public settings: Settings;
     public seasonPortion: SEASON_PORTION;
     public weeklyPowerRanks: Map<number, WeeklyPowerRanks>;

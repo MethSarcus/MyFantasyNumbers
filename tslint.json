@@ -12,7 +12,8 @@
         "no-unused-expression": false,
         "object-literal-sort-keys": false,
         "interface-name": false,
-        "forin": false
+        "forin": false,
+        "radix": false
     },
     "rulesDirectory": []
 }
