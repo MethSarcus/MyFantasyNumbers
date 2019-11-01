@@ -126,7 +126,7 @@
                   <select id="select_year_input" name="select" required="required" class="custom-select">
                     <option value="2019">2019</option>
                     <option value="2018">2018</option>
-                    <option value="2018">2017</option>
+                    <option value="2017">2017</option>
                   </select>
                 </div>
               </div>
@@ -156,22 +156,22 @@
             </ul>
           </div>
         </div>
-        <li class="nav-item ml-2">
+        <!-- <li class="nav-item ml-2">
           <a id="past_weeks_button" class="nav-link navBut" type="button">Past Weeks</a>
-        </li>
+        </li> -->
         <li class="nav-item ml-2">
           <a id="pwrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#power_ranks_page">Power
             Ranks</a>
         </li>
         <li class="nav-item ml-2">
-          <a id="trades_button" class="nav-link navBut" type="button">Trades</a>
+          <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button" href="#league_trades_pane">Trades</a>
         </li>
-        <li class="nav-item ml-2">
+        <!-- <li class="nav-item ml-2">
           <a id="draft_button" class="nav-link navBut" type="button">Draft</a>
         </li>
         <li class="nav-item ml-2">
           <a id="history_button" class="nav-link navBut" type="button">History</a>
-        </li>
+        </li> -->
         <li class="nav-item ml-auto mr-0 my-auto">
           <select class="form-control form-control-sm" id="available_seasons">
           </select>
@@ -223,6 +223,17 @@
 
             </div>
           </div>
+          <div id="league_trades_pane" class="tab-pane">
+            <div class="row">
+              <div class="col-12">
+                  <h3 class="mx-auto" style="text-align: center;">League Trade Connections</h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6 offset-3 pb-5"><div id="league_trade_chart"></div></div>
+              
+            </div>
+          </div>
           <div id="power_ranks_page" class="tab-pane">
             <div class="row">
               <div class="col-6">
@@ -241,7 +252,7 @@
               </div>
               <div class="col-6">
                 <div class="row">
-                  <div id="league_trade_chart"></div>
+                  
                   <div class="col-6">
                     <!-- <div id="league_best_week_card"
                       class="card text-center statcard p-2 align-items-center d-flex justify-content-center"

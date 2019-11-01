@@ -458,6 +458,10 @@ function setPage(league) {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
     };
+    document.getElementById("trades_button").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
     localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
     var profileImage = document.getElementById("team_image");
     profileImage.addEventListener("error", fixNoImage);
@@ -3237,16 +3241,7 @@ function makeMemberLabels(league) {
 function createLeagueTradeDiagram(league) {
     am4core.useTheme(am4themes_animated);
     var leagueTradeData = createLeagueTradeDiagramData(league);
-    console.log(leagueTradeData);
-    am4core.createFromConfig({
-        "data": leagueTradeData,
-        "dataFields": {
-            "fromName": "from",
-            "toName": "to",
-            "value": "value",
-            "nodeColor": "nodeColor"
-        }
-    }, "league_trade_chart", am4charts.ChordDiagram);
+    initChordChart(leagueTradeData);
 }
 function createLeagueTradeDiagramData(league) {
     var tradeMap = new Map();
@@ -3278,12 +3273,77 @@ function formatTradeValues(league, key, numTrades) {
     var team1 = parseInt(names[0]);
     var team2 = parseInt(names[1]);
     var formattedData = {
-        "from": league.getMember(team1).nameToString(),
-        "to": league.getMember(team2).nameToString(),
-        "value": numTrades,
-        "nodeColor": getMemberColor(team1)
+        from: league.getMember(team1).nameToString(),
+        to: league.getMember(team2).nameToString(),
+        value: numTrades,
+        nodeColor: getMemberColor(team1)
     };
     return formattedData;
+}
+function initChordChart(chartData) {
+    am4core.useTheme(am4themes_animated);
+    var chart = am4core.create("league_trade_chart", am4charts.ChordDiagram);
+    chart.colors.saturation = 0.45;
+    chart.data = chartData;
+    chart.dataFields.fromName = "from";
+    chart.dataFields.toName = "to";
+    chart.dataFields.value = "value";
+    chart.dataFields.nodeColor = "nodeColor";
+    chart.nodePadding = 0.5;
+    chart.minNodeSize = 0.01;
+    chart.startAngle = 80;
+    chart.endAngle = chart.startAngle + 360;
+    chart.sortBy = "value";
+    var nodeTemplate = chart.nodes.template;
+    nodeTemplate.readerTitle = "Click to show/hide or drag to rearrange";
+    nodeTemplate.showSystemTooltip = true;
+    nodeTemplate.propertyFields.fill = "color";
+    nodeTemplate.tooltipText = "{name}'s trades: {total}";
+    nodeTemplate.events.on("over", function (event) {
+        var node = event.target;
+        node.outgoingDataItems.each(function (dataItem) {
+            if (dataItem.toNode) {
+                dataItem.link.isHover = true;
+                dataItem.toNode.label.isHover = true;
+            }
+        });
+        node.incomingDataItems.each(function (dataItem) {
+            if (dataItem.fromNode) {
+                dataItem.link.isHover = true;
+                dataItem.fromNode.label.isHover = true;
+            }
+        });
+        node.label.isHover = true;
+    });
+    nodeTemplate.events.on("out", function (event) {
+        var node = event.target;
+        node.outgoingDataItems.each(function (dataItem) {
+            if (dataItem.toNode) {
+                dataItem.link.isHover = false;
+                dataItem.toNode.label.isHover = false;
+            }
+        });
+        node.incomingDataItems.each(function (dataItem) {
+            if (dataItem.fromNode) {
+                dataItem.link.isHover = false;
+                dataItem.fromNode.label.isHover = false;
+            }
+        });
+        node.label.isHover = false;
+    });
+    var label = nodeTemplate.label;
+    label.relativeRotation = 90;
+    label.fillOpacity = 0.25;
+    var labelHS = label.states.create("hover");
+    labelHS.properties.fillOpacity = 1;
+    nodeTemplate.cursorOverStyle = am4core.MouseCursorStyle.pointer;
+    var linkTemplate = chart.links.template;
+    linkTemplate.strokeOpacity = 0;
+    linkTemplate.fillOpacity = 0.1;
+    linkTemplate.tooltipText = "{fromName} & {toName}:{value.value}";
+    var hoverState = linkTemplate.states.create("hover");
+    hoverState.properties.fillOpacity = 0.7;
+    hoverState.properties.strokeOpacity = 0.7;
 }
 function createMainWeeklyLineChart(league) {
     window.myChart.destroy();

@@ -11,16 +11,17 @@ function createLeagueTradeDiagram(league: League): void {
     // chart.dataFields.value = "value";
     // chart.dataFields.color = "nodeColor";
     const leagueTradeData = createLeagueTradeDiagramData(league);
-    console.log(leagueTradeData);
-    am4core.createFromConfig({
-        "data": leagueTradeData,
-        "dataFields": {
-          "fromName": "from",
-          "toName": "to",
-          "value": "value",
-          "nodeColor": "nodeColor"
-        }
-      }, "league_trade_chart", am4charts.ChordDiagram);
+    initChordChart(leagueTradeData);
+    // am4core.createFromConfig({
+    //     data: leagueTradeData,
+    //     sortBy: "value",
+    //     dataFields: {
+    //       fromName: "from",
+    //       toName: "to",
+    //       value: "value",
+    //       nodeColor: "nodeColor"
+    //     }
+    //   }, "league_trade_chart", am4charts.ChordDiagram);
 }
 
 function createLeagueTradeDiagramData(league: League): object[] {
@@ -48,16 +49,99 @@ function createLeagueTradeDiagramData(league: League): object[] {
     return tradeList;
 }
 
-function formatTradeValues(league: League, key: string, numTrades: number ): object {
+function formatTradeValues(league: League, key: string, numTrades: number): object {
     const names = key.split(",");
     const team1 = parseInt(names[0]);
     const team2 = parseInt(names[1]);
     const formattedData = {
-        "from": league.getMember(team1).nameToString(),
-        "to": league.getMember(team2).nameToString(),
-        "value": numTrades,
-        "nodeColor": getMemberColor(team1)
+        from: league.getMember(team1).nameToString(),
+        to: league.getMember(team2).nameToString(),
+        value: numTrades,
+        nodeColor: getMemberColor(team1)
     };
 
     return formattedData;
+}
+
+function initChordChart(chartData: object[]) {
+    am4core.useTheme(am4themes_animated);
+    const chart = am4core.create("league_trade_chart", am4charts.ChordDiagram);
+
+    chart.colors.saturation = 0.45;
+    chart.data = chartData;
+
+    chart.dataFields.fromName = "from";
+    chart.dataFields.toName = "to";
+    chart.dataFields.value = "value";
+    chart.dataFields.nodeColor = "nodeColor";
+
+    chart.nodePadding = 0.5;
+    chart.minNodeSize = 0.01;
+    chart.startAngle = 80;
+    chart.endAngle = chart.startAngle + 360;
+    chart.sortBy = "value";
+
+    const nodeTemplate = chart.nodes.template;
+    nodeTemplate.readerTitle = "Click to show/hide or drag to rearrange";
+    nodeTemplate.showSystemTooltip = true;
+    nodeTemplate.propertyFields.fill = "color";
+    nodeTemplate.tooltipText = "{name}'s trades: {total}";
+
+    // when rolled over the node, make all the links rolled-over
+    nodeTemplate.events.on("over", (event: any) => {
+        const node = event.target;
+        node.outgoingDataItems.each((dataItem: any) => {
+            if (dataItem.toNode) {
+                dataItem.link.isHover = true;
+                dataItem.toNode.label.isHover = true;
+            }
+        });
+        node.incomingDataItems.each((dataItem: any) => {
+            if (dataItem.fromNode) {
+                dataItem.link.isHover = true;
+                dataItem.fromNode.label.isHover = true;
+            }
+        });
+
+        node.label.isHover = true;
+    });
+
+    // when rolled out from the node, make all the links rolled-out
+    nodeTemplate.events.on("out", (event: any) => {
+        const node = event.target;
+        node.outgoingDataItems.each((dataItem: any) => {
+            if (dataItem.toNode) {
+                dataItem.link.isHover = false;
+                dataItem.toNode.label.isHover = false;
+            }
+        });
+        node.incomingDataItems.each((dataItem: any) => {
+            if (dataItem.fromNode) {
+                dataItem.link.isHover = false;
+                dataItem.fromNode.label.isHover = false;
+            }
+        });
+
+        node.label.isHover = false;
+    });
+
+    const label = nodeTemplate.label;
+    label.relativeRotation = 90;
+
+    label.fillOpacity = 0.25;
+    const labelHS = label.states.create("hover");
+    labelHS.properties.fillOpacity = 1;
+
+    nodeTemplate.cursorOverStyle = am4core.MouseCursorStyle.pointer;
+    // this adapter makes non-main character nodes to be filled with color of the main character which he/she kissed most
+
+    // link template
+    const linkTemplate = chart.links.template;
+    linkTemplate.strokeOpacity = 0;
+    linkTemplate.fillOpacity = 0.1;
+    linkTemplate.tooltipText = "{fromName} & {toName}:{value.value}";
+
+    const hoverState = linkTemplate.states.create("hover");
+    hoverState.properties.fillOpacity = 0.7;
+    hoverState.properties.strokeOpacity = 0.7;
 }

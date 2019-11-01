@@ -35,6 +35,10 @@ function setPage(league: League) {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
     };
+    document.getElementById("trades_button").onclick = () => {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
     localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
     const profileImage = document.getElementById("team_image");
     profileImage.addEventListener("error", fixNoImage);

@@ -566,8 +566,8 @@ div.statWidget > div:nth-child(1) > h5:nth-child(1) {
     box-shadow: inset 0px 0px 10px #000000;
 }
 #league_trade_chart {
-    width: 400% !important;
-    height: 400px !important;
+    width: 100% !important;
+    height: 800px !important;
 }
 
 
