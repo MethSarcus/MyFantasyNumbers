@@ -580,6 +580,7 @@ function setPage(league) {
         $(this).removeClass("hover");
         reselectLeagueLineData();
     });
+    createLeagueTradeDiagram(league);
     var particles = document.getElementById("particles-js");
     particles.style.display = "none";
     updateLoadingText("Finished");
@@ -2600,6 +2601,7 @@ var SleeperTrade = (function () {
         this.draftPicksInvolved = [];
         this.playersReceived = new Map();
         this.initiatingMemberId = trade.creator;
+        this.initiatingTeamId = trade.consenter_ids[0];
         this.consentingTeamIds = trade.consenter_ids;
         this.week = trade.leg;
         this.transactionId = trade.transaction_id;
@@ -3231,6 +3233,57 @@ function makeMemberLabels(league) {
         labels.push(member.nameToString());
     });
     return labels;
+}
+function createLeagueTradeDiagram(league) {
+    am4core.useTheme(am4themes_animated);
+    var leagueTradeData = createLeagueTradeDiagramData(league);
+    console.log(leagueTradeData);
+    am4core.createFromConfig({
+        "data": leagueTradeData,
+        "dataFields": {
+            "fromName": "from",
+            "toName": "to",
+            "value": "value",
+            "nodeColor": "nodeColor"
+        }
+    }, "league_trade_chart", am4charts.ChordDiagram);
+}
+function createLeagueTradeDiagramData(league) {
+    var tradeMap = new Map();
+    var tradeList = [];
+    league.trades.forEach(function (trade) {
+        var initId = trade.initiatingTeamId;
+        var consentingTeamIds = trade.consentingTeamIds.slice(1, trade.consentingTeamIds.length);
+        consentingTeamIds.forEach(function (partnerId) {
+            var tradeMapKey = initId + "," + partnerId;
+            var tradeMapAltKey = partnerId + "," + initId;
+            if (tradeMap.has(tradeMapKey)) {
+                tradeMap.set(tradeMapKey, tradeMap.get(tradeMapKey) + 1);
+            }
+            else if (tradeMap.has(tradeMapAltKey)) {
+                tradeMap.set(tradeMapAltKey, tradeMap.get(tradeMapAltKey) + 1);
+            }
+            else {
+                tradeMap.set(tradeMapKey, 1);
+            }
+        });
+    });
+    tradeMap.forEach(function (value, key) {
+        tradeList.push(formatTradeValues(league, key, value));
+    });
+    return tradeList;
+}
+function formatTradeValues(league, key, numTrades) {
+    var names = key.split(",");
+    var team1 = parseInt(names[0]);
+    var team2 = parseInt(names[1]);
+    var formattedData = {
+        "from": league.getMember(team1).nameToString(),
+        "to": league.getMember(team2).nameToString(),
+        "value": numTrades,
+        "nodeColor": getMemberColor(team1)
+    };
+    return formattedData;
 }
 function createMainWeeklyLineChart(league) {
     window.myChart.destroy();

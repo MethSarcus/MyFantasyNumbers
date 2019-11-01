@@ -171,7 +171,7 @@ function setPage(league: League) {
         $(this).removeClass("hover");
         reselectLeagueLineData();
     });
-
+    createLeagueTradeDiagram(league);
     const particles = document.getElementById("particles-js");
     particles.style.display = "none";
     updateLoadingText("Finished");
