@@ -88,10 +88,10 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: string
                     }
                     return 0;
                 });
-                const league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
+                const league = new ESPNLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
                 league.setMemberStats(league.getSeasonPortionWeeks());
                 localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
-                setPage(league);
+                league.setPage();
             }
         });
     }

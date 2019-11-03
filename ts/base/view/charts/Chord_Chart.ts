@@ -2,7 +2,7 @@ declare var am4core: any;
 declare var am4charts: any;
 declare var am4themes_animated: any;
 
-function createLeagueTradeDiagram(league: League): void {
+function createLeagueTradeDiagram(league: SleeperLeague): void {
     am4core.useTheme(am4themes_animated);
     // const chart = am4core.create("league_trade_chart", am4charts.ChordDiagram);
     // chart.data = createLeagueTradeDiagramData(league);
@@ -24,7 +24,7 @@ function createLeagueTradeDiagram(league: League): void {
     //   }, "league_trade_chart", am4charts.ChordDiagram);
 }
 
-function createLeagueTradeDiagramData(league: League): object[] {
+function createLeagueTradeDiagramData(league: SleeperLeague): object[] {
     const tradeMap = new Map<string, number>();
     const tradeList: object[] = [];
     league.trades.forEach((trade) => {

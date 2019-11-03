@@ -164,14 +164,14 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
             });
         });
 
-        const league = new League(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
+        const league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         updateLoadingText("Setting Page");
         league.setMemberStats(league.getSeasonPortionWeeks());
         getSleeperTrades(league);
     });
 }
 
-function getSleeperTrades(league: League) {
+function getSleeperTrades(league: SleeperLeague) {
     const promises = [];
     for (let i = 1; i <= league.settings.currentMatchupPeriod; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
@@ -183,6 +183,6 @@ function getSleeperTrades(league: League) {
                 league.trades.push(new SleeperTrade(trade));
             });
         });
-        setPage(league);
+        league.setPage();
     });
 }

@@ -1,77 +1,9 @@
-class League {
-    public static convertESPNFromJson(object: any): League {
-        const members: Member[] = [];
-        const weeks: Week[] = [];
-        const jsonSettings = object.settings;
-        const settings = new Settings(jsonSettings.activeLineupSlots,
-            jsonSettings.lineupSlots,
-            jsonSettings.regularSeasonLength,
-            jsonSettings.playoffLength,
-            jsonSettings.draftType,
-            jsonSettings.currentMatchupPeriod,
-            jsonSettings.isActive,
-            jsonSettings.yearsActive);
-        object.weeks.forEach((week: Week) => {
-            const matchups: Matchup[] = [];
-            week.matchups.forEach((matchup: Matchup) => {
-                const homeRoster: Player[] = [];
-                matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach((player) => {
-                    homeRoster.push(new ESPNPlayer(player.firstName, player.lastName,
-                        player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
-                        player.lineupSlotID, player.eligibleSlots, player.weekNumber));
-                });
-                let awayTeamId = -1;
-                let away;
-                if (!matchup.byeWeek) {
-                    const awayRoster: Player[] = [];
-                    awayTeamId = matchup.away.teamID;
-                    matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach((player: Player) => {
-                        awayRoster.push(new ESPNPlayer(player.firstName, player.lastName,
-                            player.score, player.projectedScore, player.position, player.realTeamID, player.playerID,
-                            player.lineupSlotID, player.eligibleSlots, player.weekNumber));
-                    });
-                    away = new ESPNTeam(matchup.away.teamID,
-                        awayRoster,
-                        object.settings.activeLineupSlots,
-                        matchup.home.teamID);
-                }
-                const home = new ESPNTeam(
-                    matchup.home.teamID,
-                    homeRoster,
-                    object.settings.activeLineupSlots,
-                    awayTeamId);
-                const recreatedMatchup = new Matchup(home, away, week.weekNumber, week.isPlayoffs);
-                recreatedMatchup.setPoorLineupDecisions();
-                matchups.push(recreatedMatchup);
-            });
-            weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
-        });
-        object.members.forEach((member: ESPNMember) => {
-            members.push(new ESPNMember(
-                member.memberID,
-                member.firstName,
-                member.lastName,
-                member.teamLocation,
-                member.teamNickname,
-                member.teamAbbrev,
-                member.division,
-                member.teamID,
-                member.logoURL,
-                member.transactions,
-                new Stats(member.stats.finalStanding)
-            ));
-        });
-        const league = new League(object.id, object.season, weeks, members, settings, object.leagueName, object.leaguePlatform);
-        league.setMemberStats(league.getSeasonPortionWeeks());
-        league.setPowerRanks();
-        return league;
-    }
+abstract class League {
     public id: string;
     public leagueName: string;
     public weeks: Week[];
     public season: number;
     public members: Member[];
-    public trades: SleeperTrade[] = [];
     public settings: Settings;
     public seasonPortion: SEASON_PORTION;
     public weeklyPowerRanks: Map<number, WeeklyPowerRanks>;
@@ -86,6 +18,8 @@ class League {
         this.leagueName = leagueName;
         this.leaguePlatform = leaguePlatform;
     }
+
+    // public abstract convertFromJson(object: any): League;
 
     public setPowerRanks(): void {
         this.weeklyPowerRanks = new Map();
@@ -696,18 +630,22 @@ class League {
         return [underdogCount, upsetCount];
     }
 
-    // public calculateOwnerScore(memberID: number) {
-    //     // Things that influence owner score:
-    //     // Gut Points, Efficiency, PF, Record
-    // }
-
-    // public calculateTeamScore() {
-    //     // Things that influence owner score:
-    //     // Potential Points, Power Record, Margin of Victory
-
-    // }
-
-    // public calculateSuperScore() {
-
-    // }
+    public setPage(): void {
+        // localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
+        // const profileImage = document.getElementById("team_image");
+        // profileImage.addEventListener("error", fixNoImage);
+        // tslint:disable-next-line: no-console
+        console.log(this);
+        document.getElementById("league_name_header").innerHTML = this.leagueName;
+        enableButtons();
+        enableSeasonPortionSelector(this);
+        enableYearSelector(this);
+        createTeamMenu(this);
+        createPowerRankTable(this);
+        createLeagueWeeklyLineChart(this, true);
+        createLeagueStatsTable(this);
+        createLeagueStackedGraph(this);
+        initLeagueStatsTable();
+        initPowerRankTable();
+    }
 }

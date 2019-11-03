@@ -77,7 +77,7 @@ const positionToInt = new Map([
 function getPosition(eligibleSlots: number[]): string {
     let slotNum = eligibleSlots[0];
     let i = 0;
-    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5") {
+    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5" || slotNum.toString() === "7") {
         i += 1;
         slotNum = eligibleSlots[i];
     }

@@ -13,8 +13,8 @@ function main() {
         } else if (espnButton.checked) {
             if (localStorage.getItem(leagueID + seasonID)) {
                 const jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
-                const restoredLeague = League.convertESPNFromJson(jsonLeague);
-                setPage(restoredLeague);
+                const restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
+                restoredLeague.setPage();
             } else {
                 localStorage.clear();
                 getESPNSettings(leagueID, seasonID);
@@ -23,10 +23,36 @@ function main() {
     }
 }
 
-function setPage(league: League) {
-    // tslint:disable-next-line: no-console
-    console.log(league);
-    document.getElementById("league_name_header").innerHTML = league.leagueName;
+function transitionToLeaguePage() {
+    const particles = document.getElementById("particles-js");
+    particles.style.display = "none";
+    updateLoadingText("Finished");
+    $("#prompt_screen").stop(true, true).fadeOut(200, () => {
+        unfadeLeaguePage();
+    });
+}
+
+function selectedPlatform(button: HTMLButtonElement): void {
+    const seasonIDSelector = document.getElementById("select_year_input") as HTMLSelectElement;
+    const children = seasonIDSelector.childNodes;
+    if (button.value === "espn") {
+        children.forEach((option) => {
+            if ((option as HTMLSelectElement).value !== "2019") {
+                (option as HTMLSelectElement).disabled = true;
+            } else {
+                (option as HTMLSelectElement).disabled = false;
+                (option as HTMLSelectElement).setAttribute("checked", "checked");
+                (option as HTMLSelectElement).setAttribute("selected", "true");
+            }
+        });
+    } else {
+        children.forEach((option) => {
+            (option as HTMLSelectElement).disabled = false;
+        });
+    }
+}
+
+function enableButtons(): void {
     document.getElementById("league_name_header").onclick = () => {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
@@ -35,13 +61,16 @@ function setPage(league: League) {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
     };
+}
+
+function enableTradePage(): void {
     document.getElementById("trades_button").onclick = () => {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
     };
-    localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
-    const profileImage = document.getElementById("team_image");
-    profileImage.addEventListener("error", fixNoImage);
+}
+
+function enableSeasonPortionSelector(league: League): void {
     if (league.settings.currentMatchupPeriod > league.settings.regularSeasonLength) {
         document.getElementById(SEASON_PORTION.REGULAR).onclick = () => {
             league.seasonPortion = SEASON_PORTION.REGULAR;
@@ -81,7 +110,9 @@ function setPage(league: League) {
         (document.getElementById("post_radio_button") as HTMLButtonElement).disabled = true;
         (document.getElementById("complete_radio_button") as HTMLButtonElement).disabled = true;
     }
+}
 
+function enableYearSelector(league: League): void {
     const yearSelector = document.getElementById("available_seasons");
     league.settings.yearsActive.forEach((year) => {
         const option = document.createElement("option");
@@ -92,10 +123,27 @@ function setPage(league: League) {
         }
         (yearSelector as HTMLSelectElement).add(option);
     });
+}
 
-    const nav = document.getElementById("team_dropdown");
+function enableTooltips(): void {
+    $(() => {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    $("#league_stats_table tr").hover(function() {
+        $(this).addClass("hover");
+        deselectLeagueLineData($(this).find("td:first-child").text());
+    }, function() {
+        $(this).removeClass("hover");
+        reselectLeagueLineData();
+    });
+}
+
+function createTeamMenu(league: League): void {
     const tabsList = document.getElementById("tabs-content");
-
+    const nav = document.getElementById("team_dropdown");
+    const q = document.getElementById("leaguePage");
+    tabsList.appendChild(q);
     for (const i in league.members) {
         const a = document.createElement("li");
         a.id = league.members[i].teamID.toString();
@@ -123,87 +171,5 @@ function setPage(league: League) {
         b.appendChild(d);
         a.appendChild(b);
         nav.appendChild(a);
-    }
-
-    const q = document.getElementById("leaguePage");
-    tabsList.appendChild(q);
-    createPowerRankTable(league);
-
-    const graphPage = document.getElementById("graphPage");
-    const selectRow = document.createElement("div");
-    selectRow.classList.add("row", "mb-4");
-
-    const pieButton = document.createElement("button");
-    pieButton.classList.add("col-2", "btn", "btn-outline-info", "mx-auto");
-    const barButton = document.createElement("button");
-    const lineButton = document.createElement("button");
-    const tradeButton = document.createElement("button");
-    const graphRow = document.createElement("div");
-    graphRow.classList.add("row");
-
-    const graphContainer = document.createElement("div");
-    graphContainer.classList.add("col-12", "col-sm-12", "col-md-9", "col-lg-9", "col-xl-9", "graphContainer");
-    const stackedCanvas = document.createElement("canvas");
-    stackedCanvas.id = "GRAPHCANVAS";
-    graphContainer.appendChild(stackedCanvas);
-
-    selectRow.appendChild(barButton);
-    selectRow.appendChild(pieButton);
-    selectRow.appendChild(lineButton);
-    selectRow.appendChild(tradeButton);
-    graphPage.appendChild(selectRow);
-    graphRow.appendChild(graphContainer);
-
-    graphPage.appendChild(graphRow);
-
-    tabsList.appendChild(graphPage);
-    createLeagueWeeklyLineChart(league, true);
-    createLeagueStatsTable(league);
-    createLeagueStackedGraph(league);
-    initLeagueStatsTable();
-
-    initPowerRankTable();
-
-    $(() => {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-
-    $("#league_stats_table tr").hover(function() {
-        $(this).addClass("hover");
-        deselectLeagueLineData($(this).find("td:first-child").text());
-    }, function() {
-        $(this).removeClass("hover");
-        reselectLeagueLineData();
-    });
-    createLeagueTradeDiagram(league);
-    const particles = document.getElementById("particles-js");
-    particles.style.display = "none";
-    updateLoadingText("Finished");
-    transitionToLeaguePage();
-}
-
-function transitionToLeaguePage() {
-    $("#prompt_screen").stop(true, true).fadeOut(200, () => {
-        unfadeLeaguePage();
-    });
-}
-
-function selectedPlatform(button: HTMLButtonElement): void {
-    const seasonIDSelector = document.getElementById("select_year_input") as HTMLSelectElement;
-    const children = seasonIDSelector.childNodes;
-    if (button.value === "espn") {
-        children.forEach((option) => {
-            if ((option as HTMLSelectElement).value !== "2019") {
-                (option as HTMLSelectElement).disabled = true;
-            } else {
-                (option as HTMLSelectElement).disabled = false;
-                (option as HTMLSelectElement).setAttribute("checked", "checked");
-                (option as HTMLSelectElement).setAttribute("selected", "true");
-            }
-        });
-    } else {
-        children.forEach((option) => {
-            (option as HTMLSelectElement).disabled = false;
-        });
     }
 }
