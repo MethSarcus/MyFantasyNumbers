@@ -1,22 +1,23 @@
 #league_input_page {
-    width: 100vw;
-    height: 100vh;
-    z-index: 999;
-    position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  position: absolute;
 }
 
-#particles-js{
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    /* background-color: #1834b6; */
-    background-image: url('../assets/images/otherbackground.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
+#particles-js {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  background-image: url("../assets/images/otherbackground.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-  #input_card {
-    background-color: rgba(10,10,10,.75);
-    color: ghostwhite;
-  }
+#input_card {
+  background-color: rgba(10, 10, 10, 0.75);
+  color: ghostwhite;
+}
+
+/*# sourceMappingURL=forms.css.map */
