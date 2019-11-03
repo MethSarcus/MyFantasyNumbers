@@ -177,26 +177,11 @@ img.resize {
 	width: 100%;
 	margin: 0 0 0 0;
 }
-.statcard {
-	text-overflow: clip;
-	padding-top: auto;
-	padding-bottom: auto;
-	overflow: hidden;
-	font-family: $font_family_2;
-	cursor: default;
-}
+
 .sidebar {
 	height: 100%;
 }
-.card {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	transition: 0.3s;
-	cursor: default;
-	&:hover {
-		box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-		filter: brightness(95%);
-	}
-}
+
 .sidebar-nav {
 	padding: 9px 0;
 }
@@ -300,15 +285,7 @@ header {
 		}
 	}
 }
-.maincard {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	transition: 0.3s;
-	cursor: default;
-	&:hover {
-		box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-		filter: brightness(95%);
-	}
-}
+
 img.newresize {
 	width: auto;
 	height: auto;
@@ -325,9 +302,7 @@ img.newresize {
 .nomarg {
 	margin: 0 !important;
 }
-.teamGraphCard {
-	max-height: 250px;
-}
+
 .statWidget {
 	cursor: default;
 	color: $color_1;
@@ -419,20 +394,4 @@ div.statWidget {
 		}
 	}
 }
-@media (max-width: 1199.98px) {
-	.profilecard {
-		width: 100%;
-		float: left;
-	}
-	.profileImage {
-		max-height: 10em;
-		max-width: 10em;
-	}
-	.problock {
-		float: left;
-	}
-}
 
-#test {
-	display: none;
-}

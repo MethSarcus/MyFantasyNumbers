@@ -1,0 +1,52 @@
+$color_1: white;
+$color_2: #000000;
+$color_3: blue;
+$color_4: black;
+$color_5: rgba(255, 255, 255, 1);
+$color_6: rgb(240, 240, 240);
+$font_family_1: Roboto;
+$font_family_2: 'Bitter', serif;
+$background_color_1: #343a40;
+$background_color_2: #111;
+$background_color_3: lightgrey;
+$background_color_4: blue;
+$background_color_5: darkgrey;
+$background_color_6: #666;
+$background_color_7: white;
+$background_color_8: transparent;
+$background_color_9: #bbb;
+$background_color_10: dodgerblue;
+
+.card {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+	transition: 0.3s;
+	cursor: default;
+	&:hover {
+		box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+		filter: brightness(95%);
+	}
+}
+.maincard {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+	transition: 0.3s;
+	cursor: default;
+	&:hover {
+		box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+		filter: brightness(95%);
+	}
+}
+
+
+
+.teamGraphCard {
+	max-height: 250px;
+}
+
+.statcard {
+	text-overflow: clip;
+	padding-top: auto;
+	padding-bottom: auto;
+	overflow: hidden;
+	font-family: $font_family_2;
+	cursor: default;
+}

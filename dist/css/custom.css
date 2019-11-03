@@ -173,27 +173,8 @@ img.resize {
   margin: 0 0 0 0;
 }
 
-.statcard {
-  text-overflow: clip;
-  padding-top: auto;
-  padding-bottom: auto;
-  overflow: hidden;
-  font-family: "Bitter", serif;
-  cursor: default;
-}
-
 .sidebar {
   height: 100%;
-}
-
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-  cursor: default;
-}
-.card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-  filter: brightness(95%);
 }
 
 .sidebar-nav {
@@ -299,16 +280,6 @@ header {
   color-adjust: economy !important;
 }
 
-.maincard {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-  cursor: default;
-}
-.maincard:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-  filter: brightness(95%);
-}
-
 img.newresize {
   width: auto;
   height: auto;
@@ -326,10 +297,6 @@ img.newresize {
 
 .nomarg {
   margin: 0 !important;
-}
-
-.teamGraphCard {
-  max-height: 250px;
 }
 
 .statWidget {
@@ -410,25 +377,6 @@ div.statWidget > div:nth-child(1) > h4:nth-child(2) {
 #member_week_table_body .tr:hover {
   color: black;
   box-shadow: inset 0px 0px 10px #000000;
-}
-
-@media (max-width: 1199.98px) {
-  .profilecard {
-    width: 100%;
-    float: left;
-  }
-
-  .profileImage {
-    max-height: 10em;
-    max-width: 10em;
-  }
-
-  .problock {
-    float: left;
-  }
-}
-#test {
-  display: none;
 }
 
 /*# sourceMappingURL=custom.css.map */
