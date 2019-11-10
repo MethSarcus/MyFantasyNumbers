@@ -35,7 +35,7 @@ class ESPNMember implements Member {
         this.stats.weeklyAverage = getMean(scores);
     }
 
-    public nameToString(): string {
+    public teamNameToString(): string {
         return this.teamLocation + " " + this.teamNickname;
     }
 

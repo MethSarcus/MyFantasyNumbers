@@ -167,7 +167,7 @@ function createTeamMenu(league: League): void {
         c.style.marginLeft = "8px";
         c.style.marginRight = "auto";
         b.appendChild(c);
-        const d = document.createTextNode(" " + league.members[i].nameToString());
+        const d = document.createTextNode(" " + league.members[i].teamNameToString());
         b.appendChild(d);
         a.appendChild(b);
         nav.appendChild(a);

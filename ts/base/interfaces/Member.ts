@@ -7,7 +7,7 @@ interface Member {
     stats: Stats;
 
     setAdvancedStats: (weeks: Week[]) => void;
-    nameToString: () => string;
+    teamNameToString: () => string;
     ownerToString: () => string;
     recordToString: () => string;
     rankToString: () => string;

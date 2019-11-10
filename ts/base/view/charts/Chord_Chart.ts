@@ -54,8 +54,8 @@ function formatTradeValues(league: League, key: string, numTrades: number): obje
     const team1 = parseInt(names[0]);
     const team2 = parseInt(names[1]);
     const formattedData = {
-        from: league.getMember(team1).nameToString(),
-        to: league.getMember(team2).nameToString(),
+        from: league.getMember(team1).teamNameToString(),
+        to: league.getMember(team2).teamNameToString(),
         value: numTrades,
         nodeColor: getMemberColor(team1)
     };

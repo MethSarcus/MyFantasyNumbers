@@ -113,7 +113,7 @@ function updateTeamCard(league: League, member: Member): void {
     const record = document.getElementById("team_record");
     picture.setAttribute("src", member.logoURL);
     picture.addEventListener("error", fixNoImage);
-    team.innerHTML = member.nameToString();
+    team.innerHTML = member.teamNameToString();
     owner.innerHTML = member.ownerToString();
     if (league.settings.isActive) {
         finish.innerHTML = "Ranked " + member.rankToString() + " overall";

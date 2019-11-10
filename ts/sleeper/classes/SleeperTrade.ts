@@ -2,35 +2,35 @@ class SleeperTrade {
     public initiatingMemberId: string;
     public initiatingTeamId: number;
     public consentingTeamIds: number[];
-    public playersTraded: Map<number, string[]> = new Map<number, string[]>();
+    public playersTraded: Map<number, SleeperBasePlayer[]> = new Map<number, SleeperBasePlayer[]>();
     public faabTraded: Map<number, number> = new Map<number, number>();
     public draftPicksInvolved: SleeperDraftPick[] = [];
-    public playersReceived: Map<number, string[]> = new Map<number, string[]>();
+    public playersReceived: Map<number, SleeperBasePlayer[]> = new Map<number, SleeperBasePlayer[]>();
     public week: number;
     public transactionId: string;
 
-    constructor(trade: SleeperTransactionResponse) {
+    constructor(trade: SleeperTransactionResponse, lib: SleeperPlayerLibrary) {
         this.initiatingMemberId = trade.creator;
         this.initiatingTeamId = trade.consenter_ids[0];
         this.consentingTeamIds = trade.consenter_ids;
         this.week = trade.leg;
         this.transactionId = trade.transaction_id;
         this.initTradeMaps();
-        this.createTradeMaps(trade);
+        this.createTradeMaps(trade, lib);
     }
 
-    private createTradeMaps(trade: SleeperTransactionResponse): void {
+    private createTradeMaps(trade: SleeperTransactionResponse, lib: SleeperPlayerLibrary): void {
         if (trade.adds) {
             Object.keys(trade.adds).forEach((playerId) => {
                 const teamID = trade.adds[playerId];
-                this.playersReceived.get(teamID).push(playerId);
+                this.playersReceived.get(teamID).push(new SleeperBasePlayer(lib[playerId]));
             });
         }
 
         if (trade.drops) {
             Object.keys(trade.drops).forEach((playerId) => {
                 const teamID = trade.drops[playerId];
-                this.playersTraded.get(teamID).push(playerId);
+                this.playersTraded.get(teamID).push(new SleeperBasePlayer(lib[playerId]));
             });
         }
 

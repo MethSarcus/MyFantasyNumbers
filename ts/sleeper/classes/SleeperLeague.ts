@@ -18,6 +18,7 @@ class SleeperLeague extends League {
         super.setPage();
         enableTradePage();
         createLeagueTradeDiagram(this);
+        constructTrades(this);
         transitionToLeaguePage();
     }
 }

@@ -24,7 +24,7 @@ function createLeagueStatsTableRow(league: League, member: Member): HTMLTableRow
     image.style.marginRight = "8px";
 
     teamNameCell.appendChild(image);
-    teamNameCell.appendChild(document.createTextNode(member.nameToString()));
+    teamNameCell.appendChild(document.createTextNode(member.teamNameToString()));
     rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));

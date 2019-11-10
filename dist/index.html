@@ -39,15 +39,15 @@
   <script src="vendor/datatables/jquery.dataTables.js"></script>
   <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
 
-    <!-- Bootstrap Imports -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  <!-- Bootstrap Imports -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-      <!-- ChartJS -->
+  <!-- ChartJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
   <!-- Am Charts -->
@@ -65,7 +65,7 @@
 </head>
 
 
-<body id="page-top">
+<body id="page-top" style="height: 100vh; width: 100vw;">
 
   <div id="particles-js"></div>
   <div class="container h-100" id="prompt_screen">
@@ -130,7 +130,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-12 col-md-8.offset-4">
+                <div class="col-12 col-md-8 offset-md-4 col-lg-8 offset-lg-4 col-xl-8 offset-xl-4">
                   <button name="submit" type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </div>
@@ -163,7 +163,8 @@
             Ranks</a>
         </li>
         <li class="nav-item ml-2">
-          <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button" href="#league_trades_pane">Trades</a>
+          <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button"
+            href="#league_trades_pane">Trades</a>
         </li>
         <!-- <li class="nav-item ml-2">
           <a id="draft_button" class="nav-link navBut" type="button">Draft</a>
@@ -225,12 +226,35 @@
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
               <div class="col-12">
-                  <h3 class="mx-auto" style="text-align: center;">League Trade Connections</h3>
+                <h3 class="mx-auto" style="text-align: center;">League Trade Connections</h3>
               </div>
             </div>
             <div class="row">
-              <div class="col-12 col-md-4 col-lg-4 col-xl-4 offset-1" style="overflow: scroll;"></div>
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6 pb-5"><div id="league_trade_chart"></div></div>
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6" class="scrolling_card_container"
+                id="league_trades_container">
+                <template>
+                  <div class="col-xs-12 col-md-6 col-lg-6">
+                    <div class="card statcard p-2">
+                      <h4 class="card-title trade_owner_name">MethSarcus</h4>
+                      <div class="row">
+                        <div class="col-6">
+                          <h6 style="text-align: left;">Sent</h6>
+                          <div class="sent_assets_list">
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <h6 style="text-align: left;">Received</h6>
+                          <div class="received_assets_list">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6 pb-5">
+                  <div id="league_trade_chart"></div>
+                </div>
             </div>
           </div>
           <div id="power_ranks_page" class="tab-pane">
@@ -251,7 +275,7 @@
               </div>
               <div class="col-12 col-md-6 col-lg-6 col-xl-6">
                 <div class="row">
-                  
+
                   <div class="col-6">
                     <!-- <div id="league_best_week_card"
                       class="card text-center statcard p-2 align-items-center d-flex justify-content-center"
@@ -492,7 +516,8 @@
               <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
                 <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
                   <div id="member_bar_chart_container" style="height: 250px;"><canvas
-                      id="member_bar_chart_canvas"></canvas></div>
+                      id="member_bar_chart_canvas"></canvas>
+                  </div>
                 </div>
                 <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
                   style="height: 350px;">

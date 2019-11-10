@@ -1,0 +1,8 @@
+#league_trade_chart {
+    height: 65vh;
+}
+
+#league_trades_container {
+    overflow: scroll;
+    height: 65vh;
+}

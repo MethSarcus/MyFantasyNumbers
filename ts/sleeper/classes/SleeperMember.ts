@@ -19,7 +19,7 @@ class SleeperMember implements Member {
         if (teamAvatar !== undefined && teamAvatar !== null) {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         } else {
-            this.logoURL = "./assets/images/user1.png";
+            this.logoURL = "../assets/images/user1.png";
         }
     }
 
@@ -37,12 +37,16 @@ class SleeperMember implements Member {
         this.stats.weeklyAverage = getMean(scores);
     }
 
-    public nameToString(): string {
-        return this.name;
+    public teamNameToString(): string {
+        if (this.teamName === "" || this.teamName === undefined) {
+            return this.ownerToString();
+        } else {
+            return this.teamName;
+        }
     }
 
     public ownerToString(): string {
-        return this.teamName;
+        return this.name;
     }
 
     public recordToString(): string {

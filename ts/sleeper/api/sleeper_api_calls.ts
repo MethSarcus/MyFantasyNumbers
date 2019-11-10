@@ -167,20 +167,20 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
         const league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         updateLoadingText("Setting Page");
         league.setMemberStats(league.getSeasonPortionWeeks());
-        getSleeperTrades(league);
+        getSleeperTrades(league, lib);
     });
 }
 
-function getSleeperTrades(league: SleeperLeague) {
+function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
     const promises = [];
-    for (let i = 1; i <= league.settings.currentMatchupPeriod; i++) {
+    for (let i = 1; i <= league.settings.currentMatchupPeriod - 1; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
     }
     updateLoadingText("Getting Transactions");
     Promise.all(promises).then((transactionArray) => {
         transactionArray.map((it) => it.response).forEach((week) => {
             week.filter((it: SleeperTransactionResponse) => it.type === "trade" && it.status === "complete").forEach((trade: SleeperTransactionResponse) => {
-                league.trades.push(new SleeperTrade(trade));
+                league.trades.push(new SleeperTrade(trade, lib));
             });
         });
         league.setPage();

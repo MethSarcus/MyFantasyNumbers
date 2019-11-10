@@ -12,4 +12,8 @@ class SleeperDraftPick {
         this.sellingOwnerId = sellingOwnerId;
         this.associatedRosterId = associatedRosterId;
     }
+
+    public toString(league: League): string {
+        return this.season + " " + ordinal_suffix_of(this.round) + " (" + league.getMember(this.associatedRosterId).ownerToString() + ")";
+    }
 }

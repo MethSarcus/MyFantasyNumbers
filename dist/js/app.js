@@ -1254,7 +1254,7 @@ function createTeamMenu(league) {
         c.style.marginLeft = "8px";
         c.style.marginRight = "auto";
         b.appendChild(c);
-        var d = document.createTextNode(" " + league.members[i].nameToString());
+        var d = document.createTextNode(" " + league.members[i].teamNameToString());
         b.appendChild(d);
         a.appendChild(b);
         nav.appendChild(a);
@@ -1822,7 +1822,7 @@ function updateTeamCard(league, member) {
     var record = document.getElementById("team_record");
     picture.setAttribute("src", member.logoURL);
     picture.addEventListener("error", fixNoImage);
-    team.innerHTML = member.nameToString();
+    team.innerHTML = member.teamNameToString();
     owner.innerHTML = member.ownerToString();
     if (league.settings.isActive) {
         finish.innerHTML = "Ranked " + member.rankToString() + " overall";
@@ -2009,7 +2009,7 @@ function createTeamBarChart(league, member) {
     if (window.memberBarChart !== undefined) {
         window.memberBarChart.data.datasets = [];
         window.memberBarChart.data.datasets.push({
-            label: member.nameToString(),
+            label: member.teamNameToString(),
             backgroundColor: getMemberColor(member.teamID),
             data: league.getMemberTotalPointsPerPosition(member.teamID)
         });
@@ -2030,7 +2030,7 @@ function createTeamBarChart(league, member) {
         var chartData = {
             labels: league.settings.getPositions(),
             datasets: [{
-                    label: member.nameToString(),
+                    label: member.teamNameToString(),
                     backgroundColor: getMemberColor(member.teamID),
                     data: league.getMemberTotalPointsPerPosition(member.teamID)
                 }, {
@@ -2157,7 +2157,7 @@ function getLeagueStackedDatasets(league) {
         increment += 1;
     });
     league.members.sort(function (a, b) { return (a.stats.pf < b.stats.pf) ? 1 : -1; }).forEach(function (member) {
-        labels.push(member.nameToString);
+        labels.push(member.teamNameToString);
         var positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
         for (var i = 0; i < datasets.length; i++) {
             datasets[i].data.push(positionPoints[i]);
@@ -2168,14 +2168,14 @@ function getLeagueStackedDatasets(league) {
 function makeDescendingMemberLabels(league) {
     var labels = [];
     league.members.sort(function (a, b) { return (a.stats.pf < b.stats.pf) ? 1 : -1; }).forEach(function (member) {
-        labels.push(member.nameToString());
+        labels.push(member.teamNameToString());
     });
     return labels;
 }
 function makeMemberLabels(league) {
     var labels = [];
     league.members.forEach(function (member) {
-        labels.push(member.nameToString());
+        labels.push(member.teamNameToString());
     });
     return labels;
 }
@@ -2214,8 +2214,8 @@ function formatTradeValues(league, key, numTrades) {
     var team1 = parseInt(names[0]);
     var team2 = parseInt(names[1]);
     var formattedData = {
-        from: league.getMember(team1).nameToString(),
-        to: league.getMember(team2).nameToString(),
+        from: league.getMember(team1).teamNameToString(),
+        to: league.getMember(team2).teamNameToString(),
         value: numTrades,
         nodeColor: getMemberColor(team1)
     };
@@ -2324,7 +2324,7 @@ function createMainWeeklyLineChart(league) {
             var curTeam = league.getMember(key);
             var myColor = getMemberColor(key);
             datasets.push({
-                label: curTeam.nameToString(),
+                label: curTeam.teamNameToString(),
                 data: value,
                 borderColor: myColor,
                 backGroundColor: myColor,
@@ -2421,7 +2421,7 @@ function createMemberWeeklyLineChart(league, member) {
         else {
             var curTeam = league.getMember(key);
             datasets.push({
-                label: curTeam.nameToString(),
+                label: curTeam.teamNameToString(),
                 data: value,
                 borderColor: getMemberColor(key),
                 backgroundColor: getMemberColor(key),
@@ -2604,7 +2604,7 @@ function getLeagueLineData(league, accumulates) {
                 pointBackgroundColor: getMemberColor(key),
                 lineTension: 0,
                 borderWidth: 2,
-                label: curTeam.nameToString()
+                label: curTeam.teamNameToString()
             });
         }
     });
@@ -2654,7 +2654,7 @@ function createTeamRadarChart(league, member) {
             data: league.getLeagueAveragePointsPerPosition()
         });
         window.myRadarChart.data.datasets.push({
-            label: member.nameToString(),
+            label: member.teamNameToString(),
             fill: true,
             backgroundColor: "rgba(255,99,132,0.2)",
             borderColor: "rgba(255,99,132,1)",
@@ -2679,7 +2679,7 @@ function createTeamRadarChart(league, member) {
                         pointBackgroundColor: "rgba(179,181,198,1)",
                         data: league.getLeagueAveragePointsPerPosition()
                     }, {
-                        label: member.nameToString(),
+                        label: member.teamNameToString(),
                         fill: true,
                         backgroundColor: "rgba(255,99,132,0.2)",
                         borderColor: "rgba(255,99,132,1)",
@@ -2768,7 +2768,7 @@ function createLeagueStatsTableRow(league, member) {
     image.addEventListener("error", fixNoImage);
     image.style.marginRight = "8px";
     teamNameCell.appendChild(image);
-    teamNameCell.appendChild(document.createTextNode(member.nameToString()));
+    teamNameCell.appendChild(document.createTextNode(member.teamNameToString()));
     rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
@@ -2889,7 +2889,7 @@ function createPowerRankTable(league) {
         image.addEventListener("error", fixNoImage);
         image.style.marginRight = "8px";
         teamName.appendChild(image);
-        teamName.appendChild(document.createTextNode(member.nameToString()));
+        teamName.appendChild(document.createTextNode(member.teamNameToString()));
         powerRank.innerText = member.stats.powerRank + "";
         powerRecord.innerText = member.powerRecordToString();
         potentialRecord.innerText = member.potentialPowerRecordToString();
@@ -3192,7 +3192,7 @@ var ESPNMember = (function () {
         this.stats.standardDeviation = calcStandardDeviation(scores);
         this.stats.weeklyAverage = getMean(scores);
     };
-    ESPNMember.prototype.nameToString = function () {
+    ESPNMember.prototype.teamNameToString = function () {
         return this.teamLocation + " " + this.teamNickname;
     };
     ESPNMember.prototype.ownerToString = function () {
@@ -3534,19 +3534,19 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
         var league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         updateLoadingText("Setting Page");
         league.setMemberStats(league.getSeasonPortionWeeks());
-        getSleeperTrades(league);
+        getSleeperTrades(league, lib);
     });
 }
-function getSleeperTrades(league) {
+function getSleeperTrades(league, lib) {
     var promises = [];
-    for (var i = 1; i <= league.settings.currentMatchupPeriod; i++) {
+    for (var i = 1; i <= league.settings.currentMatchupPeriod - 1; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
     }
     updateLoadingText("Getting Transactions");
     Promise.all(promises).then(function (transactionArray) {
         transactionArray.map(function (it) { return it.response; }).forEach(function (week) {
             week.filter(function (it) { return it.type === "trade" && it.status === "complete"; }).forEach(function (trade) {
-                league.trades.push(new SleeperTrade(trade));
+                league.trades.push(new SleeperTrade(trade, lib));
             });
         });
         league.setPage();
@@ -3590,6 +3590,32 @@ var TransactionMetadata;
     TransactionMetadata["FAILED_CLAIMED_BY_OTHER_OWNER"] = "This player was claimed by another owner.";
     TransactionMetadata["FAILED_TOO_MANY_PLAYERS"] = "Unfortunately, your roster will have too many players after this transaction.";
 })(TransactionMetadata || (TransactionMetadata = {}));
+var SleeperBasePlayer = (function () {
+    function SleeperBasePlayer(entry) {
+        this.playerID = entry.player_id;
+        this.firstName = entry.first_name;
+        this.lastName = entry.last_name;
+        this.position = entry.position;
+        this.realTeamID = entry.team;
+        this.age = entry.age;
+        if (entry.espn_id) {
+            this.espnID = entry.espn_id.toString();
+        }
+        else {
+            this.espnID = this.playerID;
+        }
+        this.setPictureURL();
+    }
+    SleeperBasePlayer.prototype.setPictureURL = function () {
+        if (this.position === "D/ST" || this.position === "DEF") {
+            this.pictureURL = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
+        }
+        else {
+            this.pictureURL = "http://a.espncdn.com/i/headshots/nfl/players/full/" + this.espnID + ".png";
+        }
+    };
+    return SleeperBasePlayer;
+}());
 var SleeperDraftPick = (function () {
     function SleeperDraftPick(season, round, currentOwnerId, sellingOwnerId, associatedRosterId) {
         this.season = season;
@@ -3598,6 +3624,9 @@ var SleeperDraftPick = (function () {
         this.sellingOwnerId = sellingOwnerId;
         this.associatedRosterId = associatedRosterId;
     }
+    SleeperDraftPick.prototype.toString = function (league) {
+        return this.season + " " + ordinal_suffix_of(this.round) + " (" + league.getMember(this.associatedRosterId).ownerToString() + ")";
+    };
     return SleeperDraftPick;
 }());
 var SleeperLeague = (function (_super) {
@@ -3611,6 +3640,7 @@ var SleeperLeague = (function (_super) {
         _super.prototype.setPage.call(this);
         enableTradePage();
         createLeagueTradeDiagram(this);
+        constructTrades(this);
         transitionToLeaguePage();
     };
     return SleeperLeague;
@@ -3630,7 +3660,7 @@ var SleeperMember = (function () {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         }
         else {
-            this.logoURL = "./assets/images/user1.png";
+            this.logoURL = "../assets/images/user1.png";
         }
     }
     SleeperMember.prototype.getPictureURL = function () {
@@ -3645,11 +3675,16 @@ var SleeperMember = (function () {
         this.stats.standardDeviation = calcStandardDeviation(scores);
         this.stats.weeklyAverage = getMean(scores);
     };
-    SleeperMember.prototype.nameToString = function () {
-        return this.name;
+    SleeperMember.prototype.teamNameToString = function () {
+        if (this.teamName === "" || this.teamName === undefined) {
+            return this.ownerToString();
+        }
+        else {
+            return this.teamName;
+        }
     };
     SleeperMember.prototype.ownerToString = function () {
-        return this.teamName;
+        return this.name;
     };
     SleeperMember.prototype.recordToString = function () {
         if (this.stats.ties !== 0) {
@@ -3809,7 +3844,7 @@ var SleeperTeam = (function () {
     return SleeperTeam;
 }());
 var SleeperTrade = (function () {
-    function SleeperTrade(trade) {
+    function SleeperTrade(trade, lib) {
         this.playersTraded = new Map();
         this.faabTraded = new Map();
         this.draftPicksInvolved = [];
@@ -3820,20 +3855,20 @@ var SleeperTrade = (function () {
         this.week = trade.leg;
         this.transactionId = trade.transaction_id;
         this.initTradeMaps();
-        this.createTradeMaps(trade);
+        this.createTradeMaps(trade, lib);
     }
-    SleeperTrade.prototype.createTradeMaps = function (trade) {
+    SleeperTrade.prototype.createTradeMaps = function (trade, lib) {
         var _this = this;
         if (trade.adds) {
             Object.keys(trade.adds).forEach(function (playerId) {
                 var teamID = trade.adds[playerId];
-                _this.playersReceived.get(teamID).push(playerId);
+                _this.playersReceived.get(teamID).push(new SleeperBasePlayer(lib[playerId]));
             });
         }
         if (trade.drops) {
             Object.keys(trade.drops).forEach(function (playerId) {
                 var teamID = trade.drops[playerId];
-                _this.playersTraded.get(teamID).push(playerId);
+                _this.playersTraded.get(teamID).push(new SleeperBasePlayer(lib[playerId]));
             });
         }
         if (trade.draft_picks.length > 0) {
@@ -3987,3 +4022,46 @@ var SleeperWeekStats = (function () {
     };
     return SleeperWeekStats;
 }());
+function createTradeCard(league, trade) {
+    var tradeContainer = document.createElement("div");
+    tradeContainer.id = "trade_container_" + trade.transactionId;
+    tradeContainer.classList.add("row", "my-1");
+    var template = document.querySelector("template");
+    trade.consentingTeamIds.forEach(function (teamID) {
+        var teamNode = document.importNode(template.content, true);
+        var ownerName = teamNode.querySelector(".trade_owner_name");
+        var sentAssetsList = teamNode.querySelector(".sent_assets_list");
+        var receivedAssetsList = teamNode.querySelector(".received_assets_list");
+        ownerName.textContent = league.getMember(teamID).ownerToString();
+        trade.playersTraded.get(teamID).forEach(function (player) {
+            sentAssetsList.innerHTML += "&bull;" + player.firstName + " " + player.lastName;
+            sentAssetsList.appendChild(document.createElement("br"));
+        });
+        trade.playersReceived.get(teamID).forEach(function (player) {
+            receivedAssetsList.innerHTML += "&bull;" + player.firstName + " " + player.lastName;
+            receivedAssetsList.appendChild(document.createElement("br"));
+        });
+        trade.draftPicksInvolved.filter(function (pick) {
+            return teamID === pick.currentOwnerId;
+        }).forEach(function (pick) {
+            receivedAssetsList.innerHTML += pick.toString(league);
+            receivedAssetsList.appendChild(document.createElement("br"));
+        });
+        trade.draftPicksInvolved.filter(function (pick) {
+            return teamID === pick.sellingOwnerId;
+        }).forEach(function (pick) {
+            sentAssetsList.innerHTML += pick.toString(league);
+            sentAssetsList.appendChild(document.createElement("br"));
+        });
+        tradeContainer.appendChild(teamNode);
+    });
+    return tradeContainer;
+}
+function constructTrades(league) {
+    var container = document.getElementById("league_trades_container");
+    league.trades.forEach(function (trade) {
+        var tradeRow = document.createElement("div");
+        tradeRow.appendChild(createTradeCard(league, trade));
+        container.appendChild(tradeRow);
+    });
+}

@@ -39,7 +39,7 @@ function createMainWeeklyLineChart(league: League) {
             const curTeam = league.getMember(key);
             const myColor = getMemberColor(key);
             datasets.push({
-                label: curTeam.nameToString(),
+                label: curTeam.teamNameToString(),
                 data: value,
                 borderColor: myColor,
                 backGroundColor: myColor,
@@ -141,7 +141,7 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
         } else {
             const curTeam = league.getMember(key);
             datasets.push({
-                label: curTeam.nameToString(),
+                label: curTeam.teamNameToString(),
                 data: value,
                 borderColor: getMemberColor(key),
                 backgroundColor: getMemberColor(key),
@@ -331,7 +331,7 @@ function getLeagueLineData(league: League, accumulates: boolean): object[] {
                 pointBackgroundColor: getMemberColor(key),
                 lineTension: 0,
                 borderWidth: 2,
-                label: curTeam.nameToString()
+                label: curTeam.teamNameToString()
             });
         }
     });

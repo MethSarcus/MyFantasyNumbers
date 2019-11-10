@@ -18,7 +18,7 @@ function createPowerRankTable(league: League) {
         image.style.marginRight = "8px";
 
         teamName.appendChild(image);
-        teamName.appendChild(document.createTextNode(member.nameToString()));
+        teamName.appendChild(document.createTextNode(member.teamNameToString()));
         powerRank.innerText = member.stats.powerRank + "";
         powerRecord.innerText = member.powerRecordToString();
         potentialRecord.innerText = member.potentialPowerRecordToString();

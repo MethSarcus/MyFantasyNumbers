@@ -11,7 +11,7 @@ function createTeamRadarChart(league: League, member: Member) {
       data: league.getLeagueAveragePointsPerPosition()
     });
     (window as any).myRadarChart.data.datasets.push({
-      label: member.nameToString(),
+      label: member.teamNameToString(),
       fill: true,
       backgroundColor: "rgba(255,99,132,0.2)",
       borderColor: "rgba(255,99,132,1)",
@@ -36,7 +36,7 @@ function createTeamRadarChart(league: League, member: Member) {
             pointBackgroundColor: "rgba(179,181,198,1)",
             data: league.getLeagueAveragePointsPerPosition()
           }, {
-            label: member.nameToString(),
+            label: member.teamNameToString(),
             fill: true,
             backgroundColor: "rgba(255,99,132,0.2)",
             borderColor: "rgba(255,99,132,1)",

@@ -5,7 +5,7 @@ function createTeamBarChart(league: League, member: Member) {
     if ((window as any).memberBarChart !== undefined) {
         (window as any).memberBarChart.data.datasets = [];
         (window as any).memberBarChart.data.datasets.push({
-            label: member.nameToString(),
+            label: member.teamNameToString(),
             backgroundColor: getMemberColor(member.teamID),
             data: league.getMemberTotalPointsPerPosition(member.teamID)
         });
@@ -25,7 +25,7 @@ function createTeamBarChart(league: League, member: Member) {
         const chartData = {
             labels: league.settings.getPositions(),
             datasets: [{
-                label: member.nameToString(),
+                label: member.teamNameToString(),
                 backgroundColor: getMemberColor(member.teamID),
                 data: league.getMemberTotalPointsPerPosition(member.teamID)
             }, {
@@ -159,7 +159,7 @@ function getLeagueStackedDatasets(league: League): object[] {
         increment += 1;
     });
     league.members.sort((a, b) => (a.stats.pf < b.stats.pf) ? 1 : -1).forEach((member) => {
-        labels.push(member.nameToString);
+        labels.push(member.teamNameToString);
         const positionPoints = league.getMemberTotalPointsPerPosition(member.teamID);
         for (let i = 0; i < datasets.length; i++) {
             datasets[i].data.push(positionPoints[i]);
@@ -172,7 +172,7 @@ function getLeagueStackedDatasets(league: League): object[] {
 function makeDescendingMemberLabels(league: League): string[] {
     const labels: string[] = [];
     league.members.sort((a, b) => (a.stats.pf < b.stats.pf) ? 1 : -1).forEach((member) => {
-        labels.push(member.nameToString());
+        labels.push(member.teamNameToString());
     });
 
     return labels;
@@ -181,7 +181,7 @@ function makeDescendingMemberLabels(league: League): string[] {
 function makeMemberLabels(league: League): string[] {
     const labels: string[] = [];
     league.members.forEach((member) => {
-        labels.push(member.nameToString());
+        labels.push(member.teamNameToString());
     });
 
     return labels;
