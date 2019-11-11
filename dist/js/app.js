@@ -1094,6 +1094,7 @@ function initCube() {
     updateLoadingText("Getting Settings");
 }
 function main() {
+    localStorage.clear();
     var sleeperButton = document.getElementById("platform_input_0");
     var espnButton = document.getElementById("platform_input_1");
     var leagueIDInput = document.getElementById("league_id_input");
@@ -1158,6 +1159,7 @@ function enableButtons() {
     };
 }
 function enableTradePage() {
+    document.getElementById("trades_button").style.display = "block";
     document.getElementById("trades_button").onclick = function () {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
