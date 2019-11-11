@@ -5,33 +5,50 @@ function createTradeCard(league: SleeperLeague, trade: SleeperTrade) {
     const template = document.querySelector("template");
     trade.consentingTeamIds.forEach((teamID) => {
         const teamNode = document.importNode(template.content, true);
-        const ownerName = teamNode.querySelector(".trade_owner_name");
+        const ownerName = teamNode.querySelector(".trade_owner_name") as HTMLDivElement;
         const sentAssetsList = teamNode.querySelector(".sent_assets_list");
         const receivedAssetsList = teamNode.querySelector(".received_assets_list");
-        ownerName.textContent = league.getMember(teamID).ownerToString();
+        const c = document.createElement("img");
+        c.src = league.getMember(teamID).logoURL;
+        c.style.width = "25px";
+        c.style.height = "25px";
+        c.style.borderRadius = "25px";
+        c.addEventListener("error", fixNoImage);
+        c.style.marginLeft = "8px";
+        c.style.marginRight = "auto";
+        ownerName.appendChild(c);
+        ownerName.appendChild(document.createTextNode(" " + league.getMember(teamID).ownerToString()));
         trade.playersTraded.get(teamID).forEach((player) => {
-            sentAssetsList.innerHTML += "&bull;" + player.firstName + " " + player.lastName;
+            sentAssetsList.innerHTML += "- " + player.firstName + " " + player.lastName;
             sentAssetsList.appendChild(document.createElement("br"));
         });
         trade.playersReceived.get(teamID).forEach((player) => {
-            receivedAssetsList.innerHTML += "&bull;" + player.firstName + " " + player.lastName;
+            receivedAssetsList.innerHTML += "+ " + player.firstName + " " + player.lastName;
             receivedAssetsList.appendChild(document.createElement("br"));
         });
         trade.draftPicksInvolved.filter((pick) => {
             return teamID === pick.currentOwnerId;
         }).forEach((pick) => {
-            receivedAssetsList.innerHTML += pick.toString(league);
+            receivedAssetsList.innerHTML += "+ " + pick.toString(league);
             receivedAssetsList.appendChild(document.createElement("br"));
-
         });
 
         trade.draftPicksInvolved.filter((pick) => {
             return teamID === pick.sellingOwnerId;
         }).forEach((pick) => {
-            sentAssetsList.innerHTML += pick.toString(league);
+            sentAssetsList.innerHTML += "- " + pick.toString(league);
             sentAssetsList.appendChild(document.createElement("br"));
 
         });
+
+        if (trade.faabTraded.get(teamID) !== undefined && trade.faabTraded.get(teamID) !== 0) {
+            if (trade.faabTraded.get(teamID) > 0) {
+                receivedAssetsList.appendChild(document.createTextNode("Faab: + $" + trade.faabTraded.get(teamID)));
+            } else {
+                sentAssetsList.appendChild(document.createTextNode("Faab: - $" + (trade.faabTraded.get(teamID) * -1)));
+            }
+        }
+
         tradeContainer.appendChild(teamNode);
     });
     return tradeContainer;

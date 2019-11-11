@@ -47,8 +47,8 @@ class SleeperTrade {
 
         if (trade.waiver_budget.length > 0) {
             trade.waiver_budget.forEach((faabTransaction) => {
-                this.faabTraded.set(faabTransaction.receiver, this.faabTraded.get(faabTransaction.receiver += faabTransaction.amount));
-                this.faabTraded.set(faabTransaction.sender, this.faabTraded.get(faabTransaction.receiver -= faabTransaction.amount));
+                this.faabTraded.set(faabTransaction.receiver, this.faabTraded.get(faabTransaction.receiver) + faabTransaction.amount);
+                this.faabTraded.set(faabTransaction.sender, this.faabTraded.get(faabTransaction.sender) - faabTransaction.amount);
             });
         }
     }

@@ -4,5 +4,19 @@
 
 #league_trades_container {
     overflow: scroll;
-    height: 65vh;
+    height: 80vh;
+}
+
+.league_trade_container {
+    padding: 1em;
+    font-size: .8em;
+}
+
+.sent_assets_list {
+    color: red;
+}
+
+.received_assets_list {
+    color: green;
+    
 }
