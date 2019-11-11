@@ -1,4 +1,5 @@
 function main() {
+    localStorage.clear();
     const sleeperButton = document.getElementById("platform_input_0") as any;
     const espnButton = document.getElementById("platform_input_1") as any;
     const leagueIDInput = document.getElementById("league_id_input") as HTMLInputElement;
