@@ -11,7 +11,7 @@ function createTeamBarChart(league: League, member: Member) {
         });
         (window as any).memberBarChart.data.datasets.push({
             label: "All Opponents",
-            backgroundColor: "lightgrey",
+            backgroundColor: "black",
             data: league.getLeaguePointsPerPosition()
         });
         (window as any).memberBarChart.data.datasets.push({

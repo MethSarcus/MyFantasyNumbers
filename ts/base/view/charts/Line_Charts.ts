@@ -122,9 +122,9 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
             datasets.push({
                 label: "League Average",
                 data: value,
-                borderColor: "lightgrey",
-                backgroundColor: "lightgrey",
-                pointBackgroundColor: "lightgrey",
+                borderColor: "darkgrey",
+                backgroundColor: "darkgrey",
+                pointBackgroundColor: "darkgrey",
                 fill: false,
                 lineTension: 0,
             });
@@ -132,9 +132,9 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
             datasets.push({
                 label: "Opponent",
                 data: value,
-                borderColor: "darkgrey",
-                backgroundColor: "darkgrey",
-                pointBackgroundColor: "darkgrey",
+                borderColor: "black",
+                backgroundColor: "black",
+                pointBackgroundColor: "black",
                 fill: false,
                 lineTension: 0,
             });
