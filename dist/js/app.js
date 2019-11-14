@@ -4033,9 +4033,11 @@ function createTradeCard(league, trade) {
     trade.consentingTeamIds.forEach(function (teamID) {
         var teamNode = document.importNode(template.content, true);
         var ownerName = teamNode.querySelector(".trade_owner_name");
+        var container = teamNode.querySelector(".league_trade_container");
         var sentAssetsList = teamNode.querySelector(".sent_assets_list");
         var receivedAssetsList = teamNode.querySelector(".received_assets_list");
         var c = document.createElement("img");
+        container.style.borderColor = getMemberColor(teamID);
         c.src = league.getMember(teamID).logoURL;
         c.style.width = "25px";
         c.style.height = "25px";

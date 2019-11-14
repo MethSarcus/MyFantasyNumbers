@@ -6,9 +6,11 @@ function createTradeCard(league: SleeperLeague, trade: SleeperTrade) {
     trade.consentingTeamIds.forEach((teamID) => {
         const teamNode = document.importNode(template.content, true);
         const ownerName = teamNode.querySelector(".trade_owner_name") as HTMLDivElement;
+        const container = teamNode.querySelector(".league_trade_container") as HTMLDivElement;
         const sentAssetsList = teamNode.querySelector(".sent_assets_list");
         const receivedAssetsList = teamNode.querySelector(".received_assets_list");
         const c = document.createElement("img");
+        container.style.borderColor = getMemberColor(teamID);
         c.src = league.getMember(teamID).logoURL;
         c.style.width = "25px";
         c.style.height = "25px";

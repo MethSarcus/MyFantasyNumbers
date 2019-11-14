@@ -4,24 +4,8 @@ declare var am4themes_animated: any;
 
 function createLeagueTradeDiagram(league: SleeperLeague): void {
     am4core.useTheme(am4themes_animated);
-    // const chart = am4core.create("league_trade_chart", am4charts.ChordDiagram);
-    // chart.data = createLeagueTradeDiagramData(league);
-    // chart.dataFields.fromName = "from";
-    // chart.dataFields.toName = "to";
-    // chart.dataFields.value = "value";
-    // chart.dataFields.color = "nodeColor";
     const leagueTradeData = createLeagueTradeDiagramData(league);
     initChordChart(leagueTradeData);
-    // am4core.createFromConfig({
-    //     data: leagueTradeData,
-    //     sortBy: "value",
-    //     dataFields: {
-    //       fromName: "from",
-    //       toName: "to",
-    //       value: "value",
-    //       nodeColor: "nodeColor"
-    //     }
-    //   }, "league_trade_chart", am4charts.ChordDiagram);
 }
 
 function createLeagueTradeDiagramData(league: SleeperLeague): object[] {
