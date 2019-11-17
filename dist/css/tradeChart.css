@@ -3,7 +3,7 @@
 }
 
 #league_trades_container {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 80vh;
 }
 

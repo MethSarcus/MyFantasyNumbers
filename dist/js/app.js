@@ -4028,9 +4028,9 @@ var SleeperWeekStats = (function () {
 function createTradeCard(league, trade) {
     var tradeContainer = document.createElement("div");
     tradeContainer.id = "trade_container_" + trade.transactionId;
-    tradeContainer.classList.add("row", "my-1");
+    tradeContainer.classList.add("row", "my-1", "league_trade");
     var template = document.querySelector("template");
-    trade.consentingTeamIds.forEach(function (teamID) {
+    trade.consentingTeamIds.forEach(function (teamID, index) {
         var teamNode = document.importNode(template.content, true);
         var ownerName = teamNode.querySelector(".trade_owner_name");
         var container = teamNode.querySelector(".league_trade_container");
@@ -4076,6 +4076,16 @@ function createTradeCard(league, trade) {
             }
         }
         tradeContainer.appendChild(teamNode);
+        if (index < trade.consentingTeamIds.length - 1) {
+            var tradeSymbolContainer = document.createElement("div");
+            tradeSymbolContainer.classList.add("col-1", "my-auto", "ml-0");
+            var tradeSymbol = document.createElement("img");
+            tradeSymbol.src = "./assets/images/trade_symbol.png";
+            tradeSymbol.style.height = "2em";
+            tradeSymbol.style.width = "3em";
+            tradeSymbolContainer.appendChild(tradeSymbol);
+            tradeContainer.appendChild(tradeSymbolContainer);
+        }
     });
     return tradeContainer;
 }
