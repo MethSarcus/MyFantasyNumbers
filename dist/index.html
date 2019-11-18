@@ -195,6 +195,8 @@
     <div id="wrapper" class="px-5">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
+
+          <!-- Main League Page-->
           <div id="leaguePage" class="tab-pane fade active show">
             <div class="row">
               <div class="col-12 col-md-6 col-lg-5 col-xl-5">
@@ -220,14 +222,15 @@
               <div class="col-12" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas" style="min-height: 600px;"></canvas>
               </div>
-
             </div>
           </div>
+
+          <!-- League Trade Page-->
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
-                <div class="col-6">
-                    <h4 class="mx-auto" style="text-align: center;">Trades</h4>
-                  </div>
+              <div class="col-6">
+                <h4 class="mx-auto" style="text-align: center;">Trades</h4>
+              </div>
               <div class="col-6">
                 <h4 class="mx-auto" style="text-align: center;">Trade Connections</h4>
               </div>
@@ -237,21 +240,21 @@
                 id="league_trades_container">
                 <template>
                   <div class="card league_trade_container">
-                      <h5 class="card-title trade_owner_name"></h5>
-                      <div class="ml-2">
-                          <b style="text-align: left;">Sent</b>
-                          <div class="sent_assets_list">
-                          </div>
-                          <b style="text-align: left;">Received</b>
-                          <div class="received_assets_list">
-                        </div>
+                    <h5 class="card-title trade_owner_name"></h5>
+                    <div class="ml-2">
+                      <b style="text-align: left;">Sent</b>
+                      <div class="sent_assets_list">
                       </div>
+                      <b style="text-align: left;">Received</b>
+                      <div class="received_assets_list">
+                      </div>
+                    </div>
                   </div>
                 </template>
               </div>
               <div class="col-12 col-md-6 col-lg-6 col-xl-6 pb-5">
-                  <div id="league_trade_chart"></div>
-                </div>
+                <div id="league_trade_chart"></div>
+              </div>
             </div>
           </div>
           <div id="power_ranks_page" class="tab-pane">
@@ -292,6 +295,7 @@
               </div>
             </div>
           </div>
+          <!-- Team Page -->
           <div id="teamPill" class="tab-pane">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
@@ -308,6 +312,24 @@
                 </div>
                 <p class="card-text" id="team_finish">Finished 3rd Overall</p>
                 <p id="team_record">Record: 9-4</p>
+                <table class="" id="memberWeekTable">
+                  <thead>
+                    <tr id="member_week_table_head_row">
+                      <th scope="col">Week</th>
+                      <th scope="col">Score</th>
+                      <th scope="col">VS</th>
+                      <th scope="col">Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody id="member_week_table_body"></tbody>
+                </table>
+                <div style="text-align: center;">
+                  <h6>Trades</h6>
+                </div>
+                <div id="team_page_trades_container" class="card-deck"></div>
+                <div class="px-4" id="radar_chart_container">
+                  <canvas id="radar_chart_canvas"></canvas>
+                </div>
               </div>
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row pb-1">
@@ -416,29 +438,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="row pb-1">
-              <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                <table class="" id="memberWeekTable">
-                  <thead>
-                    <tr id="member_week_table_head_row">
-                      <th scope="col">Week</th>
-                      <th scope="col">Score</th>
-                      <th scope="col">VS</th>
-                      <th scope="col">Margin</th>
-                    </tr>
-                  </thead>
-                  <tbody id="member_week_table_body">
-
-                  </tbody>
-                </table>
-                <div style="text-align: center;">
-                    <h6>Trades</h6>
-                </div>
-                <div id="team_page_trades_container" class="card-deck"></div>
-              </div>
-              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row py-1">
                   <div class="col-12 card-deck">
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center p-2">
@@ -506,24 +505,17 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="row py-1">
-              <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                <div class="px-4" id="radar_chart_container">
-                  <canvas id="radar_chart_canvas"></canvas>
-                </div>
-              </div>
-              <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
-                  <div id="member_bar_chart_container" style="height: 250px;"><canvas
-                      id="member_bar_chart_canvas"></canvas>
+                <div class="row py-1">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                    <div id="member_bar_chart_container" style="height: 250px;"><canvas
+                        id="member_bar_chart_canvas"></canvas>
+                    </div>
                   </div>
-                </div>
-                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
-                  style="height: 350px;">
-                  <canvas id="TEAM_LINE_CANVAS">
-                  </canvas>
+                  <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
+                    style="height: 350px;">
+                    <canvas id="TEAM_LINE_CANVAS">
+                    </canvas>
+                  </div>
                 </div>
               </div>
             </div>

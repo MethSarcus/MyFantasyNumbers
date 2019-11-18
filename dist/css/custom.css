@@ -156,7 +156,6 @@ img.resize {
 }
 
 #memberWeekTable {
-  table-layout: fixed !important;
   width: 100% !important;
 }
 
@@ -369,15 +368,6 @@ div.statWidget > div:nth-child(1) > h4:nth-child(2) {
 #dropdownMenuButton:hover {
   background-color: #007bff !important;
   animation-duration: 0.2ms;
-}
-
-#member_week_table_body .tr {
-  margin-top: 0.25em;
-  margin-bottom: 0.25em;
-}
-#member_week_table_body .tr:hover {
-  color: black;
-  box-shadow: inset 0px 0px 10px #000000;
 }
 
 .league_trade {
