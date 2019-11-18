@@ -18,7 +18,9 @@ function updateTeamPill(league: League, teamID: number): void {
     updateWinnableGamesLost(league, member);
     updateMargins(league, member);
     updateUpsets(league, member);
-
+    if (league.leaguePlatform === PLATFORM.SLEEPER) {
+        updateTeamTrades(league as SleeperLeague, member);
+    }
     unfadeTeam();
 }
 
@@ -279,6 +281,10 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
     }
     biggestBoomName.innerText = biggestBoom.firstName + " " + biggestBoom.lastName;
     biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
+}
+
+function updateTeamTrades(league: SleeperLeague, member: Member) {
+    constructTeamPageTrades(league, member.teamID);
 }
 
 function fadeTeam(league: League, teamID: number) {

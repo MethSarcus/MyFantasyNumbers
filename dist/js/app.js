@@ -1738,6 +1738,9 @@ function updateTeamPill(league, teamID) {
     updateWinnableGamesLost(league, member);
     updateMargins(league, member);
     updateUpsets(league, member);
+    if (league.leaguePlatform === PLATFORM.SLEEPER) {
+        updateTeamTrades(league, member);
+    }
     unfadeTeam();
 }
 function updateBestWorstConsistent(league, member) {
@@ -1980,6 +1983,9 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
     }
     biggestBoomName.innerText = biggestBoom.firstName + " " + biggestBoom.lastName;
     biggestBoomPoints.innerText = biggestBoom.score + " Points Week " + biggestBoom.weekNumber + outcomeText;
+}
+function updateTeamTrades(league, member) {
+    constructTeamPageTrades(league, member.teamID);
 }
 function fadeTeam(league, teamID) {
     $("#teamPill").stop(true, true).fadeOut(200, function () {
@@ -4028,8 +4034,8 @@ var SleeperWeekStats = (function () {
 function createTradeCard(league, trade) {
     var tradeContainer = document.createElement("div");
     tradeContainer.id = "trade_container_" + trade.transactionId;
-    tradeContainer.classList.add("row", "my-1", "league_trade");
-    var template = document.querySelector("template");
+    tradeContainer.classList.add("row", "my-1", "league_trade", "card-deck");
+    var template = document.getElementsByTagName("template")[0];
     trade.consentingTeamIds.forEach(function (teamID, index) {
         var teamNode = document.importNode(template.content, true);
         var ownerName = teamNode.querySelector(".trade_owner_name");
@@ -4076,22 +4082,25 @@ function createTradeCard(league, trade) {
             }
         }
         tradeContainer.appendChild(teamNode);
-        if (index < trade.consentingTeamIds.length - 1) {
-            var tradeSymbolContainer = document.createElement("div");
-            tradeSymbolContainer.classList.add("col-1", "my-auto", "ml-0");
-            var tradeSymbol = document.createElement("img");
-            tradeSymbol.src = "./assets/images/trade_symbol.png";
-            tradeSymbol.style.height = "2em";
-            tradeSymbol.style.width = "3em";
-            tradeSymbolContainer.appendChild(tradeSymbol);
-            tradeContainer.appendChild(tradeSymbolContainer);
-        }
     });
     return tradeContainer;
 }
 function constructTrades(league) {
     var container = document.getElementById("league_trades_container");
     league.trades.forEach(function (trade) {
+        var tradeRow = document.createElement("div");
+        tradeRow.appendChild(createTradeCard(league, trade));
+        container.appendChild(tradeRow);
+    });
+}
+function constructTeamPageTrades(league, teamId) {
+    var container = document.getElementById("team_page_trades_container");
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    league.trades.filter(function (trade) {
+        return trade.consentingTeamIds.includes(teamId);
+    }).forEach(function (trade) {
         var tradeRow = document.createElement("div");
         tradeRow.appendChild(createTradeCard(league, trade));
         container.appendChild(tradeRow);

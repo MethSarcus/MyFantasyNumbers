@@ -24,3 +24,9 @@
 .nav-link.active {
     background-color: #007bff;
 }
+
+
+#team_page_trades_container {
+  height: 25vh;
+  overflow-y: scroll;
+}
