@@ -57,9 +57,9 @@ class SeasonPlayer {
 
     public setPictureURL(): void {
         if (this.position === "D/ST" || this.position === "DEF") {
-            this.pictureURL = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
+            this.pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
         } else {
-            this.pictureURL = "http://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
+            this.pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
         }
     }
 }
