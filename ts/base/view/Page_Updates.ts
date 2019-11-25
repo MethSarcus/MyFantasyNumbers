@@ -3,6 +3,7 @@ declare var ajax: any;
 
 function updateTeamPill(league: League, teamID: number): void {
     const member = league.getMember(teamID);
+    document.getElementById("teamPill").setAttribute("currentTeam", teamID.toString());
     updateTeamCard(league, member);
     updateMiniStatCards(league, member);
     updateWeekAverage(league, member);

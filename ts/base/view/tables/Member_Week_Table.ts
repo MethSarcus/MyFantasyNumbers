@@ -30,9 +30,20 @@ function updateMemberWeekTable(league: League, member: Member): void {
         row.appendChild(scoreCell);
         row.appendChild(vsCell);
         row.appendChild(marginCell);
+        row.setAttribute("data-toggle", "modal");
+        row.setAttribute("data-target", "#matchup_modal");
+        row.addEventListener("click", function() {
+            createMatchupModal(this, league);
+        });
         tableBody.appendChild(row);
     });
     weekTable.appendChild(tableBody);
+}
+
+function createMatchupModal(elem: HTMLTableRowElement, league: League): void {
+    const weekNum = parseInt(elem.firstChild.nodeValue);
+    const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+    const matchup = league.weeks[weekNum - 1].getTeamMatchup(teamID);
 }
 
 // this function is to create vs populate

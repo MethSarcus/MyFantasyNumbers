@@ -60,6 +60,11 @@
   <!-- Custom CSS Imports -->
   <link href="css/master.css?v=5" rel="stylesheet" />
 
+  <!-- Scroll Hint Imports -->
+  <link rel="stylesheet" href="https://unpkg.com/scroll-hint@latest/css/scroll-hint.css">
+  <script src="https://unpkg.com/scroll-hint@latest/js/scroll-hint.min.js"></script>
+
+
   <!-- Main JS Import -->
   <script type="text/javascript" src="js/app.js?v=8"></script>
 </head>
@@ -236,8 +241,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6" class="scrolling_card_container"
-                id="league_trades_container">
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6 scrolling_card_container" id="league_trades_container">
                 <template>
                   <div class="card league_trade_container">
                     <h5 class="card-title trade_owner_name"></h5>
@@ -312,7 +316,7 @@
                 </div>
                 <p class="card-text" id="team_finish">Finished 3rd Overall</p>
                 <p id="team_record">Record: 9-4</p>
-                <table class="" id="memberWeekTable">
+                <table class="table-sm compact hover" id="memberWeekTable">
                   <thead>
                     <tr id="member_week_table_head_row">
                       <th scope="col">Week</th>
@@ -323,10 +327,10 @@
                   </thead>
                   <tbody id="member_week_table_body"></tbody>
                 </table>
-                <div style="text-align: center;">
+                <div style="text-align: center;" class="pt-3">
                   <h6>Trades</h6>
                 </div>
-                <div id="team_page_trades_container" class="card-deck"></div>
+                <div id="team_page_trades_container" class="js-scrollable"></div>
                 <div class="px-4" id="radar_chart_container">
                   <canvas id="radar_chart_canvas"></canvas>
                 </div>
@@ -515,6 +519,114 @@
                     style="height: 350px;">
                     <canvas id="TEAM_LINE_CANVAS">
                     </canvas>
+                  </div>
+                  <div class="modal fade" id="matchup_modal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog matchup_modal_container" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="matchup_modal_title">Modal title</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body" id="matchup_modal_body">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr class="finalScoreRow">
+                                <td>Team 1</td>
+                                <td>Margin</td>
+                                <td>Team 2</td>
+                              </tr>
+                            </thead>
+                            <tbody class="matchup_modal_table_body">
+                              <tr>
+                                <td>
+                                  <div class="row">
+                                    <div class="col-2">
+                                        <img class="player_badge_image my-auto"
+                                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                                    </div>
+                                    <div class="col-7">
+                                      <b>Odell Beckham Jr.</b>
+                                      <br>
+                                      <p>WR, Cleveland Browns</p>
+                                    </div>
+                                    <div class="col-2">
+                                      <h5>24.65</h5>
+                                      <small>18.34</small>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="position_badge">
+                                    <b>WR</b>
+                                  </div>
+                                  <small>-3.45</small>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img class="player_badge_image my-auto"
+                                            src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                                        </div>
+                                        <div class="col-7">
+                                          <b>Odell Beckham Jr.</b>
+                                          <br>
+                                          <p>WR, Cleveland Browns</p>
+                                        </div>
+                                        <div class="col-3">
+                                          <h5>24.65</h5>
+                                          <small>18.34</small>
+                                        </div>
+                                      </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Player 2</td>
+                                <td>+3.45</td>
+                                <td>Player 2</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr class="finalScoreRow">
+                                <td>110.26</td>
+                                <td>-24.11</td>
+                                <td>134.54</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

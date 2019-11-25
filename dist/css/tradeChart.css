@@ -30,3 +30,51 @@
   height: 25vh;
   overflow-y: scroll;
 }
+
+tr.finalScoreRow td {
+    text-align: center;
+    border: 0;
+  }
+
+.matchup_modal_table_body tr td {
+    padding: .5rem;
+    vertical-align: middle;
+}
+
+.player_badge_image {
+    border-radius: 25px;
+    width: 75px;
+    height: auto;
+    background-color: white;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.matchup_modal_container {
+    max-width: 65vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.position_badge {
+    background-color: darkblue;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    width: 50px;
+    height: 50px;
+    padding-top: 10px;
+    font-size: 1.3em;
+    text-align: center;
+}
+
+#member_week_table_body tr {
+    cursor:pointer;
+}
+
+#member_week_table_body tr :hover {
+    opacity: 90%;
+}

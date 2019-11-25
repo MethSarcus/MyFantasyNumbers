@@ -585,7 +585,7 @@ var League = (function () {
         createLeagueStackedGraph(this);
         initLeagueStatsTable();
         initPowerRankTable();
-        enableTooltips();
+        enablePlugins();
     };
     return League;
 }());
@@ -903,10 +903,10 @@ var SeasonPlayer = (function () {
     };
     SeasonPlayer.prototype.setPictureURL = function () {
         if (this.position === "D/ST" || this.position === "DEF") {
-            this.pictureURL = "http://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
+            this.pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
         }
         else {
-            this.pictureURL = "http://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
+            this.pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
         }
     };
     return SeasonPlayer;
@@ -1217,7 +1217,7 @@ function enableYearSelector(league) {
         yearSelector.add(option);
     });
 }
-function enableTooltips() {
+function enablePlugins() {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -1227,6 +1227,9 @@ function enableTooltips() {
     }, function () {
         $(this).removeClass("hover");
         reselectLeagueLineData();
+    });
+    new ScrollHint("#league_trades_container", {
+        suggestiveShadow: true
     });
 }
 function createTeamMenu(league) {
@@ -1723,6 +1726,7 @@ function getMemberColor(memberID) {
 }
 function updateTeamPill(league, teamID) {
     var member = league.getMember(teamID);
+    document.getElementById("teamPill").setAttribute("currentTeam", teamID.toString());
     updateTeamCard(league, member);
     updateMiniStatCards(league, member);
     updateWeekAverage(league, member);
@@ -2863,9 +2867,19 @@ function updateMemberWeekTable(league, member) {
         row.appendChild(scoreCell);
         row.appendChild(vsCell);
         row.appendChild(marginCell);
+        row.setAttribute("data-toggle", "modal");
+        row.setAttribute("data-target", "#matchup_modal");
+        row.addEventListener("click", function () {
+            createMatchupModal(this, league);
+        });
         tableBody.appendChild(row);
     });
     weekTable.appendChild(tableBody);
+}
+function createMatchupModal(elem, league) {
+    var weekNum = parseInt(elem.firstChild.nodeValue);
+    var teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+    var matchup = league.weeks[weekNum - 1].getTeamMatchup(teamID);
 }
 function createMemberWeekTable(league) {
     var weekTable = document.getElementById("memberWeekTable");

@@ -1,3 +1,5 @@
+declare var ScrollHint: any;
+
 function main() {
     localStorage.clear();
     const sleeperButton = document.getElementById("platform_input_0") as any;
@@ -127,7 +129,7 @@ function enableYearSelector(league: League): void {
     });
 }
 
-function enableTooltips(): void {
+function enablePlugins(): void {
     $(() => {
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -139,6 +141,10 @@ function enableTooltips(): void {
         $(this).removeClass("hover");
         reselectLeagueLineData();
     });
+
+    new ScrollHint("#league_trades_container", {
+        suggestiveShadow: true
+      });
 }
 
 function createTeamMenu(league: League): void {

@@ -647,6 +647,6 @@ abstract class League {
         createLeagueStackedGraph(this);
         initLeagueStatsTable();
         initPowerRankTable();
-        enableTooltips();
+        enablePlugins();
     }
 }
