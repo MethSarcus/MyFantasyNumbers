@@ -58,7 +58,7 @@
 
 
   <!-- Custom CSS Imports -->
-  <link href="css/master.css?v=5" rel="stylesheet" />
+  <link href="css/master.css?v=6" rel="stylesheet" />
 
   <!-- Scroll Hint Imports -->
   <link rel="stylesheet" href="https://unpkg.com/scroll-hint@latest/css/scroll-hint.css">
@@ -66,7 +66,7 @@
 
 
   <!-- Main JS Import -->
-  <script type="text/javascript" src="js/app.js?v=8"></script>
+  <script type="text/javascript" src="js/app.js?v=13"></script>
 </head>
 
 
@@ -221,10 +221,21 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-12 col-md-6 col-lg-7 col-xl-7 py-2 pb-5 pt-2" id="league_weekly_line_chart_container">
+              <div class="col-7">
+                <div class="row">
+                  <div class="col-4">Highest Weekly Score</div>
+                  <div class="col-4">Most Consistent</div>
+                  <div class="col-4">Worst Lineup Setter</div>
+                  <div class="col-4">Gutsiest Owner</div>
+                  <div class="col-4">Missed the mark (biggest projection differential)</div>
+                  <div class="col-4">Closest Match</div>
+                  <div class="col-8">Largest Stomp</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6" id="league_weekly_line_chart_container">
                 <canvas id="league_weekly_line_canvas"></canvas>
               </div>
-              <div class="col-12" id="league_stacked_graph_container">
+              <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas" style="min-height: 600px;"></canvas>
               </div>
             </div>

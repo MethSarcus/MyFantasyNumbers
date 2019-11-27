@@ -1417,6 +1417,7 @@ var positionToInt = new Map([
     ["QB", 0],
     ["TQB", 1],
     ["RB", 2],
+    ["FB", 2],
     ["RB/WR", 3],
     ["WR", 4],
     ["WR/TE", 5],
