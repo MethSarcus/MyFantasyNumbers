@@ -76,6 +76,7 @@ var League = (function () {
                 curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
+                curMember.stats.bestProjectedLinupPoints += curMemberTeam.projectedBestLineupPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
@@ -340,6 +341,25 @@ var League = (function () {
         });
         return bestWeekMatchup;
     };
+    League.prototype.getOverallWorstWeek = function () {
+        var worstWeekMatchup;
+        var lowestScore = this.getSeasonPortionWeeks()[0].matchups[0].getLosingTeam().score;
+        this.getSeasonPortionWeeks().forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
+                if (matchup.home.score < lowestScore) {
+                    worstWeekMatchup = matchup;
+                    lowestScore = matchup.home.score;
+                }
+                else if (!matchup.byeWeek) {
+                    if (matchup.away.score < lowestScore) {
+                        worstWeekMatchup = matchup;
+                        lowestScore = matchup.away.score;
+                    }
+                }
+            });
+        });
+        return worstWeekMatchup;
+    };
     League.prototype.getTeamAveragePointsPerPosition = function (teamID) {
         var _this = this;
         var allPlayers = getSeasonPlayers(this, teamID);
@@ -585,6 +605,7 @@ var League = (function () {
         createLeagueStackedGraph(this);
         initLeagueStatsTable();
         initPowerRankTable();
+        updateLeagueStatsCards(this);
         enablePlugins();
     };
     return League;
@@ -761,6 +782,17 @@ var Matchup = (function () {
             return this.away;
         }
     };
+    Matchup.prototype.getLosingTeam = function () {
+        if (this.byeWeek) {
+            return null;
+        }
+        else if (this.home.score < this.away.score) {
+            return this.home;
+        }
+        else {
+            return this.away;
+        }
+    };
     Matchup.prototype.hasTeam = function (teamID) {
         if (this.byeWeek !== true) {
             if (this.home.teamID === teamID || this.away.teamID === teamID) {
@@ -926,6 +958,7 @@ var Stats = (function () {
         this.pf = 0;
         this.pa = 0;
         this.pp = 0;
+        this.bestProjectedLinupPoints = 0;
         this.choicesThatCouldHaveWonMatchup = 0;
         this.gameLostDueToSingleChoice = 0;
         this.gutPlayersPlayed = 0;
@@ -1231,6 +1264,44 @@ function enablePlugins() {
     new ScrollHint("#league_trades_container", {
         suggestiveShadow: true
     });
+}
+function updateLeagueStatsCards(league) {
+    updateLeagueWeeklyAverage(league);
+    updateLeagueStandardDeviation(league);
+    updateLeagueEfficiency(league);
+    updateBestWorstLeagueWeeks(league);
+}
+function updateLeagueStandardDeviation(league) {
+    var leagueStandardDeviation = document.getElementById("league_standard_deviation");
+    leagueStandardDeviation.innerText = roundToHundred(league.getLeagueStandardDeviation()).toString();
+}
+function updateLeagueEfficiency(league) {
+    var leagueEfficiency = document.getElementById("league_efficiency_percentage");
+    leagueEfficiency.innerText = roundToHundred(league.getAverageEfficiency()).toString();
+}
+function updateLeagueWeeklyAverage(league) {
+    var leagueWeeklyAverage = document.getElementById("league_weekly_average");
+    leagueWeeklyAverage.innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
+}
+function updateBestWorstLeagueWeeks(league) {
+    var leagueBestWeekScore = document.getElementById("league_best_week_score");
+    var leagueBestWeekTeamName = document.getElementById("league_best_week_team_name");
+    var leagueWorstWeekTeamName = document.getElementById("league_worst_week_team_name");
+    var leagueBestWeekImage = document.getElementById("team_best_week_image");
+    var leagueWorstWeekImage = document.getElementById("team_worst_week_image");
+    var leagueWorstWeekScore = document.getElementById("league_worst_week_score");
+    var leagueBestWeekNumber = document.getElementById("league_best_week_number");
+    var leagueWorstWeekNumber = document.getElementById("league_worst_week_number");
+    var bestWeek = league.getOverallBestWeek();
+    var worstWeek = league.getOverallWorstWeek();
+    leagueBestWeekScore.innerText = roundToHundred(bestWeek.getWinningTeam().score).toString() + " Points";
+    leagueBestWeekTeamName.innerText = league.getMember(bestWeek.getWinningTeam().teamID).teamNameToString();
+    leagueBestWeekNumber.innerText = "Week " + bestWeek.weekNumber.toString();
+    leagueBestWeekImage.src = league.getMember(bestWeek.getWinningTeam().teamID).logoURL;
+    leagueWorstWeekScore.innerText = roundToHundred(worstWeek.getLosingTeam().score).toString() + " Points";
+    leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLosingTeam().teamID).teamNameToString();
+    leagueWorstWeekNumber.innerText = "Week " + worstWeek.weekNumber.toString();
+    leagueWorstWeekImage.src = league.getMember(worstWeek.getLosingTeam().teamID).logoURL;
 }
 function createTeamMenu(league) {
     var tabsList = document.getElementById("tabs-content");
@@ -3296,6 +3367,7 @@ var ESPNTeam = (function () {
         this.score = this.getTeamScore(this.lineup);
         this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         this.projectedScore = this.getProjectedScore(this.lineup);
+        this.projectedBestLineupPoints = this.getTeamScore(getOptimalProjectedLineup(activeLineupSlots, players));
         var gutArray = this.getGutPoints(activeLineupSlots);
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];
@@ -3861,6 +3933,7 @@ var SleeperTeam = (function () {
     SleeperTeam.prototype.setTeamMetrics = function (activeLineupSlots) {
         this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         this.projectedScore = this.getProjectedScore(this.lineup);
+        this.projectedBestLineupPoints = this.getTeamScore(getOptimalProjectedLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         var gutArray = this.getGutPoints(activeLineupSlots);
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];

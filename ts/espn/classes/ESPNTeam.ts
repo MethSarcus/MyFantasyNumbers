@@ -6,6 +6,7 @@ class ESPNTeam implements Team {
     public score: number;
     public potentialPoints: number;
     public projectedScore: number;
+    public projectedBestLineupPoints: number;
     public opponentID: number;
     public gutDifference: number;
     public gutPlayers: number;
@@ -27,6 +28,7 @@ class ESPNTeam implements Team {
         this.score = this.getTeamScore(this.lineup);
         this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         this.projectedScore = this.getProjectedScore(this.lineup);
+        this.projectedBestLineupPoints = this.getTeamScore(getOptimalProjectedLineup(activeLineupSlots, players));
         const gutArray = this.getGutPoints(activeLineupSlots);
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];

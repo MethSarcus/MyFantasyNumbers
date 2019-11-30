@@ -74,6 +74,7 @@ abstract class League {
                 curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
+                curMember.stats.bestProjectedLinupPoints += curMemberTeam.projectedBestLineupPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
@@ -375,6 +376,26 @@ abstract class League {
         return bestWeekMatchup;
     }
 
+    public getOverallWorstWeek(): Matchup {
+        let worstWeekMatchup;
+        let lowestScore = this.getSeasonPortionWeeks()[0].matchups[0].getLosingTeam().score;
+        this.getSeasonPortionWeeks().forEach((week) => {
+            week.matchups.forEach((matchup) => {
+                if (matchup.home.score < lowestScore) {
+                    worstWeekMatchup = matchup;
+                    lowestScore = matchup.home.score;
+                } else if (!matchup.byeWeek) {
+                    if (matchup.away.score < lowestScore) {
+                        worstWeekMatchup = matchup;
+                        lowestScore = matchup.away.score;
+                    }
+                }
+            });
+        });
+
+        return worstWeekMatchup;
+    }
+
     public getTeamAveragePointsPerPosition(teamID: number): number[] {
         const allPlayers = getSeasonPlayers(this, teamID);
         const positions = this.settings.getPositions();
@@ -647,6 +668,7 @@ abstract class League {
         createLeagueStackedGraph(this);
         initLeagueStatsTable();
         initPowerRankTable();
+        updateLeagueStatsCards(this);
         enablePlugins();
     }
 }

@@ -78,3 +78,7 @@ tr.finalScoreRow td {
 #member_week_table_body tr :hover {
     opacity: 90%;
 }
+
+.mini-stat-text {
+    font-size: .75rem;
+}

@@ -147,6 +147,52 @@ function enablePlugins(): void {
       });
 }
 
+function updateLeagueStatsCards(league: League): void {
+    updateLeagueWeeklyAverage(league);
+    updateLeagueStandardDeviation(league);
+    updateLeagueEfficiency(league);
+    updateBestWorstLeagueWeeks(league);
+
+}
+
+function updateLeagueStandardDeviation(league: League) {
+    const leagueStandardDeviation = document.getElementById("league_standard_deviation");
+    leagueStandardDeviation.innerText = roundToHundred(league.getLeagueStandardDeviation()).toString();
+}
+
+function updateLeagueEfficiency(league: League) {
+    const leagueEfficiency = document.getElementById("league_efficiency_percentage");
+    leagueEfficiency.innerText = roundToHundred(league.getAverageEfficiency()).toString();
+}
+
+function updateLeagueWeeklyAverage(league: League) {
+    const leagueWeeklyAverage = document.getElementById("league_weekly_average");
+    leagueWeeklyAverage.innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
+}
+
+function updateBestWorstLeagueWeeks(league: League) {
+    const leagueBestWeekScore = document.getElementById("league_best_week_score");
+    const leagueBestWeekTeamName = document.getElementById("league_best_week_team_name");
+    const leagueWorstWeekTeamName = document.getElementById("league_worst_week_team_name");
+    const leagueBestWeekImage = document.getElementById("team_best_week_image") as HTMLImageElement;
+    const leagueWorstWeekImage = document.getElementById("team_worst_week_image") as HTMLImageElement;
+    const leagueWorstWeekScore = document.getElementById("league_worst_week_score");
+    const leagueBestWeekNumber = document.getElementById("league_best_week_number");
+    const leagueWorstWeekNumber = document.getElementById("league_worst_week_number");
+    const bestWeek = league.getOverallBestWeek();
+    const worstWeek = league.getOverallWorstWeek();
+
+    leagueBestWeekScore.innerText = roundToHundred(bestWeek.getWinningTeam().score).toString() + " Points";
+    leagueBestWeekTeamName.innerText = league.getMember(bestWeek.getWinningTeam().teamID).teamNameToString();
+    leagueBestWeekNumber.innerText = "Week " + bestWeek.weekNumber.toString();
+    leagueBestWeekImage.src = league.getMember(bestWeek.getWinningTeam().teamID).logoURL;
+
+    leagueWorstWeekScore.innerText = roundToHundred(worstWeek.getLosingTeam().score).toString() + " Points";
+    leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLosingTeam().teamID).teamNameToString();
+    leagueWorstWeekNumber.innerText = "Week " + worstWeek.weekNumber.toString();
+    leagueWorstWeekImage.src = league.getMember(worstWeek.getLosingTeam().teamID).logoURL;
+}
+
 function createTeamMenu(league: League): void {
     const tabsList = document.getElementById("tabs-content");
     const nav = document.getElementById("team_dropdown");

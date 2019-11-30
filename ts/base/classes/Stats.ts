@@ -21,6 +21,7 @@ class Stats {
     public pf: number;
     public pa: number;
     public pp: number;
+    public bestProjectedLinupPoints: number;
     public longestWinStreak: number;
     public standardDeviation: number;
     public weeklyAverage: number;
@@ -41,6 +42,7 @@ class Stats {
         this.pf = 0;
         this.pa = 0;
         this.pp = 0;
+        this.bestProjectedLinupPoints = 0;
         this.choicesThatCouldHaveWonMatchup = 0;
         this.gameLostDueToSingleChoice = 0;
         this.gutPlayersPlayed = 0;

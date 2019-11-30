@@ -46,10 +46,20 @@ class Matchup {
         }
     }
 
-    public getWinningTeam(): any {
+    public getWinningTeam(): Team {
         if (this.byeWeek) {
             return null;
         } else if (this.home.score > this.away.score) {
+            return this.home;
+        } else {
+            return this.away;
+        }
+    }
+
+    public getLosingTeam(): Team {
+        if (this.byeWeek) {
+            return null;
+        } else if (this.home.score < this.away.score) {
             return this.home;
         } else {
             return this.away;
