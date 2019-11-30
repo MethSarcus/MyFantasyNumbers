@@ -1191,6 +1191,13 @@ function enableButtons() {
         fadeToLeaguePage();
     };
 }
+function enableBadgesPane() {
+    document.getElementById("stats_button").style.display = "block";
+    document.getElementById("stats_button").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
+}
 function enableTradePage() {
     document.getElementById("trades_button").style.display = "block";
     document.getElementById("trades_button").onclick = function () {
@@ -1267,9 +1274,12 @@ function enablePlugins() {
 }
 function updateLeagueStatsCards(league) {
     updateLeagueWeeklyAverage(league);
+    updateLeagueWeeklyPP(league);
     updateLeagueStandardDeviation(league);
     updateLeagueEfficiency(league);
     updateBestWorstLeagueWeeks(league);
+    updateLeagueSmallestMOVCard(league);
+    updateLeagueLargestMOVCard(league);
 }
 function updateLeagueStandardDeviation(league) {
     var leagueStandardDeviation = document.getElementById("league_standard_deviation");
@@ -1277,11 +1287,57 @@ function updateLeagueStandardDeviation(league) {
 }
 function updateLeagueEfficiency(league) {
     var leagueEfficiency = document.getElementById("league_efficiency_percentage");
-    leagueEfficiency.innerText = roundToHundred(league.getAverageEfficiency()).toString();
+    leagueEfficiency.innerText = (roundToHundred(league.getAverageEfficiency()) * 100).toString() + "%";
 }
 function updateLeagueWeeklyAverage(league) {
     var leagueWeeklyAverage = document.getElementById("league_weekly_average");
     leagueWeeklyAverage.innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
+}
+function updateLeagueWeeklyPP(league) {
+    var leagueWeeklyAverage = document.getElementById("league_weekly_average_pp");
+    leagueWeeklyAverage.innerText = roundToHundred(league.getLeaguePP() / league.getSeasonPortionWeeks().length).toString();
+}
+function updateLeagueSmallestMOVCard(league) {
+    var closestMatchup = league.getSmallestMarginOfVictory();
+    var team1 = closestMatchup.home;
+    var team2 = closestMatchup.away;
+    var margin = document.getElementById("league_closest_match_margin");
+    var weekNumber = document.getElementById("league_closest_match_week");
+    var firstTeamName = document.getElementById("league_closest_match_team_1");
+    var firstTeamScore = document.getElementById("league_closest_match_team_1_score");
+    var firstTeamImage = document.getElementById("league_closest_match_team_1_image");
+    var secondTeamName = document.getElementById("league_closest_match_team_2");
+    var secondTeamScore = document.getElementById("league_closest_match_team_2_score");
+    var secondTeamImage = document.getElementById("league_closest_match_team_2_image");
+    margin.innerText = roundToThousand(closestMatchup.marginOfVictory) + " Points";
+    weekNumber.innerText = "Week " + closestMatchup.weekNumber.toString();
+    firstTeamName.innerText = league.getMember(team1.teamID).teamNameToString();
+    firstTeamScore.innerText = roundToThousand(team1.score) + " Points";
+    firstTeamImage.src = league.getMember(team1.teamID).logoURL;
+    secondTeamName.innerText = league.getMember(team2.teamID).teamNameToString();
+    secondTeamScore.innerText = roundToThousand(team2.score) + " Points";
+    secondTeamImage.src = league.getMember(team2.teamID).logoURL;
+}
+function updateLeagueLargestMOVCard(league) {
+    var closestMatchup = league.getLargestMarginOfVictory();
+    var team1 = closestMatchup.home;
+    var team2 = closestMatchup.away;
+    var margin = document.getElementById("league_largest_match_margin");
+    var weekNumber = document.getElementById("league_largest_match_week");
+    var firstTeamName = document.getElementById("league_largest_match_team_1");
+    var firstTeamScore = document.getElementById("league_largest_match_team_1_score");
+    var firstTeamImage = document.getElementById("league_largest_match_team_1_image");
+    var secondTeamName = document.getElementById("league_largest_match_team_2");
+    var secondTeamScore = document.getElementById("league_largest_match_team_2_score");
+    var secondTeamImage = document.getElementById("league_largest_match_team_2_image");
+    margin.innerText = roundToThousand(closestMatchup.marginOfVictory) + " Points";
+    weekNumber.innerText = "Week " + closestMatchup.weekNumber.toString();
+    firstTeamName.innerText = league.getMember(team1.teamID).teamNameToString();
+    firstTeamScore.innerText = roundToThousand(team1.score) + " Points";
+    firstTeamImage.src = league.getMember(team1.teamID).logoURL;
+    secondTeamName.innerText = league.getMember(team2.teamID).teamNameToString();
+    secondTeamScore.innerText = roundToThousand(team2.score) + " Points";
+    secondTeamImage.src = league.getMember(team2.teamID).logoURL;
 }
 function updateBestWorstLeagueWeeks(league) {
     var leagueBestWeekScore = document.getElementById("league_best_week_score");
@@ -1342,6 +1398,9 @@ function roundToHundred(x) {
 }
 function roundToTen(x) {
     return Math.round(x * 10) / 10;
+}
+function roundToThousand(x) {
+    return Math.round(x * 1000) / 1000;
 }
 function getColor(value) {
     var hue = ((1 - value) * 120).toString(10);

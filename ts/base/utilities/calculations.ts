@@ -8,6 +8,10 @@ function roundToTen(x: number): number {
     return Math.round(x * 10) / 10;
 }
 
+function roundToThousand(x: number): number {
+    return Math.round(x * 1000) / 1000;
+}
+
 // Params: Double
 // Returns: Hex, Color for card
 function getColor(value: number): string {

@@ -168,6 +168,10 @@
             Ranks</a>
         </li>
         <li class="nav-item ml-2">
+            <a id="stats_button" class="nav-link navBut" data-toggle="pill" type="button"
+              href="#league_stats_pane">Badges</a>
+          </li>
+        <li class="nav-item ml-2">
           <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
             href="#league_trades_pane">Trades</a>
         </li>
@@ -205,6 +209,44 @@
           <div id="leaguePage" class="tab-pane fade active show">
             <div class="row">
               <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+                  <div class="row my-1 justify-content-center align-items-center">
+                      <h4><b>League Stats</b></h4>
+                    </div>
+                    <div class="row mt-1 mb-2">
+                      <div class="col-12 card-deck">
+                        <div id="league_weekly_average_card"
+                          class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                          <p class="mb-1">Weekly Points</p>
+                          <b id="league_weekly_average">157.1</b><small data-toggle="tooltip" data-placement="right"
+                            title="" data-original-title="Average points scored per week">PPW <i
+                              class="fa fa-info-circle"></i></small>
+                        </div>
+                        <div id="league_std_card"
+                          class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                          <p class="mb-1">Consistency</p>
+                          <b id="league_standard_deviation">21.5</b>
+                          <small data-toggle="tooltip" data-placement="right" title=""
+                            data-original-title="Standard Deviation, indicates weekly variation of points from their average">
+                            Std Dev <i class="fa fa-info-circle"></i></small>
+                        </div>
+                        <div id="league_weekly_pp_card"
+                          class="card text-center p-1 statcard align-items-center d-flex justify-content-center">
+                          <p class="mb-1">Weekly Potential</p>
+                          <b id="league_weekly_average_pp">133</b>
+                          <small data-toggle="tooltip" data-placement="right" title=""
+                            data-original-title="Average number of potential points scored each week">
+                            Weekly PP <i class="fa fa-info-circle"></i></small>
+                        </div>
+                        <div id="league_efficiency_card"
+                          class="card text-center p-1 statcard align-items-center d-flex justify-content-center">
+                          <p class="mb-1">Efficiency</p>
+                          <b id="league_efficiency_percentage">92%</b>
+                          <small data-toggle="tooltip" data-placement="right" title=""
+                            data-original-title="Efficiency = (Points Scored / Potential Points) * 100">
+                            % of PP Scored <i class="fa fa-info-circle"></i></small>
+                        </div>
+                      </div>
+                    </div>
                 <table class="table table-sm compact hover" id="league_stats_table">
                   <thead>
                     <tr role="row">
@@ -224,127 +266,126 @@
               <div class="col-12 col-md-6 col-lg-6 col-xl-6" id="league_weekly_line_chart_container">
                   <canvas id="league_weekly_line_canvas"></canvas>
                 </div>
-              <div class="col-sm-12 col-md-6">
-                <div class="row my-1 justify-content-center align-items-center">
-                  <h4><b>League Stats</b></h4>
-                </div>
-                <div class="row my-1">
-                  <div class="col-12 card-deck">
-                    <div id="league_weekly_average_card"
-                      class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                      <p class="mb-1">Weekly Points</p>
-                      <b id="league_weekly_average">157.1</b><small data-toggle="tooltip" data-placement="right"
-                        title="" data-original-title="Average points scored per week">PPW <i
-                          class="fa fa-info-circle"></i></small>
-                    </div>
-                    <div id="league_std_card"
-                      class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                      <p class="mb-1">Consistency</p>
-                      <b id="league_standard_deviation">21.5</b>
-                      <small data-toggle="tooltip" data-placement="right" title=""
-                        data-original-title="Standard Deviation, indicates weekly variation of points from their average">
-                        Std Dev <i class="fa fa-info-circle"></i></small>
-                    </div>
-                    <div id="league_efficiency_card"
-                      class="card text-center p-1 statcard align-items-center d-flex justify-content-center">
-                      <p class="mb-1">Efficiency</p>
-                      <b id="league_efficiency_percentage">92%</b>
-                      <small data-toggle="tooltip" data-placement="right" title=""
-                        data-original-title="Efficiency = (Points Scored / Potential Points) * 100">
-                        PP Scored <i class="fa fa-info-circle"></i></small>
-                    </div>
-                  </div>
-                </div>
-                  <div class="row my-1">
-                    <div class="col-12 card-deck">
-                        <div id="league_best_week_card"
-                        class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                        <p class="mb-1">Best Week</p>
-                        <div>
-                            <img id="team_best_week_image" src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3" style="width: 25px; height: 25px; border-radius: 25px;">
-                            <div data-toggle="tooltip" data-placement="right" title=""
-                              data-original-title="Highest scoring team this season" id="league_best_week_team_name" style="float: right;"> Average Joes
-                              <i class="fa fa-info-circle"></i></div>
-                        </div>
-                          <b id="league_best_week_score">202.88</b>
-                          <small id="league_best_week_number">Week 10</small>
-                      </div>
-                      <div id="league_worst_week_card"
-                        class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                        <p class="mb-1">Worst Week</p>
-                        <div>
-                            <img id="team_worst_week_image" src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3" style="width: 25px; height: 25px; border-radius: 25px;">
-                            <div data-toggle="tooltip" data-placement="right" title=""
-                            data-original-title="Lowest scoring team this season" id="league_worst_week_team_name" style="float: right;"> Average Joes
-                            <i class="fa fa-info-circle"></i></div>
-                        </div>
-                        
-                        
-                        <b id="league_worst_week_score">2.88</b>
-                        <small id="league_worst_week_number">Week 10</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row my-1">
-                      <div class="col-12 card-deck">
-                          <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                          <h4 class="mb-1">Highest Scoring Matchup</h4>
-                          <div class="row w-100">
-                              <div class="matchup_card_left col-4 justify-content-center">
-                                  <b id="league_biggest_matchup_team_1">Team 1</b>
-                                  <p id="league_biggest_matchup_score_1">166.3 Points Scored</p>
-                              </div>
-                              <div class="matchup_card_center col-4 justify-content-center">
-                                VS.
-                                <p><small id="league_biggest_matchup_week">Week 4</small></p>
-                              </div>
-                              <div class="matchup_card_right col-4 justify-content-center">
-                                  <b id="league_biggest_matchup_team_2">Team 2</b>
-                                  <p id="league_biggest_matchup_score_2">166.3 Points Scored</p>
-                                </div>
-                          </div>
-                          <div class="row my-1">
-                            <b>Had a combined score of 309 points</b>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  <div class="row mt-1">
-                      <div class="col-12 card-deck">
-                          <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                          <h6 class="mb-1">Biggest Overperformance</h6>
-                          <b id="league_biggest_overperformance_projected">Projected: 102.88</b>
-                          <b id="league_biggest_overperformance_score">Actual: 183.49</b>
-                          <small data-toggle="tooltip" data-placement="right" title=""
-                            data-original-title="Highest scoring team this season" id="league_best_week_finish">90 points more than expected
-                            <i class="fa fa-info-circle"></i></small>
-                        </div>
-                        <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
-                            <h6 class="mb-1">Biggest Underperformance</h6>
-                            <b id="league_biggest_overperformance_projected">Projected: 102.88</b>
-                            <b id="league_biggest_overperformance_score">Actual: 183.49</b>
-                            <small data-toggle="tooltip" data-placement="right" title=""
-                              data-original-title="Highest scoring team this season" id="league_best_week_finish">90 points more than expected
-                              <i class="fa fa-info-circle"></i></small>
-                          </div>
-                      </div>
-                    </div>
-                    
-                  <!-- <div class="row">
-                    <div class="col-4">Worst Lineup Setter</div>
-                    <div class="col-4">Gutsiest Owner</div>
-                    <div class="col-4">Missed the mark (biggest projection differential)</div>
-                    <div class="col-4">Closest Match</div>
-                    <div class="col-8">Largest Stomp</div>
-                  </div> -->
-                </div>
               
-              <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="league_stacked_graph_container">
+              
+              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas" style="min-height: 600px;"></canvas>
               </div>
             </div>
           </div>
-
+          <!-- League Badges Page-->
+          <div id="league_stats_pane" class="tab-pane">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                      <div class="row my-1">
+                        <div class="col-12 card-deck">
+                            <div id="league_best_week_card"
+                            class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                            <h5 class="">Best Week</h5>
+                              <b id="league_best_week_score">202.88</b>
+                              <div>
+                                <img id="team_best_week_image" src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3" style="width: 25px; height: 25px; border-radius: 25px;">
+                                <div data-toggle="tooltip" data-placement="right" title=""
+                                  data-original-title="Highest scoring team this season" id="league_best_week_team_name" style="float: right;"> Average Joes
+                                  <i class="fa fa-info-circle"></i></div>
+                            </div>
+                              <small id="league_best_week_number">Week 10</small>
+                          </div>
+                          <div id="league_worst_week_card"
+                            class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                            <h5 class="">Worst Week</h5>
+                            <b id="league_worst_week_score">2.88</b>
+                            <div>
+                              <img id="team_worst_week_image" src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3" style="width: 25px; height: 25px; border-radius: 25px;">
+                              <div data-toggle="tooltip" data-placement="right" title=""
+                              data-original-title="Lowest scoring team this season" id="league_worst_week_team_name" style="float: right;"> Average Joes
+                              <i class="fa fa-info-circle"></i></div>
+                          </div>
+                            <small id="league_worst_week_number">Week 10</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row my-1">
+                          <div class="col-12 card-deck">
+                              <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                              <h4 class="mb-1">Slimmist Victory</h4>
+                              <div class="row w-100">
+                                  <div class="matchup_card_left col-5 justify-content-center">
+                                      <img id="league_closest_match_team_1_image" style="width: 25px; height: 25px; border-radius: 25px;">
+                                      <b id="league_closest_match_team_1">Team 1</b>
+                                      <p id="league_closest_match_team_1_score">166.3 Points Scored</p>
+                                  </div>
+                                  <div class="matchup_card_center col-2 justify-content-center pt-2">
+                                    VS.
+                                    <p><small id="league_closest_match_week">Week 4</small></p>
+                                  </div>
+                                  <div class="matchup_card_right col-5 justify-content-center">
+                                      <img id="league_closest_match_team_2_image" style="width: 25px; height: 25px; border-radius: 25px;"><b id="league_closest_match_team_2">Team 2</b>
+                                      <p id="league_closest_match_team_2_score">166.3 Points Scored</p>
+                                    </div>
+                              </div>
+                              <div class="row">
+                                <b>Had a margin of victory of <span id="league_closest_match_margin">2 points</span></b>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row my-1">
+                            <div class="col-12 card-deck">
+                                <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                                <h4 class="mb-1">Biggest Blowout</h4>
+                                <div class="row w-100">
+                                    <div class="matchup_card_left col-5 justify-content-center">
+                                        <img id="league_largest_match_team_1_image" style="width: 25px; height: 25px; border-radius: 25px;">
+                                        <b id="league_largest_match_team_1">Team 1</b>
+                                        <p id="league_largest_match_team_1_score">166.3 Points Scored</p>
+                                    </div>
+                                    <div class="matchup_card_center col-2 justify-content-center pt-2">
+                                      VS.
+                                      <p><small id="league_largest_match_week">Week 4</small></p>
+                                    </div>
+                                    <div class="matchup_card_right col-5 justify-content-center">
+                                        <img id="league_largest_match_team_2_image" style="width: 25px; height: 25px; border-radius: 25px;"><b id="league_largest_match_team_2">Team 2</b>
+                                        <p id="league_largest_match_team_2_score">166.3 Points Scored</p>
+                                      </div>
+                                </div>
+                                <div class="row">
+                                  <b>Had a margin of victory of <span id="league_largest_match_margin">2 points</span></b>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      <!-- <div class="row mt-1">
+                          <div class="col-12 card-deck">
+                              <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                              <h6 class="mb-1">Biggest Overperformance</h6>
+                              <b id="league_biggest_overperformance_projected">Projected: 102.88</b>
+                              <b id="league_biggest_overperformance_score">Actual: 183.49</b>
+                              <small data-toggle="tooltip" data-placement="right" title=""
+                                data-original-title="Highest scoring team this season" id="league_best_week_finish">90 points more than expected
+                                <i class="fa fa-info-circle"></i></small>
+                            </div>
+                            <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                                <h6 class="mb-1">Biggest Underperformance</h6>
+                                <b id="league_biggest_overperformance_projected">Projected: 102.88</b>
+                                <b id="league_biggest_overperformance_score">Actual: 183.49</b>
+                                <small data-toggle="tooltip" data-placement="right" title=""
+                                  data-original-title="Highest scoring team this season" id="league_best_week_finish">90 points more than expected
+                                  <i class="fa fa-info-circle"></i></small>
+                              </div>
+                          </div>
+                        </div> -->
+                        
+                      <!-- <div class="row">
+                        <div class="col-4">Worst Lineup Setter</div>
+                        <div class="col-4">Gutsiest Owner</div>
+                        <div class="col-4">Missed the mark (biggest projection differential)</div>
+                        <div class="col-4">Closest Match</div>
+                        <div class="col-8">Largest Stomp</div>
+                      </div> -->
+                    </div>
+            </div>
+            </div>
           <!-- League Trade Page-->
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
