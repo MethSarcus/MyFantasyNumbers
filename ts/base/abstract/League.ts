@@ -74,7 +74,7 @@ abstract class League {
                 curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
-                curMember.stats.bestProjectedLinupPoints += curMemberTeam.projectedBestLineupPoints;
+                curMember.stats.OPSLAP += curMemberTeam.projectedBestLineupPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
@@ -253,6 +253,17 @@ abstract class League {
         const pp = this.getMember(teamID).stats.pp;
         this.members.forEach((member) => {
             if (pp < member.stats.pp && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
+    public getOPSLAPFinish(teamID: number): number {
+        let finish = 1;
+        const opslap = this.getMember(teamID).stats.OPSLAP;
+        this.members.forEach((member) => {
+            if (opslap < member.stats.OPSLAP && member.teamID !== teamID) {
                 finish += 1;
             }
         });

@@ -13,6 +13,7 @@ function createLeagueStatsTableRow(league: League, member: Member): HTMLTableRow
     const pfCell = document.createElement("td");
     const paCell = document.createElement("td");
     const ppCell = document.createElement("td");
+    const opslapCell = document.createElement("td");
     const pctCell = document.createElement("td");
     const image = document.createElement("img");
     let pctText = "%";
@@ -29,6 +30,7 @@ function createLeagueStatsTableRow(league: League, member: Member): HTMLTableRow
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
     ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
+    opslapCell.appendChild(document.createTextNode(roundToHundred(member.stats.OPSLAP).toString()));
     recordCell.appendChild(document.createTextNode(member.recordToString()));
     if (member.stats.getWinPct() === 0 || member.stats.getWinPct() === 1) {
         pctText = ".00" + pctText;
@@ -38,13 +40,15 @@ function createLeagueStatsTableRow(league: League, member: Member): HTMLTableRow
     pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
     paCell.style.backgroundColor = getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length);
     ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
+    opslapCell.style.backgroundColor = getDarkColor(league.getOPSLAPFinish(member.teamID) / league.members.length);
     row.appendChild(teamNameCell);
     row.appendChild(rankCell);
     row.appendChild(recordCell);
     row.appendChild(pctCell);
     row.appendChild(pfCell);
-    row.appendChild(paCell);
+    row.appendChild(opslapCell);
     row.appendChild(ppCell);
+    row.appendChild(paCell);
 
     return row;
 }
@@ -71,10 +75,13 @@ function initLeagueStatsTable() {
                 data: "PF"
             },
             {
-                data: "PA"
+                data: "OPSLAP"
             },
             {
                 data: "PP"
+            },
+            {
+                data: "PA"
             },
         ],
     });

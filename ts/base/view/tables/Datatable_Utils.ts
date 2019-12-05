@@ -2,7 +2,7 @@ function sortTableByRecord(x: string, y: string) {
     const xWins = parseInt(x.split("-")[0], 10);
     const xLosses = parseInt(x.split("-")[1], 10);
     const yWins = parseInt(y.split("-")[0], 10);
-    const yLosses = parseInt(x.split("-")[1], 10);
+    const yLosses = parseInt(y.split("-")[1], 10);
 
     if (xWins > yWins) {
         return 1;

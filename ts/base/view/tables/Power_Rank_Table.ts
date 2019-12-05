@@ -31,8 +31,8 @@ function createPowerRankTable(league: League) {
         powerRank.style.backgroundColor = getDarkColor(member.stats.powerRank / league.members.length);
         diffRow.innerText = (diffText as unknown as string);
         row.appendChild(teamName);
-        row.appendChild(actualRank);
         row.appendChild(powerRank);
+        row.appendChild(actualRank);
         row.appendChild(diffRow);
         row.appendChild(powerRecord);
         tableBody.appendChild(row);

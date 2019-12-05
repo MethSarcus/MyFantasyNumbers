@@ -76,7 +76,7 @@ var League = (function () {
                 curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
-                curMember.stats.bestProjectedLinupPoints += curMemberTeam.projectedBestLineupPoints;
+                curMember.stats.OPSLAP += curMemberTeam.projectedBestLineupPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
@@ -235,6 +235,16 @@ var League = (function () {
         var pp = this.getMember(teamID).stats.pp;
         this.members.forEach(function (member) {
             if (pp < member.stats.pp && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+        return finish;
+    };
+    League.prototype.getOPSLAPFinish = function (teamID) {
+        var finish = 1;
+        var opslap = this.getMember(teamID).stats.OPSLAP;
+        this.members.forEach(function (member) {
+            if (opslap < member.stats.OPSLAP && member.teamID !== teamID) {
                 finish += 1;
             }
         });
@@ -1002,7 +1012,7 @@ var Stats = (function () {
         this.pf = 0;
         this.pa = 0;
         this.pp = 0;
-        this.bestProjectedLinupPoints = 0;
+        this.OPSLAP = 0;
         this.choicesThatCouldHaveWonMatchup = 0;
         this.gameLostDueToSingleChoice = 0;
         this.gutPlayersPlayed = 0;
@@ -3090,7 +3100,7 @@ function sortTableByRecord(x, y) {
     var xWins = parseInt(x.split("-")[0], 10);
     var xLosses = parseInt(x.split("-")[1], 10);
     var yWins = parseInt(y.split("-")[0], 10);
-    var yLosses = parseInt(x.split("-")[1], 10);
+    var yLosses = parseInt(y.split("-")[1], 10);
     if (xWins > yWins) {
         return 1;
     }
@@ -3132,6 +3142,7 @@ function createLeagueStatsTableRow(league, member) {
     var pfCell = document.createElement("td");
     var paCell = document.createElement("td");
     var ppCell = document.createElement("td");
+    var opslapCell = document.createElement("td");
     var pctCell = document.createElement("td");
     var image = document.createElement("img");
     var pctText = "%";
@@ -3147,6 +3158,7 @@ function createLeagueStatsTableRow(league, member) {
     pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
     paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
     ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
+    opslapCell.appendChild(document.createTextNode(roundToHundred(member.stats.OPSLAP).toString()));
     recordCell.appendChild(document.createTextNode(member.recordToString()));
     if (member.stats.getWinPct() === 0 || member.stats.getWinPct() === 1) {
         pctText = ".00" + pctText;
@@ -3156,13 +3168,15 @@ function createLeagueStatsTableRow(league, member) {
     pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
     paCell.style.backgroundColor = getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length);
     ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
+    opslapCell.style.backgroundColor = getDarkColor(league.getOPSLAPFinish(member.teamID) / league.members.length);
     row.appendChild(teamNameCell);
     row.appendChild(rankCell);
     row.appendChild(recordCell);
     row.appendChild(pctCell);
     row.appendChild(pfCell);
-    row.appendChild(paCell);
+    row.appendChild(opslapCell);
     row.appendChild(ppCell);
+    row.appendChild(paCell);
     return row;
 }
 function initLeagueStatsTable() {
@@ -3187,10 +3201,13 @@ function initLeagueStatsTable() {
                 data: "PF"
             },
             {
-                data: "PA"
+                data: "OPSLAP"
             },
             {
                 data: "PP"
+            },
+            {
+                data: "PA"
             },
         ],
     });
@@ -3286,8 +3303,8 @@ function createPowerRankTable(league) {
         powerRank.style.backgroundColor = getDarkColor(member.stats.powerRank / league.members.length);
         diffRow.innerText = diffText;
         row.appendChild(teamName);
-        row.appendChild(actualRank);
         row.appendChild(powerRank);
+        row.appendChild(actualRank);
         row.appendChild(diffRow);
         row.appendChild(powerRecord);
         tableBody.appendChild(row);
@@ -4045,7 +4062,7 @@ var SleeperMember = (function () {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         }
         else {
-            this.logoURL = "../assets/images/user1.png";
+            this.logoURL = "./assets/images/user1.png";
         }
     }
     SleeperMember.prototype.getPictureURL = function () {
