@@ -651,6 +651,59 @@ abstract class League {
         return [underdogCount, upsetCount];
     }
 
+    public getLeagueGutPointAverage(): number {
+        let sum = 0;
+        this.members.forEach((member) => {
+            sum += member.stats.getAverageGutPoints();
+        });
+
+        return roundToHundred(sum / this.members.length);
+    }
+
+    public getHighestPPMember(): Member {
+        let highMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.pp > highMember.stats.pp) {
+                highMember = member;
+            }
+        });
+
+        return highMember;
+    }
+
+    public getLowestPPMember(): Member {
+        let lowMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.pp < lowMember.stats.pp) {
+                lowMember = member;
+            }
+        });
+
+        return lowMember;
+    }
+
+    public getHighestGutPointMember(): Member {
+        let highMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.getAverageGutPoints() > highMember.stats.getAverageGutPoints()) {
+                highMember = member;
+            }
+        });
+
+        return highMember;
+    }
+
+    public getLowestGutPointMember(): Member {
+        let lowMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.getAverageGutPoints() < lowMember.stats.getAverageGutPoints()) {
+                lowMember = member;
+            }
+        });
+
+        return lowMember;
+    }
+
     public setPage(): void {
         // localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
         // const profileImage = document.getElementById("team_image");
@@ -666,6 +719,7 @@ abstract class League {
         createLeagueWeeklyLineChart(this, true);
         createLeagueStatsTable(this);
         createLeagueStackedGraph(this);
+        createMemberStrengthScatterChart(this);
         initLeagueStatsTable();
         initPowerRankTable();
         updateLeagueStatsCards(this);

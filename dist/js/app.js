@@ -592,6 +592,49 @@ var League = (function () {
         });
         return [underdogCount, upsetCount];
     };
+    League.prototype.getLeagueGutPointAverage = function () {
+        var sum = 0;
+        this.members.forEach(function (member) {
+            sum += member.stats.getAverageGutPoints();
+        });
+        return roundToHundred(sum / this.members.length);
+    };
+    League.prototype.getHighestPPMember = function () {
+        var highMember = this.members[0];
+        this.members.forEach(function (member) {
+            if (member.stats.pp > highMember.stats.pp) {
+                highMember = member;
+            }
+        });
+        return highMember;
+    };
+    League.prototype.getLowestPPMember = function () {
+        var lowMember = this.members[0];
+        this.members.forEach(function (member) {
+            if (member.stats.pp < lowMember.stats.pp) {
+                lowMember = member;
+            }
+        });
+        return lowMember;
+    };
+    League.prototype.getHighestGutPointMember = function () {
+        var highMember = this.members[0];
+        this.members.forEach(function (member) {
+            if (member.stats.getAverageGutPoints() > highMember.stats.getAverageGutPoints()) {
+                highMember = member;
+            }
+        });
+        return highMember;
+    };
+    League.prototype.getLowestGutPointMember = function () {
+        var lowMember = this.members[0];
+        this.members.forEach(function (member) {
+            if (member.stats.getAverageGutPoints() < lowMember.stats.getAverageGutPoints()) {
+                lowMember = member;
+            }
+        });
+        return lowMember;
+    };
     League.prototype.setPage = function () {
         console.log(this);
         document.getElementById("league_name_header").innerHTML = this.leagueName;
@@ -603,6 +646,7 @@ var League = (function () {
         createLeagueWeeklyLineChart(this, true);
         createLeagueStatsTable(this);
         createLeagueStackedGraph(this);
+        createMemberStrengthScatterChart(this);
         initLeagueStatsTable();
         initPowerRankTable();
         updateLeagueStatsCards(this);
@@ -1000,6 +1044,14 @@ var Stats = (function () {
     };
     Stats.prototype.getEfficiency = function () {
         return this.pf / this.pp;
+    };
+    Stats.prototype.getAverageGutPoints = function () {
+        if (this.gutPlayersPlayed === 0 || this.gutPoints === 0) {
+            return 0;
+        }
+        else {
+            return roundToHundred(this.gutPoints / this.gutPlayersPlayed);
+        }
     };
     return Stats;
 }());
@@ -1451,6 +1503,17 @@ function ordinal_suffix_of(i) {
         return i + "rd";
     }
     return i + "th";
+}
+function hexToRGB(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    if (alpha) {
+        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+    }
+    else {
+        return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
 }
 function getOptimalLineup(activeLineupSlots, players) {
     var optimalLineup = [];
@@ -2784,6 +2847,173 @@ function reselectLeagueLineData() {
     });
     window.leagueWeeklyLineChart.data.datasets = data;
     window.leagueWeeklyLineChart.update();
+}
+function createMemberStrengthScatterChart(league) {
+    var ctx = document.getElementById("quadrant_chart_canvas").getContext("2d");
+    var chartDatasets = generateStrengthScatterData(league);
+    window.scatterChart = new Chart(ctx, {
+        type: "scatter",
+        data: {
+            datasets: chartDatasets
+        },
+        options: {
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        var label = data.datasets[tooltipItem[0].datasetIndex].label;
+                        var manager = "";
+                        var roster = "";
+                        if (tooltipItem[0].xLabel > 0) {
+                            manager = "Good Manager";
+                        }
+                        else if (tooltipItem[0].xLabel < 0) {
+                            manager = "Bad Manager";
+                        }
+                        else {
+                            manager = "Average Manager";
+                        }
+                        if (tooltipItem[0].yLabel > 0) {
+                            roster = "Good Roster";
+                        }
+                        else if (tooltipItem[0].yLabel < 0) {
+                            roster = "Bad Roster";
+                        }
+                        else {
+                            roster = "Average Roster";
+                        }
+                        return label + "\n\n" + manager + "\n" + roster;
+                    },
+                    label: function (tooltipItem) {
+                        var aboveBelowGP = "";
+                        if (tooltipItem.xLabel > 0) {
+                            aboveBelowGP = "GP: +" + tooltipItem.xLabel + " avg";
+                        }
+                        else {
+                            aboveBelowGP = "GP: " + tooltipItem.xLabel + " avg";
+                        }
+                        return aboveBelowGP;
+                    },
+                    afterLabel: function (tooltipItem) {
+                        var aboveBelowPP = "";
+                        if (tooltipItem.yLabel > 0) {
+                            aboveBelowPP = "PP: +" + tooltipItem.yLabel + " avg";
+                        }
+                        else {
+                            aboveBelowPP = "PP: " + tooltipItem.yLabel + " avg";
+                        }
+                        return aboveBelowPP;
+                    }
+                }
+            },
+            aspectRatio: 1,
+            title: {
+                display: true,
+                position: "top",
+                text: "Management Skill vs Roster Strength",
+                fontSize: 20,
+                fontColor: "#111",
+            },
+            intersect: true,
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                yAxes: [{
+                        padding: 40,
+                        gridLines: {
+                            zeroLineWidth: 1,
+                            zeroLineColor: "rgba(0,0,0,1)"
+                        },
+                        ticks: {
+                            display: false,
+                            suggestedMin: Math.round(0 - getPPMargin(league)),
+                            suggestedMax: Math.round(getPPMargin(league)),
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "<---------------- Roster Strength ---------------->"
+                        },
+                    }],
+                xAxes: [{
+                        beginAtZero: false,
+                        padding: 40,
+                        display: true,
+                        gridLines: {
+                            zeroLineWidth: 1,
+                            zeroLineColor: "rgba(0,0,0,1)"
+                        },
+                        ticks: {
+                            display: false,
+                            suggestedMin: -1 * getGutPointMargin(league),
+                            suggestedMax: getGutPointMargin(league),
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "<---------------- Management Skill ---------------->"
+                        },
+                    }]
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                    fontColor: "#333",
+                    fontSize: 12
+                }
+            },
+            plugins: {
+                deferred: {
+                    xOffset: 150,
+                    yOffset: "50%",
+                    delay: 500
+                }
+            },
+        }
+    });
+    window.scatterChart.render();
+}
+function generateStrengthScatterData(league) {
+    var datasets = [];
+    league.members.forEach(function (member) {
+        var img = new Image();
+        img.width = 40;
+        img.height = 40;
+        img.src = member.logoURL;
+        datasets.push({
+            label: member.teamNameToString(),
+            borderColor: hexToRGB(getMemberColor(member.teamID), 1),
+            backgroundColor: hexToRGB(getMemberColor(member.teamID), 1),
+            pointStyle: img,
+            hitRadius: 15,
+            radius: 15,
+            data: [{
+                    x: member.stats.getAverageGutPoints(),
+                    y: roundToHundred(member.stats.pp - league.getLeaguePP()),
+                }]
+        });
+    });
+    return datasets;
+}
+function getPPMargin(league) {
+    var avg = league.getLeaguePP();
+    var low = league.getLowestPPMember().stats.pp;
+    var high = league.getHighestPPMember().stats.pp;
+    if (Math.abs(avg - low) > Math.abs(avg - high)) {
+        return 1.2 * (avg - low);
+    }
+    else {
+        return 1.2 * (high - avg);
+    }
+}
+function getGutPointMargin(league) {
+    var avg = league.getLeagueGutPointAverage();
+    var high = league.getHighestGutPointMember().stats.getAverageGutPoints();
+    var low = league.getLowestGutPointMember().stats.getAverageGutPoints();
+    if (Math.abs(avg - low) > Math.abs(avg - high)) {
+        return Math.abs(avg - low);
+    }
+    else {
+        return Math.abs(avg - high);
+    }
 }
 function createTeamRadarChart(league, member) {
     if (window.myRadarChart !== undefined) {

@@ -86,4 +86,12 @@ class Stats {
     public getEfficiency(): number {
         return this.pf / this.pp;
     }
+
+    public getAverageGutPoints(): number {
+        if (this.gutPlayersPlayed === 0 || this.gutPoints === 0) {
+            return 0;
+        } else {
+            return roundToHundred(this.gutPoints / this.gutPlayersPlayed);
+        }
+    }
 }
