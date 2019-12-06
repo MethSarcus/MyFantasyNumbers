@@ -64,6 +64,11 @@ function enableButtons(): void {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
     };
+
+    document.getElementById("stats_button").onclick = () => {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
 }
 
 function enableBadgesPane(): void {
@@ -196,13 +201,13 @@ function updateLeagueSmallestMOVCard(league: League) {
 
     const firstTeamName = document.getElementById("league_closest_match_team_1");
     const firstTeamScore = document.getElementById("league_closest_match_team_1_score");
-    const firstTeamImage = document.getElementById("league_closest_match_team_1_image") as HTMLImageElement; 
+    const firstTeamImage = document.getElementById("league_closest_match_team_1_image") as HTMLImageElement;
 
     const secondTeamName = document.getElementById("league_closest_match_team_2");
     const secondTeamScore = document.getElementById("league_closest_match_team_2_score");
-    const secondTeamImage = document.getElementById("league_closest_match_team_2_image") as HTMLImageElement; 
+    const secondTeamImage = document.getElementById("league_closest_match_team_2_image") as HTMLImageElement;
 
-    margin.innerText = roundToThousand(closestMatchup.marginOfVictory) + " Points";
+    margin.innerText = roundToMil(closestMatchup.marginOfVictory) + " Points";
     weekNumber.innerText = "Week " + closestMatchup.weekNumber.toString();
 
     firstTeamName.innerText = league.getMember(team1.teamID).teamNameToString();
@@ -224,11 +229,11 @@ function updateLeagueLargestMOVCard(league: League) {
 
     const firstTeamName = document.getElementById("league_largest_match_team_1");
     const firstTeamScore = document.getElementById("league_largest_match_team_1_score");
-    const firstTeamImage = document.getElementById("league_largest_match_team_1_image") as HTMLImageElement; 
+    const firstTeamImage = document.getElementById("league_largest_match_team_1_image") as HTMLImageElement;
 
     const secondTeamName = document.getElementById("league_largest_match_team_2");
     const secondTeamScore = document.getElementById("league_largest_match_team_2_score");
-    const secondTeamImage = document.getElementById("league_largest_match_team_2_image") as HTMLImageElement; 
+    const secondTeamImage = document.getElementById("league_largest_match_team_2_image") as HTMLImageElement;
 
     margin.innerText = roundToThousand(closestMatchup.marginOfVictory) + " Points";
     weekNumber.innerText = "Week " + closestMatchup.weekNumber.toString();

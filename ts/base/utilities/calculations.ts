@@ -12,6 +12,10 @@ function roundToThousand(x: number): number {
     return Math.round(x * 1000) / 1000;
 }
 
+function roundToMil(x: number): number {
+    return Math.round(x * 1000000) / 1000000;
+}
+
 // Params: Double
 // Returns: Hex, Color for card
 function getColor(value: number): string {

@@ -1252,6 +1252,10 @@ function enableButtons() {
         $(".nav-link").removeClass("active");
         fadeToLeaguePage();
     };
+    document.getElementById("stats_button").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
 }
 function enableBadgesPane() {
     document.getElementById("stats_button").style.display = "block";
@@ -1371,7 +1375,7 @@ function updateLeagueSmallestMOVCard(league) {
     var secondTeamName = document.getElementById("league_closest_match_team_2");
     var secondTeamScore = document.getElementById("league_closest_match_team_2_score");
     var secondTeamImage = document.getElementById("league_closest_match_team_2_image");
-    margin.innerText = roundToThousand(closestMatchup.marginOfVictory) + " Points";
+    margin.innerText = roundToMil(closestMatchup.marginOfVictory) + " Points";
     weekNumber.innerText = "Week " + closestMatchup.weekNumber.toString();
     firstTeamName.innerText = league.getMember(team1.teamID).teamNameToString();
     firstTeamScore.innerText = roundToThousand(team1.score) + " Points";
@@ -1463,6 +1467,9 @@ function roundToTen(x) {
 }
 function roundToThousand(x) {
     return Math.round(x * 1000) / 1000;
+}
+function roundToMil(x) {
+    return Math.round(x * 1000000) / 1000000;
 }
 function getColor(value) {
     var hue = ((1 - value) * 120).toString(10);
