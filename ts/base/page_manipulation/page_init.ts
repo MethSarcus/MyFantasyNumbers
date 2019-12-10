@@ -87,8 +87,8 @@ function enableTradePage(): void {
     };
 }
 
-function enableSeasonPortionSelector(league: League): void {
-    if (league.settings.currentMatchupPeriod > league.settings.regularSeasonLength) {
+function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void {
+    if (isPlayoffs) {
         document.getElementById(SEASON_PORTION.REGULAR).onclick = () => {
             league.seasonPortion = SEASON_PORTION.REGULAR;
             league.resetStats();

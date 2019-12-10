@@ -723,7 +723,6 @@ abstract class League {
         console.log(this);
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
-        enableSeasonPortionSelector(this);
         enableYearSelector(this);
         createTeamMenu(this);
         createPowerRankTable(this);

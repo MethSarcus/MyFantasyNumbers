@@ -14,6 +14,7 @@ class ESPNLeague extends League {
 
     public setPage(): void {
         super.setPage();
+        enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod > this.settings.regularSeasonLength);
         transitionToLeaguePage();
     }
 

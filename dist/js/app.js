@@ -132,15 +132,16 @@ var League = (function () {
         return roundToHundred(pp / this.members.length);
     };
     League.prototype.getSeasonPortionWeeks = function () {
+        var _this = this;
         var weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter(function (it) {
-                return !it.isPlayoffs;
+                return it.isPlayoffs === false && it.weekNumber <= _this.settings.currentMatchupPeriod;
             });
         }
         else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs;
+                return it.isPlayoffs === true && it.weekNumber <= _this.settings.currentMatchupPeriod;
             });
         }
         return weekPortion;
@@ -648,7 +649,6 @@ var League = (function () {
         console.log(this);
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
-        enableSeasonPortionSelector(this);
         enableYearSelector(this);
         createTeamMenu(this);
         createPowerRankTable(this);
@@ -667,6 +667,7 @@ var Settings = (function () {
     function Settings(activeLineupSlots, lineupSlots, regularSeasonLength, playoffLength, draftType, currentMatchupPeriod, isActive, yearsActive) {
         this.activeLineupSlots = activeLineupSlots;
         this.lineupSlots = lineupSlots;
+        console.log(regularSeasonLength);
         this.regularSeasonLength = regularSeasonLength;
         this.playoffLength = playoffLength;
         this.draftType = draftType;
@@ -1270,8 +1271,8 @@ function enableTradePage() {
         fadeToLeaguePage();
     };
 }
-function enableSeasonPortionSelector(league) {
-    if (league.settings.currentMatchupPeriod > league.settings.regularSeasonLength) {
+function enableSeasonPortionSelector(league, isPlayoffs) {
+    if (isPlayoffs) {
         document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
             league.seasonPortion = SEASON_PORTION.REGULAR;
             league.resetStats();
@@ -3697,6 +3698,7 @@ var ESPNLeague = (function (_super) {
     }
     ESPNLeague.prototype.setPage = function () {
         _super.prototype.setPage.call(this);
+        enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod > this.settings.regularSeasonLength);
         transitionToLeaguePage();
     };
     ESPNLeague.convertESPNFromJson = function (object) {
@@ -3946,6 +3948,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
             location.reload();
             return;
         }
+        console.log(json);
         var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
         var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
         var leagueName = json.name;
@@ -3955,13 +3958,13 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
         var currentMatchupPeriod = json.settings.last_scored_leg;
         var previousLeagueId = json.previous_league_id;
         var numDivisions = json.settings.divisions;
-        var isActive = (json.status === "in_season");
+        var isActive = (json.status === "in_season" || json.status === "post_season");
         var scoringSettings = json.scoring_settings;
         var divisions = [];
         for (var i = 0; i < numDivisions; i++) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
-        var settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16, 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
+        var settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
         updateLoadingText("Getting Members");
         getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName);
     });
@@ -4009,14 +4012,14 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettin
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
     updateLoadingText("Getting weekly stats");
-    var weekCounter = 1;
+    var weekCounter = 0;
     var Weeks = [];
     Promise.all(promises).then(function (weeks) {
         weeks.forEach(function (week) {
-            var isPlayoffs = (weekCounter > settings.regularSeasonLength);
+            weekCounter += 1;
+            var isPlayoffs = (weekCounter >= settings.regularSeasonLength);
             var weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
-            weekCounter += 1;
         });
         getSleeperWeekStats(settings.currentMatchupPeriod).then(function (result) {
             var _loop_2 = function (y) {
@@ -4067,6 +4070,12 @@ function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder) {
     for (var i = 0; i <= (teams.length / 2); i++) {
         _loop_3(i);
     }
+    var byeWeekTeams = allTeams.filter(function (team) {
+        return team.matchupID === null;
+    });
+    byeWeekTeams.forEach(function (team) {
+        matchups.push(new Matchup(team, null, weekNumber, isPlayoff));
+    });
     return matchups;
 }
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
@@ -4208,6 +4217,7 @@ var SleeperLeague = (function (_super) {
     }
     SleeperLeague.prototype.setPage = function () {
         _super.prototype.setPage.call(this);
+        enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod >= this.settings.regularSeasonLength);
         enableTradePage();
         createLeagueTradeDiagram(this);
         constructTrades(this);
@@ -4240,8 +4250,6 @@ var SleeperMember = (function () {
         var _this = this;
         var scores = [];
         weeks.forEach(function (week) {
-            console.log(week);
-            console.log(week.getTeam(_this.teamID));
             scores.push(week.getTeam(_this.teamID).score);
         });
         this.stats.standardDeviation = calcStandardDeviation(scores);

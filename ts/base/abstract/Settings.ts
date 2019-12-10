@@ -14,6 +14,7 @@ class Settings {
     constructor(activeLineupSlots: number[][], lineupSlots: number[][], regularSeasonLength: number, playoffLength: number, draftType: DRAFT_TYPE, currentMatchupPeriod: number, isActive: boolean, yearsActive: number[]) {
         this.activeLineupSlots = activeLineupSlots;
         this.lineupSlots = lineupSlots;
+        console.log(regularSeasonLength);
         this.regularSeasonLength = regularSeasonLength;
         this.playoffLength = playoffLength;
         this.draftType = draftType;
