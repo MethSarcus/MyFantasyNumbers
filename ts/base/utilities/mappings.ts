@@ -43,6 +43,7 @@ const intToPosition = new Map([
     [23, "FLEX"],
     [25, "???"],
     [88, "TAXI"],
+    [-1, "EMPTY"],
 ]);
 
 const positionToInt = new Map([
@@ -73,6 +74,7 @@ const positionToInt = new Map([
     ["FLEX", 23],
     ["TAXI", 88],
     ["???", 25],
+    ["EMPTY", -1],
 ]);
 
 function getPosition(eligibleSlots: number[]): string {
@@ -86,6 +88,10 @@ function getPosition(eligibleSlots: number[]): string {
 }
 
 function getRealTeamInitials(realteamID: string) {
+    if (realteamID == null) {
+        return "FA";
+    }
+
     let team = realteamID.toString();
     switch (team) {
         case "1":
@@ -184,6 +190,10 @@ function getRealTeamInitials(realteamID: string) {
         case "34":
             team = "Hou";
             break;
+        case "-1":
+            team = "None";
+            break;
     }
+
     return team;
 }

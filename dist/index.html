@@ -67,7 +67,7 @@
 
 
   <!-- Main JS Import -->
-  <script type="text/javascript" src="js/app.js?v=14"></script>
+  <script type="text/javascript" src="js/app.js?v=15"></script>
 </head>
 
 
@@ -433,6 +433,25 @@
               </div>
             </div>
             <div class="row">
+              <div class="container">
+                  <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                    </div>
+              </div>
+                
               <div class="col-12 col-md-6 col-lg-6 col-xl-6 scrolling_card_container" id="league_trades_container">
                 <template>
                   <div class="card league_trade_container">
@@ -728,15 +747,15 @@
                           </button>
                         </div>
                         <div class="modal-body" id="matchup_modal_body">
-                          <table class="table table-bordered table-hover">
+                          <table class="table table-hover table-sm">
                             <thead>
                               <tr class="finalScoreRow">
-                                <td>Team 1</td>
-                                <td>Margin</td>
-                                <td>Team 2</td>
+                                <td id="matchup_modal_first_team_name">Team 1</td>
+                                <td></td>
+                                <td id="matchup_modal_second_team_name">Team 2</td>
                               </tr>
                             </thead>
-                            <tbody class="matchup_modal_table_body">
+                            <tbody id="matchup_modal_table_body">
                               <tr>
                                 <td>
                                   <div class="row">
@@ -750,7 +769,9 @@
                                       <p>WR, Cleveland Browns</p>
                                     </div>
                                     <div class="col-2">
+                                      <div style="font-size: .8em;">Score</div>
                                       <h5>24.65</h5>
+                                      <div style="font-size: .6em;">Projected</div>
                                       <small>18.34</small>
                                     </div>
                                   </div>
@@ -773,8 +794,10 @@
                                       <p>WR, Cleveland Browns</p>
                                     </div>
                                     <div class="col-3">
-                                      <h5>24.65</h5>
-                                      <small>18.34</small>
+                                        <div style="font-size: .8em;">Score</div>
+                                        <h5>24.65</h5>
+                                        <div style="font-size: .6em;">Projected</div>
+                                        <small>18.34</small>
                                     </div>
                                   </div>
                                 </td>

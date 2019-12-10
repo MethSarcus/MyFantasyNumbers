@@ -145,8 +145,8 @@ function createLeagueStackedGraph(league: League): void {
 
 function getLeagueStackedDatasets(league: League): object[] {
     const datasets: any[] = [];
-    const backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
     const positions = league.settings.getPositions();
+    const backgroundColors = getPositionColors();
     const labels = [];
     let increment = 0;
     positions.forEach((position) => {

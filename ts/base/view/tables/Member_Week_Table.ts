@@ -41,9 +41,10 @@ function updateMemberWeekTable(league: League, member: Member): void {
 }
 
 function createMatchupModal(elem: HTMLTableRowElement, league: League): void {
-    const weekNum = parseInt(elem.firstChild.nodeValue);
+    const weekNum = parseInt((elem.firstChild as HTMLTableCellElement).innerText);
     const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
-    const matchup = league.weeks[weekNum - 1].getTeamMatchup(teamID);
+
+    generateMatchupTable(league, teamID, weekNum);
 }
 
 // this function is to create vs populate

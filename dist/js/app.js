@@ -132,16 +132,15 @@ var League = (function () {
         return roundToHundred(pp / this.members.length);
     };
     League.prototype.getSeasonPortionWeeks = function () {
-        var _this = this;
         var weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs === false && it.weekNumber <= _this.settings.currentMatchupPeriod;
+                return !it.isPlayoffs;
             });
         }
         else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter(function (it) {
-                return it.isPlayoffs === true && it.weekNumber <= _this.settings.currentMatchupPeriod;
+                return it.isPlayoffs;
             });
         }
         return weekPortion;
@@ -1459,6 +1458,157 @@ function createTeamMenu(league) {
         nav.appendChild(a);
     }
 }
+function generateMatchupTable(league, firstTeamId, weekNumber) {
+    var tableBody = document.getElementById("matchup_modal_table_body");
+    var matchup = league.weeks[weekNumber - 1].getTeamMatchup(firstTeamId);
+    var tableTitle = document.getElementById("matchup_modal_title");
+    if (matchup.isPlayoffs) {
+        tableTitle.innerText = "Week " + weekNumber.toString() + ", Playoffs";
+    }
+    else if (matchup.byeWeek) {
+        tableTitle.innerText = "Week " + weekNumber.toString() + ", Bye Week";
+    }
+    else {
+        tableTitle.innerText = "Week " + weekNumber.toString() + ", Regular Season";
+    }
+    tableBody.innerHTML = "";
+    document.getElementById("matchup_modal_first_team_name").innerText = league.getMember(matchup.home.teamID).teamNameToString();
+    if (!matchup.byeWeek) {
+        document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
+    }
+    var index = 0;
+    league.settings.activeLineupSlots.forEach(function (slot) {
+        var slotId = slot[0];
+        var slotAmount = slot[1];
+        for (var i = 0; i < slotAmount; i++) {
+            var firstPlayer = matchup.home.lineup[index];
+            var secondPlayer = void 0;
+            if (!matchup.byeWeek) {
+                secondPlayer = matchup.away.lineup[index];
+            }
+            else {
+                secondPlayer = new EmptySlot(slotId);
+            }
+            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer));
+            index += 1;
+        }
+    });
+}
+function generateMatchupPlayerRow(player, otherPlayer) {
+    var tr = document.createElement("tr");
+    var margin = player.score - otherPlayer.score;
+    var playerBadgeCell = generatePositionBadge(margin, player.lineupSlotID);
+    var firstPlayerCell;
+    var otherPlayerCell;
+    try {
+        firstPlayerCell = generatePlayerRowCell(player);
+    }
+    catch (error) {
+        console.log(error);
+        console.log(player);
+    }
+    try {
+        otherPlayerCell = generatePlayerRowCell(otherPlayer);
+    }
+    catch (error) {
+        console.log(error);
+        console.log(otherPlayer);
+    }
+    if (margin > 0) {
+        firstPlayerCell.style.borderRight = "green";
+        firstPlayerCell.style.borderRightStyle = "solid";
+        otherPlayerCell.style.borderLeft = "red";
+        otherPlayerCell.style.borderLeftStyle = "solid";
+    }
+    else if (margin < 0) {
+        otherPlayerCell.style.borderLeft = "green";
+        otherPlayerCell.style.borderLeftStyle = "solid";
+        firstPlayerCell.style.borderRight = "red";
+        firstPlayerCell.style.borderRightStyle = "solid";
+    }
+    else {
+        firstPlayerCell.style.borderRight = "green";
+        firstPlayerCell.style.borderRightStyle = "solid";
+        otherPlayerCell.style.borderLeft = "green";
+        otherPlayerCell.style.borderLeft = "solid";
+    }
+    tr.appendChild(firstPlayerCell);
+    tr.appendChild(playerBadgeCell);
+    tr.appendChild(otherPlayerCell);
+    return tr;
+}
+function generateTeamPlayerRow(player) {
+    var tr = document.createElement("tr");
+    var firstPlayerCell = generatePlayerRowCell(player);
+    tr.appendChild(firstPlayerCell);
+    return tr;
+}
+function generatePositionBadge(marginText, slotID) {
+    var td = document.createElement("td");
+    td.style.textAlign = "center";
+    var container = document.createElement("div");
+    container.style.backgroundColor = getMemberColor(slotID);
+    container.style.color = "white";
+    container.classList.add("position_badge");
+    var posText = document.createElement("b");
+    posText.style.fontSize = "1em";
+    posText.innerText = intToPosition.get(slotID);
+    var margin = document.createElement("small");
+    margin.innerText = roundToHundred(marginText).toString();
+    container.appendChild(posText);
+    td.appendChild(container);
+    td.appendChild(margin);
+    return td;
+}
+function generatePlayerRowCell(player) {
+    var td = document.createElement("td");
+    var row = document.createElement("div");
+    row.classList.add("row");
+    var imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-2", "pt-3");
+    var image = document.createElement("img");
+    var pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    var nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-7", "pt-3");
+    var boldName = document.createElement("b");
+    var teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    var lineBreak = document.createElement("br");
+    var scoreDiv = document.createElement("div");
+    scoreDiv.classList.add("col-2");
+    var scoreTitle = document.createElement("div");
+    scoreTitle.innerText = "Score";
+    scoreTitle.style.fontSize = ".8em";
+    var scoreText = document.createElement("h5");
+    scoreText.innerText = roundToHundred(player.score).toString();
+    var projectedTitle = document.createElement("div");
+    projectedTitle.innerText = "Projected";
+    projectedTitle.style.fontSize = ".6em";
+    var projectedText = document.createElement("small");
+    projectedText.innerText = roundToHundred(player.projectedScore).toString();
+    row.appendChild(imageDiv);
+    row.appendChild(nameDiv);
+    row.appendChild(scoreDiv);
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    scoreDiv.appendChild(scoreTitle);
+    scoreDiv.appendChild(scoreText);
+    scoreDiv.appendChild(projectedTitle);
+    scoreDiv.appendChild(projectedText);
+    td.appendChild(row);
+    return td;
+}
 function roundToHundred(x) {
     return Math.round(x * 100) / 100;
 }
@@ -1622,6 +1772,7 @@ var intToPosition = new Map([
     [23, "FLEX"],
     [25, "???"],
     [88, "TAXI"],
+    [-1, "EMPTY"],
 ]);
 var positionToInt = new Map([
     ["QB", 0],
@@ -1651,6 +1802,7 @@ var positionToInt = new Map([
     ["FLEX", 23],
     ["TAXI", 88],
     ["???", 25],
+    ["EMPTY", -1],
 ]);
 function getPosition(eligibleSlots) {
     var slotNum = eligibleSlots[0];
@@ -1662,6 +1814,9 @@ function getPosition(eligibleSlots) {
     return intToPosition.get(slotNum);
 }
 function getRealTeamInitials(realteamID) {
+    if (realteamID == null) {
+        return "FA";
+    }
     var team = realteamID.toString();
     switch (team) {
         case "1":
@@ -1759,6 +1914,9 @@ function getRealTeamInitials(realteamID) {
             break;
         case "34":
             team = "Hou";
+            break;
+        case "-1":
+            team = "None";
             break;
     }
     return team;
@@ -1934,6 +2092,9 @@ function getMemberColor(memberID) {
         "#3366cc", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac",
         "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
     return colorCode[memberID];
+}
+function getPositionColors() {
+    return ["#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000075", "#808080"];
 }
 function updateTeamPill(league, teamID) {
     var member = league.getMember(teamID);
@@ -2367,8 +2528,8 @@ function createLeagueStackedGraph(league) {
 }
 function getLeagueStackedDatasets(league) {
     var datasets = [];
-    var backgroundColors = ["#24115c", "#700566", "#ae0560", "#de364d", "#f96c32", "#ffa600"];
     var positions = league.settings.getPositions();
+    var backgroundColors = getPositionColors();
     var labels = [];
     var increment = 0;
     positions.forEach(function (position) {
@@ -3262,9 +3423,9 @@ function updateMemberWeekTable(league, member) {
     weekTable.appendChild(tableBody);
 }
 function createMatchupModal(elem, league) {
-    var weekNum = parseInt(elem.firstChild.nodeValue);
+    var weekNum = parseInt(elem.firstChild.innerText);
     var teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
-    var matchup = league.weeks[weekNum - 1].getTeamMatchup(teamID);
+    generateMatchupTable(league, teamID, weekNum);
 }
 function createMemberWeekTable(league) {
     var weekTable = document.getElementById("memberWeekTable");
@@ -4079,6 +4240,8 @@ var SleeperMember = (function () {
         var _this = this;
         var scores = [];
         weeks.forEach(function (week) {
+            console.log(week);
+            console.log(week.getTeam(_this.teamID));
             scores.push(week.getTeam(_this.teamID).score);
         });
         this.stats.standardDeviation = calcStandardDeviation(scores);
