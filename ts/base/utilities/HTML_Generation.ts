@@ -43,14 +43,18 @@ function generateMatchupPlayerRow(player: Player, otherPlayer: Player): HTMLTabl
     try {
         firstPlayerCell = generatePlayerRowCell(player);
     } catch (error) {
+        // tslint:disable-next-line: no-console
         console.log(error);
+        // tslint:disable-next-line: no-console
         console.log(player);
     }
 
     try {
         otherPlayerCell = generatePlayerRowCell(otherPlayer);
     } catch (error) {
+        // tslint:disable-next-line: no-console
         console.log(error);
+        // tslint:disable-next-line: no-console
         console.log(otherPlayer);
     }
 

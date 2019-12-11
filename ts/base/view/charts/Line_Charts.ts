@@ -286,7 +286,7 @@ function createLeagueWeeklyLineChart(league: League, accumulates: boolean) {
         });
         (window as any).leagueWeeklyLineChart.render();
     } else {
-        (window as any).leagueWeeklyLineChart.data.datasets = (window as any).leagueWeeklyLineChart.data.datasets;
+        (window as any).leagueWeeklyLineChart.data.datasets = getLeagueLineData(league, accumulates);
         (window as any).leagueWeeklyLineChart.update();
     }
 }
@@ -301,7 +301,7 @@ function getLeagueLineData(league: League, accumulates: boolean): object[] {
         weeklyScoreMap.set(member.teamID, []);
     });
 
-    league.weeks.forEach((week) => {
+    league.getSeasonPortionWeeks().forEach((week) => {
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
         week.matchups.forEach((matchup) => {
             weeklyScoreMap.get(matchup.home.teamID).push(roundToHundred(matchup.home.score));

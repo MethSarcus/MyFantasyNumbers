@@ -7,7 +7,6 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             location.reload();
             return;
         }
-        console.log(json);
         const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
         const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
         const leagueName = json.name;

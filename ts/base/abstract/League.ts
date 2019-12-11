@@ -591,7 +591,7 @@ abstract class League {
 
     public getPowerRankDiffFinish(teamID: number): number {
         let finish = 1;
-        const pwrRankDiff = this.getMember(teamID).stats.rank - this.getMember(teamID).stats.powerRank;
+        const pwrRankDiff = this.getMember(teamID).stats.powerRank - this.getMember(teamID).stats.rank;
         this.members.forEach((member) => {
             if (pwrRankDiff < (member.stats.rank - member.stats.powerRank) && member.teamID !== teamID) {
                 finish += 1;
@@ -715,24 +715,55 @@ abstract class League {
         return lowMember;
     }
 
+    public getMemberByStats(pf: string, pa: string, pp: string, OPSLAP: string, record: string): Member {
+        let mem: Member;
+        this.members.forEach((member) => {
+            if (roundToHundred(member.stats.pf) === parseFloat(pf) &&
+                roundToHundred(member.stats.pp) === parseFloat(pp) &&
+                roundToHundred(member.stats.pa) === parseFloat(pa) &&
+                roundToHundred(member.stats.OPSLAP) === parseFloat(OPSLAP) &&
+                member.recordToString() === record) {
+                    mem = member;
+            }
+        });
+
+        return mem;
+    }
+
+    public getMemberByPowerStats(teamName: string, rank: string, powerRank: string, powerRecord: string): Member {
+        let mem: Member;
+        this.members.forEach((member) => {
+            if (member.teamNameToString() === teamName &&
+                member.stats.rank === parseInt(rank) &&
+                member.stats.powerRank === parseInt(powerRank) &&
+                member.powerRecordToString() === powerRecord) {
+                    mem = member;
+            }
+        });
+
+        return mem;
+    }
+
     public setPage(): void {
         // localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
         // const profileImage = document.getElementById("team_image");
         // profileImage.addEventListener("error", fixNoImage);
         // tslint:disable-next-line: no-console
-        console.log(this);
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
         enableYearSelector(this);
         createTeamMenu(this);
+        createLeagueStackedGraph(this);
+        createMemberStrengthScatterChart(this);
+        updateLeagueStatsCards(this);
+        enablePlugins();
         createPowerRankTable(this);
         createLeagueWeeklyLineChart(this, true);
         createLeagueStatsTable(this);
-        createLeagueStackedGraph(this);
-        createMemberStrengthScatterChart(this);
-        initLeagueStatsTable();
-        initPowerRankTable();
-        updateLeagueStatsCards(this);
-        enablePlugins();
+    }
+
+    public updateMainPage(): void {
+        updatePowerRankTable(this);
+        updateLeagueStatsTable(this);
     }
 }

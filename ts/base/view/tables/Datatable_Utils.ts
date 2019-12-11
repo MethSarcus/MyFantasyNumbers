@@ -1,19 +1,19 @@
-function sortTableByRecord(x: string, y: string) {
-    const xWins = parseInt(x.split("-")[0], 10);
-    const xLosses = parseInt(x.split("-")[1], 10);
-    const yWins = parseInt(y.split("-")[0], 10);
-    const yLosses = parseInt(y.split("-")[1], 10);
+function sortTableRecord(data: string, type: string, row: any, settings: any) {
+    if (type === "sort") {
+        return parseInt(data.split("-")[0]) / parseInt(data.split("-")[1]);
+    }
+    return data;
+}
 
-    if (xWins > yWins) {
-        return 1;
-    } else if (xWins > yWins) {
-        return -1;
-    } else {
-        if (xLosses < yLosses) {
-            return 1;
+function renderTablePercentage(data: string, type: string) {
+    if (type === "display") {
+        if (parseFloat(data) === 0 || parseFloat(data) === 1) {
+            return data + ".00%";
         } else {
-            return -1;
+            return data + "%";
         }
+    } else {
+        return data;
     }
 }
 

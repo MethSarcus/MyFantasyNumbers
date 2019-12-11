@@ -98,6 +98,7 @@ function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void 
                     fadeTeam(league, parseInt(i.toString(), 10));
                 }
             }
+            league.updateMainPage();
         };
 
         document.getElementById(SEASON_PORTION.POST).onclick = () => {
@@ -109,6 +110,7 @@ function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void 
                     fadeTeam(league, parseInt(i.toString(), 10));
                 }
             }
+            league.updateMainPage();
         };
 
         document.getElementById(SEASON_PORTION.ALL).onclick = () => {
@@ -120,6 +122,7 @@ function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void 
                     fadeTeam(league, parseInt(i.toString(), 10));
                 }
             }
+            league.updateMainPage();
         };
     } else {
         document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
@@ -146,15 +149,6 @@ function enablePlugins(): void {
     $(() => {
         $('[data-toggle="tooltip"]').tooltip();
     });
-
-    $("#league_stats_table tr").hover(function() {
-        $(this).addClass("hover");
-        deselectLeagueLineData($(this).find("td:first-child").text());
-    }, function() {
-        $(this).removeClass("hover");
-        reselectLeagueLineData();
-    });
-
     new ScrollHint("#league_trades_container", {
         suggestiveShadow: true
       });
