@@ -3354,47 +3354,6 @@ function getLeagueStatsTableRowData(member) {
         PA: roundToHundred(member.stats.pa)
     };
 }
-function createLeagueStatsTableRow(league, member) {
-    var row = document.createElement("tr");
-    var rankCell = document.createElement("td");
-    var teamNameCell = document.createElement("td");
-    var recordCell = document.createElement("td");
-    var pfCell = document.createElement("td");
-    var paCell = document.createElement("td");
-    var ppCell = document.createElement("td");
-    var opslapCell = document.createElement("td");
-    var pctCell = document.createElement("td");
-    var image = document.createElement("img");
-    image.src = member.logoURL;
-    image.style.width = "25px";
-    image.style.height = "25px";
-    image.style.borderRadius = "25px";
-    image.addEventListener("error", fixNoImage);
-    image.style.marginRight = "8px";
-    teamNameCell.appendChild(image);
-    teamNameCell.appendChild(document.createTextNode(member.teamNameToString()));
-    rankCell.appendChild(document.createTextNode(member.stats.rank.toString()));
-    pfCell.appendChild(document.createTextNode(roundToHundred(member.stats.pf).toString()));
-    paCell.appendChild(document.createTextNode(roundToHundred(member.stats.pa).toString()));
-    ppCell.appendChild(document.createTextNode(roundToHundred(member.stats.pp).toString()));
-    opslapCell.appendChild(document.createTextNode(roundToHundred(member.stats.OPSLAP).toString()));
-    recordCell.appendChild(document.createTextNode(member.recordToString()));
-    pctCell.appendChild(document.createTextNode(member.stats.getWinPct().toString()));
-    rankCell.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
-    pfCell.style.backgroundColor = getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length);
-    paCell.style.backgroundColor = getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length);
-    ppCell.style.backgroundColor = getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length);
-    opslapCell.style.backgroundColor = getDarkColor(league.getOPSLAPFinish(member.teamID) / league.members.length);
-    row.appendChild(teamNameCell);
-    row.appendChild(rankCell);
-    row.appendChild(recordCell);
-    row.appendChild(pctCell);
-    row.appendChild(pfCell);
-    row.appendChild(opslapCell);
-    row.appendChild(ppCell);
-    row.appendChild(paCell);
-    return row;
-}
 function initLeagueStatsTable(league) {
     $("#league_stats_table").DataTable({
         paging: false,
@@ -3527,44 +3486,6 @@ function getPowerRankStatsRowData(member) {
         "Difference": member.stats.powerRank - member.stats.rank,
         "Power Record": member.powerRecordToString(),
     };
-}
-function createPowerRankTableHtml(league) {
-    var tableBody = document.getElementById("power_rank_table_body");
-    league.members.forEach(function (member) {
-        var row = document.createElement("tr");
-        var teamName = document.createElement("td");
-        var powerRank = document.createElement("td");
-        var powerRecord = document.createElement("td");
-        var potentialRecord = document.createElement("td");
-        var actualRank = document.createElement("td");
-        var image = document.createElement("img");
-        var diffRow = document.createElement("td");
-        image.src = member.logoURL;
-        image.style.width = "25px";
-        image.style.height = "25px";
-        image.style.borderRadius = "25px";
-        image.addEventListener("error", fixNoImage);
-        image.style.marginRight = "8px";
-        teamName.appendChild(image);
-        teamName.appendChild(document.createTextNode(member.teamNameToString()));
-        powerRank.innerText = member.stats.powerRank + "";
-        powerRecord.innerText = member.powerRecordToString();
-        potentialRecord.innerText = member.potentialPowerRecordToString();
-        actualRank.innerText = member.stats.rank + "";
-        var diffText = member.stats.rank - member.stats.powerRank;
-        if (diffText !== 0) {
-            diffRow.style.backgroundColor = getDarkColor(league.getPowerRankDiffFinish(member.teamID) / league.members.length);
-        }
-        actualRank.style.backgroundColor = getDarkColor(member.stats.rank / league.members.length);
-        powerRank.style.backgroundColor = getDarkColor(member.stats.powerRank / league.members.length);
-        diffRow.innerText = diffText;
-        row.appendChild(teamName);
-        row.appendChild(powerRank);
-        row.appendChild(actualRank);
-        row.appendChild(diffRow);
-        row.appendChild(powerRecord);
-        tableBody.appendChild(row);
-    });
 }
 function initPowerRankTable(league) {
     $("#power_rank_table").DataTable({
