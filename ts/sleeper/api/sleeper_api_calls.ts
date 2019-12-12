@@ -16,13 +16,13 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
         const currentMatchupPeriod = json.settings.last_scored_leg;
         const previousLeagueId = json.previous_league_id;
         const numDivisions = json.settings.divisions;
-        const isActive = (json.status === "in_season");
+        const isActive = (json.status === "in_season" || json.status === "post_season");
         const scoringSettings: SleeperScoringSettings = json.scoring_settings;
         const divisions = [];
         for (let i = 0; i < numDivisions; i++) {
             divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
         }
-        const settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16, 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
+        const settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
         updateLoadingText("Getting Members");
         getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName);
     });
@@ -73,14 +73,14 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
     updateLoadingText("Getting weekly stats");
-    let weekCounter = 1;
+    let weekCounter = 0;
     const Weeks: Week[] = [];
     Promise.all(promises).then((weeks) => {
         weeks.forEach((week) => {
-            const isPlayoffs = (weekCounter > settings.regularSeasonLength);
+            weekCounter += 1;
+            const isPlayoffs = (weekCounter >= settings.regularSeasonLength);
             const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
-            weekCounter += 1;
         });
 
         getSleeperWeekStats(settings.currentMatchupPeriod).then((result) => {
@@ -128,6 +128,14 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
             matchups.push(new Matchup(curTeams[0], curTeams[1], weekNumber, isPlayoff));
         }
     }
+
+    const byeWeekTeams = allTeams.filter((team) => {
+        return team.matchupID === null;
+    });
+    byeWeekTeams.forEach((team) => {
+        matchups.push(new Matchup(team, null, weekNumber, isPlayoff));
+    });
+
     return matchups;
 }
 

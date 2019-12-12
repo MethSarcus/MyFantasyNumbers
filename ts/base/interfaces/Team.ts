@@ -6,6 +6,7 @@ interface Team {
     score: number;
     potentialPoints: number;
     projectedScore: number;
+    projectedBestLineupPoints: number;
     opponentID: number;
     gutDifference: number;
     gutPlayers: number;

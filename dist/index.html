@@ -33,11 +33,10 @@
     crossorigin="anonymous"></script>
 
   <!-- Plugin Imports -->
-  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" href="css/cubeSpinner.css">
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-  <script src="vendor/datatables/jquery.dataTables.js"></script>
-  <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+  <link rel="stylesheet" type="text/css" href="vendor/DataTables/datatables.min.css"/>
+  <script type="text/javascript" src="vendor/DataTables/datatables.min.js"></script>
 
   <!-- Bootstrap Imports -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -48,7 +47,8 @@
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- ChartJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css">
 
   <!-- Am Charts -->
   <!-- Resources -->
@@ -58,10 +58,16 @@
 
 
   <!-- Custom CSS Imports -->
-  <link href="css/master.css?v=5" rel="stylesheet" />
+  <link href="css/master.css?v=9" rel="stylesheet" />
+
+  <!-- Scroll Hint Imports -->
+  <link rel="stylesheet" href="https://unpkg.com/scroll-hint@latest/css/scroll-hint.css">
+  <script src="https://unpkg.com/scroll-hint@latest/js/scroll-hint.min.js"></script>
+
 
   <!-- Main JS Import -->
   <script type="text/javascript" src="js/app.js?v=9"></script>
+  <script type="text/javascript" src="js/app.js?v=17"></script>
 </head>
 
 
@@ -163,6 +169,10 @@
             Ranks</a>
         </li>
         <li class="nav-item ml-2">
+          <a id="stats_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
+            href="#league_stats_pane">Badges</a>
+        </li>
+        <li class="nav-item ml-2">
           <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
             href="#league_trades_pane">Trades</a>
         </li>
@@ -195,69 +205,267 @@
     <div id="wrapper" class="px-5">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
+
+          <!-- Main League Page-->
           <div id="leaguePage" class="tab-pane fade active show">
             <div class="row">
-              <div class="col-12 col-md-6 col-lg-5 col-xl-5">
-                <table class="table table-sm compact hover" id="league_stats_table">
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="row my-1 justify-content-center align-items-center">
+                  <h4><b>League Stats</b></h4>
+                </div>
+                <div class="row mt-1 mb-2">
+                  <div class="col-12 card-deck">
+                    <div id="league_weekly_average_card"
+                      class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                      <p class="mb-1">Weekly Points</p>
+                      <b id="league_weekly_average">157.1</b><small data-toggle="tooltip" data-placement="right"
+                        title="" data-original-title="Average points scored per week">PPW <i
+                          class="fa fa-info-circle"></i></small>
+                    </div>
+                    <div id="league_std_card"
+                      class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                      <p class="mb-1">Consistency</p>
+                      <b id="league_standard_deviation">21.5</b>
+                      <small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Standard Deviation, indicates weekly variation of points from their average">
+                        Std Dev <i class="fa fa-info-circle"></i></small>
+                    </div>
+                    <div id="league_weekly_pp_card"
+                      class="card text-center p-1 statcard align-items-center d-flex justify-content-center">
+                      <p class="mb-1">Weekly Potential</p>
+                      <b id="league_weekly_average_pp">133</b>
+                      <small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Average number of potential points scored each week">
+                        Weekly PP <i class="fa fa-info-circle"></i></small>
+                    </div>
+                    <div id="league_efficiency_card"
+                      class="card text-center p-1 statcard align-items-center d-flex justify-content-center">
+                      <p class="mb-1">Efficiency</p>
+                      <b id="league_efficiency_percentage">92%</b>
+                      <small data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Efficiency = (Points Scored / Potential Points) * 100">
+                        % of PP Scored <i class="fa fa-info-circle"></i></small>
+                    </div>
+                  </div>
+                </div>
+                <table class="table table-sm compact table-hover" id="league_stats_table">
                   <thead>
-                    <tr role="row">
+                    <tr>
                       <th scope="col">Team</th>
                       <th scope="col">Rank</th>
                       <th scope="col">Record</th>
                       <th scope="col">Pct</th>
-                      <th scope="col">PF</th>
-                      <th scope="col">PA</th>
-                      <th scope="col">PP</th>
+                      <th scope="col">
+                        <div data-toggle="tooltip" data-placement="right" title="" data-original-title="Points Scored"
+                          style="float: right;">PF 
+                          <i class="fa fa-info-circle"></i></div>
+                      </th>
+                      <th scope="col">
+                        <div data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Optimally Projected Starting Lineup Actual Points" style="float: right;">
+                          OPSLAP 
+                          <i class="fa fa-info-circle"></i></div>
+                      </th>
+
+                      <th scope="col">
+                        <div data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Potential Points" style="float: right;">PP 
+                          <i class="fa fa-info-circle"></i></div>
+                      </th>
+                      <th scope="col">
+                        <div data-toggle="tooltip" data-placement="right" title="" data-original-title="Points Against"
+                          style="float: right;">PA 
+                          <i class="fa fa-info-circle"></i></div>
+                      </th>
                     </tr>
                   </thead>
-                  <tbody id="league_stats_table_body">
+                  <tbody>
                   </tbody>
                 </table>
               </div>
-              <div class="col-12 col-md-6 col-lg-7 col-xl-7 py-2 pb-5 pt-2" id="league_weekly_line_chart_container">
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6" id="league_weekly_line_chart_container">
                 <canvas id="league_weekly_line_canvas"></canvas>
               </div>
-              <div class="col-12" id="league_stacked_graph_container">
+
+
+              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="league_stacked_graph_container">
                 <canvas id="league_stacked_graph_canvas" style="min-height: 600px;"></canvas>
               </div>
-
             </div>
           </div>
+          <!-- League Badges Page-->
+          <div id="league_stats_pane" class="tab-pane">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="row my-1">
+                  <div class="col-12 card-deck">
+                    <div id="league_best_week_card"
+                      class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                      <h5 class="">Best Week</h5>
+                      <b id="league_best_week_score">202.88</b>
+                      <div>
+                        <img id="team_best_week_image"
+                          src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3"
+                          style="width: 25px; height: 25px; border-radius: 25px;">
+                        <div data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Highest scoring team this season" id="league_best_week_team_name"
+                          style="float: right;"> Average Joes
+                          <i class="fa fa-info-circle"></i></div>
+                      </div>
+                      <small id="league_best_week_number">Week 10</small>
+                    </div>
+                    <div id="league_worst_week_card"
+                      class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                      <h5 class="">Worst Week</h5>
+                      <b id="league_worst_week_score">2.88</b>
+                      <div>
+                        <img id="team_worst_week_image"
+                          src="https://sleepercdn.com/avatars/785801591061360e5ec1225d73578bc3"
+                          style="width: 25px; height: 25px; border-radius: 25px;">
+                        <div data-toggle="tooltip" data-placement="right" title=""
+                          data-original-title="Lowest scoring team this season" id="league_worst_week_team_name"
+                          style="float: right;"> Average Joes
+                          <i class="fa fa-info-circle"></i></div>
+                      </div>
+                      <small id="league_worst_week_number">Week 10</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="row my-1">
+                  <div class="col-12 card-deck">
+                    <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                      <h4 class="mb-1">Slimmist Victory</h4>
+                      <div class="row w-100">
+                        <div class="matchup_card_left col-5 justify-content-center">
+                          <img id="league_closest_match_team_1_image"
+                            style="width: 25px; height: 25px; border-radius: 25px;">
+                          <b id="league_closest_match_team_1">Team 1</b>
+                          <p id="league_closest_match_team_1_score">166.3 Points Scored</p>
+                        </div>
+                        <div class="matchup_card_center col-2 justify-content-center pt-2">
+                          VS.
+                          <p><small id="league_closest_match_week">Week 4</small></p>
+                        </div>
+                        <div class="matchup_card_right col-5 justify-content-center">
+                          <img id="league_closest_match_team_2_image"
+                            style="width: 25px; height: 25px; border-radius: 25px;"><b
+                            id="league_closest_match_team_2">Team 2</b>
+                          <p id="league_closest_match_team_2_score">166.3 Points Scored</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <b>Had a margin of victory of <span id="league_closest_match_margin">2 points</span></b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row my-1">
+                  <div class="col-12 card-deck">
+                    <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                      <h4 class="mb-1">Biggest Blowout</h4>
+                      <div class="row w-100">
+                        <div class="matchup_card_left col-5 justify-content-center">
+                          <img id="league_largest_match_team_1_image"
+                            style="width: 25px; height: 25px; border-radius: 25px;">
+                          <b id="league_largest_match_team_1">Team 1</b>
+                          <p id="league_largest_match_team_1_score">166.3 Points Scored</p>
+                        </div>
+                        <div class="matchup_card_center col-2 justify-content-center pt-2">
+                          VS.
+                          <p><small id="league_largest_match_week">Week 4</small></p>
+                        </div>
+                        <div class="matchup_card_right col-5 justify-content-center">
+                          <img id="league_largest_match_team_2_image"
+                            style="width: 25px; height: 25px; border-radius: 25px;"><b
+                            id="league_largest_match_team_2">Team 2</b>
+                          <p id="league_largest_match_team_2_score">166.3 Points Scored</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <b>Had a margin of victory of <span id="league_largest_match_margin">2 points</span></b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="row mt-1">
+                          <div class="col-12 card-deck">
+                              <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                              <h6 class="mb-1">Biggest Overperformance</h6>
+                              <b id="league_biggest_overperformance_projected">Projected: 102.88</b>
+                              <b id="league_biggest_overperformance_score">Actual: 183.49</b>
+                              <small data-toggle="tooltip" data-placement="right" title=""
+                                data-original-title="Highest scoring team this season" id="league_best_week_finish">90 points more than expected
+                                <i class="fa fa-info-circle"></i></small>
+                            </div>
+                            <div class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
+                                <h6 class="mb-1">Biggest Underperformance</h6>
+                                <b id="league_biggest_overperformance_projected">Projected: 102.88</b>
+                                <b id="league_biggest_overperformance_score">Actual: 183.49</b>
+                                <small data-toggle="tooltip" data-placement="right" title=""
+                                  data-original-title="Highest scoring team this season" id="league_best_week_finish">90 points more than expected
+                                  <i class="fa fa-info-circle"></i></small>
+                              </div>
+                          </div>
+                        </div> -->
+
+                <!-- <div class="row">
+                        <div class="col-4">Worst Lineup Setter</div>
+                        <div class="col-4">Gutsiest Owner</div>
+                        <div class="col-4">Missed the mark (biggest projection differential)</div>
+                        <div class="col-4">Closest Match</div>
+                        <div class="col-8">Largest Stomp</div>
+                      </div> -->
+              </div>
+            </div>
+          </div>
+          <!-- League Trade Page-->
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
-                <div class="col-6">
-                    <h4 class="mx-auto" style="text-align: center;">Trades</h4>
-                  </div>
+              <div class="col-6">
+                <h4 class="mx-auto" style="text-align: center;">Trades</h4>
+              </div>
               <div class="col-6">
                 <h4 class="mx-auto" style="text-align: center;">Trade Connections</h4>
               </div>
             </div>
             <div class="row">
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6" class="scrolling_card_container"
-                id="league_trades_container">
+              <div class="container">
+                  <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                    </div>
+              </div>
+                
+              <div class="col-12 col-md-6 col-lg-6 col-xl-6 scrolling_card_container" id="league_trades_container">
                 <template>
-                  <div class="col-xs-12 col-md-6 col-lg-6 league_trade_container">
-                    <div class="card statcard p-2">
-                      <h5 class="card-title trade_owner_name"></h5>
-                      <div class="row ml-3">
-                        <div class="col-6">
-                          <b style="text-align: left;">Sent</b>
-                          <div class="sent_assets_list">
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <b style="text-align: left;">Received</b>
-                          <div class="received_assets_list">
-                          </div>
-                        </div>
+                  <div class="card league_trade_container">
+                    <h5 class="card-title trade_owner_name"></h5>
+                    <div class="ml-2">
+                      <b style="text-align: left;">Sent</b>
+                      <div class="sent_assets_list">
+                      </div>
+                      <b style="text-align: left;">Received</b>
+                      <div class="received_assets_list">
                       </div>
                     </div>
                   </div>
                 </template>
               </div>
               <div class="col-12 col-md-6 col-lg-6 col-xl-6 pb-5">
-                  <div id="league_trade_chart"></div>
-                </div>
+                <div id="league_trade_chart"></div>
+              </div>
             </div>
           </div>
           <div id="power_ranks_page" class="tab-pane">
@@ -267,8 +475,8 @@
                   <thead>
                     <tr id="power_rank_table_head">
                       <th scope="col">Team</th>
-                      <th scope="col">Actual Rank</th>
                       <th scope="col">Power Rank</th>
+                      <th scope="col">Actual Rank</th>
                       <th scope="col">Difference</th>
                       <th scope="col">Power Record</th>
                     </tr>
@@ -277,6 +485,11 @@
                 </table>
               </div>
               <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="row h-100">
+                  <div class="col-12" id="quadrant_chart_container">
+                    <canvas id="quadrant_chart_canvas"></canvas>
+                  </div>
+                </div>
                 <div class="row">
 
                   <div class="col-6">
@@ -298,6 +511,7 @@
               </div>
             </div>
           </div>
+          <!-- Team Page -->
           <div id="teamPill" class="tab-pane">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
@@ -314,6 +528,24 @@
                 </div>
                 <p class="card-text" id="team_finish">Finished 3rd Overall</p>
                 <p id="team_record">Record: 9-4</p>
+                <table class="table table-sm hover compact" id="memberWeekTable">
+                  <thead>
+                    <tr>
+                      <th scope="col">Week</th>
+                      <th scope="col">Score</th>
+                      <th scope="col">VS</th>
+                      <th scope="col">Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody id="member_week_table_body"></tbody>
+                </table>
+                <div style="text-align: center;" class="pt-3">
+                  <h6>Trades</h6>
+                </div>
+                <div id="team_page_trades_container" class="js-scrollable"></div>
+                <div class="px-4" id="radar_chart_container">
+                  <canvas id="radar_chart_canvas"></canvas>
+                </div>
               </div>
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row pb-1">
@@ -422,25 +654,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="row pb-1">
-              <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                <table class="" id="memberWeekTable">
-                  <thead>
-                    <tr id="member_week_table_head_row">
-                      <th scope="col">Week</th>
-                      <th scope="col">Score</th>
-                      <th scope="col">VS</th>
-                      <th scope="col">Margin</th>
-                    </tr>
-                  </thead>
-                  <tbody id="member_week_table_body">
-
-                  </tbody>
-                </table>
-              </div>
-              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row py-1">
                   <div class="col-12 card-deck">
                     <div class="card mvpcard text-center h-100 justify-content-center align-items-center p-2">
@@ -508,24 +721,129 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="row py-1">
-              <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                <div class="px-4" id="radar_chart_container">
-                  <canvas id="radar_chart_canvas"></canvas>
-                </div>
-              </div>
-              <div class="row col-12 col-sm-12 col-md-6 col-lg-9 col-xl-9">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
-                  <div id="member_bar_chart_container" style="height: 250px;"><canvas
-                      id="member_bar_chart_canvas"></canvas>
+                <div class="row py-1">
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                    <div id="member_bar_chart_container" style="height: 250px;"><canvas
+                        id="member_bar_chart_canvas"></canvas>
+                    </div>
                   </div>
-                </div>
-                <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
-                  style="height: 350px;">
-                  <canvas id="TEAM_LINE_CANVAS">
-                  </canvas>
+                  <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
+                    style="height: 350px;">
+                    <canvas id="TEAM_LINE_CANVAS">
+                    </canvas>
+                  </div>
+                  <div class="modal fade" id="matchup_modal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog matchup_modal_container" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="matchup_modal_title">Modal title</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body" id="matchup_modal_body">
+                          <table class="table table-hover table-sm">
+                            <thead>
+                              <tr class="finalScoreRow">
+                                <td id="matchup_modal_first_team_name">Team 1</td>
+                                <td></td>
+                                <td id="matchup_modal_second_team_name">Team 2</td>
+                              </tr>
+                            </thead>
+                            <tbody id="matchup_modal_table_body">
+                              <tr>
+                                <td>
+                                  <div class="row">
+                                    <div class="col-2">
+                                      <img class="player_badge_image my-auto"
+                                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                                    </div>
+                                    <div class="col-7">
+                                      <b>Odell Beckham Jr.</b>
+                                      <br>
+                                      <p>WR, Cleveland Browns</p>
+                                    </div>
+                                    <div class="col-2">
+                                      <div style="font-size: .8em;">Score</div>
+                                      <h5>24.65</h5>
+                                      <div style="font-size: .6em;">Projected</div>
+                                      <small>18.34</small>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="position_badge">
+                                    <b>WR</b>
+                                  </div>
+                                  <small>-3.45</small>
+                                </td>
+                                <td>
+                                  <div class="row">
+                                    <div class="col-2">
+                                      <img class="player_badge_image my-auto"
+                                        src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
+                                    </div>
+                                    <div class="col-7">
+                                      <b>Odell Beckham Jr.</b>
+                                      <br>
+                                      <p>WR, Cleveland Browns</p>
+                                    </div>
+                                    <div class="col-3">
+                                        <div style="font-size: .8em;">Score</div>
+                                        <h5>24.65</h5>
+                                        <div style="font-size: .6em;">Projected</div>
+                                        <small>18.34</small>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Player 2</td>
+                                <td>+3.45</td>
+                                <td>Player 2</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr>
+                                <td>Player 3</td>
+                                <td>-4.55</td>
+                                <td>Player 3</td>
+                              </tr>
+                              <tr class="finalScoreRow">
+                                <td>110.26</td>
+                                <td>-24.11</td>
+                                <td>134.54</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -19,7 +19,7 @@ class SleeperMember implements Member {
         if (teamAvatar !== undefined && teamAvatar !== null) {
             this.logoURL = "https://sleepercdn.com/avatars/" + teamAvatar.toString();
         } else {
-            this.logoURL = "../assets/images/user1.png";
+            this.logoURL = "./assets/images/user1.png";
         }
     }
 

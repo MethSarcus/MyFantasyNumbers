@@ -9688,6 +9688,7 @@ var exports = module.exports = {
 		if (style && typeof style === 'object') {
 			type = style.toString();
 			if (type === '[object HTMLImageElement]' || type === '[object HTMLCanvasElement]') {
+				console.log(style);
 				ctx.drawImage(style, x - style.width / 2, y - style.height / 2, style.width, style.height);
 				return;
 			}

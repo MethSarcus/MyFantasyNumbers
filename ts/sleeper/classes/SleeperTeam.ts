@@ -10,6 +10,7 @@ class SleeperTeam implements Team {
     public opponentID: number;
     public gutDifference: number;
     public gutPlayers: number;
+    public projectedBestLineupPoints: number;
     constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber: number, lineupOrder: string[]) {
         this.lineup = lineup.map((playerID, index) => {
             return new SleeperPlayer(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
@@ -130,6 +131,7 @@ class SleeperTeam implements Team {
     public setTeamMetrics(activeLineupSlots: number[][]): void {
         this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         this.projectedScore = this.getProjectedScore(this.lineup);
+        this.projectedBestLineupPoints = this.getTeamScore(getOptimalProjectedLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
         const gutArray = this.getGutPoints(activeLineupSlots);
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];

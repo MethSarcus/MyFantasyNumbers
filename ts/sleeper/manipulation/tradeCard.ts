@@ -1,9 +1,9 @@
 function createTradeCard(league: SleeperLeague, trade: SleeperTrade) {
     const tradeContainer = document.createElement("div");
     tradeContainer.id = "trade_container_" + trade.transactionId;
-    tradeContainer.classList.add("row", "my-1");
-    const template = document.querySelector("template");
-    trade.consentingTeamIds.forEach((teamID) => {
+    tradeContainer.classList.add("row", "my-1", "league_trade", "card-deck");
+    const template = document.getElementsByTagName("template")[0];
+    trade.consentingTeamIds.forEach((teamID, index) => {
         const teamNode = document.importNode(template.content, true);
         const ownerName = teamNode.querySelector(".trade_owner_name") as HTMLDivElement;
         const container = teamNode.querySelector(".league_trade_container") as HTMLDivElement;
@@ -52,6 +52,16 @@ function createTradeCard(league: SleeperLeague, trade: SleeperTrade) {
         }
 
         tradeContainer.appendChild(teamNode);
+        // if (index < trade.consentingTeamIds.length - 1) {
+        //     const tradeSymbolContainer = document.createElement("div");
+        //     tradeSymbolContainer.classList.add("col-1", "my-auto", "ml-0");
+        //     const tradeSymbol = document.createElement("img");
+        //     tradeSymbol.src = "./assets/images/trade_symbol.png";
+        //     tradeSymbol.style.height = "2em";
+        //     tradeSymbol.style.width = "3em";
+        //     tradeSymbolContainer.appendChild(tradeSymbol);
+        //     tradeContainer.appendChild(tradeSymbolContainer);
+        // }
     });
     return tradeContainer;
 }
@@ -59,6 +69,20 @@ function createTradeCard(league: SleeperLeague, trade: SleeperTrade) {
 function constructTrades(league: SleeperLeague): void {
     const container = document.getElementById("league_trades_container");
     league.trades.forEach((trade) => {
+        const tradeRow = document.createElement("div");
+        tradeRow.appendChild(createTradeCard(league, trade));
+        container.appendChild(tradeRow);
+    });
+}
+
+function constructTeamPageTrades(league: SleeperLeague, teamId: number): void {
+    const container = document.getElementById("team_page_trades_container");
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+    league.trades.filter((trade) => {
+        return trade.consentingTeamIds.includes(teamId);
+    }).forEach((trade) => {
         const tradeRow = document.createElement("div");
         tradeRow.appendChild(createTradeCard(league, trade));
         container.appendChild(tradeRow);

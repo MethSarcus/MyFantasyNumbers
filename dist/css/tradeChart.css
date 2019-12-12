@@ -3,7 +3,7 @@
 }
 
 #league_trades_container {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 80vh;
 }
 
@@ -23,4 +23,59 @@
 
 .nav-link.active {
     background-color: #007bff;
+}
+
+
+#team_page_trades_container {
+  height: 25vh;
+  overflow-y: scroll;
+}
+
+tr.finalScoreRow td {
+    text-align: center;
+    border: 0;
+  }
+
+#matchup_modal_table_body tr td {
+    vertical-align: middle;
+}
+
+.player_badge_image {
+    border-radius: 25px;
+    width: 75px;
+    height: auto;
+    background-color: white;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.matchup_modal_container {
+    max-width: 65vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.position_badge {
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 50px;
+    padding-top: 12px;
+}
+
+#member_week_table_body tr {
+    cursor:pointer;
+}
+
+#member_week_table_body tr :hover {
+    opacity: 90%;
+}
+
+.mini-stat-text {
+    font-size: .75rem;
+}
+
+.chart_pic {
+    border-radius: 25px;
 }

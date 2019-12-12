@@ -1,4 +1,68 @@
-function updateMemberWeekTable(league: League, member: Member): void {
+function initMemberWeekTable(league: League) {
+    $("#memberWeekTable").DataTable({
+        paging: false,
+        searching: false,
+        orderClasses: true,
+        order: [[0, "asc"]],
+        columns: [
+            { data: "Week"},
+            {
+                data: "Score",
+            },
+            {
+                data: "VS",
+            },
+            {
+                data: "Margin",
+            },
+        ],
+        createdRow( row: any, data: any, index: any ) {
+            // const member = league.getMemberByStats(data.PF, data.PA, data.PP, data.OPSLAP, data.Record);
+            $("td", row).setAttribute("data-toggle", "modal");
+            $("td", row).setAttribute("data-target", "#matchup_modal");
+            $("td", row).addEventListener("click", function() {
+                const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+                generateMatchupTable(league, teamID, data.Week);
+            });
+            // $("td", row).eq(1).css( "background-color",  getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length));
+            // $("td", row).eq(2).css( "background-color",  getDarkColor(league.getOPSLAPFinish(member.teamID) / league.members.length));
+            // $("td", row).eq(3).css( "background-color",  getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length));
+            // $("td", row).eq(4).css( "background-color",  getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length));
+
+        },
+    });
+}
+
+function updateMemberWeekTable(league: League, member: Member) {
+    const table = $("#memberWeekTable").DataTable();
+    table.clear();
+    league.getSeasonPortionWeeks().forEach((week) => {
+        table.row.add(getMemberWeekTableData(league, week, member.teamID));
+    });
+    table.draw();
+}
+
+function getMemberWeekTableData(league: League, week: Week, teamID: number) {
+    const curMatchup = week.getTeamMatchup(teamID);
+    const team = week.getTeam(teamID);
+    if (!curMatchup.byeWeek) {
+        return {
+            Week: week.weekNumber,
+            Score: roundToHundred(team.score),
+            VS: league.getMember(curMatchup.getOpponent(teamID).teamID).teamAbbrev,
+            Margin: team.score - curMatchup.getOpponent(teamID).score,
+        };
+    } else {
+        return {
+            Week: week.weekNumber,
+            Score: roundToHundred(team.score),
+            VS: "Bye",
+            Margin: "N/A",
+        };
+    }
+}
+
+function updateMemberWeekTableHTML(league: League, member: Member): void {
     $("#member_week_table_body").empty();
     const weekTable = document.getElementById("memberWeekTable");
     const tableBody = document.getElementById("member_week_table_body");
@@ -30,9 +94,21 @@ function updateMemberWeekTable(league: League, member: Member): void {
         row.appendChild(scoreCell);
         row.appendChild(vsCell);
         row.appendChild(marginCell);
+        row.setAttribute("data-toggle", "modal");
+        row.setAttribute("data-target", "#matchup_modal");
+        row.addEventListener("click", function() {
+            createMatchupModal(this, league);
+        });
         tableBody.appendChild(row);
     });
     weekTable.appendChild(tableBody);
+}
+
+function createMatchupModal(elem: HTMLTableRowElement, league: League): void {
+    const weekNum = parseInt((elem.firstChild as HTMLTableCellElement).innerText);
+    const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+
+    generateMatchupTable(league, teamID, weekNum);
 }
 
 // this function is to create vs populate

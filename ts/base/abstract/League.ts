@@ -74,6 +74,7 @@ abstract class League {
                 curMember.stats.gutPoints += curMemberTeam.gutDifference;
                 curMember.stats.pf += curMemberTeam.score;
                 curMember.stats.pp += curMemberTeam.potentialPoints;
+                curMember.stats.OPSLAP += curMemberTeam.projectedBestLineupPoints;
                 curMember.stats.powerWins += i;
                 curMember.stats.powerLosses += (weekMatches.length - 1 - i);
             }
@@ -258,6 +259,17 @@ abstract class League {
 
         return finish;
     }
+    public getOPSLAPFinish(teamID: number): number {
+        let finish = 1;
+        const opslap = this.getMember(teamID).stats.OPSLAP;
+        this.members.forEach((member) => {
+            if (opslap < member.stats.OPSLAP && member.teamID !== teamID) {
+                finish += 1;
+            }
+        });
+
+        return finish;
+    }
 
     public getBestWeek(teamID: number): Matchup {
         let bestWeekMatchup = this.getSeasonPortionWeeks()[0].getTeamMatchup(teamID);
@@ -373,6 +385,26 @@ abstract class League {
         });
 
         return bestWeekMatchup;
+    }
+
+    public getOverallWorstWeek(): Matchup {
+        let worstWeekMatchup;
+        let lowestScore = this.getSeasonPortionWeeks()[0].matchups[0].getLosingTeam().score;
+        this.getSeasonPortionWeeks().forEach((week) => {
+            week.matchups.forEach((matchup) => {
+                if (matchup.home.score < lowestScore) {
+                    worstWeekMatchup = matchup;
+                    lowestScore = matchup.home.score;
+                } else if (!matchup.byeWeek) {
+                    if (matchup.away.score < lowestScore) {
+                        worstWeekMatchup = matchup;
+                        lowestScore = matchup.away.score;
+                    }
+                }
+            });
+        });
+
+        return worstWeekMatchup;
     }
 
     public getTeamAveragePointsPerPosition(teamID: number): number[] {
@@ -559,7 +591,7 @@ abstract class League {
 
     public getPowerRankDiffFinish(teamID: number): number {
         let finish = 1;
-        const pwrRankDiff = this.getMember(teamID).stats.rank - this.getMember(teamID).stats.powerRank;
+        const pwrRankDiff = this.getMember(teamID).stats.powerRank - this.getMember(teamID).stats.rank;
         this.members.forEach((member) => {
             if (pwrRankDiff < (member.stats.rank - member.stats.powerRank) && member.teamID !== teamID) {
                 finish += 1;
@@ -630,23 +662,109 @@ abstract class League {
         return [underdogCount, upsetCount];
     }
 
+    public getLeagueGutPointAverage(): number {
+        let sum = 0;
+        this.members.forEach((member) => {
+            sum += member.stats.getAverageGutPoints();
+        });
+
+        return roundToHundred(sum / this.members.length);
+    }
+
+    public getHighestPPMember(): Member {
+        let highMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.pp > highMember.stats.pp) {
+                highMember = member;
+            }
+        });
+
+        return highMember;
+    }
+
+    public getLowestPPMember(): Member {
+        let lowMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.pp < lowMember.stats.pp) {
+                lowMember = member;
+            }
+        });
+
+        return lowMember;
+    }
+
+    public getHighestGutPointMember(): Member {
+        let highMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.getAverageGutPoints() > highMember.stats.getAverageGutPoints()) {
+                highMember = member;
+            }
+        });
+
+        return highMember;
+    }
+
+    public getLowestGutPointMember(): Member {
+        let lowMember = this.members[0];
+        this.members.forEach((member) => {
+            if (member.stats.getAverageGutPoints() < lowMember.stats.getAverageGutPoints()) {
+                lowMember = member;
+            }
+        });
+
+        return lowMember;
+    }
+
+    public getMemberByStats(pf: string, pa: string, pp: string, OPSLAP: string, record: string): Member {
+        let mem: Member;
+        this.members.forEach((member) => {
+            if (roundToHundred(member.stats.pf) === parseFloat(pf) &&
+                roundToHundred(member.stats.pp) === parseFloat(pp) &&
+                roundToHundred(member.stats.pa) === parseFloat(pa) &&
+                roundToHundred(member.stats.OPSLAP) === parseFloat(OPSLAP) &&
+                member.recordToString() === record) {
+                    mem = member;
+            }
+        });
+
+        return mem;
+    }
+
+    public getMemberByPowerStats(teamName: string, rank: string, powerRank: string, powerRecord: string): Member {
+        let mem: Member;
+        this.members.forEach((member) => {
+            if (member.teamNameToString() === teamName &&
+                member.stats.rank === parseInt(rank) &&
+                member.stats.powerRank === parseInt(powerRank) &&
+                member.powerRecordToString() === powerRecord) {
+                    mem = member;
+            }
+        });
+
+        return mem;
+    }
+
     public setPage(): void {
         // localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
         // const profileImage = document.getElementById("team_image");
         // profileImage.addEventListener("error", fixNoImage);
         // tslint:disable-next-line: no-console
-        console.log(this);
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
-        enableSeasonPortionSelector(this);
         enableYearSelector(this);
         createTeamMenu(this);
+        createLeagueStackedGraph(this);
+        createMemberStrengthScatterChart(this);
+        updateLeagueStatsCards(this);
+        enablePlugins();
         createPowerRankTable(this);
         createLeagueWeeklyLineChart(this, true);
         createLeagueStatsTable(this);
-        createLeagueStackedGraph(this);
-        initLeagueStatsTable();
-        initPowerRankTable();
-        enableTooltips();
+    }
+
+    public updateMainPage(): void {
+        updatePowerRankTable(this);
+        updateLeagueStatsTable(this);
+        initMemberWeekTable(this);
     }
 }
