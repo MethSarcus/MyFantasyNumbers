@@ -686,6 +686,7 @@ var League = (function () {
     League.prototype.updateMainPage = function () {
         updatePowerRankTable(this);
         updateLeagueStatsTable(this);
+        initMemberWeekTable(this);
     };
     return League;
 }());
@@ -3400,7 +3401,63 @@ function initLeagueStatsTable(league) {
         },
     });
 }
+function initMemberWeekTable(league) {
+    $("#memberWeekTable").DataTable({
+        paging: false,
+        searching: false,
+        orderClasses: true,
+        order: [[0, "asc"]],
+        columns: [
+            { data: "Week" },
+            {
+                data: "Score",
+            },
+            {
+                data: "VS",
+            },
+            {
+                data: "Margin",
+            },
+        ],
+        createdRow: function (row, data, index) {
+            $("td", row).setAttribute("data-toggle", "modal");
+            $("td", row).setAttribute("data-target", "#matchup_modal");
+            $("td", row).addEventListener("click", function () {
+                var teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+                generateMatchupTable(league, teamID, data.Week);
+            });
+        },
+    });
+}
 function updateMemberWeekTable(league, member) {
+    var table = $("#memberWeekTable").DataTable();
+    table.clear();
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        table.row.add(getMemberWeekTableData(league, week, member.teamID));
+    });
+    table.draw();
+}
+function getMemberWeekTableData(league, week, teamID) {
+    var curMatchup = week.getTeamMatchup(teamID);
+    var team = week.getTeam(teamID);
+    if (!curMatchup.byeWeek) {
+        return {
+            Week: week.weekNumber,
+            Score: roundToHundred(team.score),
+            VS: league.getMember(curMatchup.getOpponent(teamID).teamID).teamAbbrev,
+            Margin: team.score - curMatchup.getOpponent(teamID).score,
+        };
+    }
+    else {
+        return {
+            Week: week.weekNumber,
+            Score: roundToHundred(team.score),
+            VS: "Bye",
+            Margin: "N/A",
+        };
+    }
+}
+function updateMemberWeekTableHTML(league, member) {
     $("#member_week_table_body").empty();
     var weekTable = document.getElementById("memberWeekTable");
     var tableBody = document.getElementById("member_week_table_body");
