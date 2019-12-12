@@ -682,11 +682,11 @@ var League = (function () {
         createPowerRankTable(this);
         createLeagueWeeklyLineChart(this, true);
         createLeagueStatsTable(this);
+        initMemberWeekTable(this);
     };
     League.prototype.updateMainPage = function () {
         updatePowerRankTable(this);
         updateLeagueStatsTable(this);
-        initMemberWeekTable(this);
     };
     return League;
 }());
@@ -2137,6 +2137,7 @@ function updateTeamPill(league, teamID) {
     updateWinnableGamesLost(league, member);
     updateMargins(league, member);
     updateUpsets(league, member);
+    updateMemberWeekTable(league, member);
     if (league.leaguePlatform === PLATFORM.SLEEPER) {
         updateTeamTrades(league, member);
     }
@@ -3420,12 +3421,18 @@ function initMemberWeekTable(league) {
             },
         ],
         createdRow: function (row, data, index) {
-            $("td", row).setAttribute("data-toggle", "modal");
-            $("td", row).setAttribute("data-target", "#matchup_modal");
-            $("td", row).addEventListener("click", function () {
-                var teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+            var curTeamId = document.getElementById("teamPill").getAttribute("currentteam");
+            var member = league.getMember(parseInt(curTeamId));
+            var week = league.weeks[data.Week - 1];
+            $(row).attr("data-toggle", "modal");
+            $(row).attr("data-target", "#matchup_modal");
+            $(row).click(function () {
+                var teamID = parseInt(document.getElementById("teamPill").getAttribute("currentteam"));
                 generateMatchupTable(league, teamID, data.Week);
             });
+            $("td", row).eq(1).css("background-color", getCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
+            $("td", row).eq(2).css("background-color", getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
+            $("td", row).eq(3).css("background-color", getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
         },
     });
 }
@@ -3445,7 +3452,7 @@ function getMemberWeekTableData(league, week, teamID) {
             Week: week.weekNumber,
             Score: roundToHundred(team.score),
             VS: league.getMember(curMatchup.getOpponent(teamID).teamID).teamAbbrev,
-            Margin: team.score - curMatchup.getOpponent(teamID).score,
+            Margin: roundToHundred(team.score - curMatchup.getOpponent(teamID).score),
         };
     }
     else {

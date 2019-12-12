@@ -19,6 +19,7 @@ function updateTeamPill(league: League, teamID: number): void {
     updateWinnableGamesLost(league, member);
     updateMargins(league, member);
     updateUpsets(league, member);
+    updateMemberWeekTable(league, member);
     if (league.leaguePlatform === PLATFORM.SLEEPER) {
         updateTeamTrades(league as SleeperLeague, member);
     }

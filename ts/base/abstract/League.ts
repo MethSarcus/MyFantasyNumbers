@@ -760,11 +760,11 @@ abstract class League {
         createPowerRankTable(this);
         createLeagueWeeklyLineChart(this, true);
         createLeagueStatsTable(this);
+        initMemberWeekTable(this);
     }
 
     public updateMainPage(): void {
         updatePowerRankTable(this);
         updateLeagueStatsTable(this);
-        initMemberWeekTable(this);
     }
 }

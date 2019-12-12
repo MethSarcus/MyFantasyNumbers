@@ -17,18 +17,18 @@ function initMemberWeekTable(league: League) {
             },
         ],
         createdRow( row: any, data: any, index: any ) {
-            // const member = league.getMemberByStats(data.PF, data.PA, data.PP, data.OPSLAP, data.Record);
-            $("td", row).setAttribute("data-toggle", "modal");
-            $("td", row).setAttribute("data-target", "#matchup_modal");
-            $("td", row).addEventListener("click", function() {
-                const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+            const curTeamId = document.getElementById("teamPill").getAttribute("currentteam");
+            const member = league.getMember(parseInt(curTeamId));
+            const week = league.weeks[data.Week - 1];
+            $(row).attr("data-toggle", "modal");
+            $(row).attr("data-target", "#matchup_modal");
+            $(row).click(() => {
+                const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentteam"));
                 generateMatchupTable(league, teamID, data.Week);
             });
-            // $("td", row).eq(1).css( "background-color",  getDarkColor(league.getPointsScoredFinish(member.teamID) / league.members.length));
-            // $("td", row).eq(2).css( "background-color",  getDarkColor(league.getOPSLAPFinish(member.teamID) / league.members.length));
-            // $("td", row).eq(3).css( "background-color",  getDarkColor(league.getPotentialPointsFinish(member.teamID) / league.members.length));
-            // $("td", row).eq(4).css( "background-color",  getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length));
-
+            $("td", row).eq(1).css( "background-color",  getCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
+            $("td", row).eq(2).css( "background-color",  getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
+            $("td", row).eq(3).css( "background-color",  getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
         },
     });
 }
@@ -50,7 +50,7 @@ function getMemberWeekTableData(league: League, week: Week, teamID: number) {
             Week: week.weekNumber,
             Score: roundToHundred(team.score),
             VS: league.getMember(curMatchup.getOpponent(teamID).teamID).teamAbbrev,
-            Margin: team.score - curMatchup.getOpponent(teamID).score,
+            Margin: roundToHundred(team.score - curMatchup.getOpponent(teamID).score),
         };
     } else {
         return {
