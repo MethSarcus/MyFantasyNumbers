@@ -567,22 +567,27 @@ var League = (function () {
         var finish = 1;
         var week = this.weeks[weekNumber - 1];
         var teamMatchup = week.getTeamMatchup(teamID);
-        var margin = teamMatchup.getTeam(teamID).score - teamMatchup.getOpponent(teamID).score;
-        if (margin < 0) {
-            finish += 1;
-        }
-        week.matchups.filter(function (it) { return !it.byeWeek; }).forEach(function (matchup) {
-            if (matchup.home.teamID !== teamID && matchup.away.teamID !== teamID) {
-                var homeMargin = matchup.home.score - matchup.away.score;
-                var awayMargin = matchup.away.score - matchup.home.score;
-                if (awayMargin > margin && homeMargin > margin) {
-                    finish += 2;
-                }
-                else if (awayMargin > margin || homeMargin > margin) {
-                    finish += 1;
-                }
+        if (!teamMatchup.byeWeek) {
+            var margin_1 = teamMatchup.getTeam(teamID).score - teamMatchup.getOpponent(teamID).score;
+            if (margin_1 < 0) {
+                finish += 1;
             }
-        });
+            week.matchups.filter(function (it) { return !it.byeWeek; }).forEach(function (matchup) {
+                if (matchup.home.teamID !== teamID && matchup.away.teamID !== teamID) {
+                    var homeMargin = matchup.home.score - matchup.away.score;
+                    var awayMargin = matchup.away.score - matchup.home.score;
+                    if (awayMargin > margin_1 && homeMargin > margin_1) {
+                        finish += 2;
+                    }
+                    else if (awayMargin > margin_1 || homeMargin > margin_1) {
+                        finish += 1;
+                    }
+                }
+            });
+        }
+        else {
+            finish = 0;
+        }
         return finish;
     };
     League.prototype.getUpsets = function (teamID) {
@@ -1516,6 +1521,52 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
             index += 1;
         }
     });
+    var scoreRow = document.createElement("tr");
+    var teamScoreCell = document.createElement("td");
+    var otherTeamScoreCell = document.createElement("td");
+    var marginScoreCell = document.createElement("td");
+    var teamScore = document.createElement("h5");
+    var otherTeamScore = document.createElement("h5");
+    var marginScore = document.createElement("h5");
+    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString();
+    teamScore.innerText = roundToHundred(matchup.home.score).toString();
+    if (!matchup.byeWeek) {
+        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
+    }
+    else {
+        marginScore.innerText = "0.00";
+    }
+    teamScoreCell.appendChild(teamScore);
+    otherTeamScoreCell.appendChild(otherTeamScore);
+    marginScoreCell.appendChild(marginScore);
+    scoreRow.appendChild(teamScoreCell);
+    scoreRow.appendChild(marginScoreCell);
+    scoreRow.appendChild(otherTeamScoreCell);
+    scoreRow.style.textAlign = "center";
+    tableBody.appendChild(scoreRow);
+    generateBenchTable(matchup);
+}
+function generateBenchTable(matchup) {
+    var tableBody = document.getElementById("matchup_modal_bench_table_body");
+    tableBody.innerHTML = "";
+    var size = Math.max(matchup.home.bench.length, matchup.away.bench.length);
+    for (var i = 0; i < size; i++) {
+        var row = document.createElement("tr");
+        if (matchup.home.bench.length >= i) {
+            row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
+        }
+        else {
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
+        }
+        row.appendChild(document.createElement("td"));
+        if (matchup.away.bench.length >= i) {
+            row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
+        }
+        else {
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false));
+        }
+        tableBody.appendChild(row);
+    }
 }
 function generateMatchupPlayerRow(player, otherPlayer) {
     var tr = document.createElement("tr");
@@ -1524,36 +1575,28 @@ function generateMatchupPlayerRow(player, otherPlayer) {
     var firstPlayerCell;
     var otherPlayerCell;
     try {
-        firstPlayerCell = generatePlayerRowCell(player);
+        firstPlayerCell = generatePlayerRowCell(player, true);
     }
     catch (error) {
         console.log(error);
         console.log(player);
     }
     try {
-        otherPlayerCell = generatePlayerRowCell(otherPlayer);
+        otherPlayerCell = generatePlayerRowCell(otherPlayer, false);
     }
     catch (error) {
         console.log(error);
         console.log(otherPlayer);
     }
     if (margin > 0) {
-        firstPlayerCell.style.borderRight = "green";
-        firstPlayerCell.style.borderRightStyle = "solid";
-        otherPlayerCell.style.borderLeft = "red";
-        otherPlayerCell.style.borderLeftStyle = "solid";
+        firstPlayerCell.style.background = "linear-gradient(to left, #00ff00 0%, #ffffff 100%)";
+        otherPlayerCell.style.background = "linear-gradient(to right, #ff0000 0%, #ffffff 100%)";
     }
     else if (margin < 0) {
-        otherPlayerCell.style.borderLeft = "green";
-        otherPlayerCell.style.borderLeftStyle = "solid";
-        firstPlayerCell.style.borderRight = "red";
-        firstPlayerCell.style.borderRightStyle = "solid";
+        otherPlayerCell.style.background = "linear-gradient(to right, #00ff00 0%, #ffffff 100%)";
+        firstPlayerCell.style.background = "linear-gradient(to left, #ff0000 0%, #ffffff 100%)";
     }
     else {
-        firstPlayerCell.style.borderRight = "green";
-        firstPlayerCell.style.borderRightStyle = "solid";
-        otherPlayerCell.style.borderLeft = "green";
-        otherPlayerCell.style.borderLeft = "solid";
     }
     tr.appendChild(firstPlayerCell);
     tr.appendChild(playerBadgeCell);
@@ -1562,7 +1605,7 @@ function generateMatchupPlayerRow(player, otherPlayer) {
 }
 function generateTeamPlayerRow(player) {
     var tr = document.createElement("tr");
-    var firstPlayerCell = generatePlayerRowCell(player);
+    var firstPlayerCell = generateBenchPlayerCell(player, true);
     tr.appendChild(firstPlayerCell);
     return tr;
 }
@@ -1577,18 +1620,40 @@ function generatePositionBadge(marginText, slotID) {
     posText.style.fontSize = "1em";
     posText.innerText = intToPosition.get(slotID);
     var margin = document.createElement("small");
-    margin.innerText = roundToHundred(marginText).toString();
+    margin.classList.add("margin_small_text");
+    if (marginText > 0) {
+        margin.innerText = "+" + roundToHundred(marginText).toString();
+        margin.style.color = "#00ff00";
+    }
+    else {
+        margin.innerText = roundToHundred(marginText).toString();
+        margin.style.color = "#ff0000";
+    }
     container.appendChild(posText);
     td.appendChild(container);
     td.appendChild(margin);
     return td;
 }
-function generatePlayerRowCell(player) {
+function generateBenchPositionBadge(position) {
+    var td = document.createElement("td");
+    td.style.textAlign = "center";
+    var container = document.createElement("div");
+    container.style.backgroundColor = getMemberColor(positionToInt.get(position));
+    container.style.color = "white";
+    container.classList.add("bench_position_badge");
+    var posText = document.createElement("b");
+    posText.style.fontSize = "1em";
+    posText.innerText = position;
+    container.appendChild(posText);
+    td.appendChild(container);
+    return td;
+}
+function generatePlayerRowCell(player, homePlayer) {
     var td = document.createElement("td");
     var row = document.createElement("div");
     row.classList.add("row");
     var imageDiv = document.createElement("div");
-    imageDiv.classList.add("col-2", "pt-3");
+    imageDiv.classList.add("col-3", "pt-3");
     var image = document.createElement("img");
     var pictureURL = "";
     if (player.position === "D/ST" || player.position === "DEF") {
@@ -1600,33 +1665,114 @@ function generatePlayerRowCell(player) {
     image.classList.add("player_badge_image", "my-auto");
     image.src = pictureURL;
     var nameDiv = document.createElement("div");
-    nameDiv.classList.add("col-7", "pt-3");
+    nameDiv.classList.add("col-6", "pt-3");
     var boldName = document.createElement("b");
     var teamParagraph = document.createElement("p");
     boldName.innerText = player.firstName + " " + player.lastName;
     teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
     var lineBreak = document.createElement("br");
     var scoreDiv = document.createElement("div");
-    scoreDiv.classList.add("col-2");
+    scoreDiv.classList.add("col-3");
     var scoreTitle = document.createElement("div");
     scoreTitle.innerText = "Score";
     scoreTitle.style.fontSize = ".8em";
-    var scoreText = document.createElement("h5");
+    var scoreText = document.createElement("b");
     scoreText.innerText = roundToHundred(player.score).toString();
     var projectedTitle = document.createElement("div");
     projectedTitle.innerText = "Projected";
     projectedTitle.style.fontSize = ".6em";
     var projectedText = document.createElement("small");
     projectedText.innerText = roundToHundred(player.projectedScore).toString();
-    row.appendChild(imageDiv);
-    row.appendChild(nameDiv);
-    row.appendChild(scoreDiv);
+    if (homePlayer) {
+        row.appendChild(imageDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(scoreDiv);
+        scoreDiv.style.textAlign = "right";
+        nameDiv.style.textAlign = "left";
+    }
+    else {
+        scoreDiv.style.textAlign = "left";
+        nameDiv.style.textAlign = "right";
+        row.appendChild(scoreDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(imageDiv);
+    }
     imageDiv.appendChild(image);
     nameDiv.appendChild(boldName);
     nameDiv.appendChild(lineBreak);
     nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    scoreDiv.classList.add("player_cell_score");
     scoreDiv.appendChild(scoreTitle);
     scoreDiv.appendChild(scoreText);
+    scoreDiv.appendChild(document.createElement("br"));
+    scoreDiv.appendChild(projectedTitle);
+    scoreDiv.appendChild(projectedText);
+    td.appendChild(row);
+    return td;
+}
+function generateBenchPlayerCell(player, homePlayer) {
+    var td = document.createElement("td");
+    var row = document.createElement("div");
+    var badge = generateBenchPositionBadge(player.position);
+    row.classList.add("row");
+    var imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-2", "pt-3");
+    var image = document.createElement("img");
+    var pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    var badgeDiv = document.createElement("div");
+    badgeDiv.classList.add("col-3", "pt-3");
+    badgeDiv.appendChild(badge);
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    var nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-4", "pt-3");
+    var boldName = document.createElement("b");
+    var teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    var lineBreak = document.createElement("br");
+    var scoreDiv = document.createElement("div");
+    scoreDiv.classList.add("col-3");
+    var scoreTitle = document.createElement("div");
+    scoreTitle.innerText = "Score";
+    scoreTitle.style.fontSize = ".8em";
+    var scoreText = document.createElement("b");
+    scoreText.innerText = roundToHundred(player.score).toString();
+    var projectedTitle = document.createElement("div");
+    projectedTitle.innerText = "Projected";
+    projectedTitle.style.fontSize = ".6em";
+    var projectedText = document.createElement("small");
+    projectedText.innerText = roundToHundred(player.projectedScore).toString();
+    if (homePlayer) {
+        row.appendChild(badgeDiv);
+        row.appendChild(imageDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(scoreDiv);
+        scoreDiv.style.textAlign = "right";
+    }
+    else {
+        scoreDiv.style.textAlign = "left";
+        row.appendChild(scoreDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(imageDiv);
+        row.appendChild(badgeDiv);
+    }
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    scoreDiv.classList.add("player_cell_score");
+    scoreDiv.appendChild(scoreTitle);
+    scoreDiv.appendChild(scoreText);
+    scoreDiv.appendChild(document.createElement("br"));
     scoreDiv.appendChild(projectedTitle);
     scoreDiv.appendChild(projectedText);
     td.appendChild(row);

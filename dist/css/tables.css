@@ -50,8 +50,20 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, 
 }
 
 #member_week_table_body.tr:hover {
-  opacity: 90%;
+  opacity: 125%;
   box-shadow: inset 0px 0px 10px #000000;
+}
+
+.matchup_modal_table {
+  border-collapse: separate !important;
+  table-layout: fixed;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-content {
+  display: inline-block;
 }
 
 /*# sourceMappingURL=tables.css.map */

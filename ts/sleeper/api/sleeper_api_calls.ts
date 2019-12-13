@@ -51,6 +51,10 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
     }).done((json: SleeperRosterResponse[]) => {
         json.forEach((roster) => {
             const teamID = parseInt(roster.roster_id, 10);
+            const metadata = roster.metadata;
+            const curRoster = roster.players;
+            const reserve = roster.reserve;
+            const taxi = roster.taxi;
             const wins = roster.settings.wins;
             const totalMoves = roster.settings.total_moves;
             const rosterOwnerID = roster.owner_id.toString();

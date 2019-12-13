@@ -626,21 +626,25 @@ abstract class League {
         let finish = 1;
         const week = this.weeks[weekNumber - 1];
         const teamMatchup = week.getTeamMatchup(teamID);
-        const margin = teamMatchup.getTeam(teamID).score - teamMatchup.getOpponent(teamID).score;
-        if (margin < 0) {
-            finish += 1;
-        }
-        week.matchups.filter((it) => !it.byeWeek).forEach((matchup) => {
-            if (matchup.home.teamID !== teamID && matchup.away.teamID !== teamID) {
-                const homeMargin = matchup.home.score - matchup.away.score;
-                const awayMargin = matchup.away.score - matchup.home.score;
-                if (awayMargin > margin && homeMargin > margin) {
-                    finish += 2;
-                } else if (awayMargin > margin || homeMargin > margin) {
-                    finish += 1;
-                }
+        if (!teamMatchup.byeWeek) {
+            const margin = teamMatchup.getTeam(teamID).score - teamMatchup.getOpponent(teamID).score;
+            if (margin < 0) {
+                finish += 1;
             }
-        });
+            week.matchups.filter((it) => !it.byeWeek).forEach((matchup) => {
+                if (matchup.home.teamID !== teamID && matchup.away.teamID !== teamID) {
+                    const homeMargin = matchup.home.score - matchup.away.score;
+                    const awayMargin = matchup.away.score - matchup.home.score;
+                    if (awayMargin > margin && homeMargin > margin) {
+                        finish += 2;
+                    } else if (awayMargin > margin || homeMargin > margin) {
+                        finish += 1;
+                    }
+                }
+            });
+        } else {
+            finish = 0;
+        }
 
         return finish;
     }

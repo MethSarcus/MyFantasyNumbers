@@ -7,6 +7,7 @@ class SleeperMember implements Member {
     public logoURL: string;
     public stats: Stats;
     public division: string;
+    public currentRoster: SleeperBasePlayer[];
     constructor(memberID: string, memberName: string, teamName: string, teamAvatar: string) {
         this.memberID = memberID;
         this.name = memberName;
