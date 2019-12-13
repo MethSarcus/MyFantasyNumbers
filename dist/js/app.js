@@ -1546,6 +1546,8 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
     tableBody.appendChild(scoreRow);
     generateBenchTable(matchup);
 }
+function generateTradeBlock() {
+}
 function generateBenchTable(matchup) {
     var tableBody = document.getElementById("matchup_modal_bench_table_body");
     tableBody.innerHTML = "";
@@ -4216,6 +4218,10 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
     }).done(function (json) {
         json.forEach(function (roster) {
             var teamID = parseInt(roster.roster_id, 10);
+            var metadata = roster.metadata;
+            var curRoster = roster.players;
+            var reserve = roster.reserve;
+            var taxi = roster.taxi;
             var wins = roster.settings.wins;
             var totalMoves = roster.settings.total_moves;
             var rosterOwnerID = roster.owner_id.toString();
