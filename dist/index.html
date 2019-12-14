@@ -148,7 +148,7 @@
   </div>
   <header style="display: none;" id="page_header">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-      <b><a id="league_name_header" class="nav-link" data-toggle="pill" href="#leaguePage"></a></b>
+      <b><a id="league_name_header" class="nav-link navBut" data-toggle="pill" href="#leaguePage"></a></b>
       <ul class="navbar-nav ml-2 w-100">
         <!-- <li class="nav-item ml-2">
         <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
@@ -429,20 +429,32 @@
                   <div class="card-deck">
                       <div class="card text-center">
                           <div class="card-header">
-                              <ul class="nav nav-pills card-header-pills">
-                                <li class="nav-item">
-                                  <a class="nav-link active" href="#">Active</a>
-                                </li>
-                                <li class="nav-item">
-                                  <a class="nav-link" href="#">Link</a>
-                                </li>
-                                <li class="nav-item">
-                                  <a class="nav-link disabled" href="#">Disabled</a>
-                                </li>
-                              </ul>
+                              <div class="btn-group-toggle">
+                                  <label class="btn btn-primary active">
+                                    <input type="checkbox" checked autocomplete="off" data-toggle="pill"> All
+                                  </label>
+                                  <label class="btn btn-primary ">
+                                      <input type="checkbox" autocomplete="off" data-toggle="pill"> QB
+                                    </label>
+                                    <label class="btn btn-primary ">
+                                        <input type="checkbox" autocomplete="off" data-toggle="pill"> RB
+                                      </label>
+                                      <label class="btn btn-primary ">
+                                          <input type="checkbox" autocomplete="off" data-toggle="pill"> WR
+                                      </label>
+                                </div>
                             </div>
                           <div class="card-body">
-                            <h5 class="card-title">Meth Sarcus</h5>
+                            <div>
+                                      <div class="mini_position_badge">
+                                        <b>WR</b>
+                                      </div>
+                                  <div class="py-auto">
+                                    <img src="https://sleepercdn.com/avatars/405213591fe488220f2f4f79d9cc28eb" style="width: 25px; height: 25px; border-radius: 25px; margin-right: 8px;">
+                                      <b>Odell Beckham Jr.</b>
+                                  </div>
+                                      <small>Cleveland Browns WR1, 26 Years Old</small>
+                            </div>
                             <table class="table table-hover table-sm">
                                 <thead>
                                   <tr class="finalScoreRow">
@@ -452,23 +464,17 @@
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td>
-                                      <div class="row">
-                                        <div class="col-4">
-                                          <img width="30px" height="30px" class="my-auto"
-                                            src="http://a.espncdn.com/i/headshots/nfl/players/full/2976316.png">
-                                        </div>
-                                        <div class="col-8">
+                                      <td>
+                                          <div class="position_badge">
+                                            <b>WR</b>
+                                          </div>
+                                        </td>
+                                    <td align="left">
+                                      <div class="py-auto">
+                                        <img src="https://sleepercdn.com/avatars/405213591fe488220f2f4f79d9cc28eb" style="width: 25px; height: 25px; border-radius: 25px; margin-right: 8px;">
                                           <b>Odell Beckham Jr.</b>
-                                          <br>
-                                          <p>WR, Cleveland Browns</p>
-                                        </div>
                                       </div>
-                                    </td>
-                                    <td>
-                                      <div class="position_badge">
-                                        <b>WR</b>
-                                      </div>
+                                          <small>Cleveland Browns WR1, 26 Years Old</small>
                                     </td>
                                   </tr>
                                   <tr>
