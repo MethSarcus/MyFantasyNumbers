@@ -7,7 +7,7 @@ class SleeperBasePlayer {
     public espnID: string;
     public age: number;
     public pictureURL: string;
-    public nickName: string;
+    public nickName: string = "";
 
     constructor(entry: SleeperPlayerLibraryEntry) {
         this.playerID = entry.player_id;

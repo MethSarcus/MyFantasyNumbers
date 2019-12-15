@@ -60,9 +60,23 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
             const rosterOwnerID = roster.owner_id.toString();
             const coOwners = roster.co_owners;
             members.forEach((member) => {
+                let totalRoster = [];
+                totalRoster = curRoster;
                 if (member.memberID === rosterOwnerID) {
                     member.teamID = teamID;
                     member.stats = new Stats(0);
+                    if (reserve !== null) {
+                        totalRoster = totalRoster.concat(reserve);
+                    }
+                    if (taxi !== null) {
+                        totalRoster = totalRoster.concat(taxi);
+                    }
+                    member.currentRosterIDs = totalRoster;
+                    if (metadata != null) {
+                        for (const [key, value] of Object.entries(metadata)) {
+                            member.rosterNicknameMap.set(key, value as string);
+                        }
+                    }
                 }
             });
         });
@@ -143,7 +157,7 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
     return matchups;
 }
 
-function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: Member[], leagueName: string) {
+function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: SleeperMember[], leagueName: string) {
     updateLoadingText("Getting Player Stats");
     makeRequest("./assets/player_library.json").then((result) => {
         const lib = (result.response as SleeperPlayerLibrary);
@@ -174,6 +188,9 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
                     matchup.setPoorLineupDecisions();
                 }
             });
+        });
+        members.forEach((member) => {
+            member.setRosterAttributes(lib);
         });
 
         const league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);

@@ -4227,9 +4227,24 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
             var rosterOwnerID = roster.owner_id.toString();
             var coOwners = roster.co_owners;
             members.forEach(function (member) {
+                var totalRoster = [];
+                totalRoster = curRoster;
                 if (member.memberID === rosterOwnerID) {
                     member.teamID = teamID;
                     member.stats = new Stats(0);
+                    if (reserve !== null) {
+                        totalRoster = totalRoster.concat(reserve);
+                    }
+                    if (taxi !== null) {
+                        totalRoster = totalRoster.concat(taxi);
+                    }
+                    member.currentRosterIDs = totalRoster;
+                    if (metadata != null) {
+                        for (var _i = 0, _a = Object.entries(metadata); _i < _a.length; _i++) {
+                            var _b = _a[_i], key = _b[0], value = _b[1];
+                            member.rosterNicknameMap.set(key, value);
+                        }
+                    }
                 }
             });
         });
@@ -4341,6 +4356,9 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
                 }
             });
         });
+        members.forEach(function (member) {
+            member.setRosterAttributes(lib);
+        });
         var league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
         updateLoadingText("Setting Page");
         league.setMemberStats(league.getSeasonPortionWeeks());
@@ -4402,6 +4420,7 @@ var TransactionMetadata;
 })(TransactionMetadata || (TransactionMetadata = {}));
 var SleeperBasePlayer = (function () {
     function SleeperBasePlayer(entry) {
+        this.nickName = "";
         this.playerID = entry.player_id;
         this.firstName = entry.first_name;
         this.lastName = entry.last_name;
@@ -4458,6 +4477,10 @@ var SleeperLeague = (function (_super) {
 }(League));
 var SleeperMember = (function () {
     function SleeperMember(memberID, memberName, teamName, teamAvatar) {
+        this.currentRoster = [];
+        this.currentRosterIDs = [];
+        this.rosterNicknameMap = new Map();
+        this.tradingBlock = [];
         this.memberID = memberID;
         this.name = memberName;
         this.teamName = teamName;
@@ -4485,6 +4508,31 @@ var SleeperMember = (function () {
         });
         this.stats.standardDeviation = calcStandardDeviation(scores);
         this.stats.weeklyAverage = getMean(scores);
+    };
+    SleeperMember.prototype.setNicknames = function () {
+        var _this = this;
+        this.rosterNicknameMap.forEach(function (value, key) {
+            if (value !== "allow_pn_scoring" && value !== "allow_pn_news") {
+                var playerId_1 = key.replace("p_nick_", "");
+                _this.currentRoster.forEach(function (player) {
+                    if (player.playerID === playerId_1) {
+                        player.nickName = value;
+                        if (value.toLowerCase().includes("otb") || value.toLowerCase().includes("on the block")) {
+                            _this.tradingBlock.push(player);
+                        }
+                    }
+                });
+            }
+        });
+    };
+    SleeperMember.prototype.setRosterAttributes = function (lib) {
+        var _this = this;
+        this.currentRosterIDs.forEach(function (id) {
+            if (id !== null) {
+                _this.currentRoster.push(new SleeperBasePlayer(lib[id]));
+            }
+        });
+        this.setNicknames();
     };
     SleeperMember.prototype.teamNameToString = function () {
         if (this.teamName === "" || this.teamName === undefined) {
