@@ -58,12 +58,14 @@ class SleeperMember implements Member {
     }
 
     public setRosterAttributes(lib: SleeperPlayerLibrary): void {
-        this.currentRosterIDs.forEach((id) => {
-            if (id !== null) {
-                this.currentRoster.push(new SleeperBasePlayer(lib[id]));
-            }
-        });
-        this.setNicknames();
+        if (this.currentRosterIDs) {
+            this.currentRosterIDs.forEach((id) => {
+                if (id !== null) {
+                    this.currentRoster.push(new SleeperBasePlayer(lib[id]));
+                }
+            });
+            this.setNicknames();
+        }
     }
 
     public teamNameToString(): string {

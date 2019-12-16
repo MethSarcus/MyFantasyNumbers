@@ -14,7 +14,7 @@ abstract class League {
         this.season = season;
         this.members = members;
         this.settings = settings;
-        this.seasonPortion = SEASON_PORTION.REGULAR;
+        this.seasonPortion = SEASON_PORTION.ALL;
         this.leagueName = leagueName;
         this.leaguePlatform = leaguePlatform;
     }
@@ -145,6 +145,11 @@ abstract class League {
                 return it.isPlayoffs === false && it.weekNumber <= this.settings.currentMatchupPeriod;
             });
         } else if (this.seasonPortion === SEASON_PORTION.POST) {
+            weekPortion = this.weeks.filter((it) => {
+                return it.isPlayoffs === true && it.weekNumber <= this.settings.currentMatchupPeriod;
+            });
+        } else if (weekPortion === []) {
+            this.seasonPortion = SEASON_PORTION.POST;
             weekPortion = this.weeks.filter((it) => {
                 return it.isPlayoffs === true && it.weekNumber <= this.settings.currentMatchupPeriod;
             });
@@ -389,7 +394,17 @@ abstract class League {
 
     public getOverallWorstWeek(): Matchup {
         let worstWeekMatchup;
-        let lowestScore = this.getSeasonPortionWeeks()[0].matchups[0].getLosingTeam().score;
+        let lowestScore: number = null;
+        let i = 0;
+        while (lowestScore === null) {
+            console.log(this.getSeasonPortionWeeks());
+            if (this.getSeasonPortionWeeks()[0]) {
+                lowestScore = this.getSeasonPortionWeeks()[i].matchups[i].home.score;
+            } else {
+                lowestScore = this.getSeasonPortionWeeks()[i].matchups[i].away.score;
+            }
+            i++;
+        }
         this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach((matchup) => {
                 if (matchup.home.score < lowestScore) {

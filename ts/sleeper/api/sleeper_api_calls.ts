@@ -158,6 +158,8 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
 }
 
 function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: SleeperMember[], leagueName: string) {
+    console.log(weeks);
+    console.log(members);
     updateLoadingText("Getting Player Stats");
     makeRequest("./assets/player_library.json").then((result) => {
         const lib = (result.response as SleeperPlayerLibrary);
