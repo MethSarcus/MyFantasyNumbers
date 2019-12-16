@@ -58,7 +58,7 @@
 
 
   <!-- Custom CSS Imports -->
-  <link href="css/master.css?v=10" rel="stylesheet" />
+  <link href="css/master.css?v=11" rel="stylesheet" />
 
   <!-- Scroll Hint Imports -->
   <link rel="stylesheet" href="https://unpkg.com/scroll-hint@latest/css/scroll-hint.css">
@@ -66,7 +66,7 @@
 
 
   <!-- Main JS Import -->
-  <script type="text/javascript" src="js/app.js?v=21"></script>
+  <script type="text/javascript" src="js/app.js?v=22"></script>
 </head>
 
 
@@ -420,6 +420,13 @@
           <!-- League Trade Page-->
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                      <h1>Trade Block</h1>
+                    </div>
+                    <div class="row" id="trade_block_row">
+                    </div>
+                  </div>
               <div class="col-6">
                 <h4 class="mx-auto" style="text-align: center;">Trades</h4>
               </div>
@@ -445,13 +452,6 @@
               </div>
               <div class="col-12 col-md-6 col-lg-6 col-xl-6 pb-5">
                 <div id="league_trade_chart"></div>
-              </div>
-              <div class="col-12">
-                <div class="row">
-                  <h1>Trade Block</h1>
-                </div>
-                <div class="row" id="trade_block_row">
-                </div>
               </div>
             </div>
           </div>
@@ -526,11 +526,14 @@
                   </thead>
                   <tbody id="member_week_table_body"></tbody>
                 </table>
-                <div style="text-align: center;" class="pt-3">
-                  <h6>Trades</h6>
+                <div class="">
+                    <div style="text-align: center;" class="pt-3">
+                        <h6>Trades</h6>
+                      </div>
+                      <div id="team_page_trades_container" class="js-scrollable"></div>
                 </div>
-                <div id="team_page_trades_container" class="js-scrollable"></div>
               </div>
+
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row pb-1">
                   <div class="card-deck col-12" style="padding-left: .6em; padding-right: .6em;">
@@ -706,21 +709,19 @@
                   </div>
                 </div>
                 <div class="row py-1">
-                  <div class="col-4">
-                    <div class="px-4" id="radar_chart_container">
+                  <div class="col-6" id="radar_chart_container">
                       <canvas id="radar_chart_canvas"></canvas>
                     </div>
-                  </div>
-                  <div class="col-12 col-sm-12 col-md-6 col-lg-8 col-xl-8">
-                    <div id="member_bar_chart_container" style="height: 250px;"><canvas
-                        id="member_bar_chart_canvas"></canvas>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div id="member_bar_chart_container" style="height: 100%;"><canvas id="member_bar_chart_canvas"></canvas>
                     </div>
                   </div>
-                  <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-12 col-xl-12"
+                  <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-12"
                     style="height: 350px;">
                     <canvas id="TEAM_LINE_CANVAS">
                     </canvas>
                   </div>
+                  
                   <div class="modal fade" id="matchup_modal" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog matchup_modal_container" role="document">

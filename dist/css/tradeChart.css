@@ -1,10 +1,10 @@
 #league_trade_chart {
-    height: 80vh;
+    height: 70vh;
 }
 
 #league_trades_container {
     overflow-y: scroll;
-    height: 80vh;
+    height: 70vh;
 }
 
 .league_trade_container {
@@ -27,7 +27,7 @@
 
 
 #team_page_trades_container {
-  height: 40vh;
+  height: 75vh;
   overflow-y: scroll;
 }
 

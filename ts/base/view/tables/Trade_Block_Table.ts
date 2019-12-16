@@ -11,7 +11,7 @@ function createTradeBlockCardContainer(member: SleeperMember) {
     const card = document.createElement("div");
     card.style.maxHeight = "20em";
     card.style.overflowY = "scroll";
-    card.classList.add("card", "trade-block-card", "col-3", "mx-2");
+    card.classList.add("card", "trade-block-card", "col-3", "p-3");
     const cardBody = document.createElement("div");
     cardBody.classList.add("card-body");
     const cardHeader = document.createElement("h5");
