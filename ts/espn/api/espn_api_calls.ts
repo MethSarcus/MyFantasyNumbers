@@ -108,6 +108,7 @@ function getESPNSettings(leagueID: string, seasonID: number) {
         if (json.hasOwnProperty("details") && json.details[0].message === "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
         }
+        console.log(json);
         const regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
         const divisions = json.settings.scheduleSettings.divisions;
         const draftOrder = json.settings.draftSettings.pickOrder;

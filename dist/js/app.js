@@ -362,7 +362,6 @@ var League = (function () {
         var lowestScore = null;
         var i = 0;
         while (lowestScore === null) {
-            console.log(this.getSeasonPortionWeeks());
             if (this.getSeasonPortionWeeks()[0]) {
                 lowestScore = this.getSeasonPortionWeeks()[i].matchups[i].home.score;
             }
@@ -1920,7 +1919,10 @@ function getOptimalLineup(activeLineupSlots, players) {
     return optimalLineup;
 }
 function getHighestPlayersForSlot(slotID, numPlayers, players, takenPlayers) {
+    console.log(slotID);
+    console.log(players);
     var eligibleSortedPlayers = players.filter(function (player) {
+        console.log(player);
         return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
     }).sort(function (a, b) {
         return b.score - a.score;
@@ -2016,11 +2018,15 @@ var positionToInt = new Map([
     ["SUPER_FLEX", 7],
     ["OP", 7],
     ["DT", 8],
+    ["NT", 8],
     ["DE", 9],
+    ["OLB", 9],
+    ["ILB", 9],
     ["LB", 10],
     ["DL", 11],
     ["CB", 12],
     ["S", 13],
+    ["SS", 13],
     ["DB", 14],
     ["DP", 15],
     ["DEF", 16],
@@ -3945,6 +3951,7 @@ function getESPNSettings(leagueID, seasonID) {
         if (json.hasOwnProperty("details") && json.details[0].message === "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
         }
+        console.log(json);
         var regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
         var divisions = json.settings.scheduleSettings.divisions;
         var draftOrder = json.settings.draftSettings.pickOrder;
@@ -4414,8 +4421,6 @@ function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder) {
     return matchups;
 }
 function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
-    console.log(weeks);
-    console.log(members);
     updateLoadingText("Getting Player Stats");
     makeRequest("./assets/player_library.json").then(function (result) {
         var lib = result.response;
@@ -4940,6 +4945,10 @@ function assignSleeperPlayerAttributes(player, playerAttributes) {
     player.firstName = playerAttributes.first_name;
     player.lastName = playerAttributes.last_name;
     player.position = playerAttributes.position;
+    if (player.playerID === "2036") {
+        console.log(player);
+        console.log(playerAttributes.position);
+    }
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
     player.realTeamID = playerAttributes.team;
     if (playerAttributes.espn_id) {

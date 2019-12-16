@@ -397,7 +397,6 @@ abstract class League {
         let lowestScore: number = null;
         let i = 0;
         while (lowestScore === null) {
-            console.log(this.getSeasonPortionWeeks());
             if (this.getSeasonPortionWeeks()[0]) {
                 lowestScore = this.getSeasonPortionWeeks()[i].matchups[i].home.score;
             } else {

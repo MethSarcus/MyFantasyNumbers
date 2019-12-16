@@ -7,8 +7,11 @@ function getOptimalLineup(activeLineupSlots: number[][], players: Player[]): Pla
 }
 
 function getHighestPlayersForSlot(slotID: number, numPlayers: number, players: Player[], takenPlayers: Player[]): Player[] {
+    console.log(slotID);
+    console.log(players);
     // Filter players who have already been included or who are not eligible for the slot or who have scored less than 0 since an empty slot would be a better play
     const eligibleSortedPlayers = players.filter((player) => {
+        console.log(player);
         return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
     }).sort((a, b) => {
         return b.score - a.score;
