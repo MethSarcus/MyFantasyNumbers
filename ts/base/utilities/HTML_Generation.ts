@@ -56,10 +56,6 @@ function generateMatchupTable(league: League, firstTeamId: number, weekNumber: n
     generateBenchTable(matchup);
 }
 
-function generateTradeBlock() {
-    
-}
-
 function generateBenchTable(matchup: Matchup) {
     const tableBody = document.getElementById("matchup_modal_bench_table_body");
     tableBody.innerHTML = "";
@@ -311,4 +307,45 @@ function generateBenchPlayerCell(player: Player, homePlayer: boolean) {
     scoreDiv.appendChild(projectedText);
     td.appendChild(row);
     return td;
+}
+
+function generateGenericPlayerCell(player: SleeperBasePlayer): HTMLTableDataCellElement {
+    const td = document.createElement("td");
+    const row = document.createElement("div");
+    row.classList.add("row");
+    const imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-3", "pt-3");
+    const image = document.createElement("img");
+    let pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    } else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    const nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-6", "pt-3");
+    const boldName = document.createElement("b");
+    const teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    const lineBreak = document.createElement("br");
+    row.appendChild(imageDiv);
+    row.appendChild(nameDiv);
+    nameDiv.style.textAlign = "left";
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    td.appendChild(row);
+    return td;
+}
+
+function updateMainPageLeagueStatCards(league: League): void {
+    document.getElementById("league_weekly_average").innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
+    document.getElementById("league_standard_deviation").innerText = roundToHundred(league.getLeagueStandardDeviation()).toString();
+    document.getElementById("league_weekly_average_pp").innerText = roundToHundred(league.getLeaguePP() / league.getSeasonPortionWeeks().length).toString();
+    updateLeagueEfficiency(league);
 }

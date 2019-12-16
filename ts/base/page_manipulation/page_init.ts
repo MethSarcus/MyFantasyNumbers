@@ -282,7 +282,7 @@ function createTeamMenu(league: League): void {
         b.id = league.members[i].teamID + "_link";
         b.setAttribute("data-toggle", "pill");
         b.href = "#teamPill";
-        b.classList.add("nav-link");
+        b.classList.add("nav-link", "team-menu-link");
         b.style.paddingLeft = "3px;";
         const c = document.createElement("img");
         c.src = league.members[i].logoURL;

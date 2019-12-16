@@ -692,6 +692,7 @@ var League = (function () {
     League.prototype.updateMainPage = function () {
         updatePowerRankTable(this);
         updateLeagueStatsTable(this);
+        updateMainPageLeagueStatCards(this);
     };
     return League;
 }());
@@ -1469,7 +1470,7 @@ function createTeamMenu(league) {
         b.id = league.members[i].teamID + "_link";
         b.setAttribute("data-toggle", "pill");
         b.href = "#teamPill";
-        b.classList.add("nav-link");
+        b.classList.add("nav-link", "team-menu-link");
         b.style.paddingLeft = "3px;";
         var c = document.createElement("img");
         c.src = league.members[i].logoURL;
@@ -1545,8 +1546,6 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
     scoreRow.style.textAlign = "center";
     tableBody.appendChild(scoreRow);
     generateBenchTable(matchup);
-}
-function generateTradeBlock() {
 }
 function generateBenchTable(matchup) {
     var tableBody = document.getElementById("matchup_modal_bench_table_body");
@@ -1779,6 +1778,46 @@ function generateBenchPlayerCell(player, homePlayer) {
     scoreDiv.appendChild(projectedText);
     td.appendChild(row);
     return td;
+}
+function generateGenericPlayerCell(player) {
+    var td = document.createElement("td");
+    var row = document.createElement("div");
+    row.classList.add("row");
+    var imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-3", "pt-3");
+    var image = document.createElement("img");
+    var pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    var nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-6", "pt-3");
+    var boldName = document.createElement("b");
+    var teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    var lineBreak = document.createElement("br");
+    row.appendChild(imageDiv);
+    row.appendChild(nameDiv);
+    nameDiv.style.textAlign = "left";
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    td.appendChild(row);
+    return td;
+}
+function updateMainPageLeagueStatCards(league) {
+    document.getElementById("league_weekly_average").innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
+    document.getElementById("league_standard_deviation").innerText = roundToHundred(league.getLeagueStandardDeviation()).toString();
+    document.getElementById("league_weekly_average_pp").innerText = roundToHundred(league.getLeaguePP() / league.getSeasonPortionWeeks().length).toString();
+    updateLeagueEfficiency(league);
 }
 function roundToHundred(x) {
     return Math.round(x * 100) / 100;
@@ -3733,6 +3772,42 @@ function initPowerRankTable(league) {
         },
     });
 }
+function generateTradeBlock(league) {
+    var row = document.getElementById("trade_block_row");
+    league.members.forEach(function (member) {
+        if (member.tradingBlock.length > 0) {
+            row.appendChild(createTradeBlockCardContainer(member));
+        }
+    });
+}
+function createTradeBlockCardContainer(member) {
+    var card = document.createElement("div");
+    card.style.maxHeight = "20em";
+    card.style.overflowY = "scroll";
+    card.classList.add("card", "trade-block-card", "col-3", "mx-2");
+    var cardBody = document.createElement("div");
+    cardBody.classList.add("card-body");
+    var cardHeader = document.createElement("h5");
+    cardHeader.classList.add("card-title");
+    card.appendChild(cardBody);
+    cardBody.appendChild(cardHeader);
+    cardHeader.innerText = member.teamNameToString();
+    cardBody.appendChild(createTradeBlockTable(member));
+    return card;
+}
+function createTradeBlockTable(member) {
+    var table = document.createElement("table");
+    table.classList.add("table", "table-hover", "table-sm", "trade-block-table");
+    member.tradingBlock.forEach(function (player) {
+        var playRow = document.createElement("tr");
+        var playerBadge = generateBenchPositionBadge(player.position);
+        playerBadge.style.verticalAlign = "center";
+        playRow.appendChild(playerBadge);
+        playRow.appendChild(generateGenericPlayerCell(player));
+        table.appendChild(playRow);
+    });
+    return table;
+}
 function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
     var weeks = [];
     var weeksToGet;
@@ -4232,12 +4307,6 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
                 if (member.memberID === rosterOwnerID) {
                     member.teamID = teamID;
                     member.stats = new Stats(0);
-                    if (reserve !== null) {
-                        totalRoster = totalRoster.concat(reserve);
-                    }
-                    if (taxi !== null) {
-                        totalRoster = totalRoster.concat(taxi);
-                    }
                     member.currentRosterIDs = totalRoster;
                     if (metadata != null) {
                         for (var _i = 0, _a = Object.entries(metadata); _i < _a.length; _i++) {
@@ -4466,11 +4535,13 @@ var SleeperLeague = (function (_super) {
         return _this;
     }
     SleeperLeague.prototype.setPage = function () {
+        console.log(this);
         _super.prototype.setPage.call(this);
         enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod >= this.settings.regularSeasonLength);
         enableTradePage();
         createLeagueTradeDiagram(this);
         constructTrades(this);
+        generateTradeBlock(this);
         transitionToLeaguePage();
     };
     return SleeperLeague;

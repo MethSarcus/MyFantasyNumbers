@@ -65,12 +65,12 @@ function getSleeperRosters(leagueID: string, seasonID: number, members: SleeperM
                 if (member.memberID === rosterOwnerID) {
                     member.teamID = teamID;
                     member.stats = new Stats(0);
-                    if (reserve !== null) {
-                        totalRoster = totalRoster.concat(reserve);
-                    }
-                    if (taxi !== null) {
-                        totalRoster = totalRoster.concat(taxi);
-                    }
+                    // if (reserve !== null) {
+                    //     totalRoster = totalRoster.concat(reserve);
+                    // }
+                    // if (taxi !== null) {
+                    //     totalRoster = totalRoster.concat(taxi);
+                    // }
                     member.currentRosterIDs = totalRoster;
                     if (metadata != null) {
                         for (const [key, value] of Object.entries(metadata)) {

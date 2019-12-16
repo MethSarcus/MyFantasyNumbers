@@ -3,7 +3,7 @@ class SleeperLeague extends League {
     public leagueName: string;
     public weeks: Week[];
     public season: number;
-    public members: Member[];
+    public members: SleeperMember[];
     public trades: SleeperTrade[] = [];
     public settings: Settings;
     public seasonPortion: SEASON_PORTION;
@@ -15,11 +15,13 @@ class SleeperLeague extends League {
     }
 
     public setPage() {
+        console.log(this);
         super.setPage();
         enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod >= this.settings.regularSeasonLength);
         enableTradePage();
         createLeagueTradeDiagram(this);
         constructTrades(this);
+        generateTradeBlock(this);
         transitionToLeaguePage();
     }
 }

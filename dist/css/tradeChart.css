@@ -27,7 +27,7 @@
 
 
 #team_page_trades_container {
-  height: 25vh;
+  height: 40vh;
   overflow-y: scroll;
 }
 
@@ -107,3 +107,31 @@ font-size: .8em;
     padding: 2px;
     background-color: black;
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
+  .trade-block-table td {
+      vertical-align: middle;
+  }
+
+  .team-menu-link {
+      color: white;
+  }

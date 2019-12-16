@@ -421,100 +421,6 @@
           <!-- League Trade Page-->
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
-              <div class="col-12">
-                <div class="row">
-                  <h1>Trade Block</h1>
-                </div>
-                <div class="row">
-                  <div class="card-deck">
-                      <div class="card text-center">
-                          <div class="card-header">
-                              <div class="btn-group-toggle">
-                                  <label class="btn btn-primary active">
-                                    <input type="checkbox" checked autocomplete="off" data-toggle="pill"> All
-                                  </label>
-                                  <label class="btn btn-primary ">
-                                      <input type="checkbox" autocomplete="off" data-toggle="pill"> QB
-                                    </label>
-                                    <label class="btn btn-primary ">
-                                        <input type="checkbox" autocomplete="off" data-toggle="pill"> RB
-                                      </label>
-                                      <label class="btn btn-primary ">
-                                          <input type="checkbox" autocomplete="off" data-toggle="pill"> WR
-                                      </label>
-                                </div>
-                            </div>
-                          <div class="card-body">
-                            <div>
-                                      <div class="mini_position_badge">
-                                        <b>WR</b>
-                                      </div>
-                                  <div class="py-auto">
-                                    <img src="https://sleepercdn.com/avatars/405213591fe488220f2f4f79d9cc28eb" style="width: 25px; height: 25px; border-radius: 25px; margin-right: 8px;">
-                                      <b>Odell Beckham Jr.</b>
-                                  </div>
-                                      <small>Cleveland Browns WR1, 26 Years Old</small>
-                            </div>
-                            <table class="table table-hover table-sm">
-                                <thead>
-                                  <tr class="finalScoreRow">
-                                    <td>Team 1</td>
-                                    <td></td>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                      <td>
-                                          <div class="position_badge">
-                                            <b>WR</b>
-                                          </div>
-                                        </td>
-                                    <td align="left">
-                                      <div class="py-auto">
-                                        <img src="https://sleepercdn.com/avatars/405213591fe488220f2f4f79d9cc28eb" style="width: 25px; height: 25px; border-radius: 25px; margin-right: 8px;">
-                                          <b>Odell Beckham Jr.</b>
-                                      </div>
-                                          <small>Cleveland Browns WR1, 26 Years Old</small>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>Player 2</td>
-                                    <td>+3.45</td>
-                                    <td>Player 2</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Player 3</td>
-                                    <td>-4.55</td>
-                                    <td>Player 3</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Player 3</td>
-                                    <td>-4.55</td>
-                                    <td>Player 3</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                          </div>
-                        </div>
-
-                        <div class="card text-center">
-                            <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                          </div>
-
-                          <div class="card text-center">
-                              <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                              </div>
-                            </div>
-                  </div>
-                </div>
-              </div>
               <div class="col-6">
                 <h4 class="mx-auto" style="text-align: center;">Trades</h4>
               </div>
@@ -523,25 +429,6 @@
               </div>
             </div>
             <div class="row">
-              <div class="container">
-                  <ul class="nav nav-tabs" id="myTab" role="tablist">
-                      <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-                      </li>
-                    </ul>
-                    <div class="tab-content" id="myTabContent">
-                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
-                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-                      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
-                    </div>
-              </div>
-                
               <div class="col-12 col-md-6 col-lg-6 col-xl-6 scrolling_card_container" id="league_trades_container">
                 <template>
                   <div class="card league_trade_container">
@@ -559,6 +446,13 @@
               </div>
               <div class="col-12 col-md-6 col-lg-6 col-xl-6 pb-5">
                 <div id="league_trade_chart"></div>
+              </div>
+              <div class="col-12">
+                <div class="row">
+                  <h1>Trade Block</h1>
+                </div>
+                <div class="row" id="trade_block_row">
+                </div>
               </div>
             </div>
           </div>
@@ -637,9 +531,6 @@
                   <h6>Trades</h6>
                 </div>
                 <div id="team_page_trades_container" class="js-scrollable"></div>
-                <div class="px-4" id="radar_chart_container">
-                  <canvas id="radar_chart_canvas"></canvas>
-                </div>
               </div>
               <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
                 <div class="row pb-1">
@@ -816,7 +707,12 @@
                   </div>
                 </div>
                 <div class="row py-1">
-                  <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                  <div class="col-4">
+                    <div class="px-4" id="radar_chart_container">
+                      <canvas id="radar_chart_canvas"></canvas>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-6 col-lg-8 col-xl-8">
                     <div id="member_bar_chart_container" style="height: 250px;"><canvas
                         id="member_bar_chart_canvas"></canvas>
                     </div>

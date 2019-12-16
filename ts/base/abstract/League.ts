@@ -770,5 +770,6 @@ abstract class League {
     public updateMainPage(): void {
         updatePowerRankTable(this);
         updateLeagueStatsTable(this);
+        updateMainPageLeagueStatCards(this);
     }
 }
