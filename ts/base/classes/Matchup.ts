@@ -108,24 +108,24 @@ class Matchup {
     public setPoorLineupDecisions(): void {
         let whiffedChoices = 0;
         let team = this.home;
-        if (this.home.score > this.away.score) {
-            team = this.away;
-        }
-        team.lineup.forEach((startingPlayer) => {
-            team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach((benchedPlayer) => {
-                const diff = benchedPlayer.score - startingPlayer.score;
-                if (diff > this.marginOfVictory) {
-                    whiffedChoices += 1;
-                }
+        if (!this.byeWeek) {
+            if (this.home.score > this.away.score) {
+                team = this.away;
+            }
+            team.lineup.forEach((startingPlayer) => {
+                team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach((benchedPlayer) => {
+                    const diff = benchedPlayer.score - startingPlayer.score;
+                    if (diff > this.marginOfVictory) {
+                        whiffedChoices += 1;
+                    }
+                });
             });
-        });
-
-        this.loserPotentialWinningSingleMoves = whiffedChoices;
-
-        if (this.loserPotentialWinningSingleMoves > 0) {
-            this.withinSingleMoveOfWinning = true;
-        } else {
-            this.withinSingleMoveOfWinning = false;
+            this.loserPotentialWinningSingleMoves = whiffedChoices;
+            if (this.loserPotentialWinningSingleMoves > 0) {
+                this.withinSingleMoveOfWinning = true;
+            } else {
+                this.withinSingleMoveOfWinning = false;
+            }
         }
     }
 }

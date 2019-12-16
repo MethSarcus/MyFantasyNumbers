@@ -939,23 +939,25 @@ var Matchup = (function () {
         var _this = this;
         var whiffedChoices = 0;
         var team = this.home;
-        if (this.home.score > this.away.score) {
-            team = this.away;
-        }
-        team.lineup.forEach(function (startingPlayer) {
-            team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(function (benchedPlayer) {
-                var diff = benchedPlayer.score - startingPlayer.score;
-                if (diff > _this.marginOfVictory) {
-                    whiffedChoices += 1;
-                }
+        if (!this.byeWeek) {
+            if (this.home.score > this.away.score) {
+                team = this.away;
+            }
+            team.lineup.forEach(function (startingPlayer) {
+                team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(function (benchedPlayer) {
+                    var diff = benchedPlayer.score - startingPlayer.score;
+                    if (diff > _this.marginOfVictory) {
+                        whiffedChoices += 1;
+                    }
+                });
             });
-        });
-        this.loserPotentialWinningSingleMoves = whiffedChoices;
-        if (this.loserPotentialWinningSingleMoves > 0) {
-            this.withinSingleMoveOfWinning = true;
-        }
-        else {
-            this.withinSingleMoveOfWinning = false;
+            this.loserPotentialWinningSingleMoves = whiffedChoices;
+            if (this.loserPotentialWinningSingleMoves > 0) {
+                this.withinSingleMoveOfWinning = true;
+            }
+            else {
+                this.withinSingleMoveOfWinning = false;
+            }
         }
     };
     return Matchup;
@@ -1919,10 +1921,7 @@ function getOptimalLineup(activeLineupSlots, players) {
     return optimalLineup;
 }
 function getHighestPlayersForSlot(slotID, numPlayers, players, takenPlayers) {
-    console.log(slotID);
-    console.log(players);
     var eligibleSortedPlayers = players.filter(function (player) {
-        console.log(player);
         return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
     }).sort(function (a, b) {
         return b.score - a.score;
@@ -1977,6 +1976,11 @@ var eligibleSlotMap = new Map([
     [17, [17, 20, 21]],
     [18, [18, 20, 21]],
     [19, [19, 20]],
+    [26, [26, 8, 15, 20, 21]],
+    [27, [27, 8, 15, 20, 21]],
+    [28, [28, 8, 15, 20, 21]],
+    [29, [29, 8, 15, 20, 21]],
+    [30, [28, 8, 15, 20, 21]],
 ]);
 var intToPosition = new Map([
     [0, "QB"],
@@ -2003,6 +2007,11 @@ var intToPosition = new Map([
     [21, "IR"],
     [23, "FLEX"],
     [25, "???"],
+    [26, "SS"],
+    [27, "FS"],
+    [28, "NT"],
+    [29, "OLB"],
+    [30, "ILB"],
     [88, "TAXI"],
     [-1, "EMPTY"],
 ]);
@@ -2018,15 +2027,16 @@ var positionToInt = new Map([
     ["SUPER_FLEX", 7],
     ["OP", 7],
     ["DT", 8],
-    ["NT", 8],
+    ["NT", 28],
     ["DE", 9],
-    ["OLB", 9],
-    ["ILB", 9],
+    ["OLB", 29],
+    ["ILB", 30],
     ["LB", 10],
     ["DL", 11],
     ["CB", 12],
     ["S", 13],
-    ["SS", 13],
+    ["SS", 26],
+    ["FS", 27],
     ["DB", 14],
     ["DP", 15],
     ["DEF", 16],
@@ -3880,6 +3890,7 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                         homePlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                     }
                     var awayTeam = void 0;
+                    var awayteamID = -1;
                     if (curWeek.away !== null && curWeek.away !== undefined) {
                         var awayTeamID = curWeek.away.teamId;
                         var awayPlayers = [];
@@ -3909,9 +3920,10 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                             awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
+                        awayteamID = awayTeam.teamID;
                     }
                     var isPlayoff = (q > settings.regularSeasonLength);
-                    var homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam.teamID);
+                    var homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayteamID);
                     var matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
                     matchup.setPoorLineupDecisions();
                     matchups.push(matchup);
@@ -3951,7 +3963,6 @@ function getESPNSettings(leagueID, seasonID) {
         if (json.hasOwnProperty("details") && json.details[0].message === "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
         }
-        console.log(json);
         var regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
         var divisions = json.settings.scheduleSettings.divisions;
         var draftOrder = json.settings.draftSettings.pickOrder;
@@ -4945,10 +4956,6 @@ function assignSleeperPlayerAttributes(player, playerAttributes) {
     player.firstName = playerAttributes.first_name;
     player.lastName = playerAttributes.last_name;
     player.position = playerAttributes.position;
-    if (player.playerID === "2036") {
-        console.log(player);
-        console.log(playerAttributes.position);
-    }
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
     player.realTeamID = playerAttributes.team;
     if (playerAttributes.espn_id) {

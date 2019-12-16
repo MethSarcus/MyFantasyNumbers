@@ -42,6 +42,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: string
                     }
 
                     let awayTeam;
+                    let awayteamID = -1;
                     if (curWeek.away !== null && curWeek.away !== undefined) {
                         const awayTeamID = curWeek.away.teamId;
                         const awayPlayers = [];
@@ -68,9 +69,10 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: string
                             awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
                         awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
+                        awayteamID = awayTeam.teamID;
                     }
                     const isPlayoff = (q > settings.regularSeasonLength);
-                    const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam.teamID);
+                    const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayteamID);
                     const matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
                     matchup.setPoorLineupDecisions();
                     matchups.push(matchup);
@@ -108,7 +110,6 @@ function getESPNSettings(leagueID: string, seasonID: number) {
         if (json.hasOwnProperty("details") && json.details[0].message === "You are not authorized to view this League.") {
             alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
         }
-        console.log(json);
         const regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
         const divisions = json.settings.scheduleSettings.divisions;
         const draftOrder = json.settings.draftSettings.pickOrder;

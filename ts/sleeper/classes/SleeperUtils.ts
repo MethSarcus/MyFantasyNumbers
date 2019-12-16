@@ -94,10 +94,6 @@ function assignSleeperPlayerAttributes(player: SleeperPlayer, playerAttributes: 
     player.firstName = playerAttributes.first_name;
     player.lastName = playerAttributes.last_name;
     player.position = playerAttributes.position;
-    if (player.playerID === "2036") {
-        console.log(player);
-        console.log(playerAttributes.position);
-    }
     player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
     player.realTeamID = playerAttributes.team;
     if (playerAttributes.espn_id) {
