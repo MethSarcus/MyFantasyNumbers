@@ -270,7 +270,7 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
         biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.espnID + ".png";
     }
     let outcomeText = "";
-    const boomMatchup = league.weeks[biggestBoom.weekNumber - 1].getTeamMatchup(teamID);
+    const boomMatchup = league.getWeek(biggestBoom.weekNumber).getTeamMatchup(teamID);
     if (boomMatchup.byeWeek) {
         outcomeText = ",\nwhich was a byeweek!";
     } else {

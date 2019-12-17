@@ -131,7 +131,7 @@ function getESPNSettings(leagueID: string, seasonID: number) {
         const activeLineupSlots = lineup.filter((slot) => {
             return slot[0] !== 21 && slot[0] !== 20;
         });
-        const settings = new Settings(activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
+        const settings = new Settings(0, activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
         getESPNMembers(settings, leagueID, seasonID, leagueName);
     });
 }

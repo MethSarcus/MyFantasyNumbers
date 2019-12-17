@@ -88,37 +88,29 @@ function enableTradePage(): void {
 }
 
 function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void {
-    if (isPlayoffs) {
-        if (league.getSeasonPortionWeeks().length === 0) {
-            league.seasonPortion = SEASON_PORTION.POST;
+        if (!isPlayoffs) {
+            // document.getElementById(SEASON_PORTION.REGULAR).onclick = () => {
+            //     league.seasonPortion = SEASON_PORTION.REGULAR;
+            //     league.resetStats();
+            //     league.setMemberStats(league.getSeasonPortionWeeks());
+            //     for (let i = 1; i <= league.members.length; i++) {
+            //         if ($("#" + i).find("a.active").length !== 0) {
+            //             fadeTeam(league, parseInt(i.toString(), 10));
+            //         }
+            //     }
+            //     league.updateMainPage();
+            // };
+            document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
+            document.getElementById(SEASON_PORTION.POST).classList.add("disabled");
+            (document.getElementById("post_radio_button") as HTMLButtonElement).disabled = true;
+            (document.getElementById("complete_radio_button") as HTMLButtonElement).disabled = true;
+        } else if (league.settings.regularSeasonLength === 0) {
             document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
             document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
             (document.getElementById("regular_radio_button") as HTMLButtonElement).disabled = true;
             (document.getElementById("complete_radio_button") as HTMLButtonElement).disabled = true;
+            document.getElementById(SEASON_PORTION.REGULAR).classList.remove("active");
         } else {
-            document.getElementById(SEASON_PORTION.REGULAR).onclick = () => {
-                league.seasonPortion = SEASON_PORTION.REGULAR;
-                league.resetStats();
-                league.setMemberStats(league.getSeasonPortionWeeks());
-                for (let i = 1; i <= league.members.length; i++) {
-                    if ($("#" + i).find("a.active").length !== 0) {
-                        fadeTeam(league, parseInt(i.toString(), 10));
-                    }
-                }
-                league.updateMainPage();
-            };
-
-            document.getElementById(SEASON_PORTION.POST).onclick = () => {
-                league.seasonPortion = SEASON_PORTION.POST;
-                league.resetStats();
-                league.setMemberStats(league.getSeasonPortionWeeks());
-                for (let i = 1; i <= league.members.length; i++) {
-                    if ($("#" + i).find("a.active").length !== 0) {
-                        fadeTeam(league, parseInt(i.toString(), 10));
-                    }
-                }
-                league.updateMainPage();
-            };
             document.getElementById(SEASON_PORTION.ALL).onclick = () => {
                 league.seasonPortion = SEASON_PORTION.ALL;
                 league.resetStats();
@@ -130,8 +122,29 @@ function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void 
                 }
                 league.updateMainPage();
             };
+            document.getElementById(SEASON_PORTION.REGULAR).onclick = () => {
+                league.seasonPortion = SEASON_PORTION.REGULAR;
+                league.resetStats();
+                league.setMemberStats(league.getSeasonPortionWeeks());
+                for (let i = 1; i <= league.members.length; i++) {
+                    if ($("#" + i).find("a.active").length !== 0) {
+                        fadeTeam(league, parseInt(i.toString(), 10));
+                    }
+                }
+                league.updateMainPage();
+            };
+            document.getElementById(SEASON_PORTION.POST).onclick = () => {
+                league.seasonPortion = SEASON_PORTION.POST;
+                league.resetStats();
+                league.setMemberStats(league.getSeasonPortionWeeks());
+                for (let i = 1; i <= league.members.length; i++) {
+                    if ($("#" + i).find("a.active").length !== 0) {
+                        fadeTeam(league, parseInt(i.toString(), 10));
+                    }
+                }
+                league.updateMainPage();
+            };
         }
-    }
 }
 
 function enableYearSelector(league: League): void {
@@ -256,15 +269,15 @@ function updateBestWorstLeagueWeeks(league: League) {
     const bestWeek = league.getOverallBestWeek();
     const worstWeek = league.getOverallWorstWeek();
 
-    leagueBestWeekScore.innerText = roundToHundred(bestWeek.getWinningTeam().score).toString() + " Points";
-    leagueBestWeekTeamName.innerText = league.getMember(bestWeek.getWinningTeam().teamID).teamNameToString();
+    leagueBestWeekScore.innerText = roundToHundred(bestWeek.getHighestScoringTeam().score).toString() + " Points";
+    leagueBestWeekTeamName.innerText = league.getMember(bestWeek.getHighestScoringTeam().teamID).teamNameToString();
     leagueBestWeekNumber.innerText = "Week " + bestWeek.weekNumber.toString();
-    leagueBestWeekImage.src = league.getMember(bestWeek.getWinningTeam().teamID).logoURL;
+    leagueBestWeekImage.src = league.getMember(bestWeek.getHighestScoringTeam().teamID).logoURL;
 
-    leagueWorstWeekScore.innerText = roundToHundred(worstWeek.getLosingTeam().score).toString() + " Points";
-    leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLosingTeam().teamID).teamNameToString();
+    leagueWorstWeekScore.innerText = roundToHundred(worstWeek.getLowestScoringTeam().score).toString() + " Points";
+    leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLowestScoringTeam().teamID).teamNameToString();
     leagueWorstWeekNumber.innerText = "Week " + worstWeek.weekNumber.toString();
-    leagueWorstWeekImage.src = league.getMember(worstWeek.getLosingTeam().teamID).logoURL;
+    leagueWorstWeekImage.src = league.getMember(worstWeek.getLowestScoringTeam().teamID).logoURL;
 }
 
 function createTeamMenu(league: League): void {

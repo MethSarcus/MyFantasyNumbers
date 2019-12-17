@@ -10,8 +10,9 @@ class Settings {
     public currentMatchupPeriod: number;
     public isActive: boolean;
     public yearsActive: number[];
+    public startWeek: number;
 
-    constructor(activeLineupSlots: number[][], lineupSlots: number[][], regularSeasonLength: number, playoffLength: number, draftType: DRAFT_TYPE, currentMatchupPeriod: number, isActive: boolean, yearsActive: number[]) {
+    constructor(startWeek: number, activeLineupSlots: number[][], lineupSlots: number[][], regularSeasonLength: number, playoffLength: number, draftType: DRAFT_TYPE, currentMatchupPeriod: number, isActive: boolean, yearsActive: number[]) {
         this.activeLineupSlots = activeLineupSlots;
         this.lineupSlots = lineupSlots;
         this.regularSeasonLength = regularSeasonLength;
@@ -21,6 +22,7 @@ class Settings {
         this.currentMatchupPeriod = currentMatchupPeriod;
         this.isActive = isActive;
         this.yearsActive = yearsActive.sort((a, b) => b - a);
+        this.startWeek = startWeek;
     }
 
     public getPositions(): string[] {

@@ -1,6 +1,6 @@
 function generateMatchupTable(league: League, firstTeamId: number, weekNumber: number) {
     const tableBody = document.getElementById("matchup_modal_table_body");
-    const matchup = league.weeks[weekNumber - 1].getTeamMatchup(firstTeamId);
+    const matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
     const tableTitle = document.getElementById("matchup_modal_title");
     if (matchup.isPlayoffs) {
         tableTitle.innerText = "Week " + weekNumber.toString() + ", Playoffs";

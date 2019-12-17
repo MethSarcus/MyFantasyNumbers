@@ -19,7 +19,7 @@ function initMemberWeekTable(league: League) {
         createdRow( row: any, data: any, index: any ) {
             const curTeamId = document.getElementById("teamPill").getAttribute("currentteam");
             const member = league.getMember(parseInt(curTeamId));
-            const week = league.weeks[data.Week - 1];
+            const week = league.getWeek(data.Week);
             $(row).attr("data-toggle", "modal");
             $(row).attr("data-target", "#matchup_modal");
             $(row).click(() => {

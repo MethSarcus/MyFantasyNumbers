@@ -51,14 +51,14 @@ function makeSleeperPlayers(players: Player[]): SleeperPlayer[] {
     return sleeperPlayers;
 }
 
-function getSleeperWeekStats(numWeeks: number): Promise<any> {
+function getSleeperWeekStats(startWeek: number, lastScoredLeg: number): Promise<any> {
     const statPromises = [];
-    for (let i = 1; i <= numWeeks; i++) {
+    for (let i = startWeek; i <= lastScoredLeg; i++) {
         statPromises.push(makeRequest("https://api.sleeper.app/v1/stats/nfl/regular/2019/" + i));
     }
 
     const projectionPromises = [];
-    for (let i = 1; i <= numWeeks; i++) {
+    for (let i = startWeek; i <= lastScoredLeg; i++) {
         projectionPromises.push(makeRequest("https://api.sleeper.app/v1/projections/nfl/regular/2019/" + i));
     }
     const allPromises = statPromises.concat(projectionPromises);

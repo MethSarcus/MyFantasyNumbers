@@ -22,7 +22,8 @@ class ESPNLeague extends League {
         const members: Member[] = [];
         const weeks: Week[] = [];
         const jsonSettings = object.settings;
-        const settings = new Settings(jsonSettings.activeLineupSlots,
+        const settings = new Settings(0,
+            jsonSettings.activeLineupSlots,
             jsonSettings.lineupSlots,
             jsonSettings.regularSeasonLength,
             jsonSettings.playoffLength,

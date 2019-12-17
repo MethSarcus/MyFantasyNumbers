@@ -217,6 +217,17 @@ abstract class League {
         return finish;
     }
 
+    public getWeek(weekNum: number): Week {
+        let myWeek;
+        this.weeks.forEach((week) => {
+            if (weekNum === week.weekNumber) {
+                myWeek = week;
+            }
+        });
+
+        return myWeek;
+    }
+
     public getWorstWeekFinish(teamID: number): number {
         let finish = 1;
         const worstWeekScore = this.getMemberWorstTeam(teamID).score;
@@ -389,7 +400,7 @@ abstract class League {
                 if (matchup.home.score > highestScore) {
                     bestWeekMatchup = matchup;
                     highestScore = matchup.home.score;
-                } else if (!matchup.byeWeek) {
+                } else if (!matchup.byeWeek && matchup.away) {
                     if (matchup.away.score > highestScore) {
                         bestWeekMatchup = matchup;
                         highestScore = matchup.away.score;
@@ -418,7 +429,7 @@ abstract class League {
                 if (matchup.home.score < lowestScore) {
                     worstWeekMatchup = matchup;
                     lowestScore = matchup.home.score;
-                } else if (!matchup.byeWeek) {
+                } else if (!matchup.byeWeek && matchup.away) {
                     if (matchup.away.score < lowestScore) {
                         worstWeekMatchup = matchup;
                         lowestScore = matchup.away.score;
@@ -647,7 +658,7 @@ abstract class League {
 
     public getMarginFinish(teamID: number, weekNumber: number) {
         let finish = 1;
-        const week = this.weeks[weekNumber - 1];
+        const week = this.getWeek(weekNumber);
         const teamMatchup = week.getTeamMatchup(teamID);
         if (!teamMatchup.byeWeek) {
             const margin = teamMatchup.getTeam(teamID).score - teamMatchup.getOpponent(teamID).score;

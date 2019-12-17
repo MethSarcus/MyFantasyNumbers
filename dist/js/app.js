@@ -204,6 +204,15 @@ var League = (function () {
         });
         return finish;
     };
+    League.prototype.getWeek = function (weekNum) {
+        var myWeek;
+        this.weeks.forEach(function (week) {
+            if (weekNum === week.weekNumber) {
+                myWeek = week;
+            }
+        });
+        return myWeek;
+    };
     League.prototype.getWorstWeekFinish = function (teamID) {
         var _this = this;
         var finish = 1;
@@ -356,7 +365,7 @@ var League = (function () {
                     bestWeekMatchup = matchup;
                     highestScore = matchup.home.score;
                 }
-                else if (!matchup.byeWeek) {
+                else if (!matchup.byeWeek && matchup.away) {
                     if (matchup.away.score > highestScore) {
                         bestWeekMatchup = matchup;
                         highestScore = matchup.away.score;
@@ -385,7 +394,7 @@ var League = (function () {
                     worstWeekMatchup = matchup;
                     lowestScore = matchup.home.score;
                 }
-                else if (!matchup.byeWeek) {
+                else if (!matchup.byeWeek && matchup.away) {
                     if (matchup.away.score < lowestScore) {
                         worstWeekMatchup = matchup;
                         lowestScore = matchup.away.score;
@@ -590,7 +599,7 @@ var League = (function () {
     };
     League.prototype.getMarginFinish = function (teamID, weekNumber) {
         var finish = 1;
-        var week = this.weeks[weekNumber - 1];
+        var week = this.getWeek(weekNumber);
         var teamMatchup = week.getTeamMatchup(teamID);
         if (!teamMatchup.byeWeek) {
             var margin_1 = teamMatchup.getTeam(teamID).score - teamMatchup.getOpponent(teamID).score;
@@ -722,7 +731,7 @@ var League = (function () {
     return League;
 }());
 var Settings = (function () {
-    function Settings(activeLineupSlots, lineupSlots, regularSeasonLength, playoffLength, draftType, currentMatchupPeriod, isActive, yearsActive) {
+    function Settings(startWeek, activeLineupSlots, lineupSlots, regularSeasonLength, playoffLength, draftType, currentMatchupPeriod, isActive, yearsActive) {
         this.activeLineupSlots = activeLineupSlots;
         this.lineupSlots = lineupSlots;
         this.regularSeasonLength = regularSeasonLength;
@@ -732,6 +741,7 @@ var Settings = (function () {
         this.currentMatchupPeriod = currentMatchupPeriod;
         this.isActive = isActive;
         this.yearsActive = yearsActive.sort(function (a, b) { return b - a; });
+        this.startWeek = startWeek;
     }
     Settings.prototype.getPositions = function () {
         var positions = this.activeLineupSlots.filter(function (slot) {
@@ -895,6 +905,28 @@ var Matchup = (function () {
         }
         else {
             return this.away;
+        }
+    };
+    Matchup.prototype.getHighestScoringTeam = function () {
+        if (this.byeWeek) {
+            return this.home;
+        }
+        else if (this.home.score > this.away.score) {
+            return this.home;
+        }
+        else {
+            return this.away;
+        }
+    };
+    Matchup.prototype.getLowestScoringTeam = function () {
+        if (this.byeWeek) {
+            return this.home;
+        }
+        else if (this.home.score > this.away.score) {
+            return this.away;
+        }
+        else {
+            return this.home;
         }
     };
     Matchup.prototype.getLosingTeam = function () {
@@ -1335,49 +1367,53 @@ function enableTradePage() {
     };
 }
 function enableSeasonPortionSelector(league, isPlayoffs) {
-    if (isPlayoffs) {
-        if (league.getSeasonPortionWeeks().length === 0) {
+    if (!isPlayoffs) {
+        document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
+        document.getElementById(SEASON_PORTION.POST).classList.add("disabled");
+        document.getElementById("post_radio_button").disabled = true;
+        document.getElementById("complete_radio_button").disabled = true;
+    }
+    else if (league.settings.regularSeasonLength === 0) {
+        document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
+        document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
+        document.getElementById("regular_radio_button").disabled = true;
+        document.getElementById("complete_radio_button").disabled = true;
+        document.getElementById(SEASON_PORTION.REGULAR).classList.remove("active");
+    }
+    else {
+        document.getElementById(SEASON_PORTION.ALL).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.ALL;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($("#" + i).find("a.active").length !== 0) {
+                    fadeTeam(league, parseInt(i.toString(), 10));
+                }
+            }
+            league.updateMainPage();
+        };
+        document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.REGULAR;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($("#" + i).find("a.active").length !== 0) {
+                    fadeTeam(league, parseInt(i.toString(), 10));
+                }
+            }
+            league.updateMainPage();
+        };
+        document.getElementById(SEASON_PORTION.POST).onclick = function () {
             league.seasonPortion = SEASON_PORTION.POST;
-            document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
-            document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
-            document.getElementById("regular_radio_button").disabled = true;
-            document.getElementById("complete_radio_button").disabled = true;
-        }
-        else {
-            document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
-                league.seasonPortion = SEASON_PORTION.REGULAR;
-                league.resetStats();
-                league.setMemberStats(league.getSeasonPortionWeeks());
-                for (var i = 1; i <= league.members.length; i++) {
-                    if ($("#" + i).find("a.active").length !== 0) {
-                        fadeTeam(league, parseInt(i.toString(), 10));
-                    }
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($("#" + i).find("a.active").length !== 0) {
+                    fadeTeam(league, parseInt(i.toString(), 10));
                 }
-                league.updateMainPage();
-            };
-            document.getElementById(SEASON_PORTION.POST).onclick = function () {
-                league.seasonPortion = SEASON_PORTION.POST;
-                league.resetStats();
-                league.setMemberStats(league.getSeasonPortionWeeks());
-                for (var i = 1; i <= league.members.length; i++) {
-                    if ($("#" + i).find("a.active").length !== 0) {
-                        fadeTeam(league, parseInt(i.toString(), 10));
-                    }
-                }
-                league.updateMainPage();
-            };
-            document.getElementById(SEASON_PORTION.ALL).onclick = function () {
-                league.seasonPortion = SEASON_PORTION.ALL;
-                league.resetStats();
-                league.setMemberStats(league.getSeasonPortionWeeks());
-                for (var i = 1; i <= league.members.length; i++) {
-                    if ($("#" + i).find("a.active").length !== 0) {
-                        fadeTeam(league, parseInt(i.toString(), 10));
-                    }
-                }
-                league.updateMainPage();
-            };
-        }
+            }
+            league.updateMainPage();
+        };
     }
 }
 function enableYearSelector(league) {
@@ -1478,14 +1514,14 @@ function updateBestWorstLeagueWeeks(league) {
     var leagueWorstWeekNumber = document.getElementById("league_worst_week_number");
     var bestWeek = league.getOverallBestWeek();
     var worstWeek = league.getOverallWorstWeek();
-    leagueBestWeekScore.innerText = roundToHundred(bestWeek.getWinningTeam().score).toString() + " Points";
-    leagueBestWeekTeamName.innerText = league.getMember(bestWeek.getWinningTeam().teamID).teamNameToString();
+    leagueBestWeekScore.innerText = roundToHundred(bestWeek.getHighestScoringTeam().score).toString() + " Points";
+    leagueBestWeekTeamName.innerText = league.getMember(bestWeek.getHighestScoringTeam().teamID).teamNameToString();
     leagueBestWeekNumber.innerText = "Week " + bestWeek.weekNumber.toString();
-    leagueBestWeekImage.src = league.getMember(bestWeek.getWinningTeam().teamID).logoURL;
-    leagueWorstWeekScore.innerText = roundToHundred(worstWeek.getLosingTeam().score).toString() + " Points";
-    leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLosingTeam().teamID).teamNameToString();
+    leagueBestWeekImage.src = league.getMember(bestWeek.getHighestScoringTeam().teamID).logoURL;
+    leagueWorstWeekScore.innerText = roundToHundred(worstWeek.getLowestScoringTeam().score).toString() + " Points";
+    leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLowestScoringTeam().teamID).teamNameToString();
     leagueWorstWeekNumber.innerText = "Week " + worstWeek.weekNumber.toString();
-    leagueWorstWeekImage.src = league.getMember(worstWeek.getLosingTeam().teamID).logoURL;
+    leagueWorstWeekImage.src = league.getMember(worstWeek.getLowestScoringTeam().teamID).logoURL;
 }
 function createTeamMenu(league) {
     var tabsList = document.getElementById("tabs-content");
@@ -1523,7 +1559,7 @@ function createTeamMenu(league) {
 }
 function generateMatchupTable(league, firstTeamId, weekNumber) {
     var tableBody = document.getElementById("matchup_modal_table_body");
-    var matchup = league.weeks[weekNumber - 1].getTeamMatchup(firstTeamId);
+    var matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
     var tableTitle = document.getElementById("matchup_modal_title");
     if (matchup.isPlayoffs) {
         tableTitle.innerText = "Week " + weekNumber.toString() + ", Playoffs";
@@ -2604,7 +2640,7 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
         biggestBoomImage.src = "http://a.espncdn.com/i/headshots/nfl/players/full/" + biggestBoom.espnID + ".png";
     }
     var outcomeText = "";
-    var boomMatchup = league.weeks[biggestBoom.weekNumber - 1].getTeamMatchup(teamID);
+    var boomMatchup = league.getWeek(biggestBoom.weekNumber).getTeamMatchup(teamID);
     if (boomMatchup.byeWeek) {
         outcomeText = ",\nwhich was a byeweek!";
     }
@@ -3659,7 +3695,7 @@ function initMemberWeekTable(league) {
         createdRow: function (row, data, index) {
             var curTeamId = document.getElementById("teamPill").getAttribute("currentteam");
             var member = league.getMember(parseInt(curTeamId));
-            var week = league.weeks[data.Week - 1];
+            var week = league.getWeek(data.Week);
             $(row).attr("data-toggle", "modal");
             $(row).attr("data-target", "#matchup_modal");
             $(row).click(function () {
@@ -3997,7 +4033,7 @@ function getESPNSettings(leagueID, seasonID) {
         var activeLineupSlots = lineup.filter(function (slot) {
             return slot[0] !== 21 && slot[0] !== 20;
         });
-        var settings = new Settings(activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
+        var settings = new Settings(0, activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
         getESPNMembers(settings, leagueID, seasonID, leagueName);
     });
 }
@@ -4059,7 +4095,7 @@ var ESPNLeague = (function (_super) {
         var members = [];
         var weeks = [];
         var jsonSettings = object.settings;
-        var settings = new Settings(jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType, jsonSettings.currentMatchupPeriod, jsonSettings.isActive, jsonSettings.yearsActive);
+        var settings = new Settings(0, jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType, jsonSettings.currentMatchupPeriod, jsonSettings.isActive, jsonSettings.yearsActive);
         object.weeks.forEach(function (week) {
             var matchups = [];
             week.matchups.forEach(function (matchup) {
@@ -4297,32 +4333,40 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done(function (json) {
-        if (json == null) {
-            alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
-            location.reload();
-            return;
+        if (json.season === "2020") {
+            getSleeperLeagueSettings(json.previous_league_id, seasonID);
         }
-        var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
-        var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
-        var leagueName = json.name;
-        var leagueAvatar = json.avatar;
-        var draftId = json.draft_id;
-        var playoffStartWeek = json.settings.playoff_week_start;
-        var currentMatchupPeriod = json.settings.last_scored_leg;
-        var previousLeagueId = json.previous_league_id;
-        var numDivisions = json.settings.divisions;
-        var isActive = (json.status === "in_season" || json.status === "post_season");
-        var scoringSettings = json.scoring_settings;
-        var divisions = [];
-        for (var i = 0; i < numDivisions; i++) {
-            divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
+        else {
+            if (json == null) {
+                alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
+                location.reload();
+                return;
+            }
+            var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
+            var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
+            var leagueName = json.name;
+            var leagueAvatar = json.avatar;
+            var draftId = json.draft_id;
+            var playoffStartWeek = json.settings.playoff_week_start;
+            var currentMatchupPeriod = json.settings.last_scored_leg;
+            var previousLeagueId = json.previous_league_id;
+            var numDivisions = json.settings.divisions;
+            var startWeek = json.settings.start_week;
+            var isActive = (json.status === "in_season" || json.status === "post_season");
+            var scoringSettings = json.scoring_settings;
+            var divisions = [];
+            if (json.metadata) {
+                for (var i = 0; i < numDivisions; i++) {
+                    divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
+                }
+            }
+            var settings = new Settings(startWeek, rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
+            updateLoadingText("Getting Members");
+            getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, json.settings.last_scored_leg);
         }
-        var settings = new Settings(rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
-        updateLoadingText("Getting Members");
-        getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName);
     });
 }
-function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName) {
+function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString() + "/users"
     }).done(function (json) {
@@ -4335,10 +4379,10 @@ function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineup
             members.push(new SleeperMember(memberID, memberName, teamName, teamAvatar));
         });
         updateLoadingText("Getting Rosters");
-        getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName);
+        getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg);
     });
 }
-function getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName) {
+function getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString() + "/rosters/"
     }).done(function (json) {
@@ -4369,25 +4413,25 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
             });
         });
         updateLoadingText("Getting Matchups");
-        getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID !== undefined; }), settings, scoringSettings, lineupOrder, leagueName);
+        getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID !== undefined; }), settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg);
     });
 }
-function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName) {
+function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
     var promises = [];
-    for (var i = 1; i <= settings.currentMatchupPeriod; i++) {
+    for (var i = settings.startWeek; i <= lastScoredLeg; i++) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
     updateLoadingText("Getting weekly stats");
-    var weekCounter = 0;
+    var weekCounter = settings.startWeek;
     var Weeks = [];
     Promise.all(promises).then(function (weeks) {
         weeks.forEach(function (week) {
-            weekCounter += 1;
             var isPlayoffs = (weekCounter >= settings.regularSeasonLength);
             var weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
+            weekCounter += 1;
         });
-        getSleeperWeekStats(settings.currentMatchupPeriod).then(function (result) {
+        getSleeperWeekStats(settings.startWeek, lastScoredLeg).then(function (result) {
             var _loop_2 = function (y) {
                 Weeks[y].matchups.forEach(function (matchup) {
                     matchup.home.lineup.forEach(function (player) {
@@ -4950,13 +4994,13 @@ function makeSleeperPlayers(players) {
     });
     return sleeperPlayers;
 }
-function getSleeperWeekStats(numWeeks) {
+function getSleeperWeekStats(startWeek, lastScoredLeg) {
     var statPromises = [];
-    for (var i = 1; i <= numWeeks; i++) {
+    for (var i = startWeek; i <= lastScoredLeg; i++) {
         statPromises.push(makeRequest("https://api.sleeper.app/v1/stats/nfl/regular/2019/" + i));
     }
     var projectionPromises = [];
-    for (var i = 1; i <= numWeeks; i++) {
+    for (var i = startWeek; i <= lastScoredLeg; i++) {
         projectionPromises.push(makeRequest("https://api.sleeper.app/v1/projections/nfl/regular/2019/" + i));
     }
     var allPromises = statPromises.concat(projectionPromises);

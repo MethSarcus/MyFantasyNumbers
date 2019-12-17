@@ -61,6 +61,26 @@ class Matchup {
         }
     }
 
+    public getHighestScoringTeam(): Team {
+        if (this.byeWeek) {
+            return this.home;
+        } else if (this.home.score > this.away.score) {
+            return this.home;
+        } else {
+            return this.away;
+        }
+    }
+
+    public getLowestScoringTeam(): Team {
+        if (this.byeWeek) {
+            return this.home;
+        } else if (this.home.score > this.away.score) {
+            return this.away;
+        } else {
+            return this.home;
+        }
+    }
+
     public getLosingTeam(): Team {
         if (this.byeWeek) {
             return null;
