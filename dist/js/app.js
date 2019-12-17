@@ -1370,6 +1370,8 @@ function enableSeasonPortionSelector(league, isPlayoffs) {
     if (!isPlayoffs) {
         document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
         document.getElementById(SEASON_PORTION.POST).classList.add("disabled");
+        document.getElementById(SEASON_PORTION.ALL).classList.remove("active");
+        document.getElementById(SEASON_PORTION.REGULAR).classList.add("active");
         document.getElementById("post_radio_button").disabled = true;
         document.getElementById("complete_radio_button").disabled = true;
     }
@@ -1378,7 +1380,7 @@ function enableSeasonPortionSelector(league, isPlayoffs) {
         document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
         document.getElementById("regular_radio_button").disabled = true;
         document.getElementById("complete_radio_button").disabled = true;
-        document.getElementById(SEASON_PORTION.REGULAR).classList.remove("active");
+        document.getElementById(SEASON_PORTION.ALL).classList.remove("active");
     }
     else {
         document.getElementById(SEASON_PORTION.ALL).onclick = function () {
