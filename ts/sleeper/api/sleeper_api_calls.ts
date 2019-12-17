@@ -108,6 +108,10 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
                         (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
                         (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
                     });
+                    if (matchup.home.score === null) {
+                        matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
+                        matchup.setMatchupStats();
+                    }
                     matchup.home.bench.forEach((player) => {
                         (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
                         (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
@@ -118,6 +122,10 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
                             (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
                             (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
                         });
+                        if (matchup.away.score === null) {
+                            matchup.away.score = matchup.away.getTeamScore(matchup.away.lineup);
+                            matchup.setMatchupStats();
+                        }
                         matchup.away.bench.forEach((player: SleeperPlayer) => {
                             (result[y] as SleeperWeekStats).calculatePlayerScore(scoringSettings, player);
                             (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(scoringSettings, player);
@@ -163,6 +171,16 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
         const lib = (result.response as SleeperPlayerLibrary);
         weeks.forEach((week) => {
             week.matchups.forEach((matchup) => {
+                if (matchup.home.score === null) {
+                    matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
+                    matchup.setMatchupStats();
+                }
+                if (!matchup.byeWeek) {
+                    if (matchup.away.score === null) {
+                        matchup.away.score = matchup.home.getTeamScore(matchup.away.lineup);
+                        matchup.setMatchupStats();
+                    }
+                }
                 matchup.home.lineup.forEach((player) => {
                     assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
                 });

@@ -142,16 +142,16 @@ abstract class League {
         let weekPortion = this.weeks;
         if (this.seasonPortion === SEASON_PORTION.REGULAR) {
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === false && it.weekNumber <= this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === false;
             });
         } else if (this.seasonPortion === SEASON_PORTION.POST) {
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === true && it.weekNumber <= this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === true;
             });
         } else if (weekPortion === []) {
             this.seasonPortion = SEASON_PORTION.POST;
             weekPortion = this.weeks.filter((it) => {
-                return it.isPlayoffs === true && it.weekNumber <= this.settings.currentMatchupPeriod;
+                return it.isPlayoffs === true;
             });
         }
         return weekPortion;
@@ -318,7 +318,16 @@ abstract class League {
     }
 
     public getSmallestMarginOfVictory(): Matchup {
-        let smallestMOV = this.getSeasonPortionWeeks()[0].matchups[0].marginOfVictory;
+        let smallestMOV: number = null;
+        let i = 0;
+        while (smallestMOV === null) {
+            if (this.getSeasonPortionWeeks()[i] && this.getSeasonPortionWeeks()[i].matchups) {
+                smallestMOV = this.getSeasonPortionWeeks()[i].matchups[0].home.score;
+            } else if (!this.getSeasonPortionWeeks()[i].matchups[0].byeWeek) {
+                smallestMOV = this.getSeasonPortionWeeks()[i].matchups[0].away.score;
+            }
+            i++;
+        }
         let smallestMOVMatchup;
         this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach((matchup) => {
@@ -397,10 +406,10 @@ abstract class League {
         let lowestScore: number = null;
         let i = 0;
         while (lowestScore === null) {
-            if (this.getSeasonPortionWeeks()[0]) {
-                lowestScore = this.getSeasonPortionWeeks()[i].matchups[i].home.score;
-            } else {
-                lowestScore = this.getSeasonPortionWeeks()[i].matchups[i].away.score;
+            if (this.getSeasonPortionWeeks()[i] && this.getSeasonPortionWeeks()[i].matchups) {
+                lowestScore = this.getSeasonPortionWeeks()[i].matchups[0].home.score;
+            } else if (!this.getSeasonPortionWeeks()[i].matchups[0].byeWeek) {
+                lowestScore = this.getSeasonPortionWeeks()[i].matchups[0].away.score;
             }
             i++;
         }

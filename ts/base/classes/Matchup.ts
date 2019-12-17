@@ -14,29 +14,34 @@ class Matchup {
     public withinSingleMoveOfWinning: boolean;
     constructor(home: Team, away: Team, weekNumber: number, isPlayoff: boolean) {
         this.home = home;
+        this.away = away;
         this.weekNumber = weekNumber;
         this.isPlayoffs = isPlayoff;
-        if (away === undefined || away === null) {
+        this.setMatchupStats();
+    }
+
+    public setMatchupStats() {
+        this.isTie = false;
+        if (this.away === undefined || this.away === null) {
             this.byeWeek = true;
             this.isUpset = false;
             this.isTie = false;
         } else {
-            this.away = away;
-            if (home.projectedScore > away.projectedScore) {
-                this.projectedWinner = home.teamID;
+            if (this.home.projectedScore > this.away.projectedScore) {
+                this.projectedWinner = this.home.teamID;
             } else {
-                this.projectedWinner = away.teamID;
+                this.projectedWinner = this.away.teamID;
             }
-            this.projectedMOV = (Math.abs(home.projectedScore - away.projectedScore));
-            if (home.score > away.score) {
-                this.winner = home.teamID;
-            } else if (home.score < away.score) {
-                this.winner = away.teamID;
+            this.projectedMOV = (Math.abs(this.home.projectedScore - this.away.projectedScore));
+            if (this.home.score > this.away.score) {
+                this.winner = this.home.teamID;
+            } else if (this.home.score < this.away.score) {
+                this.winner = this.away.teamID;
             } else {
                 this.isTie = true;
                 this.isUpset = false;
             }
-            this.marginOfVictory = (Math.abs(home.score - away.score));
+            this.marginOfVictory = (Math.abs(this.home.score - this.away.score));
             this.byeWeek = false;
             if (this.projectedWinner !== this.winner) {
                 this.isUpset = true;
