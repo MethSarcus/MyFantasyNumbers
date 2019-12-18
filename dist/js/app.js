@@ -780,7 +780,7 @@ var DraftPick = (function () {
 }());
 var EmptySlot = (function () {
     function EmptySlot(lineupSlotID) {
-        this.eligibleSlots = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 88];
+        this.eligibleSlots = Array.from(Array(100).keys());
         this.score = 0;
         this.firstName = "Empty";
         this.lastName = "Slot";
@@ -1625,14 +1625,14 @@ function generateBenchTable(matchup) {
     var size = Math.max(matchup.home.bench.length, matchup.away.bench.length);
     for (var i = 0; i < size; i++) {
         var row = document.createElement("tr");
-        if (matchup.home.bench.length >= i) {
+        if (matchup.home.bench[i]) {
             row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
         }
         else {
             row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
         }
         row.appendChild(document.createElement("td"));
-        if (matchup.away.bench.length >= i) {
+        if (matchup.away.bench[i]) {
             row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
         }
         else {
@@ -2027,11 +2027,11 @@ var eligibleSlotMap = new Map([
     [17, [17, 20, 21]],
     [18, [18, 20, 21]],
     [19, [19, 20]],
-    [26, [26, 8, 15, 20, 21]],
-    [27, [27, 8, 15, 20, 21]],
-    [28, [28, 8, 15, 20, 21]],
-    [29, [29, 8, 15, 20, 21]],
-    [30, [28, 8, 15, 20, 21]],
+    [26, [26, 15, 8, 15, 20, 21]],
+    [27, [27, 15, 8, 15, 20, 21]],
+    [28, [28, 15, 8, 15, 20, 21]],
+    [29, [29, 15, 8, 15, 20, 21]],
+    [30, [28, 15, 8, 15, 20, 21]],
 ]);
 var intToPosition = new Map([
     [0, "QB"],
@@ -2074,6 +2074,7 @@ var positionToInt = new Map([
     ["RB/WR", 3],
     ["WR", 4],
     ["WR/TE", 5],
+    ["REC_FLEX", 5],
     ["TE", 6],
     ["SUPER_FLEX", 7],
     ["OP", 7],
@@ -2104,7 +2105,7 @@ var positionToInt = new Map([
 function getPosition(eligibleSlots) {
     var slotNum = eligibleSlots[0];
     var i = 0;
-    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5" || slotNum.toString() === "7") {
+    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5" || slotNum.toString() === "7" || slotNum.toString() === "15") {
         i += 1;
         slotNum = eligibleSlots[i];
     }
@@ -4344,6 +4345,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
                 location.reload();
                 return;
             }
+            console.log(json);
             var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
             var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
             var leagueName = json.name;

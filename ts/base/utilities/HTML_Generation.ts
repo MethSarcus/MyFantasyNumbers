@@ -63,13 +63,13 @@ function generateBenchTable(matchup: Matchup) {
 
     for (let i = 0; i < size; i++) {
         const row = document.createElement("tr");
-        if (matchup.home.bench.length >= i) {
+        if (matchup.home.bench[i]) {
             row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
         } else {
             row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
         }
         row.appendChild(document.createElement("td"));
-        if (matchup.away.bench.length >= i) {
+        if (matchup.away.bench[i]) {
             row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
         } else {
             row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false));

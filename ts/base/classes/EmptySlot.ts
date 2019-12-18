@@ -1,5 +1,5 @@
 class EmptySlot implements Player {
-    public eligibleSlots = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 88];
+    public eligibleSlots = Array.from(Array(100).keys());
     public score = 0;
     public weekNumber: number;
     public lineupSlotID: number;
