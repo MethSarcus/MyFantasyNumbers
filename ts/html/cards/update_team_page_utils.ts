@@ -1,31 +1,6 @@
 declare var $: any;
 declare var ajax: any;
 
-function updateTeamPill(league: League, teamID: number): void {
-    const member = league.getMember(teamID);
-    document.getElementById("teamPill").setAttribute("currentTeam", teamID.toString());
-    updateTeamCard(league, member);
-    updateMiniStatCards(league, member);
-    updateWeekAverage(league, member);
-    updateTeamStandardDeviation(league, member);
-    updateBestWeek(league, member);
-    updateEfficiency(league, member);
-    updateBestWorstConsistent(league, member);
-    createTeamRadarChart(league, member);
-    updateMemberWeekTable(league, member);
-    createMemberWeeklyLineChart(league, member);
-    createTeamBarChart(league, member);
-    updateGutWinCard(league, member);
-    updateWinnableGamesLost(league, member);
-    updateMargins(league, member);
-    updateUpsets(league, member);
-    updateMemberWeekTable(league, member);
-    if (league.leaguePlatform === PLATFORM.SLEEPER) {
-        updateTeamTrades(league as SleeperLeague, member);
-    }
-    unfadeTeam();
-}
-
 function updateBestWorstConsistent(league: League, member: Member): void {
     const arr = getBestLeastConsistent(league, member.teamID);
     updateMVP(arr[0]);
@@ -287,37 +262,4 @@ function updateBiggestBoom(league: League, biggestBoom: Player, teamID: number) 
 
 function updateTeamTrades(league: SleeperLeague, member: Member) {
     constructTeamPageTrades(league, member.teamID);
-}
-
-function fadeTeam(league: League, teamID: number) {
-    $("#teamPill").stop(true, true).fadeOut(200, () => {
-        updateTeamPill(league, teamID);
-    });
-}
-
-function fadeTeamWithLogic(league: League, teamID: number) {
-    if (document.getElementById(teamID + "_link").classList[1] !== "active") {
-        $("#teamPill").stop(true, true).fadeOut(200, () => {
-            updateTeamPill(league, teamID);
-        });
-    }
-}
-
-function fadeToLeaguePage() {
-    $("#teamPill").stop(true, true).fadeOut(200);
-}
-
-function unfadeTeam() {
-    $("#teamPill").stop(true, true).fadeIn(200);
-}
-
-function unfadeLeaguePage() {
-    document.getElementById("page_header").style.display = "flex";
-    document.getElementById("page_container").style.display = "inline-block";
-}
-
-function fixNoImage() {
-    this.src = "./assets/images/user1.png";
-    this.style.backgroundColor = "white";
-    this.onerror = null;
 }

@@ -1,3 +1,49 @@
+function getSleeperOptimalLineup(lineupSlots: string[][], players: SleeperPlayer[]): Array<[string[], SleeperPlayer]> {
+    const flexSlots: string[][] = [];
+    const positionSlots: string[][] = [];
+    const optimalLineup: Array<[string[], SleeperPlayer]> = [];
+    lineupSlots.forEach((acceptablePositions) => {
+        if (acceptablePositions.length > 1) {
+            flexSlots.push(acceptablePositions);
+        } else {
+            positionSlots.push(acceptablePositions);
+        }
+    });
+
+    positionSlots.forEach((positionSlot) => {
+        const validPlayers = getSleeperValidSlotPlayers(positionSlot, players, optimalLineup);
+        validPlayers.sort((p1, p2) => p2.score - p1.score);
+        optimalLineup.push([positionSlot, validPlayers[0]]);
+    });
+
+
+    return optimalLineup;
+}
+
+function getSleeperValidSlotPlayers(slotPositions: string[], players: SleeperPlayer[], optimalLineup: Array<[string[], SleeperPlayer]>): SleeperPlayer[] {
+    const validPlayers = [];
+    players.forEach((player) => {
+        if (slotPositions.includes(player.position) && !lineupHasPlayer(player, optimalLineup)) {
+            validPlayers.push(player);
+        }
+    });
+    if (validPlayers.length === 0) {
+        validPlayers.push(new EmptySleeperSlot(slotPositions));
+    }
+
+    return validPlayers;
+}
+
+function lineupHasPlayer(player: SleeperPlayer, optimalLineup: Array<[string[], SleeperPlayer]>): boolean {
+    let hasPlayer = false;
+    optimalLineup.forEach((lineupSlot) => {
+        if (lineupSlot[1].playerID === player.playerID) {
+            hasPlayer = true;
+        }
+    });
+    return hasPlayer;
+}
+
 function getOptimalLineup(activeLineupSlots: number[][], players: Player[]): Player[] {
     let optimalLineup: Player[] = [];
     activeLineupSlots.forEach((slot) => {

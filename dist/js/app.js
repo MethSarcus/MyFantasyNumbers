@@ -753,520 +753,713 @@ var Settings = (function () {
     };
     return Settings;
 }());
-var Draft = (function () {
-    function Draft(leagueID, year, draftType, pickOrder, draftPicks, auctionBudget) {
-        this.leagueID = leagueID;
-        this.year = year;
-        this.draftType = draftType;
-        this.auctionBudget = auctionBudget;
-        this.pickOrder = pickOrder;
-        this.draftPicks = draftPicks;
+function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
+    var weeks = [];
+    var weeksToGet;
+    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
+        weeksToGet = settings.currentMatchupPeriod - 1;
     }
-    return Draft;
-}());
-var DraftPick = (function () {
-    function DraftPick(teamID, overrallPickNumber, roundID, roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
-        this.teamID = teamID;
-        this.overallPickNumber = overrallPickNumber;
-        this.roundID = roundID;
-        this.roundPickNumber = roundID;
-        this.playerID = playerID;
-        this.playerAuctionCost = playerAuctionCost;
-        this.owningTeamIDs = owningTeamIDs;
-        this.nominatingTeamID = nominatingTeamID;
-        this.autoDraftTeamID = autoDraftTeamID;
+    else {
+        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
     }
-    return DraftPick;
-}());
-var EmptySlot = (function () {
-    function EmptySlot(lineupSlotID) {
-        this.eligibleSlots = Array.from(Array(100).keys());
-        this.score = 0;
-        this.firstName = "Empty";
-        this.lastName = "Slot";
-        this.actualScore = 0;
-        this.projectedScore = 0;
-        this.position = "EMPTY";
-        this.realTeamID = "-1";
-        this.jerseyNumber = -1;
-        this.espnID = "-1";
-        this.playerID = "-1";
-        this.lineupSlotID = lineupSlotID;
+    var _loop_1 = function (q) {
+        espn_request("get", {
+            path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
+        }).done(function (json) {
+            updateLoadingText("Getting week " + q + " matchups");
+            var matchups = [];
+            for (var i in Object.keys(json.schedule)) {
+                var curWeek = json.schedule[i];
+                if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod !== undefined) {
+                    var homeTeamID = curWeek.home.teamId;
+                    var homePlayers = [];
+                    for (var z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
+                        var curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
+                        var firstName = curPlayer.playerPoolEntry.player.firstName;
+                        var lastName = curPlayer.playerPoolEntry.player.lastName;
+                        var score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
+                        var projectedScore = 0;
+                        if (curPlayer.playerPoolEntry.player.stats.length === 0) {
+                            projectedScore = 0;
+                        }
+                        else if (curPlayer.playerPoolEntry.player.stats[1] === undefined) {
+                            projectedScore = 0;
+                        }
+                        else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId === 1) {
+                            projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
+                        }
+                        else {
+                            projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
+                        }
+                        var eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
+                        var position = getPosition(eligibleSlots);
+                        var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
+                        var playerID = curPlayer.playerId;
+                        var lineupSlotID = curPlayer.lineupSlotId;
+                        homePlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                    }
+                    var awayTeam = void 0;
+                    var awayteamID = -1;
+                    if (curWeek.away !== null && curWeek.away !== undefined) {
+                        var awayTeamID = curWeek.away.teamId;
+                        var awayPlayers = [];
+                        for (var l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
+                            var curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
+                            var firstName = curPlayer.playerPoolEntry.player.firstName;
+                            var lastName = curPlayer.playerPoolEntry.player.lastName;
+                            var score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
+                            var projectedScore = 0;
+                            if (curPlayer.playerPoolEntry.player.stats.length === 0) {
+                                projectedScore = 0;
+                            }
+                            else if (curPlayer.playerPoolEntry.player.stats[1] === undefined) {
+                                projectedScore = 0;
+                            }
+                            else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId === 1) {
+                                projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
+                            }
+                            else {
+                                projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
+                            }
+                            var eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
+                            var position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
+                            var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
+                            var playerID = curPlayer.playerId;
+                            var lineupSlotID = curPlayer.lineupSlotId;
+                            awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
+                        }
+                        awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
+                        awayteamID = awayTeam.teamID;
+                    }
+                    var isPlayoff = (q > settings.regularSeasonLength);
+                    var homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayteamID);
+                    var matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
+                    matchup.setPoorLineupDecisions();
+                    matchups.push(matchup);
+                }
+            }
+            var isPlayoffs = (q > settings.regularSeasonLength);
+            weeks.push(new Week(q, isPlayoffs, matchups));
+            if (weeks.length === weeksToGet) {
+                weeks.sort(function (x, y) {
+                    if (x.weekNumber < y.weekNumber) {
+                        return -1;
+                    }
+                    if (x.weekNumber > y.weekNumber) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                var league = new ESPNLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
+                league.setMemberStats(league.getSeasonPortionWeeks());
+                localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
+                league.setPage();
+            }
+        });
+    };
+    for (var q = 1; q <= weeksToGet; q++) {
+        _loop_1(q);
     }
-    return EmptySlot;
-}());
-var SEASON_PORTION;
-(function (SEASON_PORTION) {
-    SEASON_PORTION["REGULAR"] = "Regular Season";
-    SEASON_PORTION["POST"] = "Post-Season";
-    SEASON_PORTION["ALL"] = "Complete Season";
-})(SEASON_PORTION || (SEASON_PORTION = {}));
-var PLATFORM;
-(function (PLATFORM) {
-    PLATFORM[PLATFORM["SLEEPER"] = 0] = "SLEEPER";
-    PLATFORM[PLATFORM["ESPN"] = 1] = "ESPN";
-    PLATFORM[PLATFORM["NFL"] = 2] = "NFL";
-    PLATFORM[PLATFORM["YAHOO"] = 3] = "YAHOO";
-})(PLATFORM || (PLATFORM = {}));
-var DRAFT_TYPE;
-(function (DRAFT_TYPE) {
-    DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";
-    DRAFT_TYPE[DRAFT_TYPE["SNAKE"] = 1] = "SNAKE";
-    DRAFT_TYPE[DRAFT_TYPE["LINEAR"] = 2] = "LINEAR";
-})(DRAFT_TYPE || (DRAFT_TYPE = {}));
-var LEAGUE_TYPE;
-(function (LEAGUE_TYPE) {
-    LEAGUE_TYPE[LEAGUE_TYPE["DYNASTY"] = 0] = "DYNASTY";
-    LEAGUE_TYPE[LEAGUE_TYPE["REDRAFT"] = 1] = "REDRAFT";
-})(LEAGUE_TYPE || (LEAGUE_TYPE = {}));
-var SCORING_TYPE;
-(function (SCORING_TYPE) {
-    SCORING_TYPE[SCORING_TYPE["STANDARD"] = 0] = "STANDARD";
-    SCORING_TYPE[SCORING_TYPE["HALF_PPR"] = 1] = "HALF_PPR";
-    SCORING_TYPE[SCORING_TYPE["FULL_PPR"] = 2] = "FULL_PPR";
-})(SCORING_TYPE || (SCORING_TYPE = {}));
-var POSITION;
-(function (POSITION) {
-    POSITION["QB"] = "QB";
-    POSITION["RB"] = "RB";
-    POSITION["WR"] = "WR";
-    POSITION["TE"] = "TE";
-    POSITION["K"] = "K";
-    POSITION["DEF"] = "DEF";
-    POSITION["DL"] = "DL";
-    POSITION["DT"] = "DT";
-    POSITION["LB"] = "LB";
-    POSITION["DB"] = "DB";
-    POSITION["DE"] = "DE";
-    POSITION["DP"] = "DP";
-    POSITION["LT"] = "LT";
-    POSITION["CB"] = "CB";
-    POSITION["S"] = "S";
-    POSITION["P"] = "P";
-    POSITION["HC"] = "HC";
-})(POSITION || (POSITION = {}));
-var LeagueStats = (function () {
-    function LeagueStats() {
-        this.leaguePF = 0;
-        this.leaguePP = 0;
-        this.leaguePositionalStats = new PositionalStats();
+}
+function getESPNSettings(leagueID, seasonID) {
+    updateLoadingText("Getting Settings");
+    espn_request("get", {
+        path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mSettings"
+    }).done(function (json) {
+        if (json.hasOwnProperty("messages") && json.messages[0] === "You are not authorized to view this League.") {
+            alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
+        }
+        if (json.hasOwnProperty("details") && json.details[0].message === "You are not authorized to view this League.") {
+            alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
+        }
+        var regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
+        var divisions = json.settings.scheduleSettings.divisions;
+        var draftOrder = json.settings.draftSettings.pickOrder;
+        var scoringType = json.settings.scoringSettings.playerRankType;
+        var totalMatchupCount = json.status.finalScoringPeriod;
+        var currentMatchupPeriod = json.status.currentMatchupPeriod;
+        var leagueSeasons = json.status.previousSeasons;
+        var isActive = json.status.isActive;
+        var playoffLength = totalMatchupCount - regularSeasonMatchupCount;
+        var DRAFT_TYPE = json.settings.draftSettings.type;
+        var lineupSlots = Object.entries(json.settings.rosterSettings.lineupSlotCounts);
+        var lineup = lineupSlots.map(function (slot) {
+            return [parseInt(slot[0].toString(), 10), parseInt(slot[1].toString(), 10)];
+        }).filter(function (slot) {
+            return slot[1] !== 0;
+        });
+        leagueSeasons.push(seasonID);
+        var leagueName = json.settings.name;
+        var activeLineupSlots = lineup.filter(function (slot) {
+            return slot[0] !== 21 && slot[0] !== 20;
+        });
+        var settings = new Settings(0, activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
+        getESPNMembers(settings, leagueID, seasonID, leagueName);
+    });
+}
+function getESPNMembers(settings, leagueID, seasonID, leagueName) {
+    updateLoadingText("Getting Members");
+    espn_request("get", {
+        path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mTeam"
+    }).done(function (json) {
+        var members = [];
+        var teams = json.teams;
+        var seasonLength = settings.regularSeasonLength + settings.playoffLength;
+        for (var i in Object.keys(json.members)) {
+            var member = json.members[i];
+            var firstName = member.firstName;
+            var lastName = member.lastName;
+            var memberID = member.id.toString();
+            var notificationSettings = member.notificationSettings;
+            for (var x in Object.keys(teams)) {
+                if (teams[x].primaryOwner === memberID) {
+                    var curTeam = teams[x];
+                    var location_1 = curTeam.location;
+                    var nickname = curTeam.nickname;
+                    var teamAbbrev = curTeam.abbrev;
+                    var curProjectedRank = curTeam.currentProjectedRank;
+                    var draftDayProjectedRank = curTeam.draftDayProjectedRank;
+                    var divisionID = curTeam.divisionId;
+                    var transactions = curTeam.transactionCounter;
+                    var teamID = parseInt(curTeam.id, 10);
+                    var logo = curTeam.logo;
+                    var finalStanding = curTeam.rankCalculatedFinal;
+                    members.push(new ESPNMember(memberID, firstName, lastName, location_1, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
+                }
+            }
+        }
+        getESPNMatchups(settings, members, leagueID, seasonID, leagueName);
+    });
+}
+function espn_request(t, d) {
+    return $.ajax({
+        type: t,
+        url: "./proxies/espn_proxy.php",
+        dataType: "json",
+        data: d,
+        cache: false,
+        async: true,
+    });
+}
+function getSleeperLeagueSettings(leagueID, seasonID) {
+    sleeper_request("get", {
+        path: "league/" + leagueID.toString()
+    }).done(function (json) {
+        if (json.season === "2020") {
+            getSleeperLeagueSettings(json.previous_league_id, seasonID);
+        }
+        else {
+            if (json == null) {
+                alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
+                location.reload();
+                return;
+            }
+            console.log(json);
+            var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
+            var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
+            var leagueName = json.name;
+            var leagueAvatar = json.avatar;
+            var draftId = json.draft_id;
+            var playoffStartWeek = json.settings.playoff_week_start;
+            var currentMatchupPeriod = json.settings.last_scored_leg;
+            var previousLeagueId = json.previous_league_id;
+            var numDivisions = json.settings.divisions;
+            var startWeek = json.settings.start_week;
+            var isActive = (json.status === "in_season" || json.status === "post_season");
+            var scoringSettings = json.scoring_settings;
+            var divisions = [];
+            if (json.metadata) {
+                for (var i = 0; i < numDivisions; i++) {
+                    divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
+                }
+            }
+            var settings = new Settings(startWeek, rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
+            updateLoadingText("Getting Members");
+            getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, json.settings.last_scored_leg);
+        }
+    });
+}
+function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
+    sleeper_request("get", {
+        path: "league/" + leagueID.toString() + "/users"
+    }).done(function (json) {
+        var members = [];
+        json.forEach(function (member) {
+            var memberName = member.display_name;
+            var memberID = member.user_id;
+            var teamName = member.metadata.team_name;
+            var teamAvatar = member.avatar;
+            members.push(new SleeperMember(memberID, memberName, teamName, teamAvatar));
+        });
+        updateLoadingText("Getting Rosters");
+        getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg);
+    });
+}
+function getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
+    sleeper_request("get", {
+        path: "league/" + leagueID.toString() + "/rosters/"
+    }).done(function (json) {
+        json.forEach(function (roster) {
+            var teamID = parseInt(roster.roster_id, 10);
+            var metadata = roster.metadata;
+            var curRoster = roster.players;
+            var reserve = roster.reserve;
+            var taxi = roster.taxi;
+            var wins = roster.settings.wins;
+            var totalMoves = roster.settings.total_moves;
+            var rosterOwnerID = roster.owner_id.toString();
+            var coOwners = roster.co_owners;
+            members.forEach(function (member) {
+                var totalRoster = [];
+                totalRoster = curRoster;
+                if (member.memberID === rosterOwnerID) {
+                    member.teamID = teamID;
+                    member.stats = new Stats(0);
+                    member.currentRosterIDs = totalRoster;
+                    if (metadata != null) {
+                        for (var _i = 0, _a = Object.entries(metadata); _i < _a.length; _i++) {
+                            var _b = _a[_i], key = _b[0], value = _b[1];
+                            member.rosterNicknameMap.set(key, value);
+                        }
+                    }
+                }
+            });
+        });
+        updateLoadingText("Getting Matchups");
+        getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID !== undefined; }), settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg);
+    });
+}
+function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
+    var promises = [];
+    for (var i = settings.startWeek; i <= lastScoredLeg; i++) {
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
     }
-    return LeagueStats;
-}());
-var Matchup = (function () {
-    function Matchup(home, away, weekNumber, isPlayoff) {
-        this.home = home;
-        this.away = away;
-        this.weekNumber = weekNumber;
-        this.isPlayoffs = isPlayoff;
-        this.setMatchupStats();
-    }
-    Matchup.prototype.setMatchupStats = function () {
-        this.isTie = false;
-        if (this.away === undefined || this.away === null) {
-            this.byeWeek = true;
-            this.isUpset = false;
-            this.isTie = false;
-        }
-        else {
-            if (this.home.projectedScore > this.away.projectedScore) {
-                this.projectedWinner = this.home.teamID;
-            }
-            else {
-                this.projectedWinner = this.away.teamID;
-            }
-            this.projectedMOV = (Math.abs(this.home.projectedScore - this.away.projectedScore));
-            if (this.home.score > this.away.score) {
-                this.winner = this.home.teamID;
-            }
-            else if (this.home.score < this.away.score) {
-                this.winner = this.away.teamID;
-            }
-            else {
-                this.isTie = true;
-                this.isUpset = false;
-            }
-            this.marginOfVictory = (Math.abs(this.home.score - this.away.score));
-            this.byeWeek = false;
-            if (this.projectedWinner !== this.winner) {
-                this.isUpset = true;
-            }
-            else {
-                this.isUpset = false;
-            }
-        }
-    };
-    Matchup.prototype.getWinningTeam = function () {
-        if (this.byeWeek) {
-            return null;
-        }
-        else if (this.home.score > this.away.score) {
-            return this.home;
-        }
-        else {
-            return this.away;
-        }
-    };
-    Matchup.prototype.getHighestScoringTeam = function () {
-        if (this.byeWeek) {
-            return this.home;
-        }
-        else if (this.home.score > this.away.score) {
-            return this.home;
-        }
-        else {
-            return this.away;
-        }
-    };
-    Matchup.prototype.getLowestScoringTeam = function () {
-        if (this.byeWeek) {
-            return this.home;
-        }
-        else if (this.home.score > this.away.score) {
-            return this.away;
-        }
-        else {
-            return this.home;
-        }
-    };
-    Matchup.prototype.getLosingTeam = function () {
-        if (this.byeWeek) {
-            return null;
-        }
-        else if (this.home.score < this.away.score) {
-            return this.home;
-        }
-        else {
-            return this.away;
-        }
-    };
-    Matchup.prototype.hasTeam = function (teamID) {
-        if (this.byeWeek !== true) {
-            if (this.home.teamID === teamID || this.away.teamID === teamID) {
-                return true;
-            }
-        }
-        else {
-            if (this.home.teamID === teamID) {
-                return true;
-            }
-        }
-    };
-    Matchup.prototype.getTeam = function (teamID) {
-        if (this.home.teamID === teamID) {
-            return this.home;
-        }
-        else if (this.away.teamID === teamID) {
-            return this.away;
-        }
-    };
-    Matchup.prototype.getOpponent = function (teamID) {
-        if (this.home.teamID === teamID && this.byeWeek === false) {
-            return this.away;
-        }
-        else if (this.away.teamID === teamID) {
-            return this.home;
-        }
-        else {
-            return null;
-        }
-    };
-    Matchup.prototype.gutHadImpact = function (teamID) {
-        var team = this.getTeam(teamID);
-        if (this.marginOfVictory > Math.abs(team.gutDifference)) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    };
-    Matchup.prototype.setPoorLineupDecisions = function () {
-        var _this = this;
-        var whiffedChoices = 0;
-        var team = this.home;
-        if (!this.byeWeek) {
-            if (this.home.score > this.away.score) {
-                team = this.away;
-            }
-            team.lineup.forEach(function (startingPlayer) {
-                team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(function (benchedPlayer) {
-                    var diff = benchedPlayer.score - startingPlayer.score;
-                    if (diff > _this.marginOfVictory) {
-                        whiffedChoices += 1;
+    updateLoadingText("Getting weekly stats");
+    var weekCounter = settings.startWeek;
+    var Weeks = [];
+    Promise.all(promises).then(function (weeks) {
+        weeks.forEach(function (week) {
+            var isPlayoffs = (weekCounter >= settings.regularSeasonLength);
+            var weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, lineupOrder);
+            Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
+            weekCounter += 1;
+        });
+        getSleeperWeekStats(settings.startWeek, lastScoredLeg).then(function (result) {
+            var _loop_2 = function (y) {
+                Weeks[y].matchups.forEach(function (matchup) {
+                    matchup.home.lineup.forEach(function (player) {
+                        result[y].calculatePlayerScore(scoringSettings, player);
+                        result[y].calculateProjectedPlayerScore(scoringSettings, player);
+                    });
+                    if (matchup.home.score === null) {
+                        matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
+                        matchup.setMatchupStats();
+                    }
+                    matchup.home.bench.forEach(function (player) {
+                        result[y].calculatePlayerScore(scoringSettings, player);
+                        result[y].calculateProjectedPlayerScore(scoringSettings, player);
+                    });
+                    if (!matchup.byeWeek) {
+                        matchup.away.lineup.forEach(function (player) {
+                            result[y].calculatePlayerScore(scoringSettings, player);
+                            result[y].calculateProjectedPlayerScore(scoringSettings, player);
+                        });
+                        if (matchup.away.score === null) {
+                            matchup.away.score = matchup.away.getTeamScore(matchup.away.lineup);
+                            matchup.setMatchupStats();
+                        }
+                        matchup.away.bench.forEach(function (player) {
+                            result[y].calculatePlayerScore(scoringSettings, player);
+                            result[y].calculateProjectedPlayerScore(scoringSettings, player);
+                        });
                     }
                 });
-            });
-            this.loserPotentialWinningSingleMoves = whiffedChoices;
-            if (this.loserPotentialWinningSingleMoves > 0) {
-                this.withinSingleMoveOfWinning = true;
+            };
+            for (var y = 0; y < result.length; y++) {
+                _loop_2(y);
             }
-            else {
-                this.withinSingleMoveOfWinning = false;
-            }
+            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName);
+        });
+    });
+}
+function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder) {
+    var allTeams = (teams).map(function (team) {
+        return new SleeperTeam(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, lineupOrder);
+    });
+    var matchups = [];
+    var _loop_3 = function (i) {
+        var curTeams = allTeams.filter(function (team) {
+            return team.matchupID === i;
+        });
+        if (curTeams.length === 1) {
+            matchups.push(new Matchup(curTeams[0], null, weekNumber, isPlayoff));
+        }
+        if (curTeams.length === 2) {
+            matchups.push(new Matchup(curTeams[0], curTeams[1], weekNumber, isPlayoff));
         }
     };
-    return Matchup;
-}());
-var PositionalStats = (function () {
-    function PositionalStats() {
-        this.qbPoints = 0;
-        this.rbPoints = 0;
-        this.wrPoints = 0;
-        this.tePoints = 0;
-        this.kPoints = 0;
-        this.defPoints = 0;
-        this.qbPotentialPoints = 0;
-        this.rbPotentialPoints = 0;
-        this.wrPotentialPoints = 0;
-        this.tePotentialPoints = 0;
-        this.kPotentialPoints = 0;
-        this.defPotentialPoints = 0;
+    for (var i = 0; i <= (teams.length / 2); i++) {
+        _loop_3(i);
     }
-    PositionalStats.prototype.getPositionalScores = function () {
-        return [this.qbPoints, this.rbPoints, this.wrPoints, this.tePoints, this.kPoints, this.defPoints];
+    var byeWeekTeams = allTeams.filter(function (team) {
+        return team.matchupID === null;
+    });
+    byeWeekTeams.forEach(function (team) {
+        matchups.push(new Matchup(team, null, weekNumber, isPlayoff));
+    });
+    return matchups;
+}
+function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
+    updateLoadingText("Getting Player Stats");
+    makeRequest("./assets/player_library.json").then(function (result) {
+        var lib = result.response;
+        weeks.forEach(function (week) {
+            week.matchups.forEach(function (matchup) {
+                if (matchup.home.score === null) {
+                    matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
+                    matchup.setMatchupStats();
+                }
+                if (!matchup.byeWeek) {
+                    if (matchup.away.score === null) {
+                        matchup.away.score = matchup.home.getTeamScore(matchup.away.lineup);
+                        matchup.setMatchupStats();
+                    }
+                }
+                matchup.home.lineup.forEach(function (player) {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.bench.forEach(function (player) {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.IR.forEach(function (player) {
+                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                });
+                matchup.home.setTeamMetrics(activeLineupSlots);
+                if (!matchup.byeWeek) {
+                    matchup.away.lineup.forEach(function (player) {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.bench.forEach(function (player) {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.IR.forEach(function (player) {
+                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
+                    });
+                    matchup.away.setTeamMetrics(activeLineupSlots);
+                    matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
+                    matchup.setPoorLineupDecisions();
+                }
+            });
+        });
+        members.forEach(function (member) {
+            member.setRosterAttributes(lib);
+        });
+        var league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
+        updateLoadingText("Setting Page");
+        league.setMemberStats(league.getSeasonPortionWeeks());
+        getSleeperTrades(league, lib);
+    });
+}
+function getSleeperTrades(league, lib) {
+    var promises = [];
+    for (var i = 1; i <= league.settings.currentMatchupPeriod - 1; i++) {
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
+    }
+    updateLoadingText("Getting Transactions");
+    Promise.all(promises).then(function (transactionArray) {
+        transactionArray.map(function (it) { return it.response; }).forEach(function (week) {
+            week.filter(function (it) { return it.type === "trade" && it.status === "complete"; }).forEach(function (trade) {
+                league.trades.push(new SleeperTrade(trade, lib));
+            });
+        });
+        league.setPage();
+    });
+}
+function makeRequest(url) {
+    var request = new XMLHttpRequest();
+    request.responseType = "json";
+    return new Promise(function (resolve, reject) {
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) {
+                return;
+            }
+            if (request.status >= 200 && request.status < 300) {
+                resolve(request);
+            }
+            else {
+                reject({
+                    status: request.status,
+                    statusText: request.statusText,
+                });
+            }
+        };
+        request.open("GET", url, true);
+        request.send();
+    });
+}
+function sleeper_request(t, d) {
+    return $.ajax({
+        type: t,
+        url: "./proxies/sleeper_proxy.php",
+        dataType: "json",
+        data: d,
+        cache: false,
+        async: true,
+    });
+}
+var TransactionMetadata;
+(function (TransactionMetadata) {
+    TransactionMetadata["SUCCESS_PLAYER_CLAIMED"] = "Your waiver claim was processed successfully!";
+    TransactionMetadata["FAILED_CLAIMED_BY_OTHER_OWNER"] = "This player was claimed by another owner.";
+    TransactionMetadata["FAILED_TOO_MANY_PLAYERS"] = "Unfortunately, your roster will have too many players after this transaction.";
+})(TransactionMetadata || (TransactionMetadata = {}));
+var ESPNLeague = (function (_super) {
+    __extends(ESPNLeague, _super);
+    function ESPNLeague(id, season, weeks, members, settings, leagueName, leaguePlatform) {
+        return _super.call(this, id, season, weeks, members, settings, leagueName, leaguePlatform) || this;
+    }
+    ESPNLeague.prototype.setPage = function () {
+        _super.prototype.setPage.call(this);
+        enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod > this.settings.regularSeasonLength);
+        transitionToLeaguePage();
     };
-    PositionalStats.prototype.getPositionalPotentialScores = function () {
-        return [this.qbPoints, this.rbPoints, this.wrPoints, this.tePoints, this.kPoints, this.defPoints];
+    ESPNLeague.convertESPNFromJson = function (object) {
+        var members = [];
+        var weeks = [];
+        var jsonSettings = object.settings;
+        var settings = new Settings(0, jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType, jsonSettings.currentMatchupPeriod, jsonSettings.isActive, jsonSettings.yearsActive);
+        object.weeks.forEach(function (week) {
+            var matchups = [];
+            week.matchups.forEach(function (matchup) {
+                var homeRoster = [];
+                matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(function (player) {
+                    homeRoster.push(new ESPNPlayer(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                });
+                var awayTeamId = -1;
+                var away;
+                if (!matchup.byeWeek) {
+                    var awayRoster_1 = [];
+                    awayTeamId = matchup.away.teamID;
+                    matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(function (player) {
+                        awayRoster_1.push(new ESPNPlayer(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
+                    });
+                    away = new ESPNTeam(matchup.away.teamID, awayRoster_1, object.settings.activeLineupSlots, matchup.home.teamID);
+                }
+                var home = new ESPNTeam(matchup.home.teamID, homeRoster, object.settings.activeLineupSlots, awayTeamId);
+                var recreatedMatchup = new Matchup(home, away, week.weekNumber, week.isPlayoffs);
+                recreatedMatchup.setPoorLineupDecisions();
+                matchups.push(recreatedMatchup);
+            });
+            weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
+        });
+        object.members.forEach(function (member) {
+            members.push(new ESPNMember(member.memberID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
+        });
+        var league = new ESPNLeague(object.id, object.season, weeks, members, settings, object.leagueName, object.leaguePlatform);
+        league.setMemberStats(league.getSeasonPortionWeeks());
+        league.setPowerRanks();
+        return league;
     };
-    return PositionalStats;
-}());
-var PowerStats = (function () {
-    function PowerStats(teamID, weekNumber, pf, pp, projected) {
+    return ESPNLeague;
+}(League));
+var ESPNMember = (function () {
+    function ESPNMember(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
+        this.memberID = memberID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.teamLocation = teamLocation;
+        this.teamNickname = teamNickname;
+        this.teamAbbrev = teamAbbrev;
+        this.division = division;
         this.teamID = teamID;
+        this.logoURL = logoURL;
+        this.transactions = transactions;
+        this.stats = stats;
+    }
+    ESPNMember.prototype.setAdvancedStats = function (weeks) {
+        var _this = this;
+        var scores = [];
+        weeks.forEach(function (week) {
+            scores.push(week.getTeam(_this.teamID).score);
+        });
+        this.stats.standardDeviation = calcStandardDeviation(scores);
+        this.stats.weeklyAverage = getMean(scores);
+    };
+    ESPNMember.prototype.teamNameToString = function () {
+        return this.teamLocation + " " + this.teamNickname;
+    };
+    ESPNMember.prototype.ownerToString = function () {
+        return this.firstName + " " + this.lastName;
+    };
+    ESPNMember.prototype.recordToString = function () {
+        if (this.stats.ties !== 0) {
+            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
+        }
+        else {
+            return this.stats.wins + "-" + this.stats.losses;
+        }
+    };
+    ESPNMember.prototype.rankToString = function () {
+        return ordinal_suffix_of(this.stats.rank);
+    };
+    ESPNMember.prototype.finishToString = function () {
+        return ordinal_suffix_of(this.stats.finalStanding);
+    };
+    ESPNMember.prototype.powerRecordToString = function () {
+        return this.stats.powerWins + "-" + this.stats.powerLosses;
+    };
+    ESPNMember.prototype.potentialPowerRecordToString = function () {
+        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
+    };
+    return ESPNMember;
+}());
+var ESPNPlayer = (function () {
+    function ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
+        this.firstName = firstName;
+        if (lastName === "D/ST") {
+            this.lastName = "DEF";
+        }
+        else {
+            this.lastName = lastName;
+        }
+        this.eligibleSlots = eligibleSlots;
+        this.score = score;
+        this.projectedScore = projectedScore;
+        this.position = position;
+        this.realTeamID = realTeamID;
+        this.playerID = playerID;
+        this.lineupSlotID = lineupSlotID;
         this.weekNumber = weekNumber;
-        this.wins = 0;
-        this.losses = 0;
-        this.ties = 0;
-        this.pf = pf;
-        this.projected = projected;
-        this.pp = pp;
+        this.espnID = playerID;
     }
-    return PowerStats;
+    ESPNPlayer.prototype.isEligible = function (slot) {
+        var isEligible = false;
+        this.eligibleSlots.forEach(function (eligibleSlot) {
+            if (eligibleSlot === slot) {
+                isEligible = true;
+            }
+        });
+        return isEligible;
+    };
+    return ESPNPlayer;
 }());
-var SeasonPlayer = (function () {
-    function SeasonPlayer(player, platform) {
-        this.firstName = player.firstName;
-        this.lastName = player.lastName;
-        this.eligibleSlots = player.eligibleSlots;
-        this.seasonScore = player.score;
-        this.projectedSeasonScore = player.projectedScore;
-        this.position = player.position;
-        this.realTeamID = player.realTeamID;
-        this.playerID = player.playerID;
-        this.espnID = player.espnID;
-        this.weeksPlayed = 1;
-        this.averageScore = player.score;
-        this.scores = [[player.score, player.weekNumber]];
-        if (platform === PLATFORM.SLEEPER) {
-            this.pictureID = player.espnID;
-        }
-        else {
-            this.pictureID = player.espnID;
-        }
-        this.setPictureURL();
-    }
-    SeasonPlayer.prototype.addPerformance = function (player) {
-        this.weeksPlayed += 1;
-        this.seasonScore += player.score;
-        this.projectedSeasonScore += player.projectedScore;
-        this.averageScore = roundToHundred(this.seasonScore / this.weeksPlayed);
-        this.scores.push([player.score, player.weekNumber]);
-    };
-    SeasonPlayer.prototype.getScores = function () {
-        var points = [];
-        this.scores.forEach(function (tup) {
-            points.push(tup[0]);
-        });
-        return points;
-    };
-    SeasonPlayer.prototype.isEligible = function (slot) {
-        return this.eligibleSlots.includes(slot);
-    };
-    SeasonPlayer.prototype.setPictureURL = function () {
-        if (this.position === "D/ST" || this.position === "DEF") {
-            this.pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
-        }
-        else {
-            this.pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
-        }
-    };
-    return SeasonPlayer;
-}());
-var Stats = (function () {
-    function Stats(finalStanding) {
-        this.finalStanding = finalStanding;
-        this.wins = 0;
-        this.losses = 0;
-        this.ties = 0;
-        this.powerWins = 0;
-        this.powerLosses = 0;
-        this.powerTies = 0;
-        this.potentialPowerWins = 0;
-        this.potentialPowerLosses = 0;
-        this.potentialPowerTies = 0;
-        this.pf = 0;
-        this.pa = 0;
-        this.pp = 0;
-        this.OPSLAP = 0;
-        this.choicesThatCouldHaveWonMatchup = 0;
-        this.gameLostDueToSingleChoice = 0;
-        this.gutPlayersPlayed = 0;
-        this.gutPoints = 0;
-        this.gutWins = 0;
-        this.gutLosses = 0;
-        this.rank = 0;
-        this.averageMOD = 0;
-        this.averageMOV = 0;
-    }
-    Stats.prototype.getWinPct = function () {
-        if (this.wins === 0) {
-            return 0.00;
-        }
-        else {
-            return roundToHundred(this.wins / (this.wins + this.losses + this.ties));
-        }
-    };
-    Stats.prototype.getPowerWinPct = function () {
-        if (this.powerWins === 0) {
-            return 0.00;
-        }
-        else {
-            return roundToHundred(this.powerWins / (this.powerWins + this.powerLosses + this.powerTies));
-        }
-    };
-    Stats.prototype.getPotentialPowerWinPct = function () {
-        if (this.potentialPowerWins === 0) {
-            return 0.00;
-        }
-        else {
-            return roundToHundred(this.potentialPowerWins / (this.potentialPowerWins + this.potentialPowerLosses + this.potentialPowerTies));
-        }
-    };
-    Stats.prototype.roundStats = function () {
-        this.pf = roundToHundred(this.pf);
-        this.pa = roundToHundred(this.pa);
-        this.pp = roundToHundred(this.pp);
-    };
-    Stats.prototype.getEfficiency = function () {
-        return this.pf / this.pp;
-    };
-    Stats.prototype.getAverageGutPoints = function () {
-        if (this.gutPlayersPlayed === 0 || this.gutPoints === 0) {
-            return 0;
-        }
-        else {
-            return roundToHundred(this.gutPoints / this.gutPlayersPlayed);
-        }
-    };
-    return Stats;
-}());
-var Week = (function () {
-    function Week(weekNumber, isPlayoffs, matchups) {
-        this.weekNumber = weekNumber;
-        this.isPlayoffs = isPlayoffs;
-        this.matchups = matchups;
-    }
-    Week.prototype.getTeam = function (teamID) {
-        var team;
-        this.matchups.forEach(function (matchup) {
-            if (matchup.hasTeam(teamID)) {
-                team = matchup.getTeam(teamID);
+var ESPNTeam = (function () {
+    function ESPNTeam(teamID, players, activeLineupSlots, opponentID) {
+        var _this = this;
+        this.lineup = [];
+        this.bench = [];
+        this.IR = [];
+        this.opponentID = opponentID;
+        players.forEach(function (player) {
+            if (player.lineupSlotID === 21) {
+                _this.IR.push(player);
             }
-        });
-        return team;
-    };
-    Week.prototype.getTeamScoreFinish = function (teamID) {
-        var finish = 1;
-        var score = this.getTeam(teamID).score;
-        this.matchups.forEach(function (matchup) {
-            if (matchup.home.teamID !== teamID) {
-                if (matchup.home.score > score) {
-                    finish += 1;
-                }
-            }
-            if (!matchup.byeWeek) {
-                if (matchup.away.score > score && matchup.away.teamID !== teamID) {
-                    finish += 1;
-                }
-            }
-        });
-        return finish;
-    };
-    Week.prototype.getTeamMatchup = function (teamID) {
-        var match;
-        this.matchups.forEach(function (matchup) {
-            if (matchup.hasTeam(teamID)) {
-                match = matchup;
-            }
-        });
-        return match;
-    };
-    Week.prototype.getWeekAverage = function () {
-        var weekScore = 0;
-        var numMatches = 0;
-        this.matchups.forEach(function (matchup) {
-            if (matchup.byeWeek) {
-                weekScore += matchup.home.score;
-                numMatches += 1;
+            else if (player.lineupSlotID === 20) {
+                _this.bench.push(player);
             }
             else {
-                weekScore += matchup.home.score + matchup.away.score;
-                numMatches += 2;
+                _this.lineup.push(player);
             }
         });
-        return roundToHundred(weekScore / numMatches);
-    };
-    Week.prototype.getBestPositionPlayer = function (position) {
-        var positionPlayers = [];
-        this.matchups.forEach(function (matchup) {
-            positionPlayers = positionPlayers.concat(matchup.home.getPositionalPlayers(position));
-            if (!matchup.byeWeek) {
-                positionPlayers = positionPlayers.concat(matchup.away.getPositionalPlayers(position));
-            }
-        });
-        var bestPlayer = positionPlayers[0];
-        positionPlayers.forEach(function (player) {
-            if (player.score > bestPlayer.score) {
-                bestPlayer = player;
-            }
-        });
-        return bestPlayer;
-    };
-    return Week;
-}());
-var WeeklyPowerRanks = (function () {
-    function WeeklyPowerRanks(weekNumber, isPlayoffs) {
-        this.powerStats = new Map();
-        this.weekNumber = weekNumber;
-        this.isPlayoffs = isPlayoffs;
+        this.teamID = teamID;
+        this.score = this.getTeamScore(this.lineup);
+        this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
+        this.projectedScore = this.getProjectedScore(this.lineup);
+        this.projectedBestLineupPoints = this.getTeamScore(getOptimalProjectedLineup(activeLineupSlots, players));
+        var gutArray = this.getGutPoints(activeLineupSlots);
+        this.gutDifference = gutArray[0];
+        this.gutPlayers = gutArray[1];
     }
-    WeeklyPowerRanks.prototype.addMatchup = function (matchup) {
-        var homeTeam = matchup.home;
-        this.powerStats.set(homeTeam.teamID, new PowerStats(homeTeam.teamID, matchup.weekNumber, homeTeam.score, homeTeam.projectedScore, homeTeam.potentialPoints));
-        if (!matchup.byeWeek) {
-            var awayTeam = matchup.away;
-            this.powerStats.set(awayTeam.teamID, new PowerStats(awayTeam.teamID, matchup.weekNumber, awayTeam.score, awayTeam.projectedScore, awayTeam.potentialPoints));
+    ESPNTeam.prototype.getTeamScore = function (players) {
+        var score = 0;
+        for (var i in players) {
+            if (players[i].score !== null && players[i].score !== undefined) {
+                score += players[i].score;
+            }
         }
+        return score;
     };
-    WeeklyPowerRanks.prototype.setRanks = function () {
-        var _this = this;
-        this.powerStats.forEach(function (powerStat) {
-            _this.powerStats.forEach(function (innerStat) {
-                if (powerStat.teamID !== innerStat.teamID) {
-                    if (powerStat.pf > innerStat.pf) {
-                        powerStat.wins += 1;
-                    }
-                    else if (powerStat.pf < innerStat.pf) {
-                        powerStat.losses += 1;
-                    }
-                    else {
-                        powerStat.ties += 1;
-                    }
-                }
-            });
+    ESPNTeam.prototype.getProjectedScore = function (players) {
+        var projectedScore = 0;
+        for (var i in players) {
+            if (players[i].projectedScore !== null && players[i].projectedScore !== undefined) {
+                projectedScore += players[i].projectedScore;
+            }
+        }
+        return projectedScore;
+    };
+    ESPNTeam.prototype.getMVP = function () {
+        var mvp = this.lineup[0];
+        var mvpScore = 0;
+        this.lineup.forEach(function (player) {
+            if (player.score > mvpScore) {
+                mvpScore = player.score;
+                mvp = player;
+            }
         });
+        return mvp;
     };
-    return WeeklyPowerRanks;
+    ESPNTeam.prototype.getLVP = function () {
+        var lvp = this.lineup[0];
+        var lvpScore = this.lineup[0].score;
+        this.lineup.forEach(function (player) {
+            if (player.score > lvpScore) {
+                lvpScore = player.score;
+                lvp = player;
+            }
+        });
+        return lvp;
+    };
+    ESPNTeam.prototype.getPositionalPlayers = function (position) {
+        var players = this.lineup;
+        var positionPlayers = [];
+        players.forEach(function (player) {
+            if (player.position === position) {
+                positionPlayers.push(player);
+            }
+        });
+        return positionPlayers;
+    };
+    ESPNTeam.prototype.getEligibleSlotPlayers = function (slot) {
+        var players = this.lineup.concat(this.bench, this.IR);
+        var eligiblePlayers = players.filter(function (it) {
+            return it.isEligible(slot) === true;
+        });
+        return eligiblePlayers;
+    };
+    ESPNTeam.prototype.getEligibleSlotBenchPlayers = function (slot) {
+        var players = this.bench.concat(this.IR);
+        var eligiblePlayers = players.filter(function (it) {
+            return it.isEligible(slot) === true;
+        });
+        return eligiblePlayers;
+    };
+    ESPNTeam.prototype.getGutPoints = function (activeLineupSlots) {
+        var players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
+        var gutPlayers = players[0];
+        var satPlayers = players[1];
+        var diff = this.getTeamScore(gutPlayers) - this.getTeamScore(satPlayers);
+        var playerNum = gutPlayers.length;
+        return [diff, playerNum];
+    };
+    ESPNTeam.prototype.getProjectedLinupPlayerDifference = function (activeLineupSlots) {
+        var _this = this;
+        var gutPlayers = [];
+        var satPlayers = [];
+        var projectedLineup = getOptimalProjectedLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR));
+        this.lineup.forEach(function (player) {
+            if (!includesPlayer(player, projectedLineup)) {
+                gutPlayers.push(player);
+            }
+        });
+        projectedLineup.forEach(function (player) {
+            if (!includesPlayer(player, _this.lineup)) {
+                satPlayers.push(player);
+            }
+        });
+        return [gutPlayers, satPlayers];
+    };
+    return ESPNTeam;
 }());
 function updateLoadingText(labelText) {
     var label = document.getElementById("loading_text");
@@ -1283,32 +1476,6 @@ function initCube() {
     cube.style.display = "inline-block";
     updateLoadingText("Getting Settings");
 }
-function main() {
-    localStorage.clear();
-    var sleeperButton = document.getElementById("platform_input_0");
-    var espnButton = document.getElementById("platform_input_1");
-    var leagueIDInput = document.getElementById("league_id_input");
-    var seasonIDSelector = document.getElementById("select_year_input");
-    var leagueID = leagueIDInput.value.replace(/\D/g, "");
-    var seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
-    if (leagueID !== undefined && seasonID !== undefined) {
-        initCube();
-        if (sleeperButton.checked) {
-            getSleeperLeagueSettings(leagueID, seasonID);
-        }
-        else if (espnButton.checked) {
-            if (localStorage.getItem(leagueID + seasonID)) {
-                var jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
-                var restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
-                restoredLeague.setPage();
-            }
-            else {
-                localStorage.clear();
-                getESPNSettings(leagueID, seasonID);
-            }
-        }
-    }
-}
 function transitionToLeaguePage() {
     var particles = document.getElementById("particles-js");
     particles.style.display = "none";
@@ -1317,40 +1484,66 @@ function transitionToLeaguePage() {
         unfadeLeaguePage();
     });
 }
-function selectedPlatform(button) {
-    var seasonIDSelector = document.getElementById("select_year_input");
-    var children = seasonIDSelector.childNodes;
-    if (button.value === "espn") {
-        children.forEach(function (option) {
-            if (option.value !== "2019") {
-                option.disabled = true;
-            }
-            else {
-                option.disabled = false;
-                option.setAttribute("checked", "checked");
-                option.setAttribute("selected", "true");
-            }
-        });
-    }
-    else {
-        children.forEach(function (option) {
-            option.disabled = false;
+function fadeTeam(league, teamID) {
+    $("#teamPill").stop(true, true).fadeOut(200, function () {
+        updateTeamPill(league, teamID);
+    });
+}
+function fadeTeamWithLogic(league, teamID) {
+    if (document.getElementById(teamID + "_link").classList[1] !== "active") {
+        $("#teamPill").stop(true, true).fadeOut(200, function () {
+            updateTeamPill(league, teamID);
         });
     }
 }
-function enableButtons() {
-    document.getElementById("league_name_header").onclick = function () {
-        $(".nav-link").removeClass("active");
-        fadeToLeaguePage();
-    };
-    document.getElementById("pwrRankButton").onclick = function () {
-        $(".nav-link").removeClass("active");
-        fadeToLeaguePage();
-    };
-    document.getElementById("stats_button").onclick = function () {
-        $(".nav-link").removeClass("active");
-        fadeToLeaguePage();
-    };
+function fadeToLeaguePage() {
+    $("#teamPill").stop(true, true).fadeOut(200);
+}
+function unfadeTeam() {
+    $("#teamPill").stop(true, true).fadeIn(200);
+}
+function unfadeLeaguePage() {
+    document.getElementById("page_header").style.display = "flex";
+    document.getElementById("page_container").style.display = "inline-block";
+}
+function generatePositionBadge(marginText, slotID) {
+    var td = document.createElement("td");
+    td.style.textAlign = "center";
+    var container = document.createElement("div");
+    container.style.backgroundColor = getMemberColor(slotID);
+    container.style.color = "white";
+    container.classList.add("position_badge");
+    var posText = document.createElement("b");
+    posText.style.fontSize = "1em";
+    posText.innerText = intToPosition.get(slotID);
+    var margin = document.createElement("small");
+    margin.classList.add("margin_small_text");
+    if (marginText > 0) {
+        margin.innerText = "+" + roundToHundred(marginText).toString();
+        margin.style.color = "#00ff00";
+    }
+    else {
+        margin.innerText = roundToHundred(marginText).toString();
+        margin.style.color = "#ff0000";
+    }
+    container.appendChild(posText);
+    td.appendChild(container);
+    td.appendChild(margin);
+    return td;
+}
+function generateBenchPositionBadge(position) {
+    var td = document.createElement("td");
+    td.style.textAlign = "center";
+    var container = document.createElement("div");
+    container.style.backgroundColor = getMemberColor(positionToInt.get(position));
+    container.style.color = "white";
+    container.classList.add("bench_position_badge");
+    var posText = document.createElement("b");
+    posText.style.fontSize = "1em";
+    posText.innerText = position;
+    container.appendChild(posText);
+    td.appendChild(container);
+    return td;
 }
 function enableBadgesPane() {
     document.getElementById("stats_button").style.display = "block";
@@ -1359,83 +1552,79 @@ function enableBadgesPane() {
         fadeToLeaguePage();
     };
 }
-function enableTradePage() {
-    document.getElementById("trades_button").style.display = "block";
-    document.getElementById("trades_button").onclick = function () {
-        $(".nav-link").removeClass("active");
-        fadeToLeaguePage();
-    };
-}
-function enableSeasonPortionSelector(league, isPlayoffs) {
-    if (!isPlayoffs) {
-        document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
-        document.getElementById(SEASON_PORTION.POST).classList.add("disabled");
-        document.getElementById(SEASON_PORTION.ALL).classList.remove("active");
-        document.getElementById(SEASON_PORTION.REGULAR).classList.add("active");
-        document.getElementById("post_radio_button").disabled = true;
-        document.getElementById("complete_radio_button").disabled = true;
-    }
-    else if (league.settings.regularSeasonLength === 0) {
-        document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
-        document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
-        document.getElementById("regular_radio_button").disabled = true;
-        document.getElementById("complete_radio_button").disabled = true;
-        document.getElementById(SEASON_PORTION.ALL).classList.remove("active");
-    }
-    else {
-        document.getElementById(SEASON_PORTION.ALL).onclick = function () {
-            league.seasonPortion = SEASON_PORTION.ALL;
-            league.resetStats();
-            league.setMemberStats(league.getSeasonPortionWeeks());
-            for (var i = 1; i <= league.members.length; i++) {
-                if ($("#" + i).find("a.active").length !== 0) {
-                    fadeTeam(league, parseInt(i.toString(), 10));
-                }
+function createTradeCard(league, trade) {
+    var tradeContainer = document.createElement("div");
+    tradeContainer.id = "trade_container_" + trade.transactionId;
+    tradeContainer.classList.add("row", "my-1", "league_trade", "card-deck");
+    var template = document.getElementsByTagName("template")[0];
+    trade.consentingTeamIds.forEach(function (teamID, index) {
+        var teamNode = document.importNode(template.content, true);
+        var ownerName = teamNode.querySelector(".trade_owner_name");
+        var container = teamNode.querySelector(".league_trade_container");
+        var sentAssetsList = teamNode.querySelector(".sent_assets_list");
+        var receivedAssetsList = teamNode.querySelector(".received_assets_list");
+        var c = document.createElement("img");
+        container.style.borderColor = getMemberColor(teamID);
+        c.src = league.getMember(teamID).logoURL;
+        c.style.width = "25px";
+        c.style.height = "25px";
+        c.style.borderRadius = "25px";
+        c.addEventListener("error", fixNoImage);
+        c.style.marginLeft = "8px";
+        c.style.marginRight = "auto";
+        ownerName.appendChild(c);
+        ownerName.appendChild(document.createTextNode(" " + league.getMember(teamID).ownerToString()));
+        trade.playersTraded.get(teamID).forEach(function (player) {
+            sentAssetsList.innerHTML += "- " + player.firstName + " " + player.lastName;
+            sentAssetsList.appendChild(document.createElement("br"));
+        });
+        trade.playersReceived.get(teamID).forEach(function (player) {
+            receivedAssetsList.innerHTML += "+ " + player.firstName + " " + player.lastName;
+            receivedAssetsList.appendChild(document.createElement("br"));
+        });
+        trade.draftPicksInvolved.filter(function (pick) {
+            return teamID === pick.currentOwnerId;
+        }).forEach(function (pick) {
+            receivedAssetsList.innerHTML += "+ " + pick.toString(league);
+            receivedAssetsList.appendChild(document.createElement("br"));
+        });
+        trade.draftPicksInvolved.filter(function (pick) {
+            return teamID === pick.sellingOwnerId;
+        }).forEach(function (pick) {
+            sentAssetsList.innerHTML += "- " + pick.toString(league);
+            sentAssetsList.appendChild(document.createElement("br"));
+        });
+        if (trade.faabTraded.get(teamID) !== undefined && trade.faabTraded.get(teamID) !== 0) {
+            if (trade.faabTraded.get(teamID) > 0) {
+                receivedAssetsList.appendChild(document.createTextNode("Faab: + $" + trade.faabTraded.get(teamID)));
             }
-            league.updateMainPage();
-        };
-        document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
-            league.seasonPortion = SEASON_PORTION.REGULAR;
-            league.resetStats();
-            league.setMemberStats(league.getSeasonPortionWeeks());
-            for (var i = 1; i <= league.members.length; i++) {
-                if ($("#" + i).find("a.active").length !== 0) {
-                    fadeTeam(league, parseInt(i.toString(), 10));
-                }
+            else {
+                sentAssetsList.appendChild(document.createTextNode("Faab: - $" + (trade.faabTraded.get(teamID) * -1)));
             }
-            league.updateMainPage();
-        };
-        document.getElementById(SEASON_PORTION.POST).onclick = function () {
-            league.seasonPortion = SEASON_PORTION.POST;
-            league.resetStats();
-            league.setMemberStats(league.getSeasonPortionWeeks());
-            for (var i = 1; i <= league.members.length; i++) {
-                if ($("#" + i).find("a.active").length !== 0) {
-                    fadeTeam(league, parseInt(i.toString(), 10));
-                }
-            }
-            league.updateMainPage();
-        };
-    }
-}
-function enableYearSelector(league) {
-    var yearSelector = document.getElementById("available_seasons");
-    league.settings.yearsActive.forEach(function (year) {
-        var option = document.createElement("option");
-        option.text = year.toString();
-        option.value = year.toString();
-        if (option.value === league.season.toString()) {
-            option.selected = true;
         }
-        yearSelector.add(option);
+        tradeContainer.appendChild(teamNode);
+    });
+    return tradeContainer;
+}
+function constructTrades(league) {
+    var container = document.getElementById("league_trades_container");
+    league.trades.forEach(function (trade) {
+        var tradeRow = document.createElement("div");
+        tradeRow.appendChild(createTradeCard(league, trade));
+        container.appendChild(tradeRow);
     });
 }
-function enablePlugins() {
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-    new ScrollHint("#league_trades_container", {
-        suggestiveShadow: true
+function constructTeamPageTrades(league, teamId) {
+    var container = document.getElementById("team_page_trades_container");
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    league.trades.filter(function (trade) {
+        return trade.consentingTeamIds.includes(teamId);
+    }).forEach(function (trade) {
+        var tradeRow = document.createElement("div");
+        tradeRow.appendChild(createTradeCard(league, trade));
+        container.appendChild(tradeRow);
     });
 }
 function updateLeagueStatsCards(league) {
@@ -1524,875 +1713,6 @@ function updateBestWorstLeagueWeeks(league) {
     leagueWorstWeekTeamName.innerText = league.getMember(worstWeek.getLowestScoringTeam().teamID).teamNameToString();
     leagueWorstWeekNumber.innerText = "Week " + worstWeek.weekNumber.toString();
     leagueWorstWeekImage.src = league.getMember(worstWeek.getLowestScoringTeam().teamID).logoURL;
-}
-function createTeamMenu(league) {
-    var tabsList = document.getElementById("tabs-content");
-    var nav = document.getElementById("team_dropdown");
-    var q = document.getElementById("leaguePage");
-    tabsList.appendChild(q);
-    for (var i in league.members) {
-        var a = document.createElement("li");
-        a.id = league.members[i].teamID.toString();
-        a.classList.add("nav-item", "align-items-left", "side-item", "justify-content-center");
-        a.onclick = function () {
-            $(".nav-link").removeClass("active");
-            fadeTeamWithLogic(league, parseInt(this.id, 10));
-        };
-        var b = document.createElement("a");
-        b.id = league.members[i].teamID + "_link";
-        b.setAttribute("data-toggle", "pill");
-        b.href = "#teamPill";
-        b.classList.add("nav-link", "team-menu-link");
-        b.style.paddingLeft = "3px;";
-        var c = document.createElement("img");
-        c.src = league.members[i].logoURL;
-        c.style.width = "25px";
-        c.style.height = "25px";
-        c.style.borderRadius = "25px";
-        c.addEventListener("error", fixNoImage);
-        c.style.marginLeft = "8px";
-        c.style.marginRight = "auto";
-        b.appendChild(c);
-        var d = document.createTextNode(" " + league.members[i].teamNameToString());
-        b.appendChild(d);
-        a.appendChild(b);
-        nav.appendChild(a);
-    }
-}
-function generateMatchupTable(league, firstTeamId, weekNumber) {
-    var tableBody = document.getElementById("matchup_modal_table_body");
-    var matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
-    var tableTitle = document.getElementById("matchup_modal_title");
-    if (matchup.isPlayoffs) {
-        tableTitle.innerText = "Week " + weekNumber.toString() + ", Playoffs";
-    }
-    else if (matchup.byeWeek) {
-        tableTitle.innerText = "Week " + weekNumber.toString() + ", Bye Week";
-    }
-    else {
-        tableTitle.innerText = "Week " + weekNumber.toString() + ", Regular Season";
-    }
-    tableBody.innerHTML = "";
-    document.getElementById("matchup_modal_first_team_name").innerText = league.getMember(matchup.home.teamID).teamNameToString();
-    if (!matchup.byeWeek) {
-        document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
-    }
-    var index = 0;
-    league.settings.activeLineupSlots.forEach(function (slot) {
-        var slotId = slot[0];
-        var slotAmount = slot[1];
-        for (var i = 0; i < slotAmount; i++) {
-            var firstPlayer = matchup.home.lineup[index];
-            var secondPlayer = void 0;
-            if (!matchup.byeWeek) {
-                secondPlayer = matchup.away.lineup[index];
-            }
-            else {
-                secondPlayer = new EmptySlot(slotId);
-            }
-            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer));
-            index += 1;
-        }
-    });
-    var scoreRow = document.createElement("tr");
-    var teamScoreCell = document.createElement("td");
-    var otherTeamScoreCell = document.createElement("td");
-    var marginScoreCell = document.createElement("td");
-    var teamScore = document.createElement("h5");
-    var otherTeamScore = document.createElement("h5");
-    var marginScore = document.createElement("h5");
-    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString();
-    teamScore.innerText = roundToHundred(matchup.home.score).toString();
-    if (!matchup.byeWeek) {
-        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
-    }
-    else {
-        marginScore.innerText = "0.00";
-    }
-    teamScoreCell.appendChild(teamScore);
-    otherTeamScoreCell.appendChild(otherTeamScore);
-    marginScoreCell.appendChild(marginScore);
-    scoreRow.appendChild(teamScoreCell);
-    scoreRow.appendChild(marginScoreCell);
-    scoreRow.appendChild(otherTeamScoreCell);
-    scoreRow.style.textAlign = "center";
-    tableBody.appendChild(scoreRow);
-    generateBenchTable(matchup);
-}
-function generateBenchTable(matchup) {
-    var tableBody = document.getElementById("matchup_modal_bench_table_body");
-    tableBody.innerHTML = "";
-    var size = Math.max(matchup.home.bench.length, matchup.away.bench.length);
-    for (var i = 0; i < size; i++) {
-        var row = document.createElement("tr");
-        if (matchup.home.bench[i]) {
-            row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
-        }
-        else {
-            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
-        }
-        row.appendChild(document.createElement("td"));
-        if (matchup.away.bench[i]) {
-            row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
-        }
-        else {
-            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false));
-        }
-        tableBody.appendChild(row);
-    }
-}
-function generateMatchupPlayerRow(player, otherPlayer) {
-    var tr = document.createElement("tr");
-    var margin = player.score - otherPlayer.score;
-    var playerBadgeCell = generatePositionBadge(margin, player.lineupSlotID);
-    var firstPlayerCell;
-    var otherPlayerCell;
-    try {
-        firstPlayerCell = generatePlayerRowCell(player, true);
-    }
-    catch (error) {
-        console.log(error);
-        console.log(player);
-    }
-    try {
-        otherPlayerCell = generatePlayerRowCell(otherPlayer, false);
-    }
-    catch (error) {
-        console.log(error);
-        console.log(otherPlayer);
-    }
-    if (margin > 0) {
-        firstPlayerCell.style.background = "linear-gradient(to left, #00ff00 0%, #ffffff 100%)";
-        otherPlayerCell.style.background = "linear-gradient(to right, #ff0000 0%, #ffffff 100%)";
-    }
-    else if (margin < 0) {
-        otherPlayerCell.style.background = "linear-gradient(to right, #00ff00 0%, #ffffff 100%)";
-        firstPlayerCell.style.background = "linear-gradient(to left, #ff0000 0%, #ffffff 100%)";
-    }
-    else {
-    }
-    tr.appendChild(firstPlayerCell);
-    tr.appendChild(playerBadgeCell);
-    tr.appendChild(otherPlayerCell);
-    return tr;
-}
-function generateTeamPlayerRow(player) {
-    var tr = document.createElement("tr");
-    var firstPlayerCell = generateBenchPlayerCell(player, true);
-    tr.appendChild(firstPlayerCell);
-    return tr;
-}
-function generatePositionBadge(marginText, slotID) {
-    var td = document.createElement("td");
-    td.style.textAlign = "center";
-    var container = document.createElement("div");
-    container.style.backgroundColor = getMemberColor(slotID);
-    container.style.color = "white";
-    container.classList.add("position_badge");
-    var posText = document.createElement("b");
-    posText.style.fontSize = "1em";
-    posText.innerText = intToPosition.get(slotID);
-    var margin = document.createElement("small");
-    margin.classList.add("margin_small_text");
-    if (marginText > 0) {
-        margin.innerText = "+" + roundToHundred(marginText).toString();
-        margin.style.color = "#00ff00";
-    }
-    else {
-        margin.innerText = roundToHundred(marginText).toString();
-        margin.style.color = "#ff0000";
-    }
-    container.appendChild(posText);
-    td.appendChild(container);
-    td.appendChild(margin);
-    return td;
-}
-function generateBenchPositionBadge(position) {
-    var td = document.createElement("td");
-    td.style.textAlign = "center";
-    var container = document.createElement("div");
-    container.style.backgroundColor = getMemberColor(positionToInt.get(position));
-    container.style.color = "white";
-    container.classList.add("bench_position_badge");
-    var posText = document.createElement("b");
-    posText.style.fontSize = "1em";
-    posText.innerText = position;
-    container.appendChild(posText);
-    td.appendChild(container);
-    return td;
-}
-function generatePlayerRowCell(player, homePlayer) {
-    var td = document.createElement("td");
-    var row = document.createElement("div");
-    row.classList.add("row");
-    var imageDiv = document.createElement("div");
-    imageDiv.classList.add("col-3", "pt-3");
-    var image = document.createElement("img");
-    var pictureURL = "";
-    if (player.position === "D/ST" || player.position === "DEF") {
-        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
-    }
-    else {
-        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
-    }
-    image.classList.add("player_badge_image", "my-auto");
-    image.src = pictureURL;
-    var nameDiv = document.createElement("div");
-    nameDiv.classList.add("col-6", "pt-3");
-    var boldName = document.createElement("b");
-    var teamParagraph = document.createElement("p");
-    boldName.innerText = player.firstName + " " + player.lastName;
-    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
-    var lineBreak = document.createElement("br");
-    var scoreDiv = document.createElement("div");
-    scoreDiv.classList.add("col-3");
-    var scoreTitle = document.createElement("div");
-    scoreTitle.innerText = "Score";
-    scoreTitle.style.fontSize = ".8em";
-    var scoreText = document.createElement("b");
-    scoreText.innerText = roundToHundred(player.score).toString();
-    var projectedTitle = document.createElement("div");
-    projectedTitle.innerText = "Projected";
-    projectedTitle.style.fontSize = ".6em";
-    var projectedText = document.createElement("small");
-    projectedText.innerText = roundToHundred(player.projectedScore).toString();
-    if (homePlayer) {
-        row.appendChild(imageDiv);
-        row.appendChild(nameDiv);
-        row.appendChild(scoreDiv);
-        scoreDiv.style.textAlign = "right";
-        nameDiv.style.textAlign = "left";
-    }
-    else {
-        scoreDiv.style.textAlign = "left";
-        nameDiv.style.textAlign = "right";
-        row.appendChild(scoreDiv);
-        row.appendChild(nameDiv);
-        row.appendChild(imageDiv);
-    }
-    imageDiv.appendChild(image);
-    nameDiv.appendChild(boldName);
-    nameDiv.appendChild(lineBreak);
-    nameDiv.appendChild(teamParagraph);
-    nameDiv.classList.add("player_cell_name");
-    scoreDiv.classList.add("player_cell_score");
-    scoreDiv.appendChild(scoreTitle);
-    scoreDiv.appendChild(scoreText);
-    scoreDiv.appendChild(document.createElement("br"));
-    scoreDiv.appendChild(projectedTitle);
-    scoreDiv.appendChild(projectedText);
-    td.appendChild(row);
-    return td;
-}
-function generateBenchPlayerCell(player, homePlayer) {
-    var td = document.createElement("td");
-    var row = document.createElement("div");
-    var badge = generateBenchPositionBadge(player.position);
-    row.classList.add("row");
-    var imageDiv = document.createElement("div");
-    imageDiv.classList.add("col-2", "pt-3");
-    var image = document.createElement("img");
-    var pictureURL = "";
-    if (player.position === "D/ST" || player.position === "DEF") {
-        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
-    }
-    else {
-        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
-    }
-    var badgeDiv = document.createElement("div");
-    badgeDiv.classList.add("col-3", "pt-3");
-    badgeDiv.appendChild(badge);
-    image.classList.add("player_badge_image", "my-auto");
-    image.src = pictureURL;
-    var nameDiv = document.createElement("div");
-    nameDiv.classList.add("col-4", "pt-3");
-    var boldName = document.createElement("b");
-    var teamParagraph = document.createElement("p");
-    boldName.innerText = player.firstName + " " + player.lastName;
-    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
-    var lineBreak = document.createElement("br");
-    var scoreDiv = document.createElement("div");
-    scoreDiv.classList.add("col-3");
-    var scoreTitle = document.createElement("div");
-    scoreTitle.innerText = "Score";
-    scoreTitle.style.fontSize = ".8em";
-    var scoreText = document.createElement("b");
-    scoreText.innerText = roundToHundred(player.score).toString();
-    var projectedTitle = document.createElement("div");
-    projectedTitle.innerText = "Projected";
-    projectedTitle.style.fontSize = ".6em";
-    var projectedText = document.createElement("small");
-    projectedText.innerText = roundToHundred(player.projectedScore).toString();
-    if (homePlayer) {
-        row.appendChild(badgeDiv);
-        row.appendChild(imageDiv);
-        row.appendChild(nameDiv);
-        row.appendChild(scoreDiv);
-        scoreDiv.style.textAlign = "right";
-    }
-    else {
-        scoreDiv.style.textAlign = "left";
-        row.appendChild(scoreDiv);
-        row.appendChild(nameDiv);
-        row.appendChild(imageDiv);
-        row.appendChild(badgeDiv);
-    }
-    imageDiv.appendChild(image);
-    nameDiv.appendChild(boldName);
-    nameDiv.appendChild(lineBreak);
-    nameDiv.appendChild(teamParagraph);
-    nameDiv.classList.add("player_cell_name");
-    scoreDiv.classList.add("player_cell_score");
-    scoreDiv.appendChild(scoreTitle);
-    scoreDiv.appendChild(scoreText);
-    scoreDiv.appendChild(document.createElement("br"));
-    scoreDiv.appendChild(projectedTitle);
-    scoreDiv.appendChild(projectedText);
-    td.appendChild(row);
-    return td;
-}
-function generateGenericPlayerCell(player) {
-    var td = document.createElement("td");
-    var row = document.createElement("div");
-    row.classList.add("row");
-    var imageDiv = document.createElement("div");
-    imageDiv.classList.add("col-3", "pt-3");
-    var image = document.createElement("img");
-    var pictureURL = "";
-    if (player.position === "D/ST" || player.position === "DEF") {
-        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
-    }
-    else {
-        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
-    }
-    image.classList.add("player_badge_image", "my-auto");
-    image.src = pictureURL;
-    var nameDiv = document.createElement("div");
-    nameDiv.classList.add("col-6", "pt-3");
-    var boldName = document.createElement("b");
-    var teamParagraph = document.createElement("p");
-    boldName.innerText = player.firstName + " " + player.lastName;
-    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
-    var lineBreak = document.createElement("br");
-    row.appendChild(imageDiv);
-    row.appendChild(nameDiv);
-    nameDiv.style.textAlign = "left";
-    imageDiv.appendChild(image);
-    nameDiv.appendChild(boldName);
-    nameDiv.appendChild(lineBreak);
-    nameDiv.appendChild(teamParagraph);
-    nameDiv.classList.add("player_cell_name");
-    td.appendChild(row);
-    return td;
-}
-function updateMainPageLeagueStatCards(league) {
-    document.getElementById("league_weekly_average").innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
-    document.getElementById("league_standard_deviation").innerText = roundToHundred(league.getLeagueStandardDeviation()).toString();
-    document.getElementById("league_weekly_average_pp").innerText = roundToHundred(league.getLeaguePP() / league.getSeasonPortionWeeks().length).toString();
-    updateLeagueEfficiency(league);
-}
-function roundToHundred(x) {
-    return Math.round(x * 100) / 100;
-}
-function roundToTen(x) {
-    return Math.round(x * 10) / 10;
-}
-function roundToThousand(x) {
-    return Math.round(x * 1000) / 1000;
-}
-function roundToMil(x) {
-    return Math.round(x * 1000000) / 1000000;
-}
-function getColor(value) {
-    var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,60%)"].join("");
-}
-function getLightColor(value) {
-    var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,95%)"].join("");
-}
-function getDarkColor(value) {
-    var hue = ((1 - value) * 120).toString(10);
-    return ["hsl(", hue, ",100%,47%)"].join("");
-}
-function getLightCardColor(rank, outOf) {
-    return getLightColor(rank / outOf);
-}
-function getCardColor(rank, outOf) {
-    return getColor(rank / outOf);
-}
-function getDarkCardColor(rank, outOf) {
-    return getDarkColor(rank / outOf);
-}
-function getInverseCardColor(rank, outOf) {
-    return getColor((1 + (outOf - rank)) / outOf);
-}
-function getInverseDarkCardColor(rank, outOf) {
-    return getDarkColor((1 + (outOf - rank)) / outOf);
-}
-function getTextColor(rank, outOf) {
-    var o = rank / outOf;
-    if (o < .75) {
-        return "black";
-    }
-    else {
-        return "white";
-    }
-}
-function ordinal_suffix_of(i) {
-    var j = i % 10;
-    var k = i % 100;
-    if (j === 1 && k !== 11) {
-        return i + "st";
-    }
-    if (j === 2 && k !== 12) {
-        return i + "nd";
-    }
-    if (j === 3 && k !== 13) {
-        return i + "rd";
-    }
-    return i + "th";
-}
-function hexToRGB(hex, alpha) {
-    var r = parseInt(hex.slice(1, 3), 16);
-    var g = parseInt(hex.slice(3, 5), 16);
-    var b = parseInt(hex.slice(5, 7), 16);
-    if (alpha) {
-        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    }
-    else {
-        return "rgb(" + r + ", " + g + ", " + b + ")";
-    }
-}
-function getOptimalLineup(activeLineupSlots, players) {
-    var optimalLineup = [];
-    activeLineupSlots.forEach(function (slot) {
-        optimalLineup = optimalLineup.concat(getHighestPlayersForSlot(slot[0], slot[1], players, optimalLineup));
-    });
-    return optimalLineup;
-}
-function getHighestPlayersForSlot(slotID, numPlayers, players, takenPlayers) {
-    var eligibleSortedPlayers = players.filter(function (player) {
-        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
-    }).sort(function (a, b) {
-        return b.score - a.score;
-    });
-    if (eligibleSortedPlayers.length >= numPlayers) {
-        return eligibleSortedPlayers.slice(0, numPlayers);
-    }
-    else {
-        while (eligibleSortedPlayers.length <= numPlayers) {
-            eligibleSortedPlayers.push(new EmptySlot(slotID));
-        }
-        return eligibleSortedPlayers.slice(0, numPlayers);
-    }
-}
-function getOptimalProjectedLineup(activeLineupSlots, players) {
-    var optimalLineup = [];
-    activeLineupSlots.forEach(function (slot) {
-        optimalLineup = optimalLineup.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineup));
-    });
-    return optimalLineup;
-}
-function getHighestProjectedPlayersForSlot(slotID, numPlayers, players, takenPlayers) {
-    var eligibleSortedPlayers = players.filter(function (player) {
-        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
-    }).sort(function (a, b) {
-        return b.projectedScore - a.projectedScore;
-    });
-    if (eligibleSortedPlayers.length >= numPlayers) {
-        return eligibleSortedPlayers.slice(0, numPlayers);
-    }
-    else {
-        while (eligibleSortedPlayers.length <= numPlayers) {
-            eligibleSortedPlayers.push(new EmptySlot(slotID));
-        }
-        return eligibleSortedPlayers.slice(0, numPlayers);
-    }
-}
-var eligibleSlotMap = new Map([
-    [0, [0, 1, 7, 20, 21]],
-    [1, [1, 7, 20, 21]],
-    [2, [2, 3, 7, 20, 21, 23]],
-    [4, [4, 3, 5, 7, 20, 21, 23]],
-    [6, [6, 5, 7, 20, 21, 23]],
-    [8, [8, 15, 20, 21]],
-    [9, [9, 15, 20, 21]],
-    [10, [10, 15, 20, 21]],
-    [11, [11, 15, 20, 21]],
-    [12, [12, 15, 20, 21]],
-    [13, [13, 15, 20, 21]],
-    [14, [14, 15, 20, 21]],
-    [16, [16, 20]],
-    [17, [17, 20, 21]],
-    [18, [18, 20, 21]],
-    [19, [19, 20]],
-    [26, [26, 15, 8, 15, 20, 21]],
-    [27, [27, 15, 8, 15, 20, 21]],
-    [28, [28, 15, 8, 15, 20, 21]],
-    [29, [29, 15, 8, 15, 20, 21]],
-    [30, [28, 15, 8, 15, 20, 21]],
-]);
-var intToPosition = new Map([
-    [0, "QB"],
-    [1, "TQB"],
-    [2, "RB"],
-    [3, "RB/WR"],
-    [4, "WR"],
-    [5, "WR/TE"],
-    [6, "TE"],
-    [7, "SUPER_FLEX"],
-    [8, "DT"],
-    [9, "DE"],
-    [10, "LB"],
-    [11, "DL"],
-    [12, "CB"],
-    [13, "S"],
-    [14, "DB"],
-    [15, "DP"],
-    [16, "DEF"],
-    [17, "K"],
-    [18, "P"],
-    [19, "HC"],
-    [20, "BN"],
-    [21, "IR"],
-    [23, "FLEX"],
-    [25, "???"],
-    [26, "SS"],
-    [27, "FS"],
-    [28, "NT"],
-    [29, "OLB"],
-    [30, "ILB"],
-    [88, "TAXI"],
-    [-1, "EMPTY"],
-]);
-var positionToInt = new Map([
-    ["QB", 0],
-    ["TQB", 1],
-    ["RB", 2],
-    ["FB", 2],
-    ["RB/WR", 3],
-    ["WR", 4],
-    ["WR/TE", 5],
-    ["REC_FLEX", 5],
-    ["TE", 6],
-    ["SUPER_FLEX", 7],
-    ["OP", 7],
-    ["DT", 8],
-    ["NT", 28],
-    ["DE", 9],
-    ["OLB", 29],
-    ["ILB", 30],
-    ["LB", 10],
-    ["DL", 11],
-    ["CB", 12],
-    ["S", 13],
-    ["SS", 26],
-    ["FS", 27],
-    ["DB", 14],
-    ["DP", 15],
-    ["DEF", 16],
-    ["K", 17],
-    ["P", 18],
-    ["HC", 19],
-    ["BN", 20],
-    ["IR", 21],
-    ["FLEX", 23],
-    ["TAXI", 88],
-    ["???", 25],
-    ["EMPTY", -1],
-]);
-function getPosition(eligibleSlots) {
-    var slotNum = eligibleSlots[0];
-    var i = 0;
-    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5" || slotNum.toString() === "7" || slotNum.toString() === "15") {
-        i += 1;
-        slotNum = eligibleSlots[i];
-    }
-    return intToPosition.get(slotNum);
-}
-function getRealTeamInitials(realteamID) {
-    if (realteamID == null) {
-        return "FA";
-    }
-    var team = realteamID.toString();
-    switch (team) {
-        case "1":
-            team = "Atl";
-            break;
-        case "2":
-            team = "Buf";
-            break;
-        case "3":
-            team = "Chi";
-            break;
-        case "4":
-            team = "Cin";
-            break;
-        case "5":
-            team = "Cle";
-            break;
-        case "6":
-            team = "Dal";
-            break;
-        case "7":
-            team = "Den";
-            break;
-        case "8":
-            team = "Det";
-            break;
-        case "9":
-            team = "GB";
-            break;
-        case "10":
-            team = "Ten";
-            break;
-        case "11":
-            team = "Ind";
-            break;
-        case "12":
-            team = "KC";
-            break;
-        case "13":
-            team = "Oak";
-            break;
-        case "14":
-            team = "Lar";
-            break;
-        case "15":
-            team = "Mia";
-            break;
-        case "16":
-            team = "Min";
-            break;
-        case "17":
-            team = "NE";
-            break;
-        case "18":
-            team = "NO";
-            break;
-        case "19":
-            team = "NYG";
-            break;
-        case "20":
-            team = "NYJ";
-            break;
-        case "21":
-            team = "Phi";
-            break;
-        case "22":
-            team = "Ari";
-            break;
-        case "23":
-            team = "Pit";
-            break;
-        case "24":
-            team = "LAC";
-            break;
-        case "25":
-            team = "SF";
-            break;
-        case "26":
-            team = "Sea";
-            break;
-        case "27":
-            team = "TB";
-            break;
-        case "28":
-            team = "Wsh";
-            break;
-        case "29":
-            team = "Car";
-            break;
-        case "30":
-            team = "Jax";
-            break;
-        case "33":
-            team = "Bal";
-            break;
-        case "34":
-            team = "Hou";
-            break;
-        case "-1":
-            team = "None";
-            break;
-    }
-    return team;
-}
-function includesPlayer(player, lineup) {
-    var includes = false;
-    lineup.forEach(function (element) {
-        if (player.playerID === element.playerID) {
-            includes = true;
-        }
-    });
-    return includes;
-}
-function calcStandardDeviation(scores) {
-    var modified = [];
-    var mean = getMean(scores);
-    scores.forEach(function (score) {
-        modified.push(Math.pow(score - mean, 2));
-    });
-    return roundToHundred(Math.sqrt(getMean(modified)));
-}
-function getMean(numbers) {
-    var sum = 0;
-    numbers.forEach(function (num) {
-        sum += num;
-    });
-    return roundToHundred(sum / numbers.length);
-}
-function getBestLeastConsistent(league, teamID) {
-    var players = getSeasonPlayers(league, teamID);
-    var minSampleSize = 5;
-    if (league.settings.isActive) {
-        if (league.settings.currentMatchupPeriod <= 5) {
-            minSampleSize = league.settings.currentMatchupPeriod - 1;
-        }
-    }
-    var mostConsistentPlayers = players.filter(function (player) {
-        return (player.weeksPlayed >= minSampleSize);
-    });
-    while (mostConsistentPlayers.length === 0) {
-        minSampleSize -= 1;
-        mostConsistentPlayers = players.filter(function (player) {
-            return (player.weeksPlayed >= minSampleSize);
-        });
-    }
-    var mvp = players[0];
-    var lvp = players[0];
-    var mostConsistent = mostConsistentPlayers[0];
-    players.forEach(function (seasonPlayer) {
-        if (seasonPlayer.seasonScore > mvp.seasonScore) {
-            mvp = seasonPlayer;
-        }
-        if (seasonPlayer.seasonScore < lvp.seasonScore) {
-            lvp = seasonPlayer;
-        }
-    });
-    mostConsistentPlayers.forEach(function (seasonPlayer) {
-        if (calcStandardDeviation(seasonPlayer.getScores()) < calcStandardDeviation(mostConsistent.getScores()) &&
-            seasonPlayer.weeksPlayed >= minSampleSize && seasonPlayer.seasonScore !== 0) {
-            mostConsistent = seasonPlayer;
-        }
-    });
-    return [mvp, lvp, mostConsistent];
-}
-function getMVP(league, teamID) {
-    var players = getSeasonPlayers(league, teamID);
-    var mvp = players[0];
-    players.forEach(function (seasonPlayer) {
-        if (seasonPlayer.seasonScore > mvp.seasonScore) {
-            mvp = seasonPlayer;
-        }
-    });
-    return mvp;
-}
-function getLVP(league, teamID) {
-    var players = getSeasonPlayers(league, teamID);
-    var lvp = players[0];
-    players.forEach(function (seasonPlayer) {
-        if (seasonPlayer.seasonScore === lvp.seasonScore) {
-            if (seasonPlayer.weeksPlayed > lvp.weeksPlayed) {
-                lvp = seasonPlayer;
-            }
-        }
-        else if (seasonPlayer.seasonScore < lvp.seasonScore) {
-            lvp = seasonPlayer;
-        }
-    });
-    return lvp;
-}
-function getSeasonPlayers(league, teamID) {
-    var players = [];
-    league.getSeasonPortionWeeks().forEach(function (week) {
-        week.getTeam(teamID).lineup.forEach(function (player) {
-            var index = players.findIndex(function (existingPlayer) {
-                return existingPlayer.playerID === player.playerID;
-            });
-            if (index > -1) {
-                players[index].addPerformance(player);
-            }
-            else {
-                players.push(new SeasonPlayer(player, league.leaguePlatform));
-            }
-        });
-    });
-    return players;
-}
-function getSeasonOpponentPlayers(league, teamID) {
-    var players = [];
-    league.getSeasonPortionWeeks().forEach(function (week) {
-        if (!week.getTeamMatchup(teamID).byeWeek) {
-            week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach(function (player) {
-                var index = players.findIndex(function (existingPlayer) {
-                    return existingPlayer.playerID === player.playerID;
-                });
-                if (index > -1) {
-                    players[index].addPerformance(player);
-                }
-                else {
-                    players.push(new SeasonPlayer(player, league.leaguePlatform));
-                }
-            });
-        }
-    });
-    return players;
-}
-function getAllSeasonPlayers(league) {
-    var players = [];
-    league.getSeasonPortionWeeks().forEach(function (week) {
-        week.matchups.forEach(function (matchup) {
-            matchup.home.lineup.forEach(function (player) {
-                var index = players.findIndex(function (existingPlayer) {
-                    return existingPlayer.playerID === player.playerID;
-                });
-                if (index > -1) {
-                    players[index].addPerformance(player);
-                }
-                else {
-                    players.push(new SeasonPlayer(player, league.leaguePlatform));
-                }
-            });
-            if (!matchup.byeWeek) {
-                matchup.away.lineup.forEach(function (player) {
-                    var index = players.findIndex(function (existingPlayer) {
-                        return existingPlayer.playerID === player.playerID;
-                    });
-                    if (index > -1) {
-                        players[index].addPerformance(player);
-                    }
-                    else {
-                        players.push(new SeasonPlayer(player, league.leaguePlatform));
-                    }
-                });
-            }
-        });
-    });
-    return players;
-}
-function getBestPositionPlayerAverageScore(league, position) {
-    var players = [];
-    league.getSeasonPortionWeeks().forEach(function (week) {
-        players.push(week.getBestPositionPlayer(position));
-    });
-    var totalScore = 0;
-    players.forEach(function (player) {
-        if (player !== undefined) {
-            totalScore += player.score;
-        }
-    });
-    return roundToTen(totalScore / players.length);
-}
-function getMemberColor(memberID) {
-    var colorCode = ["#3366cc", "#ff9900", "#109618", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395",
-        "#3366cc", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac",
-        "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
-    return colorCode[memberID];
-}
-function getPositionColors() {
-    return ["#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000075", "#808080"];
 }
 function updateTeamPill(league, teamID) {
     var member = league.getMember(teamID);
@@ -2661,33 +1981,6 @@ function updateBiggestBoom(league, biggestBoom, teamID) {
 }
 function updateTeamTrades(league, member) {
     constructTeamPageTrades(league, member.teamID);
-}
-function fadeTeam(league, teamID) {
-    $("#teamPill").stop(true, true).fadeOut(200, function () {
-        updateTeamPill(league, teamID);
-    });
-}
-function fadeTeamWithLogic(league, teamID) {
-    if (document.getElementById(teamID + "_link").classList[1] !== "active") {
-        $("#teamPill").stop(true, true).fadeOut(200, function () {
-            updateTeamPill(league, teamID);
-        });
-    }
-}
-function fadeToLeaguePage() {
-    $("#teamPill").stop(true, true).fadeOut(200);
-}
-function unfadeTeam() {
-    $("#teamPill").stop(true, true).fadeIn(200);
-}
-function unfadeLeaguePage() {
-    document.getElementById("page_header").style.display = "flex";
-    document.getElementById("page_container").style.display = "inline-block";
-}
-function fixNoImage() {
-    this.src = "./assets/images/user1.png";
-    this.style.backgroundColor = "white";
-    this.onerror = null;
 }
 function createTeamBarChart(league, member) {
     if (window.memberBarChart !== undefined) {
@@ -3563,6 +2856,185 @@ function createTeamRadarChart(league, member) {
         window.myRadarChart.render();
     }
 }
+function fixNoImage() {
+    this.src = "./assets/images/user1.png";
+    this.style.backgroundColor = "white";
+    this.onerror = null;
+}
+function enableButtons() {
+    document.getElementById("league_name_header").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
+    document.getElementById("pwrRankButton").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
+    document.getElementById("stats_button").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
+}
+function enableTradePage() {
+    document.getElementById("trades_button").style.display = "block";
+    document.getElementById("trades_button").onclick = function () {
+        $(".nav-link").removeClass("active");
+        fadeToLeaguePage();
+    };
+}
+function main() {
+    localStorage.clear();
+    var sleeperButton = document.getElementById("platform_input_0");
+    var espnButton = document.getElementById("platform_input_1");
+    var leagueIDInput = document.getElementById("league_id_input");
+    var seasonIDSelector = document.getElementById("select_year_input");
+    var leagueID = leagueIDInput.value.replace(/\D/g, "");
+    var seasonID = parseInt(seasonIDSelector.value.replace(/\D/g, ""), 10);
+    if (leagueID !== undefined && seasonID !== undefined) {
+        initCube();
+        if (sleeperButton.checked) {
+            getSleeperLeagueSettings(leagueID, seasonID);
+        }
+        else if (espnButton.checked) {
+            if (localStorage.getItem(leagueID + seasonID)) {
+                var jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
+                var restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
+                restoredLeague.setPage();
+            }
+            else {
+                localStorage.clear();
+                getESPNSettings(leagueID, seasonID);
+            }
+        }
+    }
+}
+function selectedPlatform(button) {
+    var seasonIDSelector = document.getElementById("select_year_input");
+    var children = seasonIDSelector.childNodes;
+    if (button.value === "espn") {
+        children.forEach(function (option) {
+            if (option.value !== "2019") {
+                option.disabled = true;
+            }
+            else {
+                option.disabled = false;
+                option.setAttribute("checked", "checked");
+                option.setAttribute("selected", "true");
+            }
+        });
+    }
+    else {
+        children.forEach(function (option) {
+            option.disabled = false;
+        });
+    }
+}
+function enablePlugins() {
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    new ScrollHint("#league_trades_container", {
+        suggestiveShadow: true
+    });
+}
+function enableSeasonPortionSelector(league, isPlayoffs) {
+    if (!isPlayoffs) {
+        document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
+        document.getElementById(SEASON_PORTION.POST).classList.add("disabled");
+        document.getElementById(SEASON_PORTION.ALL).classList.remove("active");
+        document.getElementById(SEASON_PORTION.REGULAR).classList.add("active");
+        document.getElementById("post_radio_button").disabled = true;
+        document.getElementById("complete_radio_button").disabled = true;
+    }
+    else if (league.settings.regularSeasonLength === 0) {
+        document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
+        document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
+        document.getElementById("regular_radio_button").disabled = true;
+        document.getElementById("complete_radio_button").disabled = true;
+        document.getElementById(SEASON_PORTION.ALL).classList.remove("active");
+    }
+    else {
+        document.getElementById(SEASON_PORTION.ALL).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.ALL;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($("#" + i).find("a.active").length !== 0) {
+                    fadeTeam(league, parseInt(i.toString(), 10));
+                }
+            }
+            league.updateMainPage();
+        };
+        document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.REGULAR;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($("#" + i).find("a.active").length !== 0) {
+                    fadeTeam(league, parseInt(i.toString(), 10));
+                }
+            }
+            league.updateMainPage();
+        };
+        document.getElementById(SEASON_PORTION.POST).onclick = function () {
+            league.seasonPortion = SEASON_PORTION.POST;
+            league.resetStats();
+            league.setMemberStats(league.getSeasonPortionWeeks());
+            for (var i = 1; i <= league.members.length; i++) {
+                if ($("#" + i).find("a.active").length !== 0) {
+                    fadeTeam(league, parseInt(i.toString(), 10));
+                }
+            }
+            league.updateMainPage();
+        };
+    }
+}
+function createTeamMenu(league) {
+    var tabsList = document.getElementById("tabs-content");
+    var nav = document.getElementById("team_dropdown");
+    var q = document.getElementById("leaguePage");
+    tabsList.appendChild(q);
+    for (var i in league.members) {
+        var a = document.createElement("li");
+        a.id = league.members[i].teamID.toString();
+        a.classList.add("nav-item", "align-items-left", "side-item", "justify-content-center");
+        a.onclick = function () {
+            $(".nav-link").removeClass("active");
+            fadeTeamWithLogic(league, parseInt(this.id, 10));
+        };
+        var b = document.createElement("a");
+        b.id = league.members[i].teamID + "_link";
+        b.setAttribute("data-toggle", "pill");
+        b.href = "#teamPill";
+        b.classList.add("nav-link", "team-menu-link");
+        b.style.paddingLeft = "3px;";
+        var c = document.createElement("img");
+        c.src = league.members[i].logoURL;
+        c.style.width = "25px";
+        c.style.height = "25px";
+        c.style.borderRadius = "25px";
+        c.addEventListener("error", fixNoImage);
+        c.style.marginLeft = "8px";
+        c.style.marginRight = "auto";
+        b.appendChild(c);
+        var d = document.createTextNode(" " + league.members[i].teamNameToString());
+        b.appendChild(d);
+        a.appendChild(b);
+        nav.appendChild(a);
+    }
+}
+function enableYearSelector(league) {
+    var yearSelector = document.getElementById("available_seasons");
+    league.settings.yearsActive.forEach(function (year) {
+        var option = document.createElement("option");
+        option.text = year.toString();
+        option.value = year.toString();
+        if (option.value === league.season.toString()) {
+            option.selected = true;
+        }
+        yearSelector.add(option);
+    });
+}
 function sortTableRecord(data, type, row, settings) {
     if (type === "sort") {
         return parseInt(data.split("-")[0]) / parseInt(data.split("-")[1]);
@@ -3676,6 +3148,299 @@ function initLeagueStatsTable(league) {
             $("td", row).eq(7).css("background-color", getDarkColor(league.getPointsAgainstFinish(member.teamID) / league.members.length));
         },
     });
+}
+function generateMatchupTable(league, firstTeamId, weekNumber) {
+    var tableBody = document.getElementById("matchup_modal_table_body");
+    var matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
+    var tableTitle = document.getElementById("matchup_modal_title");
+    if (matchup.isPlayoffs) {
+        tableTitle.innerText = "Week " + weekNumber.toString() + ", Playoffs";
+    }
+    else if (matchup.byeWeek) {
+        tableTitle.innerText = "Week " + weekNumber.toString() + ", Bye Week";
+    }
+    else {
+        tableTitle.innerText = "Week " + weekNumber.toString() + ", Regular Season";
+    }
+    tableBody.innerHTML = "";
+    document.getElementById("matchup_modal_first_team_name").innerText = league.getMember(matchup.home.teamID).teamNameToString();
+    if (!matchup.byeWeek) {
+        document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
+    }
+    var index = 0;
+    league.settings.activeLineupSlots.forEach(function (slot) {
+        var slotId = slot[0];
+        var slotAmount = slot[1];
+        for (var i = 0; i < slotAmount; i++) {
+            var firstPlayer = matchup.home.lineup[index];
+            var secondPlayer = void 0;
+            if (!matchup.byeWeek) {
+                secondPlayer = matchup.away.lineup[index];
+            }
+            else {
+                secondPlayer = new EmptySlot(slotId);
+            }
+            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer));
+            index += 1;
+        }
+    });
+    var scoreRow = document.createElement("tr");
+    var teamScoreCell = document.createElement("td");
+    var otherTeamScoreCell = document.createElement("td");
+    var marginScoreCell = document.createElement("td");
+    var teamScore = document.createElement("h5");
+    var otherTeamScore = document.createElement("h5");
+    var marginScore = document.createElement("h5");
+    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString();
+    teamScore.innerText = roundToHundred(matchup.home.score).toString();
+    if (!matchup.byeWeek) {
+        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
+    }
+    else {
+        marginScore.innerText = "0.00";
+    }
+    teamScoreCell.appendChild(teamScore);
+    otherTeamScoreCell.appendChild(otherTeamScore);
+    marginScoreCell.appendChild(marginScore);
+    scoreRow.appendChild(teamScoreCell);
+    scoreRow.appendChild(marginScoreCell);
+    scoreRow.appendChild(otherTeamScoreCell);
+    scoreRow.style.textAlign = "center";
+    tableBody.appendChild(scoreRow);
+    generateBenchTable(matchup);
+}
+function generateBenchTable(matchup) {
+    var tableBody = document.getElementById("matchup_modal_bench_table_body");
+    tableBody.innerHTML = "";
+    var size = Math.max(matchup.home.bench.length, matchup.away.bench.length);
+    for (var i = 0; i < size; i++) {
+        var row = document.createElement("tr");
+        if (matchup.home.bench[i]) {
+            row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
+        }
+        else {
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
+        }
+        row.appendChild(document.createElement("td"));
+        if (matchup.away.bench[i]) {
+            row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
+        }
+        else {
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false));
+        }
+        tableBody.appendChild(row);
+    }
+}
+function generateMatchupPlayerRow(player, otherPlayer) {
+    var tr = document.createElement("tr");
+    var margin = player.score - otherPlayer.score;
+    var playerBadgeCell = generatePositionBadge(margin, player.lineupSlotID);
+    var firstPlayerCell;
+    var otherPlayerCell;
+    try {
+        firstPlayerCell = generatePlayerRowCell(player, true);
+    }
+    catch (error) {
+        console.log(error);
+        console.log(player);
+    }
+    try {
+        otherPlayerCell = generatePlayerRowCell(otherPlayer, false);
+    }
+    catch (error) {
+        console.log(error);
+        console.log(otherPlayer);
+    }
+    if (margin > 0) {
+        firstPlayerCell.style.background = "linear-gradient(to left, #00ff00 0%, #ffffff 100%)";
+        otherPlayerCell.style.background = "linear-gradient(to right, #ff0000 0%, #ffffff 100%)";
+    }
+    else if (margin < 0) {
+        otherPlayerCell.style.background = "linear-gradient(to right, #00ff00 0%, #ffffff 100%)";
+        firstPlayerCell.style.background = "linear-gradient(to left, #ff0000 0%, #ffffff 100%)";
+    }
+    else {
+    }
+    tr.appendChild(firstPlayerCell);
+    tr.appendChild(playerBadgeCell);
+    tr.appendChild(otherPlayerCell);
+    return tr;
+}
+function generateTeamPlayerRow(player) {
+    var tr = document.createElement("tr");
+    var firstPlayerCell = generateBenchPlayerCell(player, true);
+    tr.appendChild(firstPlayerCell);
+    return tr;
+}
+function generatePlayerRowCell(player, homePlayer) {
+    var td = document.createElement("td");
+    var row = document.createElement("div");
+    row.classList.add("row");
+    var imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-3", "pt-3");
+    var image = document.createElement("img");
+    var pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    var nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-6", "pt-3");
+    var boldName = document.createElement("b");
+    var teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    var lineBreak = document.createElement("br");
+    var scoreDiv = document.createElement("div");
+    scoreDiv.classList.add("col-3");
+    var scoreTitle = document.createElement("div");
+    scoreTitle.innerText = "Score";
+    scoreTitle.style.fontSize = ".8em";
+    var scoreText = document.createElement("b");
+    scoreText.innerText = roundToHundred(player.score).toString();
+    var projectedTitle = document.createElement("div");
+    projectedTitle.innerText = "Projected";
+    projectedTitle.style.fontSize = ".6em";
+    var projectedText = document.createElement("small");
+    projectedText.innerText = roundToHundred(player.projectedScore).toString();
+    if (homePlayer) {
+        row.appendChild(imageDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(scoreDiv);
+        scoreDiv.style.textAlign = "right";
+        nameDiv.style.textAlign = "left";
+    }
+    else {
+        scoreDiv.style.textAlign = "left";
+        nameDiv.style.textAlign = "right";
+        row.appendChild(scoreDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(imageDiv);
+    }
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    scoreDiv.classList.add("player_cell_score");
+    scoreDiv.appendChild(scoreTitle);
+    scoreDiv.appendChild(scoreText);
+    scoreDiv.appendChild(document.createElement("br"));
+    scoreDiv.appendChild(projectedTitle);
+    scoreDiv.appendChild(projectedText);
+    td.appendChild(row);
+    return td;
+}
+function generateBenchPlayerCell(player, homePlayer) {
+    var td = document.createElement("td");
+    var row = document.createElement("div");
+    var badge = generateBenchPositionBadge(player.position);
+    row.classList.add("row");
+    var imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-2", "pt-3");
+    var image = document.createElement("img");
+    var pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    var badgeDiv = document.createElement("div");
+    badgeDiv.classList.add("col-3", "pt-3");
+    badgeDiv.appendChild(badge);
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    var nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-4", "pt-3");
+    var boldName = document.createElement("b");
+    var teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    var lineBreak = document.createElement("br");
+    var scoreDiv = document.createElement("div");
+    scoreDiv.classList.add("col-3");
+    var scoreTitle = document.createElement("div");
+    scoreTitle.innerText = "Score";
+    scoreTitle.style.fontSize = ".8em";
+    var scoreText = document.createElement("b");
+    scoreText.innerText = roundToHundred(player.score).toString();
+    var projectedTitle = document.createElement("div");
+    projectedTitle.innerText = "Projected";
+    projectedTitle.style.fontSize = ".6em";
+    var projectedText = document.createElement("small");
+    projectedText.innerText = roundToHundred(player.projectedScore).toString();
+    if (homePlayer) {
+        row.appendChild(badgeDiv);
+        row.appendChild(imageDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(scoreDiv);
+        scoreDiv.style.textAlign = "right";
+    }
+    else {
+        scoreDiv.style.textAlign = "left";
+        row.appendChild(scoreDiv);
+        row.appendChild(nameDiv);
+        row.appendChild(imageDiv);
+        row.appendChild(badgeDiv);
+    }
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    scoreDiv.classList.add("player_cell_score");
+    scoreDiv.appendChild(scoreTitle);
+    scoreDiv.appendChild(scoreText);
+    scoreDiv.appendChild(document.createElement("br"));
+    scoreDiv.appendChild(projectedTitle);
+    scoreDiv.appendChild(projectedText);
+    td.appendChild(row);
+    return td;
+}
+function generateGenericPlayerCell(player) {
+    var td = document.createElement("td");
+    var row = document.createElement("div");
+    row.classList.add("row");
+    var imageDiv = document.createElement("div");
+    imageDiv.classList.add("col-3", "pt-3");
+    var image = document.createElement("img");
+    var pictureURL = "";
+    if (player.position === "D/ST" || player.position === "DEF") {
+        pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
+    }
+    else {
+        pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
+    }
+    image.classList.add("player_badge_image", "my-auto");
+    image.src = pictureURL;
+    var nameDiv = document.createElement("div");
+    nameDiv.classList.add("col-6", "pt-3");
+    var boldName = document.createElement("b");
+    var teamParagraph = document.createElement("p");
+    boldName.innerText = player.firstName + " " + player.lastName;
+    teamParagraph.innerText = player.position + " - " + getRealTeamInitials(player.realTeamID);
+    var lineBreak = document.createElement("br");
+    row.appendChild(imageDiv);
+    row.appendChild(nameDiv);
+    nameDiv.style.textAlign = "left";
+    imageDiv.appendChild(image);
+    nameDiv.appendChild(boldName);
+    nameDiv.appendChild(lineBreak);
+    nameDiv.appendChild(teamParagraph);
+    nameDiv.classList.add("player_cell_name");
+    td.appendChild(row);
+    return td;
+}
+function updateMainPageLeagueStatCards(league) {
+    document.getElementById("league_weekly_average").innerText = roundToHundred(league.getLeagueWeeklyAverage()).toString();
+    document.getElementById("league_standard_deviation").innerText = roundToHundred(league.getLeagueStandardDeviation()).toString();
+    document.getElementById("league_weekly_average_pp").innerText = roundToHundred(league.getLeaguePP() / league.getSeasonPortionWeeks().length).toString();
+    updateLeagueEfficiency(league);
 }
 function initMemberWeekTable(league) {
     $("#memberWeekTable").DataTable({
@@ -3896,714 +3661,546 @@ function createTradeBlockTable(member) {
     });
     return table;
 }
-function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
-    var weeks = [];
-    var weeksToGet;
-    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
-        weeksToGet = settings.currentMatchupPeriod - 1;
+var Draft = (function () {
+    function Draft(leagueID, year, draftType, pickOrder, draftPicks, auctionBudget) {
+        this.leagueID = leagueID;
+        this.year = year;
+        this.draftType = draftType;
+        this.auctionBudget = auctionBudget;
+        this.pickOrder = pickOrder;
+        this.draftPicks = draftPicks;
     }
-    else {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
-    }
-    var _loop_1 = function (q) {
-        espn_request("get", {
-            path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
-        }).done(function (json) {
-            updateLoadingText("Getting week " + q + " matchups");
-            var matchups = [];
-            for (var i in Object.keys(json.schedule)) {
-                var curWeek = json.schedule[i];
-                if (curWeek.home.rosterForCurrentScoringPeriod != null || curWeek.home.rosterForCurrentScoringPeriod !== undefined) {
-                    var homeTeamID = curWeek.home.teamId;
-                    var homePlayers = [];
-                    for (var z in curWeek.home.rosterForCurrentScoringPeriod.entries) {
-                        var curPlayer = curWeek.home.rosterForCurrentScoringPeriod.entries[z];
-                        var firstName = curPlayer.playerPoolEntry.player.firstName;
-                        var lastName = curPlayer.playerPoolEntry.player.lastName;
-                        var score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
-                        var projectedScore = 0;
-                        if (curPlayer.playerPoolEntry.player.stats.length === 0) {
-                            projectedScore = 0;
-                        }
-                        else if (curPlayer.playerPoolEntry.player.stats[1] === undefined) {
-                            projectedScore = 0;
-                        }
-                        else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId === 1) {
-                            projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
-                        }
-                        else {
-                            projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
-                        }
-                        var eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                        var position = getPosition(eligibleSlots);
-                        var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
-                        var playerID = curPlayer.playerId;
-                        var lineupSlotID = curPlayer.lineupSlotId;
-                        homePlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
-                    }
-                    var awayTeam = void 0;
-                    var awayteamID = -1;
-                    if (curWeek.away !== null && curWeek.away !== undefined) {
-                        var awayTeamID = curWeek.away.teamId;
-                        var awayPlayers = [];
-                        for (var l in curWeek.away.rosterForCurrentScoringPeriod.entries) {
-                            var curPlayer = curWeek.away.rosterForCurrentScoringPeriod.entries[l];
-                            var firstName = curPlayer.playerPoolEntry.player.firstName;
-                            var lastName = curPlayer.playerPoolEntry.player.lastName;
-                            var score = roundToHundred(curPlayer.playerPoolEntry.appliedStatTotal);
-                            var projectedScore = 0;
-                            if (curPlayer.playerPoolEntry.player.stats.length === 0) {
-                                projectedScore = 0;
-                            }
-                            else if (curPlayer.playerPoolEntry.player.stats[1] === undefined) {
-                                projectedScore = 0;
-                            }
-                            else if (curPlayer.playerPoolEntry.player.stats[1].statSourceId === 1) {
-                                projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[1].appliedTotal);
-                            }
-                            else {
-                                projectedScore = roundToHundred(curPlayer.playerPoolEntry.player.stats[0].appliedTotal);
-                            }
-                            var eligibleSlots = curPlayer.playerPoolEntry.player.eligibleSlots;
-                            var position = getPosition(curPlayer.playerPoolEntry.player.eligibleSlots);
-                            var realTeamID = curPlayer.playerPoolEntry.player.proTeamId;
-                            var playerID = curPlayer.playerId;
-                            var lineupSlotID = curPlayer.lineupSlotId;
-                            awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
-                        }
-                        awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
-                        awayteamID = awayTeam.teamID;
-                    }
-                    var isPlayoff = (q > settings.regularSeasonLength);
-                    var homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayteamID);
-                    var matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
-                    matchup.setPoorLineupDecisions();
-                    matchups.push(matchup);
-                }
-            }
-            var isPlayoffs = (q > settings.regularSeasonLength);
-            weeks.push(new Week(q, isPlayoffs, matchups));
-            if (weeks.length === weeksToGet) {
-                weeks.sort(function (x, y) {
-                    if (x.weekNumber < y.weekNumber) {
-                        return -1;
-                    }
-                    if (x.weekNumber > y.weekNumber) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                var league = new ESPNLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
-                league.setMemberStats(league.getSeasonPortionWeeks());
-                localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
-                league.setPage();
-            }
-        });
-    };
-    for (var q = 1; q <= weeksToGet; q++) {
-        _loop_1(q);
-    }
-}
-function getESPNSettings(leagueID, seasonID) {
-    updateLoadingText("Getting Settings");
-    espn_request("get", {
-        path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mSettings"
-    }).done(function (json) {
-        if (json.hasOwnProperty("messages") && json.messages[0] === "You are not authorized to view this League.") {
-            alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
-        }
-        if (json.hasOwnProperty("details") && json.details[0].message === "You are not authorized to view this League.") {
-            alert("Error: League not accessable, make sure your league is set to public for the season you are trying to view");
-        }
-        var regularSeasonMatchupCount = json.settings.scheduleSettings.matchupPeriodCount;
-        var divisions = json.settings.scheduleSettings.divisions;
-        var draftOrder = json.settings.draftSettings.pickOrder;
-        var scoringType = json.settings.scoringSettings.playerRankType;
-        var totalMatchupCount = json.status.finalScoringPeriod;
-        var currentMatchupPeriod = json.status.currentMatchupPeriod;
-        var leagueSeasons = json.status.previousSeasons;
-        var isActive = json.status.isActive;
-        var playoffLength = totalMatchupCount - regularSeasonMatchupCount;
-        var DRAFT_TYPE = json.settings.draftSettings.type;
-        var lineupSlots = Object.entries(json.settings.rosterSettings.lineupSlotCounts);
-        var lineup = lineupSlots.map(function (slot) {
-            return [parseInt(slot[0].toString(), 10), parseInt(slot[1].toString(), 10)];
-        }).filter(function (slot) {
-            return slot[1] !== 0;
-        });
-        leagueSeasons.push(seasonID);
-        var leagueName = json.settings.name;
-        var activeLineupSlots = lineup.filter(function (slot) {
-            return slot[0] !== 21 && slot[0] !== 20;
-        });
-        var settings = new Settings(0, activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
-        getESPNMembers(settings, leagueID, seasonID, leagueName);
-    });
-}
-function getESPNMembers(settings, leagueID, seasonID, leagueName) {
-    updateLoadingText("Getting Members");
-    espn_request("get", {
-        path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mTeam"
-    }).done(function (json) {
-        var members = [];
-        var teams = json.teams;
-        var seasonLength = settings.regularSeasonLength + settings.playoffLength;
-        for (var i in Object.keys(json.members)) {
-            var member = json.members[i];
-            var firstName = member.firstName;
-            var lastName = member.lastName;
-            var memberID = member.id.toString();
-            var notificationSettings = member.notificationSettings;
-            for (var x in Object.keys(teams)) {
-                if (teams[x].primaryOwner === memberID) {
-                    var curTeam = teams[x];
-                    var location_1 = curTeam.location;
-                    var nickname = curTeam.nickname;
-                    var teamAbbrev = curTeam.abbrev;
-                    var curProjectedRank = curTeam.currentProjectedRank;
-                    var draftDayProjectedRank = curTeam.draftDayProjectedRank;
-                    var divisionID = curTeam.divisionId;
-                    var transactions = curTeam.transactionCounter;
-                    var teamID = parseInt(curTeam.id, 10);
-                    var logo = curTeam.logo;
-                    var finalStanding = curTeam.rankCalculatedFinal;
-                    members.push(new ESPNMember(memberID, firstName, lastName, location_1, nickname, teamAbbrev, divisionID, teamID, logo, transactions, new Stats(finalStanding)));
-                }
-            }
-        }
-        getESPNMatchups(settings, members, leagueID, seasonID, leagueName);
-    });
-}
-function espn_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "./proxies/espn_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}
-var ESPNLeague = (function (_super) {
-    __extends(ESPNLeague, _super);
-    function ESPNLeague(id, season, weeks, members, settings, leagueName, leaguePlatform) {
-        return _super.call(this, id, season, weeks, members, settings, leagueName, leaguePlatform) || this;
-    }
-    ESPNLeague.prototype.setPage = function () {
-        _super.prototype.setPage.call(this);
-        enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod > this.settings.regularSeasonLength);
-        transitionToLeaguePage();
-    };
-    ESPNLeague.convertESPNFromJson = function (object) {
-        var members = [];
-        var weeks = [];
-        var jsonSettings = object.settings;
-        var settings = new Settings(0, jsonSettings.activeLineupSlots, jsonSettings.lineupSlots, jsonSettings.regularSeasonLength, jsonSettings.playoffLength, jsonSettings.draftType, jsonSettings.currentMatchupPeriod, jsonSettings.isActive, jsonSettings.yearsActive);
-        object.weeks.forEach(function (week) {
-            var matchups = [];
-            week.matchups.forEach(function (matchup) {
-                var homeRoster = [];
-                matchup.home.IR.concat(matchup.home.bench, matchup.home.lineup).forEach(function (player) {
-                    homeRoster.push(new ESPNPlayer(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
-                });
-                var awayTeamId = -1;
-                var away;
-                if (!matchup.byeWeek) {
-                    var awayRoster_1 = [];
-                    awayTeamId = matchup.away.teamID;
-                    matchup.away.IR.concat(matchup.away.bench, matchup.away.lineup).forEach(function (player) {
-                        awayRoster_1.push(new ESPNPlayer(player.firstName, player.lastName, player.score, player.projectedScore, player.position, player.realTeamID, player.playerID, player.lineupSlotID, player.eligibleSlots, player.weekNumber));
-                    });
-                    away = new ESPNTeam(matchup.away.teamID, awayRoster_1, object.settings.activeLineupSlots, matchup.home.teamID);
-                }
-                var home = new ESPNTeam(matchup.home.teamID, homeRoster, object.settings.activeLineupSlots, awayTeamId);
-                var recreatedMatchup = new Matchup(home, away, week.weekNumber, week.isPlayoffs);
-                recreatedMatchup.setPoorLineupDecisions();
-                matchups.push(recreatedMatchup);
-            });
-            weeks.push(new Week(week.weekNumber, week.isPlayoffs, matchups));
-        });
-        object.members.forEach(function (member) {
-            members.push(new ESPNMember(member.memberID, member.firstName, member.lastName, member.teamLocation, member.teamNickname, member.teamAbbrev, member.division, member.teamID, member.logoURL, member.transactions, new Stats(member.stats.finalStanding)));
-        });
-        var league = new ESPNLeague(object.id, object.season, weeks, members, settings, object.leagueName, object.leaguePlatform);
-        league.setMemberStats(league.getSeasonPortionWeeks());
-        league.setPowerRanks();
-        return league;
-    };
-    return ESPNLeague;
-}(League));
-var ESPNMember = (function () {
-    function ESPNMember(memberID, firstName, lastName, teamLocation, teamNickname, teamAbbrev, division, teamID, logoURL, transactions, stats) {
-        this.memberID = memberID;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.teamLocation = teamLocation;
-        this.teamNickname = teamNickname;
-        this.teamAbbrev = teamAbbrev;
-        this.division = division;
-        this.teamID = teamID;
-        this.logoURL = logoURL;
-        this.transactions = transactions;
-        this.stats = stats;
-    }
-    ESPNMember.prototype.setAdvancedStats = function (weeks) {
-        var _this = this;
-        var scores = [];
-        weeks.forEach(function (week) {
-            scores.push(week.getTeam(_this.teamID).score);
-        });
-        this.stats.standardDeviation = calcStandardDeviation(scores);
-        this.stats.weeklyAverage = getMean(scores);
-    };
-    ESPNMember.prototype.teamNameToString = function () {
-        return this.teamLocation + " " + this.teamNickname;
-    };
-    ESPNMember.prototype.ownerToString = function () {
-        return this.firstName + " " + this.lastName;
-    };
-    ESPNMember.prototype.recordToString = function () {
-        if (this.stats.ties !== 0) {
-            return this.stats.wins + "-" + this.stats.losses + "-" + this.stats.ties;
-        }
-        else {
-            return this.stats.wins + "-" + this.stats.losses;
-        }
-    };
-    ESPNMember.prototype.rankToString = function () {
-        return ordinal_suffix_of(this.stats.rank);
-    };
-    ESPNMember.prototype.finishToString = function () {
-        return ordinal_suffix_of(this.stats.finalStanding);
-    };
-    ESPNMember.prototype.powerRecordToString = function () {
-        return this.stats.powerWins + "-" + this.stats.powerLosses;
-    };
-    ESPNMember.prototype.potentialPowerRecordToString = function () {
-        return this.stats.potentialPowerWins + "-" + this.stats.potentialPowerLosses;
-    };
-    return ESPNMember;
+    return Draft;
 }());
-var ESPNPlayer = (function () {
-    function ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, weekNumber) {
-        this.firstName = firstName;
-        if (lastName === "D/ST") {
-            this.lastName = "DEF";
-        }
-        else {
-            this.lastName = lastName;
-        }
-        this.eligibleSlots = eligibleSlots;
-        this.score = score;
-        this.projectedScore = projectedScore;
-        this.position = position;
-        this.realTeamID = realTeamID;
+var DraftPick = (function () {
+    function DraftPick(teamID, overrallPickNumber, roundID, roundPickNumber, playerID, playerAuctionCost, owningTeamIDs, nominatingTeamID, autoDraftTeamID) {
+        this.teamID = teamID;
+        this.overallPickNumber = overrallPickNumber;
+        this.roundID = roundID;
+        this.roundPickNumber = roundID;
         this.playerID = playerID;
+        this.playerAuctionCost = playerAuctionCost;
+        this.owningTeamIDs = owningTeamIDs;
+        this.nominatingTeamID = nominatingTeamID;
+        this.autoDraftTeamID = autoDraftTeamID;
+    }
+    return DraftPick;
+}());
+var EmptySleeperSlot = (function () {
+    function EmptySleeperSlot(positions) {
+        this.eligibleSlots = Array.from(Array(100).keys());
+        this.score = 0;
+        this.firstName = "Empty";
+        this.lastName = "Slot";
+        this.actualScore = 0;
+        this.projectedScore = 0;
+        this.position = "EMPTY";
+        this.realTeamID = "-1";
+        this.jerseyNumber = -1;
+        this.espnID = "-1";
+        this.playerID = "-1";
+        this.currentSlot = positions;
+    }
+    return EmptySleeperSlot;
+}());
+var EmptySlot = (function () {
+    function EmptySlot(lineupSlotID) {
+        this.eligibleSlots = Array.from(Array(100).keys());
+        this.score = 0;
+        this.firstName = "Empty";
+        this.lastName = "Slot";
+        this.actualScore = 0;
+        this.projectedScore = 0;
+        this.position = "EMPTY";
+        this.realTeamID = "-1";
+        this.jerseyNumber = -1;
+        this.espnID = "-1";
+        this.playerID = "-1";
         this.lineupSlotID = lineupSlotID;
+    }
+    return EmptySlot;
+}());
+var SEASON_PORTION;
+(function (SEASON_PORTION) {
+    SEASON_PORTION["REGULAR"] = "Regular Season";
+    SEASON_PORTION["POST"] = "Post-Season";
+    SEASON_PORTION["ALL"] = "Complete Season";
+})(SEASON_PORTION || (SEASON_PORTION = {}));
+var FLEX_SLOT;
+(function (FLEX_SLOT) {
+    FLEX_SLOT["FLEX"] = "FLEX";
+    FLEX_SLOT["SUPER_FLEX"] = "SUPER_FLEX";
+    FLEX_SLOT["REC_FLEX"] = "REC_FLEX";
+    FLEX_SLOT["WRRB_FLEX"] = "WRRB_FLEX";
+    FLEX_SLOT["IDP_FLEX"] = "IDP_FLEX";
+})(FLEX_SLOT || (FLEX_SLOT = {}));
+var PLATFORM;
+(function (PLATFORM) {
+    PLATFORM[PLATFORM["SLEEPER"] = 0] = "SLEEPER";
+    PLATFORM[PLATFORM["ESPN"] = 1] = "ESPN";
+    PLATFORM[PLATFORM["NFL"] = 2] = "NFL";
+    PLATFORM[PLATFORM["YAHOO"] = 3] = "YAHOO";
+})(PLATFORM || (PLATFORM = {}));
+var DRAFT_TYPE;
+(function (DRAFT_TYPE) {
+    DRAFT_TYPE[DRAFT_TYPE["AUCTION"] = 0] = "AUCTION";
+    DRAFT_TYPE[DRAFT_TYPE["SNAKE"] = 1] = "SNAKE";
+    DRAFT_TYPE[DRAFT_TYPE["LINEAR"] = 2] = "LINEAR";
+})(DRAFT_TYPE || (DRAFT_TYPE = {}));
+var LEAGUE_TYPE;
+(function (LEAGUE_TYPE) {
+    LEAGUE_TYPE[LEAGUE_TYPE["DYNASTY"] = 0] = "DYNASTY";
+    LEAGUE_TYPE[LEAGUE_TYPE["REDRAFT"] = 1] = "REDRAFT";
+})(LEAGUE_TYPE || (LEAGUE_TYPE = {}));
+var SCORING_TYPE;
+(function (SCORING_TYPE) {
+    SCORING_TYPE[SCORING_TYPE["STANDARD"] = 0] = "STANDARD";
+    SCORING_TYPE[SCORING_TYPE["HALF_PPR"] = 1] = "HALF_PPR";
+    SCORING_TYPE[SCORING_TYPE["FULL_PPR"] = 2] = "FULL_PPR";
+})(SCORING_TYPE || (SCORING_TYPE = {}));
+var POSITION;
+(function (POSITION) {
+    POSITION["QB"] = "QB";
+    POSITION["RB"] = "RB";
+    POSITION["WR"] = "WR";
+    POSITION["TE"] = "TE";
+    POSITION["K"] = "K";
+    POSITION["DEF"] = "DEF";
+    POSITION["DL"] = "DL";
+    POSITION["DT"] = "DT";
+    POSITION["LB"] = "LB";
+    POSITION["DB"] = "DB";
+    POSITION["DE"] = "DE";
+    POSITION["DP"] = "DP";
+    POSITION["LT"] = "LT";
+    POSITION["CB"] = "CB";
+    POSITION["S"] = "S";
+    POSITION["P"] = "P";
+    POSITION["HC"] = "HC";
+})(POSITION || (POSITION = {}));
+var LeagueStats = (function () {
+    function LeagueStats() {
+        this.leaguePF = 0;
+        this.leaguePP = 0;
+        this.leaguePositionalStats = new PositionalStats();
+    }
+    return LeagueStats;
+}());
+var Matchup = (function () {
+    function Matchup(home, away, weekNumber, isPlayoff) {
+        this.home = home;
+        this.away = away;
         this.weekNumber = weekNumber;
-        this.espnID = playerID;
+        this.isPlayoffs = isPlayoff;
+        this.setMatchupStats();
     }
-    ESPNPlayer.prototype.isEligible = function (slot) {
-        var isEligible = false;
-        this.eligibleSlots.forEach(function (eligibleSlot) {
-            if (eligibleSlot === slot) {
-                isEligible = true;
-            }
-        });
-        return isEligible;
-    };
-    return ESPNPlayer;
-}());
-var ESPNTeam = (function () {
-    function ESPNTeam(teamID, players, activeLineupSlots, opponentID) {
-        var _this = this;
-        this.lineup = [];
-        this.bench = [];
-        this.IR = [];
-        this.opponentID = opponentID;
-        players.forEach(function (player) {
-            if (player.lineupSlotID === 21) {
-                _this.IR.push(player);
-            }
-            else if (player.lineupSlotID === 20) {
-                _this.bench.push(player);
-            }
-            else {
-                _this.lineup.push(player);
-            }
-        });
-        this.teamID = teamID;
-        this.score = this.getTeamScore(this.lineup);
-        this.potentialPoints = this.getTeamScore(getOptimalLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR)));
-        this.projectedScore = this.getProjectedScore(this.lineup);
-        this.projectedBestLineupPoints = this.getTeamScore(getOptimalProjectedLineup(activeLineupSlots, players));
-        var gutArray = this.getGutPoints(activeLineupSlots);
-        this.gutDifference = gutArray[0];
-        this.gutPlayers = gutArray[1];
-    }
-    ESPNTeam.prototype.getTeamScore = function (players) {
-        var score = 0;
-        for (var i in players) {
-            if (players[i].score !== null && players[i].score !== undefined) {
-                score += players[i].score;
-            }
-        }
-        return score;
-    };
-    ESPNTeam.prototype.getProjectedScore = function (players) {
-        var projectedScore = 0;
-        for (var i in players) {
-            if (players[i].projectedScore !== null && players[i].projectedScore !== undefined) {
-                projectedScore += players[i].projectedScore;
-            }
-        }
-        return projectedScore;
-    };
-    ESPNTeam.prototype.getMVP = function () {
-        var mvp = this.lineup[0];
-        var mvpScore = 0;
-        this.lineup.forEach(function (player) {
-            if (player.score > mvpScore) {
-                mvpScore = player.score;
-                mvp = player;
-            }
-        });
-        return mvp;
-    };
-    ESPNTeam.prototype.getLVP = function () {
-        var lvp = this.lineup[0];
-        var lvpScore = this.lineup[0].score;
-        this.lineup.forEach(function (player) {
-            if (player.score > lvpScore) {
-                lvpScore = player.score;
-                lvp = player;
-            }
-        });
-        return lvp;
-    };
-    ESPNTeam.prototype.getPositionalPlayers = function (position) {
-        var players = this.lineup;
-        var positionPlayers = [];
-        players.forEach(function (player) {
-            if (player.position === position) {
-                positionPlayers.push(player);
-            }
-        });
-        return positionPlayers;
-    };
-    ESPNTeam.prototype.getEligibleSlotPlayers = function (slot) {
-        var players = this.lineup.concat(this.bench, this.IR);
-        var eligiblePlayers = players.filter(function (it) {
-            return it.isEligible(slot) === true;
-        });
-        return eligiblePlayers;
-    };
-    ESPNTeam.prototype.getEligibleSlotBenchPlayers = function (slot) {
-        var players = this.bench.concat(this.IR);
-        var eligiblePlayers = players.filter(function (it) {
-            return it.isEligible(slot) === true;
-        });
-        return eligiblePlayers;
-    };
-    ESPNTeam.prototype.getGutPoints = function (activeLineupSlots) {
-        var players = this.getProjectedLinupPlayerDifference(activeLineupSlots);
-        var gutPlayers = players[0];
-        var satPlayers = players[1];
-        var diff = this.getTeamScore(gutPlayers) - this.getTeamScore(satPlayers);
-        var playerNum = gutPlayers.length;
-        return [diff, playerNum];
-    };
-    ESPNTeam.prototype.getProjectedLinupPlayerDifference = function (activeLineupSlots) {
-        var _this = this;
-        var gutPlayers = [];
-        var satPlayers = [];
-        var projectedLineup = getOptimalProjectedLineup(activeLineupSlots, this.lineup.concat(this.bench, this.IR));
-        this.lineup.forEach(function (player) {
-            if (!includesPlayer(player, projectedLineup)) {
-                gutPlayers.push(player);
-            }
-        });
-        projectedLineup.forEach(function (player) {
-            if (!includesPlayer(player, _this.lineup)) {
-                satPlayers.push(player);
-            }
-        });
-        return [gutPlayers, satPlayers];
-    };
-    return ESPNTeam;
-}());
-function getSleeperLeagueSettings(leagueID, seasonID) {
-    sleeper_request("get", {
-        path: "league/" + leagueID.toString()
-    }).done(function (json) {
-        if (json.season === "2020") {
-            getSleeperLeagueSettings(json.previous_league_id, seasonID);
+    Matchup.prototype.setMatchupStats = function () {
+        this.isTie = false;
+        if (this.away === undefined || this.away === null) {
+            this.byeWeek = true;
+            this.isUpset = false;
+            this.isTie = false;
         }
         else {
-            if (json == null) {
-                alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
-                location.reload();
-                return;
-            }
-            console.log(json);
-            var rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
-            var lineupOrder = json.roster_positions.filter(function (it) { return it !== "BN"; });
-            var leagueName = json.name;
-            var leagueAvatar = json.avatar;
-            var draftId = json.draft_id;
-            var playoffStartWeek = json.settings.playoff_week_start;
-            var currentMatchupPeriod = json.settings.last_scored_leg;
-            var previousLeagueId = json.previous_league_id;
-            var numDivisions = json.settings.divisions;
-            var startWeek = json.settings.start_week;
-            var isActive = (json.status === "in_season" || json.status === "post_season");
-            var scoringSettings = json.scoring_settings;
-            var divisions = [];
-            if (json.metadata) {
-                for (var i = 0; i < numDivisions; i++) {
-                    divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
-                }
-            }
-            var settings = new Settings(startWeek, rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
-            updateLoadingText("Getting Members");
-            getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, json.settings.last_scored_leg);
-        }
-    });
-}
-function getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
-    sleeper_request("get", {
-        path: "league/" + leagueID.toString() + "/users"
-    }).done(function (json) {
-        var members = [];
-        json.forEach(function (member) {
-            var memberName = member.display_name;
-            var memberID = member.user_id;
-            var teamName = member.metadata.team_name;
-            var teamAvatar = member.avatar;
-            members.push(new SleeperMember(memberID, memberName, teamName, teamAvatar));
-        });
-        updateLoadingText("Getting Rosters");
-        getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg);
-    });
-}
-function getSleeperRosters(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
-    sleeper_request("get", {
-        path: "league/" + leagueID.toString() + "/rosters/"
-    }).done(function (json) {
-        json.forEach(function (roster) {
-            var teamID = parseInt(roster.roster_id, 10);
-            var metadata = roster.metadata;
-            var curRoster = roster.players;
-            var reserve = roster.reserve;
-            var taxi = roster.taxi;
-            var wins = roster.settings.wins;
-            var totalMoves = roster.settings.total_moves;
-            var rosterOwnerID = roster.owner_id.toString();
-            var coOwners = roster.co_owners;
-            members.forEach(function (member) {
-                var totalRoster = [];
-                totalRoster = curRoster;
-                if (member.memberID === rosterOwnerID) {
-                    member.teamID = teamID;
-                    member.stats = new Stats(0);
-                    member.currentRosterIDs = totalRoster;
-                    if (metadata != null) {
-                        for (var _i = 0, _a = Object.entries(metadata); _i < _a.length; _i++) {
-                            var _b = _a[_i], key = _b[0], value = _b[1];
-                            member.rosterNicknameMap.set(key, value);
-                        }
-                    }
-                }
-            });
-        });
-        updateLoadingText("Getting Matchups");
-        getSleeperMatchups(leagueID, seasonID, members.filter(function (member) { return member.teamID !== undefined; }), settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg);
-    });
-}
-function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName, lastScoredLeg) {
-    var promises = [];
-    for (var i = settings.startWeek; i <= lastScoredLeg; i++) {
-        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + leagueID + "/matchups/" + i));
-    }
-    updateLoadingText("Getting weekly stats");
-    var weekCounter = settings.startWeek;
-    var Weeks = [];
-    Promise.all(promises).then(function (weeks) {
-        weeks.forEach(function (week) {
-            var isPlayoffs = (weekCounter >= settings.regularSeasonLength);
-            var weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, lineupOrder);
-            Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
-            weekCounter += 1;
-        });
-        getSleeperWeekStats(settings.startWeek, lastScoredLeg).then(function (result) {
-            var _loop_2 = function (y) {
-                Weeks[y].matchups.forEach(function (matchup) {
-                    matchup.home.lineup.forEach(function (player) {
-                        result[y].calculatePlayerScore(scoringSettings, player);
-                        result[y].calculateProjectedPlayerScore(scoringSettings, player);
-                    });
-                    if (matchup.home.score === null) {
-                        matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
-                        matchup.setMatchupStats();
-                    }
-                    matchup.home.bench.forEach(function (player) {
-                        result[y].calculatePlayerScore(scoringSettings, player);
-                        result[y].calculateProjectedPlayerScore(scoringSettings, player);
-                    });
-                    if (!matchup.byeWeek) {
-                        matchup.away.lineup.forEach(function (player) {
-                            result[y].calculatePlayerScore(scoringSettings, player);
-                            result[y].calculateProjectedPlayerScore(scoringSettings, player);
-                        });
-                        if (matchup.away.score === null) {
-                            matchup.away.score = matchup.away.getTeamScore(matchup.away.lineup);
-                            matchup.setMatchupStats();
-                        }
-                        matchup.away.bench.forEach(function (player) {
-                            result[y].calculatePlayerScore(scoringSettings, player);
-                            result[y].calculateProjectedPlayerScore(scoringSettings, player);
-                        });
-                    }
-                });
-            };
-            for (var y = 0; y < result.length; y++) {
-                _loop_2(y);
-            }
-            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName);
-        });
-    });
-}
-function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder) {
-    var allTeams = (teams).map(function (team) {
-        return new SleeperTeam(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, lineupOrder);
-    });
-    var matchups = [];
-    var _loop_3 = function (i) {
-        var curTeams = allTeams.filter(function (team) {
-            return team.matchupID === i;
-        });
-        if (curTeams.length === 1) {
-            matchups.push(new Matchup(curTeams[0], null, weekNumber, isPlayoff));
-        }
-        if (curTeams.length === 2) {
-            matchups.push(new Matchup(curTeams[0], curTeams[1], weekNumber, isPlayoff));
-        }
-    };
-    for (var i = 0; i <= (teams.length / 2); i++) {
-        _loop_3(i);
-    }
-    var byeWeekTeams = allTeams.filter(function (team) {
-        return team.matchupID === null;
-    });
-    byeWeekTeams.forEach(function (team) {
-        matchups.push(new Matchup(team, null, weekNumber, isPlayoff));
-    });
-    return matchups;
-}
-function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
-    updateLoadingText("Getting Player Stats");
-    makeRequest("./assets/player_library.json").then(function (result) {
-        var lib = result.response;
-        weeks.forEach(function (week) {
-            week.matchups.forEach(function (matchup) {
-                if (matchup.home.score === null) {
-                    matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
-                    matchup.setMatchupStats();
-                }
-                if (!matchup.byeWeek) {
-                    if (matchup.away.score === null) {
-                        matchup.away.score = matchup.home.getTeamScore(matchup.away.lineup);
-                        matchup.setMatchupStats();
-                    }
-                }
-                matchup.home.lineup.forEach(function (player) {
-                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
-                });
-                matchup.home.bench.forEach(function (player) {
-                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
-                });
-                matchup.home.IR.forEach(function (player) {
-                    assignSleeperPlayerAttributes(player, lib[player.playerID]);
-                });
-                matchup.home.setTeamMetrics(activeLineupSlots);
-                if (!matchup.byeWeek) {
-                    matchup.away.lineup.forEach(function (player) {
-                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
-                    });
-                    matchup.away.bench.forEach(function (player) {
-                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
-                    });
-                    matchup.away.IR.forEach(function (player) {
-                        assignSleeperPlayerAttributes(player, lib[player.playerID]);
-                    });
-                    matchup.away.setTeamMetrics(activeLineupSlots);
-                    matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
-                    matchup.setPoorLineupDecisions();
-                }
-            });
-        });
-        members.forEach(function (member) {
-            member.setRosterAttributes(lib);
-        });
-        var league = new SleeperLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.SLEEPER);
-        updateLoadingText("Setting Page");
-        league.setMemberStats(league.getSeasonPortionWeeks());
-        getSleeperTrades(league, lib);
-    });
-}
-function getSleeperTrades(league, lib) {
-    var promises = [];
-    for (var i = 1; i <= league.settings.currentMatchupPeriod - 1; i++) {
-        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
-    }
-    updateLoadingText("Getting Transactions");
-    Promise.all(promises).then(function (transactionArray) {
-        transactionArray.map(function (it) { return it.response; }).forEach(function (week) {
-            week.filter(function (it) { return it.type === "trade" && it.status === "complete"; }).forEach(function (trade) {
-                league.trades.push(new SleeperTrade(trade, lib));
-            });
-        });
-        league.setPage();
-    });
-}
-function makeRequest(url) {
-    var request = new XMLHttpRequest();
-    request.responseType = "json";
-    return new Promise(function (resolve, reject) {
-        request.onreadystatechange = function () {
-            if (request.readyState !== 4) {
-                return;
-            }
-            if (request.status >= 200 && request.status < 300) {
-                resolve(request);
+            if (this.home.projectedScore > this.away.projectedScore) {
+                this.projectedWinner = this.home.teamID;
             }
             else {
-                reject({
-                    status: request.status,
-                    statusText: request.statusText,
-                });
+                this.projectedWinner = this.away.teamID;
             }
-        };
-        request.open("GET", url, true);
-        request.send();
-    });
-}
-function sleeper_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "./proxies/sleeper_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}
-var TransactionMetadata;
-(function (TransactionMetadata) {
-    TransactionMetadata["SUCCESS_PLAYER_CLAIMED"] = "Your waiver claim was processed successfully!";
-    TransactionMetadata["FAILED_CLAIMED_BY_OTHER_OWNER"] = "This player was claimed by another owner.";
-    TransactionMetadata["FAILED_TOO_MANY_PLAYERS"] = "Unfortunately, your roster will have too many players after this transaction.";
-})(TransactionMetadata || (TransactionMetadata = {}));
+            this.projectedMOV = (Math.abs(this.home.projectedScore - this.away.projectedScore));
+            if (this.home.score > this.away.score) {
+                this.winner = this.home.teamID;
+            }
+            else if (this.home.score < this.away.score) {
+                this.winner = this.away.teamID;
+            }
+            else {
+                this.isTie = true;
+                this.isUpset = false;
+            }
+            this.marginOfVictory = (Math.abs(this.home.score - this.away.score));
+            this.byeWeek = false;
+            if (this.projectedWinner !== this.winner) {
+                this.isUpset = true;
+            }
+            else {
+                this.isUpset = false;
+            }
+        }
+    };
+    Matchup.prototype.getWinningTeam = function () {
+        if (this.byeWeek) {
+            return null;
+        }
+        else if (this.home.score > this.away.score) {
+            return this.home;
+        }
+        else {
+            return this.away;
+        }
+    };
+    Matchup.prototype.getHighestScoringTeam = function () {
+        if (this.byeWeek) {
+            return this.home;
+        }
+        else if (this.home.score > this.away.score) {
+            return this.home;
+        }
+        else {
+            return this.away;
+        }
+    };
+    Matchup.prototype.getLowestScoringTeam = function () {
+        if (this.byeWeek) {
+            return this.home;
+        }
+        else if (this.home.score > this.away.score) {
+            return this.away;
+        }
+        else {
+            return this.home;
+        }
+    };
+    Matchup.prototype.getLosingTeam = function () {
+        if (this.byeWeek) {
+            return null;
+        }
+        else if (this.home.score < this.away.score) {
+            return this.home;
+        }
+        else {
+            return this.away;
+        }
+    };
+    Matchup.prototype.hasTeam = function (teamID) {
+        if (this.byeWeek !== true) {
+            if (this.home.teamID === teamID || this.away.teamID === teamID) {
+                return true;
+            }
+        }
+        else {
+            if (this.home.teamID === teamID) {
+                return true;
+            }
+        }
+    };
+    Matchup.prototype.getTeam = function (teamID) {
+        if (this.home.teamID === teamID) {
+            return this.home;
+        }
+        else if (this.away.teamID === teamID) {
+            return this.away;
+        }
+    };
+    Matchup.prototype.getOpponent = function (teamID) {
+        if (this.home.teamID === teamID && this.byeWeek === false) {
+            return this.away;
+        }
+        else if (this.away.teamID === teamID) {
+            return this.home;
+        }
+        else {
+            return null;
+        }
+    };
+    Matchup.prototype.gutHadImpact = function (teamID) {
+        var team = this.getTeam(teamID);
+        if (this.marginOfVictory > Math.abs(team.gutDifference)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    Matchup.prototype.setPoorLineupDecisions = function () {
+        var _this = this;
+        var whiffedChoices = 0;
+        var team = this.home;
+        if (!this.byeWeek) {
+            if (this.home.score > this.away.score) {
+                team = this.away;
+            }
+            team.lineup.forEach(function (startingPlayer) {
+                team.getEligibleSlotBenchPlayers(startingPlayer.lineupSlotID).forEach(function (benchedPlayer) {
+                    var diff = benchedPlayer.score - startingPlayer.score;
+                    if (diff > _this.marginOfVictory) {
+                        whiffedChoices += 1;
+                    }
+                });
+            });
+            this.loserPotentialWinningSingleMoves = whiffedChoices;
+            if (this.loserPotentialWinningSingleMoves > 0) {
+                this.withinSingleMoveOfWinning = true;
+            }
+            else {
+                this.withinSingleMoveOfWinning = false;
+            }
+        }
+    };
+    return Matchup;
+}());
+var PositionalStats = (function () {
+    function PositionalStats() {
+        this.qbPoints = 0;
+        this.rbPoints = 0;
+        this.wrPoints = 0;
+        this.tePoints = 0;
+        this.kPoints = 0;
+        this.defPoints = 0;
+        this.qbPotentialPoints = 0;
+        this.rbPotentialPoints = 0;
+        this.wrPotentialPoints = 0;
+        this.tePotentialPoints = 0;
+        this.kPotentialPoints = 0;
+        this.defPotentialPoints = 0;
+    }
+    PositionalStats.prototype.getPositionalScores = function () {
+        return [this.qbPoints, this.rbPoints, this.wrPoints, this.tePoints, this.kPoints, this.defPoints];
+    };
+    PositionalStats.prototype.getPositionalPotentialScores = function () {
+        return [this.qbPoints, this.rbPoints, this.wrPoints, this.tePoints, this.kPoints, this.defPoints];
+    };
+    return PositionalStats;
+}());
+var PowerStats = (function () {
+    function PowerStats(teamID, weekNumber, pf, pp, projected) {
+        this.teamID = teamID;
+        this.weekNumber = weekNumber;
+        this.wins = 0;
+        this.losses = 0;
+        this.ties = 0;
+        this.pf = pf;
+        this.projected = projected;
+        this.pp = pp;
+    }
+    return PowerStats;
+}());
+var SeasonPlayer = (function () {
+    function SeasonPlayer(player, platform) {
+        this.firstName = player.firstName;
+        this.lastName = player.lastName;
+        this.eligibleSlots = player.eligibleSlots;
+        this.seasonScore = player.score;
+        this.projectedSeasonScore = player.projectedScore;
+        this.position = player.position;
+        this.realTeamID = player.realTeamID;
+        this.playerID = player.playerID;
+        this.espnID = player.espnID;
+        this.weeksPlayed = 1;
+        this.averageScore = player.score;
+        this.scores = [[player.score, player.weekNumber]];
+        if (platform === PLATFORM.SLEEPER) {
+            this.pictureID = player.espnID;
+        }
+        else {
+            this.pictureID = player.espnID;
+        }
+        this.setPictureURL();
+    }
+    SeasonPlayer.prototype.addPerformance = function (player) {
+        this.weeksPlayed += 1;
+        this.seasonScore += player.score;
+        this.projectedSeasonScore += player.projectedScore;
+        this.averageScore = roundToHundred(this.seasonScore / this.weeksPlayed);
+        this.scores.push([player.score, player.weekNumber]);
+    };
+    SeasonPlayer.prototype.getScores = function () {
+        var points = [];
+        this.scores.forEach(function (tup) {
+            points.push(tup[0]);
+        });
+        return points;
+    };
+    SeasonPlayer.prototype.isEligible = function (slot) {
+        return this.eligibleSlots.includes(slot);
+    };
+    SeasonPlayer.prototype.setPictureURL = function () {
+        if (this.position === "D/ST" || this.position === "DEF") {
+            this.pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(this.realTeamID) + ".png&h=150&w=150";
+        }
+        else {
+            this.pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + this.pictureID + ".png";
+        }
+    };
+    return SeasonPlayer;
+}());
+var Stats = (function () {
+    function Stats(finalStanding) {
+        this.finalStanding = finalStanding;
+        this.wins = 0;
+        this.losses = 0;
+        this.ties = 0;
+        this.powerWins = 0;
+        this.powerLosses = 0;
+        this.powerTies = 0;
+        this.potentialPowerWins = 0;
+        this.potentialPowerLosses = 0;
+        this.potentialPowerTies = 0;
+        this.pf = 0;
+        this.pa = 0;
+        this.pp = 0;
+        this.OPSLAP = 0;
+        this.choicesThatCouldHaveWonMatchup = 0;
+        this.gameLostDueToSingleChoice = 0;
+        this.gutPlayersPlayed = 0;
+        this.gutPoints = 0;
+        this.gutWins = 0;
+        this.gutLosses = 0;
+        this.rank = 0;
+        this.averageMOD = 0;
+        this.averageMOV = 0;
+    }
+    Stats.prototype.getWinPct = function () {
+        if (this.wins === 0) {
+            return 0.00;
+        }
+        else {
+            return roundToHundred(this.wins / (this.wins + this.losses + this.ties));
+        }
+    };
+    Stats.prototype.getPowerWinPct = function () {
+        if (this.powerWins === 0) {
+            return 0.00;
+        }
+        else {
+            return roundToHundred(this.powerWins / (this.powerWins + this.powerLosses + this.powerTies));
+        }
+    };
+    Stats.prototype.getPotentialPowerWinPct = function () {
+        if (this.potentialPowerWins === 0) {
+            return 0.00;
+        }
+        else {
+            return roundToHundred(this.potentialPowerWins / (this.potentialPowerWins + this.potentialPowerLosses + this.potentialPowerTies));
+        }
+    };
+    Stats.prototype.roundStats = function () {
+        this.pf = roundToHundred(this.pf);
+        this.pa = roundToHundred(this.pa);
+        this.pp = roundToHundred(this.pp);
+    };
+    Stats.prototype.getEfficiency = function () {
+        return this.pf / this.pp;
+    };
+    Stats.prototype.getAverageGutPoints = function () {
+        if (this.gutPlayersPlayed === 0 || this.gutPoints === 0) {
+            return 0;
+        }
+        else {
+            return roundToHundred(this.gutPoints / this.gutPlayersPlayed);
+        }
+    };
+    return Stats;
+}());
+var Week = (function () {
+    function Week(weekNumber, isPlayoffs, matchups) {
+        this.weekNumber = weekNumber;
+        this.isPlayoffs = isPlayoffs;
+        this.matchups = matchups;
+    }
+    Week.prototype.getTeam = function (teamID) {
+        var team;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.hasTeam(teamID)) {
+                team = matchup.getTeam(teamID);
+            }
+        });
+        return team;
+    };
+    Week.prototype.getTeamScoreFinish = function (teamID) {
+        var finish = 1;
+        var score = this.getTeam(teamID).score;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.home.teamID !== teamID) {
+                if (matchup.home.score > score) {
+                    finish += 1;
+                }
+            }
+            if (!matchup.byeWeek) {
+                if (matchup.away.score > score && matchup.away.teamID !== teamID) {
+                    finish += 1;
+                }
+            }
+        });
+        return finish;
+    };
+    Week.prototype.getTeamMatchup = function (teamID) {
+        var match;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.hasTeam(teamID)) {
+                match = matchup;
+            }
+        });
+        return match;
+    };
+    Week.prototype.getWeekAverage = function () {
+        var weekScore = 0;
+        var numMatches = 0;
+        this.matchups.forEach(function (matchup) {
+            if (matchup.byeWeek) {
+                weekScore += matchup.home.score;
+                numMatches += 1;
+            }
+            else {
+                weekScore += matchup.home.score + matchup.away.score;
+                numMatches += 2;
+            }
+        });
+        return roundToHundred(weekScore / numMatches);
+    };
+    Week.prototype.getBestPositionPlayer = function (position) {
+        var positionPlayers = [];
+        this.matchups.forEach(function (matchup) {
+            positionPlayers = positionPlayers.concat(matchup.home.getPositionalPlayers(position));
+            if (!matchup.byeWeek) {
+                positionPlayers = positionPlayers.concat(matchup.away.getPositionalPlayers(position));
+            }
+        });
+        var bestPlayer = positionPlayers[0];
+        positionPlayers.forEach(function (player) {
+            if (player.score > bestPlayer.score) {
+                bestPlayer = player;
+            }
+        });
+        return bestPlayer;
+    };
+    return Week;
+}());
+var WeeklyPowerRanks = (function () {
+    function WeeklyPowerRanks(weekNumber, isPlayoffs) {
+        this.powerStats = new Map();
+        this.weekNumber = weekNumber;
+        this.isPlayoffs = isPlayoffs;
+    }
+    WeeklyPowerRanks.prototype.addMatchup = function (matchup) {
+        var homeTeam = matchup.home;
+        this.powerStats.set(homeTeam.teamID, new PowerStats(homeTeam.teamID, matchup.weekNumber, homeTeam.score, homeTeam.projectedScore, homeTeam.potentialPoints));
+        if (!matchup.byeWeek) {
+            var awayTeam = matchup.away;
+            this.powerStats.set(awayTeam.teamID, new PowerStats(awayTeam.teamID, matchup.weekNumber, awayTeam.score, awayTeam.projectedScore, awayTeam.potentialPoints));
+        }
+    };
+    WeeklyPowerRanks.prototype.setRanks = function () {
+        var _this = this;
+        this.powerStats.forEach(function (powerStat) {
+            _this.powerStats.forEach(function (innerStat) {
+                if (powerStat.teamID !== innerStat.teamID) {
+                    if (powerStat.pf > innerStat.pf) {
+                        powerStat.wins += 1;
+                    }
+                    else if (powerStat.pf < innerStat.pf) {
+                        powerStat.losses += 1;
+                    }
+                    else {
+                        powerStat.ties += 1;
+                    }
+                }
+            });
+        });
+    };
+    return WeeklyPowerRanks;
+}());
 var SleeperBasePlayer = (function () {
     function SleeperBasePlayer(entry) {
         this.nickName = "";
@@ -5072,78 +4669,553 @@ var SleeperWeekStats = (function () {
     };
     return SleeperWeekStats;
 }());
-function createTradeCard(league, trade) {
-    var tradeContainer = document.createElement("div");
-    tradeContainer.id = "trade_container_" + trade.transactionId;
-    tradeContainer.classList.add("row", "my-1", "league_trade", "card-deck");
-    var template = document.getElementsByTagName("template")[0];
-    trade.consentingTeamIds.forEach(function (teamID, index) {
-        var teamNode = document.importNode(template.content, true);
-        var ownerName = teamNode.querySelector(".trade_owner_name");
-        var container = teamNode.querySelector(".league_trade_container");
-        var sentAssetsList = teamNode.querySelector(".sent_assets_list");
-        var receivedAssetsList = teamNode.querySelector(".received_assets_list");
-        var c = document.createElement("img");
-        container.style.borderColor = getMemberColor(teamID);
-        c.src = league.getMember(teamID).logoURL;
-        c.style.width = "25px";
-        c.style.height = "25px";
-        c.style.borderRadius = "25px";
-        c.addEventListener("error", fixNoImage);
-        c.style.marginLeft = "8px";
-        c.style.marginRight = "auto";
-        ownerName.appendChild(c);
-        ownerName.appendChild(document.createTextNode(" " + league.getMember(teamID).ownerToString()));
-        trade.playersTraded.get(teamID).forEach(function (player) {
-            sentAssetsList.innerHTML += "- " + player.firstName + " " + player.lastName;
-            sentAssetsList.appendChild(document.createElement("br"));
+function roundToHundred(x) {
+    return Math.round(x * 100) / 100;
+}
+function roundToTen(x) {
+    return Math.round(x * 10) / 10;
+}
+function roundToThousand(x) {
+    return Math.round(x * 1000) / 1000;
+}
+function roundToMil(x) {
+    return Math.round(x * 1000000) / 1000000;
+}
+function getColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,60%)"].join("");
+}
+function getLightColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,95%)"].join("");
+}
+function getDarkColor(value) {
+    var hue = ((1 - value) * 120).toString(10);
+    return ["hsl(", hue, ",100%,47%)"].join("");
+}
+function getLightCardColor(rank, outOf) {
+    return getLightColor(rank / outOf);
+}
+function getCardColor(rank, outOf) {
+    return getColor(rank / outOf);
+}
+function getDarkCardColor(rank, outOf) {
+    return getDarkColor(rank / outOf);
+}
+function getInverseCardColor(rank, outOf) {
+    return getColor((1 + (outOf - rank)) / outOf);
+}
+function getInverseDarkCardColor(rank, outOf) {
+    return getDarkColor((1 + (outOf - rank)) / outOf);
+}
+function getTextColor(rank, outOf) {
+    var o = rank / outOf;
+    if (o < .75) {
+        return "black";
+    }
+    else {
+        return "white";
+    }
+}
+function ordinal_suffix_of(i) {
+    var j = i % 10;
+    var k = i % 100;
+    if (j === 1 && k !== 11) {
+        return i + "st";
+    }
+    if (j === 2 && k !== 12) {
+        return i + "nd";
+    }
+    if (j === 3 && k !== 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+function hexToRGB(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    if (alpha) {
+        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+    }
+    else {
+        return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
+}
+function getSleeperOptimalLineup(lineupSlots, players) {
+    var flexSlots = [];
+    var positionSlots = [];
+    var optimalLineup = [];
+    lineupSlots.forEach(function (acceptablePositions) {
+        if (acceptablePositions.length > 1) {
+            flexSlots.push(acceptablePositions);
+        }
+        else {
+            positionSlots.push(acceptablePositions);
+        }
+    });
+    positionSlots.forEach(function (positionSlot) {
+        var validPlayers = getSleeperValidSlotPlayers(positionSlot, players, optimalLineup);
+        validPlayers.sort(function (p1, p2) { return p2.score - p1.score; });
+        optimalLineup.push([positionSlot, validPlayers[0]]);
+    });
+    return optimalLineup;
+}
+function getSleeperValidSlotPlayers(slotPositions, players, optimalLineup) {
+    var validPlayers = [];
+    players.forEach(function (player) {
+        if (slotPositions.includes(player.position) && !lineupHasPlayer(player, optimalLineup)) {
+            validPlayers.push(player);
+        }
+    });
+    if (validPlayers.length === 0) {
+        validPlayers.push(new EmptySleeperSlot(slotPositions));
+    }
+    return validPlayers;
+}
+function lineupHasPlayer(player, optimalLineup) {
+    var hasPlayer = false;
+    optimalLineup.forEach(function (lineupSlot) {
+        if (lineupSlot[1].playerID === player.playerID) {
+            hasPlayer = true;
+        }
+    });
+    return hasPlayer;
+}
+function getOptimalLineup(activeLineupSlots, players) {
+    var optimalLineup = [];
+    activeLineupSlots.forEach(function (slot) {
+        optimalLineup = optimalLineup.concat(getHighestPlayersForSlot(slot[0], slot[1], players, optimalLineup));
+    });
+    return optimalLineup;
+}
+function getHighestPlayersForSlot(slotID, numPlayers, players, takenPlayers) {
+    var eligibleSortedPlayers = players.filter(function (player) {
+        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
+    }).sort(function (a, b) {
+        return b.score - a.score;
+    });
+    if (eligibleSortedPlayers.length >= numPlayers) {
+        return eligibleSortedPlayers.slice(0, numPlayers);
+    }
+    else {
+        while (eligibleSortedPlayers.length <= numPlayers) {
+            eligibleSortedPlayers.push(new EmptySlot(slotID));
+        }
+        return eligibleSortedPlayers.slice(0, numPlayers);
+    }
+}
+function getOptimalProjectedLineup(activeLineupSlots, players) {
+    var optimalLineup = [];
+    activeLineupSlots.forEach(function (slot) {
+        optimalLineup = optimalLineup.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineup));
+    });
+    return optimalLineup;
+}
+function getHighestProjectedPlayersForSlot(slotID, numPlayers, players, takenPlayers) {
+    var eligibleSortedPlayers = players.filter(function (player) {
+        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
+    }).sort(function (a, b) {
+        return b.projectedScore - a.projectedScore;
+    });
+    if (eligibleSortedPlayers.length >= numPlayers) {
+        return eligibleSortedPlayers.slice(0, numPlayers);
+    }
+    else {
+        while (eligibleSortedPlayers.length <= numPlayers) {
+            eligibleSortedPlayers.push(new EmptySlot(slotID));
+        }
+        return eligibleSortedPlayers.slice(0, numPlayers);
+    }
+}
+var eligibleSlotMap = new Map([
+    [0, [0, 1, 7, 20, 21, 88]],
+    [1, [1, 7, 20, 21, 88]],
+    [2, [2, 3, 7, 20, 21, 23, 88]],
+    [4, [4, 3, 5, 7, 20, 21, 23, 88]],
+    [6, [6, 5, 7, 20, 21, 23, 88]],
+    [8, [8, 15, 20, 21, 88]],
+    [9, [9, 15, 20, 21, 88]],
+    [10, [10, 15, 20, 21, 88]],
+    [11, [11, 15, 20, 21, 88]],
+    [12, [12, 15, 20, 21, 88]],
+    [13, [13, 15, 20, 21, 88]],
+    [14, [14, 15, 20, 21, 88]],
+    [16, [16, 20]],
+    [17, [17, 20, 21, 88]],
+    [18, [18, 20, 21, 88]],
+    [19, [19, 20]],
+    [26, [26, 15, 8, 15, 20, 21, 88]],
+    [27, [27, 15, 8, 15, 20, 21, 88]],
+    [28, [28, 15, 8, 15, 20, 21, 88]],
+    [29, [29, 15, 8, 15, 20, 21, 88]],
+    [30, [28, 15, 8, 15, 20, 21, 88]],
+]);
+var intToPosition = new Map([
+    [0, "QB"],
+    [1, "TQB"],
+    [2, "RB"],
+    [3, "RB/WR"],
+    [4, "WR"],
+    [5, "WR/TE"],
+    [6, "TE"],
+    [7, "SUPER_FLEX"],
+    [8, "DT"],
+    [9, "DE"],
+    [10, "LB"],
+    [11, "DL"],
+    [12, "CB"],
+    [13, "S"],
+    [14, "DB"],
+    [15, "DP"],
+    [16, "DEF"],
+    [17, "K"],
+    [18, "P"],
+    [19, "HC"],
+    [20, "BN"],
+    [21, "IR"],
+    [23, "FLEX"],
+    [25, "???"],
+    [26, "SS"],
+    [27, "FS"],
+    [28, "NT"],
+    [29, "OLB"],
+    [30, "ILB"],
+    [88, "TAXI"],
+    [-1, "EMPTY"],
+]);
+var positionToInt = new Map([
+    ["QB", 0],
+    ["TQB", 1],
+    ["RB", 2],
+    ["FB", 2],
+    ["RB/WR", 3],
+    ["WR", 4],
+    ["WR/TE", 5],
+    ["REC_FLEX", 5],
+    ["TE", 6],
+    ["SUPER_FLEX", 7],
+    ["OP", 7],
+    ["DT", 8],
+    ["NT", 28],
+    ["DE", 9],
+    ["OLB", 29],
+    ["ILB", 30],
+    ["LB", 10],
+    ["DL", 11],
+    ["CB", 12],
+    ["S", 13],
+    ["SS", 26],
+    ["FS", 27],
+    ["DB", 14],
+    ["DP", 15],
+    ["DEF", 16],
+    ["K", 17],
+    ["P", 18],
+    ["HC", 19],
+    ["BN", 20],
+    ["IR", 21],
+    ["FLEX", 23],
+    ["TAXI", 88],
+    ["???", 25],
+    ["EMPTY", -1],
+]);
+var SleeperFlexFillPositions = new Map([
+    ["SUPER_FLEX", ["QB", "RB", "WR", "TE"]],
+    ["FLEX", ["RB", "WR", "TE"]],
+    ["REC_FLEX", ["WR", "TE"]],
+    ["WRRB_FLEX", ["WR", "RB"]],
+    ["IDP_FLEX", ["DL", "LB", "DB"]],
+]);
+function getPosition(eligibleSlots) {
+    var slotNum = eligibleSlots[0];
+    var i = 0;
+    while (slotNum.toString() === "25" || slotNum.toString() === "23" || slotNum.toString() === "3" || slotNum.toString() === "5" || slotNum.toString() === "7" || slotNum.toString() === "15") {
+        i += 1;
+        slotNum = eligibleSlots[i];
+    }
+    return intToPosition.get(slotNum);
+}
+function getRealTeamInitials(realteamID) {
+    if (realteamID == null) {
+        return "FA";
+    }
+    var team = realteamID.toString();
+    switch (team) {
+        case "1":
+            team = "Atl";
+            break;
+        case "2":
+            team = "Buf";
+            break;
+        case "3":
+            team = "Chi";
+            break;
+        case "4":
+            team = "Cin";
+            break;
+        case "5":
+            team = "Cle";
+            break;
+        case "6":
+            team = "Dal";
+            break;
+        case "7":
+            team = "Den";
+            break;
+        case "8":
+            team = "Det";
+            break;
+        case "9":
+            team = "GB";
+            break;
+        case "10":
+            team = "Ten";
+            break;
+        case "11":
+            team = "Ind";
+            break;
+        case "12":
+            team = "KC";
+            break;
+        case "13":
+            team = "Oak";
+            break;
+        case "14":
+            team = "Lar";
+            break;
+        case "15":
+            team = "Mia";
+            break;
+        case "16":
+            team = "Min";
+            break;
+        case "17":
+            team = "NE";
+            break;
+        case "18":
+            team = "NO";
+            break;
+        case "19":
+            team = "NYG";
+            break;
+        case "20":
+            team = "NYJ";
+            break;
+        case "21":
+            team = "Phi";
+            break;
+        case "22":
+            team = "Ari";
+            break;
+        case "23":
+            team = "Pit";
+            break;
+        case "24":
+            team = "LAC";
+            break;
+        case "25":
+            team = "SF";
+            break;
+        case "26":
+            team = "Sea";
+            break;
+        case "27":
+            team = "TB";
+            break;
+        case "28":
+            team = "Wsh";
+            break;
+        case "29":
+            team = "Car";
+            break;
+        case "30":
+            team = "Jax";
+            break;
+        case "33":
+            team = "Bal";
+            break;
+        case "34":
+            team = "Hou";
+            break;
+        case "-1":
+            team = "None";
+            break;
+    }
+    return team;
+}
+function includesPlayer(player, lineup) {
+    var includes = false;
+    lineup.forEach(function (element) {
+        if (player.playerID === element.playerID) {
+            includes = true;
+        }
+    });
+    return includes;
+}
+function calcStandardDeviation(scores) {
+    var modified = [];
+    var mean = getMean(scores);
+    scores.forEach(function (score) {
+        modified.push(Math.pow(score - mean, 2));
+    });
+    return roundToHundred(Math.sqrt(getMean(modified)));
+}
+function getMean(numbers) {
+    var sum = 0;
+    numbers.forEach(function (num) {
+        sum += num;
+    });
+    return roundToHundred(sum / numbers.length);
+}
+function getBestLeastConsistent(league, teamID) {
+    var players = getSeasonPlayers(league, teamID);
+    var minSampleSize = 5;
+    if (league.settings.isActive) {
+        if (league.settings.currentMatchupPeriod <= 5) {
+            minSampleSize = league.settings.currentMatchupPeriod - 1;
+        }
+    }
+    var mostConsistentPlayers = players.filter(function (player) {
+        return (player.weeksPlayed >= minSampleSize);
+    });
+    while (mostConsistentPlayers.length === 0) {
+        minSampleSize -= 1;
+        mostConsistentPlayers = players.filter(function (player) {
+            return (player.weeksPlayed >= minSampleSize);
         });
-        trade.playersReceived.get(teamID).forEach(function (player) {
-            receivedAssetsList.innerHTML += "+ " + player.firstName + " " + player.lastName;
-            receivedAssetsList.appendChild(document.createElement("br"));
-        });
-        trade.draftPicksInvolved.filter(function (pick) {
-            return teamID === pick.currentOwnerId;
-        }).forEach(function (pick) {
-            receivedAssetsList.innerHTML += "+ " + pick.toString(league);
-            receivedAssetsList.appendChild(document.createElement("br"));
-        });
-        trade.draftPicksInvolved.filter(function (pick) {
-            return teamID === pick.sellingOwnerId;
-        }).forEach(function (pick) {
-            sentAssetsList.innerHTML += "- " + pick.toString(league);
-            sentAssetsList.appendChild(document.createElement("br"));
-        });
-        if (trade.faabTraded.get(teamID) !== undefined && trade.faabTraded.get(teamID) !== 0) {
-            if (trade.faabTraded.get(teamID) > 0) {
-                receivedAssetsList.appendChild(document.createTextNode("Faab: + $" + trade.faabTraded.get(teamID)));
-            }
-            else {
-                sentAssetsList.appendChild(document.createTextNode("Faab: - $" + (trade.faabTraded.get(teamID) * -1)));
+    }
+    var mvp = players[0];
+    var lvp = players[0];
+    var mostConsistent = mostConsistentPlayers[0];
+    players.forEach(function (seasonPlayer) {
+        if (seasonPlayer.seasonScore > mvp.seasonScore) {
+            mvp = seasonPlayer;
+        }
+        if (seasonPlayer.seasonScore < lvp.seasonScore) {
+            lvp = seasonPlayer;
+        }
+    });
+    mostConsistentPlayers.forEach(function (seasonPlayer) {
+        if (calcStandardDeviation(seasonPlayer.getScores()) < calcStandardDeviation(mostConsistent.getScores()) &&
+            seasonPlayer.weeksPlayed >= minSampleSize && seasonPlayer.seasonScore !== 0) {
+            mostConsistent = seasonPlayer;
+        }
+    });
+    return [mvp, lvp, mostConsistent];
+}
+function getMVP(league, teamID) {
+    var players = getSeasonPlayers(league, teamID);
+    var mvp = players[0];
+    players.forEach(function (seasonPlayer) {
+        if (seasonPlayer.seasonScore > mvp.seasonScore) {
+            mvp = seasonPlayer;
+        }
+    });
+    return mvp;
+}
+function getLVP(league, teamID) {
+    var players = getSeasonPlayers(league, teamID);
+    var lvp = players[0];
+    players.forEach(function (seasonPlayer) {
+        if (seasonPlayer.seasonScore === lvp.seasonScore) {
+            if (seasonPlayer.weeksPlayed > lvp.weeksPlayed) {
+                lvp = seasonPlayer;
             }
         }
-        tradeContainer.appendChild(teamNode);
+        else if (seasonPlayer.seasonScore < lvp.seasonScore) {
+            lvp = seasonPlayer;
+        }
     });
-    return tradeContainer;
+    return lvp;
 }
-function constructTrades(league) {
-    var container = document.getElementById("league_trades_container");
-    league.trades.forEach(function (trade) {
-        var tradeRow = document.createElement("div");
-        tradeRow.appendChild(createTradeCard(league, trade));
-        container.appendChild(tradeRow);
+function getSeasonPlayers(league, teamID) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        week.getTeam(teamID).lineup.forEach(function (player) {
+            var index = players.findIndex(function (existingPlayer) {
+                return existingPlayer.playerID === player.playerID;
+            });
+            if (index > -1) {
+                players[index].addPerformance(player);
+            }
+            else {
+                players.push(new SeasonPlayer(player, league.leaguePlatform));
+            }
+        });
     });
+    return players;
 }
-function constructTeamPageTrades(league, teamId) {
-    var container = document.getElementById("team_page_trades_container");
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
-    }
-    league.trades.filter(function (trade) {
-        return trade.consentingTeamIds.includes(teamId);
-    }).forEach(function (trade) {
-        var tradeRow = document.createElement("div");
-        tradeRow.appendChild(createTradeCard(league, trade));
-        container.appendChild(tradeRow);
+function getSeasonOpponentPlayers(league, teamID) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        if (!week.getTeamMatchup(teamID).byeWeek) {
+            week.getTeamMatchup(teamID).getOpponent(teamID).lineup.forEach(function (player) {
+                var index = players.findIndex(function (existingPlayer) {
+                    return existingPlayer.playerID === player.playerID;
+                });
+                if (index > -1) {
+                    players[index].addPerformance(player);
+                }
+                else {
+                    players.push(new SeasonPlayer(player, league.leaguePlatform));
+                }
+            });
+        }
     });
+    return players;
+}
+function getAllSeasonPlayers(league) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        week.matchups.forEach(function (matchup) {
+            matchup.home.lineup.forEach(function (player) {
+                var index = players.findIndex(function (existingPlayer) {
+                    return existingPlayer.playerID === player.playerID;
+                });
+                if (index > -1) {
+                    players[index].addPerformance(player);
+                }
+                else {
+                    players.push(new SeasonPlayer(player, league.leaguePlatform));
+                }
+            });
+            if (!matchup.byeWeek) {
+                matchup.away.lineup.forEach(function (player) {
+                    var index = players.findIndex(function (existingPlayer) {
+                        return existingPlayer.playerID === player.playerID;
+                    });
+                    if (index > -1) {
+                        players[index].addPerformance(player);
+                    }
+                    else {
+                        players.push(new SeasonPlayer(player, league.leaguePlatform));
+                    }
+                });
+            }
+        });
+    });
+    return players;
+}
+function getBestPositionPlayerAverageScore(league, position) {
+    var players = [];
+    league.getSeasonPortionWeeks().forEach(function (week) {
+        players.push(week.getBestPositionPlayer(position));
+    });
+    var totalScore = 0;
+    players.forEach(function (player) {
+        if (player !== undefined) {
+            totalScore += player.score;
+        }
+    });
+    return roundToTen(totalScore / players.length);
+}
+function getMemberColor(memberID) {
+    var colorCode = ["#3366cc", "#ff9900", "#109618", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395",
+        "#3366cc", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac",
+        "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
+    return colorCode[memberID];
+}
+function getPositionColors() {
+    return ["#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000075", "#808080"];
 }

@@ -4,6 +4,15 @@ enum SEASON_PORTION {
     ALL = "Complete Season",
 }
 
+enum FLEX_SLOT {
+    FLEX = "FLEX",
+    SUPER_FLEX = "SUPER_FLEX",
+    REC_FLEX = "REC_FLEX",
+    WRRB_FLEX = "WRRB_FLEX",
+    IDP_FLEX = "IDP_FLEX"
+
+}
+
 enum PLATFORM {
     SLEEPER,
     ESPN,
