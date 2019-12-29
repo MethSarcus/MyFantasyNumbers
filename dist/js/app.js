@@ -4598,11 +4598,11 @@ function makeSleeperPlayers(players) {
 function getSleeperWeekStats(startWeek, lastScoredLeg) {
     var statPromises = [];
     for (var i = startWeek; i <= lastScoredLeg; i++) {
-        statPromises.push(makeRequest("https://api.sleeper.app/v1/stats/nfl/regular/2019/" + i));
+        statPromises.push(makeRequest("./assets/SleeperStatsBackup/" + i + ".json"));
     }
     var projectionPromises = [];
     for (var i = startWeek; i <= lastScoredLeg; i++) {
-        projectionPromises.push(makeRequest("https://api.sleeper.app/v1/projections/nfl/regular/2019/" + i));
+        projectionPromises.push(makeRequest("./assets/SleeperProjectionsBackup/" + i + ".json"));
     }
     var allPromises = statPromises.concat(projectionPromises);
     return Promise.all(allPromises).then(function (result) {

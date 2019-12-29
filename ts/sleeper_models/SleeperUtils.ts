@@ -54,12 +54,12 @@ function makeSleeperPlayers(players: Player[]): SleeperPlayer[] {
 function getSleeperWeekStats(startWeek: number, lastScoredLeg: number): Promise<any> {
     const statPromises = [];
     for (let i = startWeek; i <= lastScoredLeg; i++) {
-        statPromises.push(makeRequest("https://api.sleeper.app/v1/stats/nfl/regular/2019/" + i));
+        statPromises.push(makeRequest("./assets/SleeperStatsBackup/" + i + ".json"));
     }
 
     const projectionPromises = [];
     for (let i = startWeek; i <= lastScoredLeg; i++) {
-        projectionPromises.push(makeRequest("https://api.sleeper.app/v1/projections/nfl/regular/2019/" + i));
+        projectionPromises.push(makeRequest("./assets/SleeperProjectionsBackup/" + i + ".json"));
     }
     const allPromises = statPromises.concat(projectionPromises);
     return Promise.all(allPromises).then((result) => {
