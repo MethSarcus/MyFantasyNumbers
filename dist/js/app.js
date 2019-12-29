@@ -4598,11 +4598,11 @@ function makeSleeperPlayers(players) {
 function getSleeperWeekStats(startWeek, lastScoredLeg) {
     var statPromises = [];
     for (var i = startWeek; i <= lastScoredLeg; i++) {
-        statPromises.push(makeRequest("./assets/SleeperStatsBackup/" + i + ".json"));
+        statPromises.push(makeRequest("./assets/st/" + i + ".json"));
     }
     var projectionPromises = [];
     for (var i = startWeek; i <= lastScoredLeg; i++) {
-        projectionPromises.push(makeRequest("./assets/SleeperProjectionsBackup/" + i + ".json"));
+        projectionPromises.push(makeRequest("./assets/prj/" + i + ".json"));
     }
     var allPromises = statPromises.concat(projectionPromises);
     return Promise.all(allPromises).then(function (result) {
