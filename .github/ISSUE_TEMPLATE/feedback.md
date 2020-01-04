@@ -2,7 +2,7 @@
 name: Feedback
 about: Let me know how you really feel
 title: "[Feedback]"
-labels: ''
+labels: Feedback
 assignees: sem4140
 
 ---
