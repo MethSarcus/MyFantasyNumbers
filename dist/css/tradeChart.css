@@ -135,3 +135,15 @@ font-size: .8em;
   .team-menu-link {
       color: white;
   }
+  
+  .settings-icon {
+      color: white;
+      width: 2em;
+      height: 2em;
+      padding: 0dp;
+  }
+
+  .settings-icon :hover {
+      color: #007bff;
+      cursor: pointer;
+  }

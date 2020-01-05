@@ -19,7 +19,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Changa+One" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Bitter:700" rel="stylesheet">
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
 
 
@@ -200,7 +200,44 @@
   </header>
   <div class="container-fluid" style="display: none;" id="page_container">
     <div id="mySidenav" class="sidenav">
+        <h5 class="settingsMenuText">Include in calculations</h5>
+        <form class="settingsRosterIncludes">
+<div class="row" style="margin-bottom: 15px;">
+        <div class="inputGroup specialInputGroup col-5">
+          <input id="roster-calc-checkbox" name="roster-calc-checkbox" type="checkbox"/>
+          <label for="roster-calc-checkbox" style="margin-bottom: 0px;">Roster</label>
+        </div>
+        <div class="inputGroup specialInputGroup col-5 offset-1">
+          <input id="bench-calc-checkbox" name="bench-calc-checkbox" type="checkbox"/>
+          <label for="bench-calc-checkbox" style="margin-bottom: 0px;">Bench</label>
+        </div>
+      </div>
+        <div class="row">
+          <div class="inputGroup specialInputGroup col-5">
+            <input id="ir-calc-checkbox" name="ir-calc-checkbox" type="checkbox"/>
+            <label for="ir-calc-checkbox" style="margin-bottom: 0px;">IR</label>
+          </div>
+          <div class="inputGroup specialInputGroup col-5 offset-1">
+            <input id="taxi-calc-checkbox" name="taxi-calc-checkbox" type="checkbox"/>
+            <label for="taxi-calc-checkbox" style="margin-bottom: 0px;">Taxi</label>
+          </div>
+        </div>
+        </form>
     </div>
+    <script>
+      function openNav() {
+          document.getElementById("mySidenav").style.width = "400px";
+          document.getElementById("settingsContainer").onclick = closeNav;
+          document.getElementsByClassName("settings-icon")[0].style.color = "#007bff";
+        }
+
+        /* Set the width of the side navigation to 0 */
+        function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+          document.getElementById("settingsContainer").onclick = openNav;
+          document.getElementsByClassName("settings-icon")[0].style.color = "white";
+        }
+    </script>
     <div id="wrapper" class="px-5">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
@@ -218,8 +255,7 @@
                       class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
                       <p class="mb-1">Weekly Points</p>
                       <b id="league_weekly_average">157.1</b><small data-toggle="tooltip" data-placement="right"
-                        title="" data-original-title="Average points scored per week">PPW <i
-                          class="fa fa-info-circle"></i></small>
+                        title="" data-original-title="Average points scored per week">PPW <i class="fa fa-info-circle"></i></small>
                     </div>
                     <div id="league_std_card"
                       class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
