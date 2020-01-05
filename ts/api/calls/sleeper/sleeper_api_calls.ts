@@ -30,6 +30,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 }
             }
             const settings = new Settings(startWeek, rosters[0], rosters[0].concat(rosters[1]), 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, DRAFT_TYPE.SNAKE, currentMatchupPeriod, isActive, [seasonID]);
+            settings.excludedLineupSlots.push(88);
             updateLoadingText("Getting Members");
             getSleeperMembers(leagueID, seasonID, settings, scoringSettings, lineupOrder, leagueName, json.settings.last_scored_leg);
         }
@@ -141,7 +142,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
                     }
                 });
             }
-            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName);
+            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName, settings.excludedLineupSlots, settings.excludedPositions);
         });
     });
 }
@@ -173,7 +174,7 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
     return matchups;
 }
 
-function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: SleeperMember[], leagueName: string) {
+function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: SleeperMember[], leagueName: string, excludedLineupSlots: number[], excludedPositions: number[]) {
     updateLoadingText("Getting Player Stats");
     makeRequest("./assets/player_library.json").then((result) => {
         const lib = (result.response as SleeperPlayerLibrary);
@@ -198,7 +199,7 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
                 matchup.home.IR.forEach((player) => {
                     assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
                 });
-                (matchup.home as SleeperTeam).setTeamMetrics(activeLineupSlots);
+                (matchup.home as SleeperTeam).setTeamMetrics(activeLineupSlots, excludedLineupSlots, excludedPositions);
                 if (!matchup.byeWeek) {
                     matchup.away.lineup.forEach((player: SleeperPlayer) => {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
@@ -209,7 +210,7 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
                     matchup.away.IR.forEach((player: SleeperPlayer) => {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
                     });
-                    (matchup.away as SleeperTeam).setTeamMetrics(activeLineupSlots);
+                    (matchup.away as SleeperTeam).setTeamMetrics(activeLineupSlots, excludedLineupSlots, excludedPositions);
                     matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
                     matchup.setPoorLineupDecisions();
                 }

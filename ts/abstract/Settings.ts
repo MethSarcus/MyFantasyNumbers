@@ -11,6 +11,9 @@ class Settings {
     public isActive: boolean;
     public yearsActive: number[];
     public startWeek: number;
+    public excludedLineupSlots: number[] = [];
+    public excludedPositions: number[] = [];
+
 
     constructor(startWeek: number, activeLineupSlots: number[][], lineupSlots: number[][], regularSeasonLength: number, playoffLength: number, draftType: DRAFT_TYPE, currentMatchupPeriod: number, isActive: boolean, yearsActive: number[]) {
         this.activeLineupSlots = activeLineupSlots;
