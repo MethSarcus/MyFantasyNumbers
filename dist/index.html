@@ -70,7 +70,7 @@
 </head>
 
 
-<body id="page-top" style="height: 100vh; width: 100vw;">
+<body id="page-top" style="height: 100vh;">
 
   <div id="particles-js"></div>
   <div class="container h-100" id="prompt_screen">
@@ -147,31 +147,33 @@
   </div>
   <header style="display: none;" id="page_header">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-      <b><a id="league_name_header" class="nav-link navBut" data-toggle="pill" href="#leaguePage"></a></b>
-      <ul class="navbar-nav ml-2 w-100">
+      <ul class="navbar-nav w-100">
+        <li><b><a id="league_name_header" class="nav-link navBut" data-toggle="pill" href="#leaguePage"></a></b></li>
         <!-- <li class="nav-item ml-2">
         <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
       </li> -->
-        <div class="dropdown">
+      <li>
+        <div class="dropdown navBut">
           <button class="nav-link navBut" type="button" id="dropdownMenuButton" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false" disabled>Teams</button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="teamDropdown">
-            <ul id="team_dropdown" class="sidebar sidebar-expand navbar-nav nav-pills nav-stacked">
+            <ul id="team_dropdown" class="navbar-nav nav-pills nav-stacked">
             </ul>
           </div>
         </div>
+        </li>
         <!-- <li class="nav-item ml-2">
           <a id="past_weeks_button" class="nav-link navBut" type="button">Past Weeks</a>
         </li> -->
-        <li class="nav-item ml-2">
+        <li class="nav-item">
           <a id="pwrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#power_ranks_page">Power
             Ranks</a>
         </li>
-        <li class="nav-item ml-2">
+        <li class="nav-item">
           <a id="stats_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
             href="#league_stats_pane">Badges</a>
         </li>
-        <li class="nav-item ml-2">
+        <li class="nav-item">
           <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
             href="#league_trades_pane">Trades</a>
         </li>
@@ -185,7 +187,7 @@
           <select class="form-control form-control-sm" id="available_seasons">
           </select>
         </li>
-        <li class="my-auto mx-3">
+        <li class="my-auto season-portion-group">
           <div class="btn-group btn-group-toggle" data-toggle="buttons" id="SeasonSegment">
             <label class="btn btn-primary btn-sm season-portion-button" id="Regular Season">
               <input type="radio" autocomplete="off" id="regular_radio_button">Regular Season</label>
@@ -194,6 +196,9 @@
             <label class="btn btn-primary btn-sm season-portion-button active" id="Complete Season">
               <input type="radio" autocomplete="off" id="complete_radio_button">All</label>
           </div>
+        </li>
+        <li>
+          <i class="fa fa-cog fa-lg settings-icon" id="settingsContainer" onclick="openNav()" aria-hidden="true"></i>
         </li>
       </ul>
     </nav>
@@ -238,14 +243,14 @@
           document.getElementsByClassName("settings-icon")[0].style.color = "white";
         }
     </script>
-    <div id="wrapper" class="px-5">
+    <div id="wrapper">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
 
           <!-- Main League Page-->
           <div id="leaguePage" class="tab-pane fade active show">
             <div class="row">
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="col-12 col-md-6 col-lg-7 col-xl-7">
                 <div class="row my-1 justify-content-center align-items-center">
                   <h4><b>League Stats</b></h4>
                 </div>
@@ -318,7 +323,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6" id="league_weekly_line_chart_container">
+              <div class="col-12 col-md-6 col-lg-5 col-xl-5" id="league_weekly_line_chart_container">
                 <canvas id="league_weekly_line_canvas"></canvas>
               </div>
 

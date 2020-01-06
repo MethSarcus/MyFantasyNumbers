@@ -3000,7 +3000,7 @@ function createTeamMenu(league) {
     for (var i in league.members) {
         var a = document.createElement("li");
         a.id = league.members[i].teamID.toString();
-        a.classList.add("nav-item", "align-items-left", "side-item", "justify-content-center");
+        a.classList.add("align-items-left", "side-item", "justify-content-center");
         a.onclick = function () {
             $(".nav-link").removeClass("active");
             fadeTeamWithLogic(league, parseInt(this.id, 10));

@@ -6,7 +6,7 @@ function createTeamMenu(league: League): void {
     for (const i in league.members) {
         const a = document.createElement("li");
         a.id = league.members[i].teamID.toString();
-        a.classList.add("nav-item", "align-items-left", "side-item", "justify-content-center");
+        a.classList.add("align-items-left", "side-item", "justify-content-center");
         a.onclick = function() {
             $(".nav-link").removeClass("active");
             fadeTeamWithLogic(league, parseInt((this as any).id, 10));
