@@ -4,7 +4,7 @@ about: Create a report to help me improve the site
 title: ''
 labels: bug
 assignees: sem4140
-project: My Fantasy Numbers
+projects: Bugs
 
 ---
 
