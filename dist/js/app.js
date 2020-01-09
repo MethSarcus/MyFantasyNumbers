@@ -3038,6 +3038,43 @@ function enableYearSelector(league) {
         yearSelector.add(option);
     });
 }
+function createPositionalCheckboxes(league) {
+    var checkboxGroupContainer = document.getElementById("position_checkbox_container");
+    league.settings.positions.forEach(function (position) {
+        checkboxGroupContainer.appendChild(createPositionCheckbox(position, league));
+    });
+}
+function createPositionCheckbox(position, league) {
+    var container = document.createElement('div');
+    container.classList.add("form-check", "form-check-inline");
+    var input = document.createElement("input");
+    input.classList.add("form-check-input");
+    input.type = "checkbox";
+    input.id = position + "_toggle_checkbox";
+    input.value = position;
+    input.checked = true;
+    input.onclick = function () {
+        if (input.checked) {
+            var index = league.settings.excludedPositions.indexOf(positionToInt.get(position));
+            if (index > -1) {
+                league.settings.excludedPositions.splice(index, 1);
+            }
+        }
+        else {
+            league.settings.excludedPositions.push(positionToInt.get(position));
+        }
+        league.resetStats();
+        league.setMemberStats(league.getSeasonPortionWeeks());
+        league.updateMainPage();
+    };
+    var label = document.createElement("label");
+    label.classList.add("form-check-label");
+    label.htmlFor = position;
+    label.innerText = position;
+    container.appendChild(input);
+    container.appendChild(label);
+    return container;
+}
 function sortTableRecord(data, type, row, settings) {
     if (type === "sort") {
         return parseInt(data.split("-")[0]) / parseInt(data.split("-")[1]);
@@ -4383,7 +4420,9 @@ var SleeperTeam = (function () {
         this.lineup = lineup.map(function (playerID, index) {
             return new SleeperPlayer(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
         });
+        console.log(lineupOrder);
         this.bench = totalRoster.filter(function (element) {
+            console.log(element);
             return !lineup.includes(element);
         }).map(function (playerID) {
             return new SleeperPlayer(playerID, weekNumber, positionToInt.get("BN"));
