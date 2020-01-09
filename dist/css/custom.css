@@ -25,66 +25,6 @@
   margin-top: 0 !important;
 }
 
-.dropdown {
-  height: auto;
-  width: auto;
-}
-.dropdown:hover .dropdown-menu {
-  display: block;
-}
-
-.dropdown-menu {
-  background-color: #343a40;
-  column-count: 2;
-}
-.dropdown-menu .sub-menu {
-  left: 100%;
-  position: absolute;
-  top: 0;
-  visibility: hidden;
-  margin-top: -1px;
-}
-.dropdown-menu li:hover .sub-menu {
-  visibility: visible;
-}
-
-.side-item {
-  width: auto;
-  font-size: 1rem;
-  padding-left: 2px;
-}
-
-.sidenav {
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  right: 0;
-  margin-top: 56px;
-  background-color: rgba(10, 10, 10, 0.85);
-  color: ghostwhite;
-  overflow-x: hidden;
-  transition: 0.5s;
-}
-.sidenav a {
-  text-decoration: none;
-  color: white;
-  display: block;
-  transition: 0.3s;
-}
-.sidenav a:hover {
-  color: blue;
-}
-
-.nav-link {
-  color: white !important;
-}
-
-a .nav-link {
-  margin-top: auto;
-}
-
 .padMe {
   padding-left: 3px !important;
 }
@@ -173,26 +113,6 @@ img.resize {
   margin: 0 0 0 0;
 }
 
-.sidebar {
-  height: 100%;
-}
-
-.sidebar-nav {
-  padding: 9px 0;
-}
-
-.nav-tabs .dropdown-menu {
-  margin-top: 0;
-}
-
-.nav-pills .dropdown-menu {
-  margin-top: 0;
-}
-
-.navbar .dropdown-menu {
-  margin-top: 0;
-}
-
 #tabs-content {
   padding-top: 16px;
 }
@@ -225,27 +145,6 @@ img.resize {
 
 #yearSelector {
   color: black;
-}
-
-.navBut {
-  text-decoration: none;
-  -webkit-appearance: none;
-  color: white !important;
-  animation-duration: 0.2ms;
-  border-radius: 10px;
-}
-.navBut:hover {
-  -webkit-appearance: none;
-  background-color: #007bff;
-  border-radius: 10px;
-  animation-duration: 0.2ms;
-}
-
-.navbar-dark {
-  position: fixed !important;
-  z-index: 4;
-  width: 100%;
-  margin-top: 0px;
 }
 
 table.dataTable thead .sorting {
@@ -347,28 +246,6 @@ div.statWidget > div:nth-child(1) > h5:nth-child(1) {
 }
 div.statWidget > div:nth-child(1) > h4:nth-child(2) {
   margin-bottom: 0.5em !important;
-}
-
-#team_dropdown {
-  flex-direction: column;
-  width: max-content;
-}
-#team_dropdown .dropdown-menu li:hover .sub-menu {
-  visibility: visible;
-}
-#team_dropdown .dropdown:hover .dropdown-menu {
-  display: inline-block;
-}
-
-#dropdownMenuButton {
-  color: white !important;
-  background-color: transparent !important;
-  border: none;
-  animation-duration: 0.2ms;
-}
-#dropdownMenuButton:hover {
-  background-color: #007bff !important;
-  animation-duration: 0.2ms;
 }
 
 .league_trade {
@@ -482,6 +359,25 @@ div.statWidget > div:nth-child(1) > h4:nth-child(2) {
   transform: translateY(-50%);
   cursor: pointer;
   visibility: hidden;
+}
+
+#settingsContainer {
+  display:inline-block;
+  font-size: 40px;
+  line-height: 50px;
+  color:white;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.navbar-nav {
+  align-items: center;
+}
+
+#team_dropdown {
+  align-items: start;
 }
 
 /*# sourceMappingURL=custom.css.map */

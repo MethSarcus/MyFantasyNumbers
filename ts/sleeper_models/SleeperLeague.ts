@@ -23,5 +23,6 @@ class SleeperLeague extends League {
         constructTrades(this);
         generateTradeBlock(this);
         transitionToLeaguePage();
+        // createPositionalCheckboxes(this);
     }
 }

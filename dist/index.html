@@ -35,7 +35,7 @@
   <!-- Plugin Imports -->
   <link rel="stylesheet" href="css/cubeSpinner.css">
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="vendor/DataTables/datatables.min.css"/>
+  <link rel="stylesheet" type="text/css" href="vendor/DataTables/datatables.min.css" />
   <script type="text/javascript" src="vendor/DataTables/datatables.min.js"></script>
 
   <!-- Bootstrap Imports -->
@@ -70,7 +70,7 @@
 </head>
 
 
-<body id="page-top" style="height: 100vh; width: 100vw;">
+<body id="page-top" style="height: 100vh;">
 
   <div id="particles-js"></div>
   <div class="container h-100" id="prompt_screen">
@@ -147,31 +147,33 @@
   </div>
   <header style="display: none;" id="page_header">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-      <b><a id="league_name_header" class="nav-link navBut" data-toggle="pill" href="#leaguePage"></a></b>
-      <ul class="navbar-nav ml-2 w-100">
+      <ul class="navbar-nav w-100">
+        <li><b><a id="league_name_header" class="nav-link navBut" data-toggle="pill" href="#leaguePage"></a></b></li>
         <!-- <li class="nav-item ml-2">
         <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
       </li> -->
-        <div class="dropdown">
-          <button class="nav-link navBut" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false" disabled>Teams</button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="teamDropdown">
-            <ul id="team_dropdown" class="sidebar sidebar-expand navbar-nav nav-pills nav-stacked">
-            </ul>
+        <li>
+          <div class="dropdown navBut">
+            <button class="nav-link navBut" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false" disabled>Teams</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="teamDropdown">
+              <ul id="team_dropdown" class="navbar-nav nav-pills nav-stacked">
+              </ul>
+            </div>
           </div>
-        </div>
+        </li>
         <!-- <li class="nav-item ml-2">
           <a id="past_weeks_button" class="nav-link navBut" type="button">Past Weeks</a>
         </li> -->
-        <li class="nav-item ml-2">
+        <li class="nav-item">
           <a id="pwrRankButton" class="nav-link navBut" data-toggle="pill" type="button" href="#power_ranks_page">Power
             Ranks</a>
         </li>
-        <li class="nav-item ml-2">
+        <li class="nav-item">
           <a id="stats_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
             href="#league_stats_pane">Badges</a>
         </li>
-        <li class="nav-item ml-2">
+        <li class="nav-item">
           <a id="trades_button" class="nav-link navBut" data-toggle="pill" type="button" style="display: none;"
             href="#league_trades_pane">Trades</a>
         </li>
@@ -185,7 +187,7 @@
           <select class="form-control form-control-sm" id="available_seasons">
           </select>
         </li>
-        <li class="my-auto mx-3">
+        <li class="my-auto season-portion-group">
           <div class="btn-group btn-group-toggle" data-toggle="buttons" id="SeasonSegment">
             <label class="btn btn-primary btn-sm season-portion-button" id="Regular Season">
               <input type="radio" autocomplete="off" id="regular_radio_button">Regular Season</label>
@@ -195,57 +197,54 @@
               <input type="radio" autocomplete="off" id="complete_radio_button">All</label>
           </div>
         </li>
+        <li>
+          <i class="fa fa-cog fa-lg settings-icon" id="settingsContainer" onclick="openNav()" aria-hidden="true"></i>
+        </li>
       </ul>
     </nav>
   </header>
   <div class="container-fluid" style="display: none;" id="page_container">
     <div id="mySidenav" class="sidenav">
-        <h5 class="settingsMenuText">Include in calculations</h5>
-        <form class="settingsRosterIncludes">
-<div class="row" style="margin-bottom: 15px;">
-        <div class="inputGroup specialInputGroup col-5">
-          <input id="roster-calc-checkbox" name="roster-calc-checkbox" type="checkbox"/>
-          <label for="roster-calc-checkbox" style="margin-bottom: 0px;">Roster</label>
+      <h4 class="settingsMenuText">Included in stats</h4>
+      <div class="ml-3 mt-3" id="position_checkbox_container">
+      </div>
+      <div class="ml-3">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="irPlayersCheckbox">
+          <label class="form-check-label" for="irPlayersCheckbox">
+            Players on IR
+          </label>
         </div>
-        <div class="inputGroup specialInputGroup col-5 offset-1">
-          <input id="bench-calc-checkbox" name="bench-calc-checkbox" type="checkbox"/>
-          <label for="bench-calc-checkbox" style="margin-bottom: 0px;">Bench</label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="taxiPlayersCheckbox">
+          <label class="form-check-label" for="taxiPlayersCheckbox">
+            Players on Taxi Squad
+          </label>
         </div>
       </div>
-        <div class="row">
-          <div class="inputGroup specialInputGroup col-5">
-            <input id="ir-calc-checkbox" name="ir-calc-checkbox" type="checkbox"/>
-            <label for="ir-calc-checkbox" style="margin-bottom: 0px;">IR</label>
-          </div>
-          <div class="inputGroup specialInputGroup col-5 offset-1">
-            <input id="taxi-calc-checkbox" name="taxi-calc-checkbox" type="checkbox"/>
-            <label for="taxi-calc-checkbox" style="margin-bottom: 0px;">Taxi</label>
-          </div>
-        </div>
-        </form>
     </div>
     <script>
       function openNav() {
-          document.getElementById("mySidenav").style.width = "400px";
-          document.getElementById("settingsContainer").onclick = closeNav;
-          document.getElementsByClassName("settings-icon")[0].style.color = "#007bff";
-        }
+        document.getElementById("mySidenav").style.width = "400px";
+        document.getElementById("settingsContainer").onclick = closeNav;
+        document.getElementsByClassName("settings-icon")[0].style.color = "#007bff";
+      }
 
-        /* Set the width of the side navigation to 0 */
-        function closeNav() {
-          document.getElementById("mySidenav").style.width = "0";
-          document.getElementById("settingsContainer").onclick = openNav;
-          document.getElementsByClassName("settings-icon")[0].style.color = "white";
-        }
+      /* Set the width of the side navigation to 0 */
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("settingsContainer").onclick = openNav;
+        document.getElementsByClassName("settings-icon")[0].style.color = "white";
+      }
     </script>
-    <div id="wrapper" class="px-5">
+    <div id="wrapper">
       <div id="content-wrapper">
         <div id="tabs-content" class="tab-content">
 
           <!-- Main League Page-->
           <div id="leaguePage" class="tab-pane fade active show">
             <div class="row">
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="col-12 col-md-6 col-lg-7 col-xl-7">
                 <div class="row my-1 justify-content-center align-items-center">
                   <h4><b>League Stats</b></h4>
                 </div>
@@ -255,7 +254,8 @@
                       class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
                       <p class="mb-1">Weekly Points</p>
                       <b id="league_weekly_average">157.1</b><small data-toggle="tooltip" data-placement="right"
-                        title="" data-original-title="Average points scored per week">PPW <i class="fa fa-info-circle"></i></small>
+                        title="" data-original-title="Average points scored per week">PPW <i
+                          class="fa fa-info-circle"></i></small>
                     </div>
                     <div id="league_std_card"
                       class="card text-center statcard p-1 align-items-center d-flex justify-content-center">
@@ -292,24 +292,24 @@
                       <th scope="col">Pct</th>
                       <th scope="col">
                         <div data-toggle="tooltip" data-placement="right" title="" data-original-title="Points Scored"
-                          style="float: right;">PF 
+                          style="float: right;">PF
                           <i class="fa fa-info-circle"></i></div>
                       </th>
                       <th scope="col">
                         <div data-toggle="tooltip" data-placement="right" title=""
                           data-original-title="Optimally Projected Starting Lineup Actual Points" style="float: right;">
-                          OPSLAP 
+                          OPSLAP
                           <i class="fa fa-info-circle"></i></div>
                       </th>
 
                       <th scope="col">
                         <div data-toggle="tooltip" data-placement="right" title=""
-                          data-original-title="Potential Points" style="float: right;">PP 
+                          data-original-title="Potential Points" style="float: right;">PP
                           <i class="fa fa-info-circle"></i></div>
                       </th>
                       <th scope="col">
                         <div data-toggle="tooltip" data-placement="right" title="" data-original-title="Points Against"
-                          style="float: right;">PA 
+                          style="float: right;">PA
                           <i class="fa fa-info-circle"></i></div>
                       </th>
                     </tr>
@@ -318,7 +318,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-12 col-md-6 col-lg-6 col-xl-6" id="league_weekly_line_chart_container">
+              <div class="col-12 col-md-6 col-lg-5 col-xl-5" id="league_weekly_line_chart_container">
                 <canvas id="league_weekly_line_canvas"></canvas>
               </div>
 
@@ -456,13 +456,13 @@
           <!-- League Trade Page-->
           <div id="league_trades_pane" class="tab-pane">
             <div class="row">
-                <div class="col-12">
-                    <div class="row">
-                      <h1>Trade Block</h1>
-                    </div>
-                    <div class="row" id="trade_block_row">
-                    </div>
-                  </div>
+              <div class="col-12">
+                <div class="row">
+                  <h1>Trade Block</h1>
+                </div>
+                <div class="row" id="trade_block_row">
+                </div>
+              </div>
               <div class="col-6">
                 <h4 class="mx-auto" style="text-align: center;">Trades</h4>
               </div>
@@ -563,10 +563,10 @@
                   <tbody id="member_week_table_body"></tbody>
                 </table>
                 <div class="">
-                    <div style="text-align: center;" class="pt-3">
-                        <h6>Trades</h6>
-                      </div>
-                      <div id="team_page_trades_container" class="js-scrollable"></div>
+                  <div style="text-align: center;" class="pt-3">
+                    <h6>Trades</h6>
+                  </div>
+                  <div id="team_page_trades_container" class="js-scrollable"></div>
                 </div>
               </div>
 
@@ -746,10 +746,11 @@
                 </div>
                 <div class="row py-1">
                   <div class="col-6" id="radar_chart_container">
-                      <canvas id="radar_chart_canvas"></canvas>
-                    </div>
+                    <canvas id="radar_chart_canvas"></canvas>
+                  </div>
                   <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                    <div id="member_bar_chart_container" style="height: 100%;"><canvas id="member_bar_chart_canvas"></canvas>
+                    <div id="member_bar_chart_container" style="height: 100%;"><canvas
+                        id="member_bar_chart_canvas"></canvas>
                     </div>
                   </div>
                   <div id="team_line_graph_container" class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-12"
@@ -757,7 +758,7 @@
                     <canvas id="TEAM_LINE_CANVAS">
                     </canvas>
                   </div>
-                  
+
                   <div class="modal fade" id="matchup_modal" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog matchup_modal_container" role="document">
@@ -770,9 +771,9 @@
                         </div>
                         <div class="modal-body" id="matchup_modal_body">
                           <table class="table table-hover table-borderless table-sm matchup_modal_table">
-                              <col width="45%">
-                              <col width="10%">
-                              <col width="45%">
+                            <col width="45%">
+                            <col width="10%">
+                            <col width="45%">
                             <thead>
                               <tr class="finalScoreRow">
                                 <td><b id="matchup_modal_first_team_name">Team 1</b><br><small>Home Team</small></td>
@@ -785,18 +786,18 @@
                           </table>
 
                           <table class="table table-hover table-borderless table-sm matchup_modal_table">
-                              <col width="45%">
-                              <col width="10%">
-                              <col width="45%">
-                              <thead>
-                                  <tr class="finalScoreRow">
-                                    <td></td>
-                                    <td>Bench</td>
-                                    <td></td>
-                                  </tr>
-                                </thead>
-                                <tbody id="matchup_modal_bench_table_body">
-                                </tbody>
+                            <col width="45%">
+                            <col width="10%">
+                            <col width="45%">
+                            <thead>
+                              <tr class="finalScoreRow">
+                                <td></td>
+                                <td>Bench</td>
+                                <td></td>
+                              </tr>
+                            </thead>
+                            <tbody id="matchup_modal_bench_table_body">
+                            </tbody>
                           </table>
                         </div>
                       </div>

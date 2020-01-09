@@ -1,4 +1,4 @@
-function getSleeperOptimalLineup(lineupSlots: string[][], players: SleeperPlayer[]): Array<[string[], SleeperPlayer]> {
+function getSleeperOptimalLineup(lineupSlots: string[][], players: SleeperPlayer[], includeTaxi: boolean): Array<[string[], SleeperPlayer]> {
     const flexSlots: string[][] = [];
     const positionSlots: string[][] = [];
     const optimalLineup: Array<[string[], SleeperPlayer]> = [];
@@ -11,7 +11,7 @@ function getSleeperOptimalLineup(lineupSlots: string[][], players: SleeperPlayer
     });
 
     positionSlots.forEach((positionSlot) => {
-        const validPlayers = getSleeperValidSlotPlayers(positionSlot, players, optimalLineup);
+        const validPlayers = getSleeperValidSlotPlayers(positionSlot, players, optimalLineup, includeTaxi);
         validPlayers.sort((p1, p2) => p2.score - p1.score);
         optimalLineup.push([positionSlot, validPlayers[0]]);
     });
@@ -20,11 +20,17 @@ function getSleeperOptimalLineup(lineupSlots: string[][], players: SleeperPlayer
     return optimalLineup;
 }
 
-function getSleeperValidSlotPlayers(slotPositions: string[], players: SleeperPlayer[], optimalLineup: Array<[string[], SleeperPlayer]>): SleeperPlayer[] {
+function getSleeperValidSlotPlayers(slotPositions: string[], players: SleeperPlayer[], optimalLineup: Array<[string[], SleeperPlayer]>, includesTaxi: boolean): SleeperPlayer[] {
     const validPlayers = [];
     players.forEach((player) => {
         if (slotPositions.includes(player.position) && !lineupHasPlayer(player, optimalLineup)) {
-            validPlayers.push(player);
+            if (includesTaxi) {
+                validPlayers.push(player);
+            } else {
+                if (player.lineupSlotID != 88) {
+                    validPlayers.push(player);
+                }
+            }
         }
     });
     if (validPlayers.length === 0) {
@@ -44,18 +50,18 @@ function lineupHasPlayer(player: SleeperPlayer, optimalLineup: Array<[string[], 
     return hasPlayer;
 }
 
-function getOptimalLineup(activeLineupSlots: number[][], players: Player[]): Player[] {
+function getOptimalLineup(activeLineupSlots: number[][], players: Player[], excludedLineupSlots: number[], excludedPositionSlots: number[]): Player[] {
     let optimalLineup: Player[] = [];
     activeLineupSlots.forEach((slot) => {
-        optimalLineup = optimalLineup.concat(getHighestPlayersForSlot(slot[0], slot[1], players, optimalLineup));
+        optimalLineup = optimalLineup.concat(getHighestPlayersForSlot(slot[0], slot[1], players, optimalLineup, excludedLineupSlots, excludedPositionSlots));
     });
     return optimalLineup;
 }
 
-function getHighestPlayersForSlot(slotID: number, numPlayers: number, players: Player[], takenPlayers: Player[]): Player[] {
+function getHighestPlayersForSlot(slotID: number, numPlayers: number, players: Player[], takenPlayers: Player[], excludedLineupSlots: number[], excludedPositionSlots: number[]): Player[] {
     // Filter players who have already been included or who are not eligible for the slot or who have scored less than 0 since an empty slot would be a better play
     const eligibleSortedPlayers = players.filter((player) => {
-        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
+        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player) && !excludedLineupSlots.includes(player.lineupSlotID) && !excludedPositionSlots.includes(positionToInt.get(player.position)));
     }).sort((a, b) => {
         return b.score - a.score;
     });
@@ -69,18 +75,18 @@ function getHighestPlayersForSlot(slotID: number, numPlayers: number, players: P
     }
 }
 
-function getOptimalProjectedLineup(activeLineupSlots: number[][], players: Player[]): Player[] {
+function getOptimalProjectedLineup(activeLineupSlots: number[][], players: Player[], excludedLineupSlots: number[], excludedPositions: number[]): Player[] {
     let optimalLineup: Player[] = [];
     activeLineupSlots.forEach((slot) => {
-        optimalLineup = optimalLineup.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineup));
+        optimalLineup = optimalLineup.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineup, excludedLineupSlots, excludedPositions));
     });
     return optimalLineup;
 }
 
-function getHighestProjectedPlayersForSlot(slotID: number, numPlayers: number, players: Player[], takenPlayers: Player[]): Player[] {
+function getHighestProjectedPlayersForSlot(slotID: number, numPlayers: number, players: Player[], takenPlayers: Player[], excludedLineupSlots: number[], excludedPositions: number[]): Player[] {
     // Filter players who have already been included or who are not eligible for the slot or who have scored less than 0 since an empty slot would be a better play
     const eligibleSortedPlayers = players.filter((player) => {
-        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player));
+        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player)  && !excludedLineupSlots.includes(player.lineupSlotID) && !excludedPositions.includes(positionToInt.get(player.position)));
     }).sort((a, b) => {
         return b.projectedScore - a.projectedScore;
     });

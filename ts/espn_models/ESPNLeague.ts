@@ -53,13 +53,13 @@ class ESPNLeague extends League {
                     away = new ESPNTeam(matchup.away.teamID,
                         awayRoster,
                         object.settings.activeLineupSlots,
-                        matchup.home.teamID);
+                        matchup.home.teamID, settings.excludedLineupSlots, settings.excludedPositions);
                 }
                 const home = new ESPNTeam(
                     matchup.home.teamID,
                     homeRoster,
                     object.settings.activeLineupSlots,
-                    awayTeamId);
+                    awayTeamId, settings.excludedLineupSlots, settings.excludedPositions);
                 const recreatedMatchup = new Matchup(home, away, week.weekNumber, week.isPlayoffs);
                 recreatedMatchup.setPoorLineupDecisions();
                 matchups.push(recreatedMatchup);
