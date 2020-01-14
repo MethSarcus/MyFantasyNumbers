@@ -3383,11 +3383,11 @@ function generateBenchPlayerCell(player, homePlayer) {
     var imageDiv = document.createElement("div");
     imageDiv.classList.add("col-2", "pt-3");
     var image = document.createElement("img");
-    var pictureURL = "";
+    var pictureURL = "./assets/images/user1.png";
     if (player.position === "D/ST" || player.position === "DEF") {
         pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
     }
-    else {
+    else if (player.espnID !== "-1") {
         pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
     }
     var badgeDiv = document.createElement("div");
@@ -4420,9 +4420,7 @@ var SleeperTeam = (function () {
         this.lineup = lineup.map(function (playerID, index) {
             return new SleeperPlayer(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
         });
-        console.log(lineupOrder);
         this.bench = totalRoster.filter(function (element) {
-            console.log(element);
             return !lineup.includes(element);
         }).map(function (playerID) {
             return new SleeperPlayer(playerID, weekNumber, positionToInt.get("BN"));

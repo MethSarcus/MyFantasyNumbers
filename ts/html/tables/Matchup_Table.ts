@@ -206,10 +206,10 @@ function generateBenchPlayerCell(player: Player, homePlayer: boolean) {
     const imageDiv = document.createElement("div");
     imageDiv.classList.add("col-2", "pt-3");
     const image = document.createElement("img");
-    let pictureURL = "";
+    let pictureURL = "./assets/images/user1.png";
     if (player.position === "D/ST" || player.position === "DEF") {
         pictureURL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/NFL/500/" + getRealTeamInitials(player.realTeamID) + ".png&h=150&w=150";
-    } else {
+    } else if (player.espnID !== "-1") {
         pictureURL = "https://a.espncdn.com/i/headshots/nfl/players/full/" + player.espnID + ".png";
     }
     const badgeDiv = document.createElement("div");
