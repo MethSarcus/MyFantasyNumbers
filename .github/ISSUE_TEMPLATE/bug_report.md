@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help me improve the site
 title: ''
 labels: bug
-assignees: sem4140
+assignees: MethSarcus
 projects: Bugs
 
 ---
