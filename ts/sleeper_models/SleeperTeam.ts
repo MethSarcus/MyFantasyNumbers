@@ -136,4 +136,8 @@ class SleeperTeam implements Team {
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];
     }
+
+    public getAllPlayers(): Player[] {
+        return (this.lineup.concat(this.IR, this.bench));
+    }
 }

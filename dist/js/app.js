@@ -1462,6 +1462,9 @@ var ESPNTeam = (function () {
         });
         return [gutPlayers, satPlayers];
     };
+    ESPNTeam.prototype.getAllPlayers = function () {
+        return (this.lineup.concat(this.bench, this.IR));
+    };
     return ESPNTeam;
 }());
 function updateLoadingText(labelText) {
@@ -3211,11 +3214,31 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
     league.settings.activeLineupSlots.forEach(function (slot) {
         var slotId = slot[0];
         var slotAmount = slot[1];
+        var homeLineup = matchup.home.lineup;
+        var awayLineup = matchup.away.lineup;
+        if (document.getElementById("modal-home-lineup").hasAttribute("active")) {
+            homeLineup = matchup.home.lineup;
+        }
+        else if (document.getElementById("modal-home-optimal-lineup").hasAttribute("active")) {
+            homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        }
+        else if (document.getElementById("modal-home-opslap").hasAttribute("active")) {
+            homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        }
+        if (document.getElementById("modal-away-lineup").hasAttribute("active")) {
+            awayLineup = matchup.away.lineup;
+        }
+        else if (document.getElementById("modal-away-optimal-lineup").hasAttribute("active")) {
+            awayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        }
+        else if (document.getElementById("modal-away-opslap").hasAttribute("active")) {
+            awayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        }
         for (var i = 0; i < slotAmount; i++) {
-            var firstPlayer = matchup.home.lineup[index];
+            var firstPlayer = homeLineup[index];
             var secondPlayer = void 0;
             if (!matchup.byeWeek) {
-                secondPlayer = matchup.away.lineup[index];
+                secondPlayer = awayLineup[index];
             }
             else {
                 secondPlayer = new EmptySlot(slotId);
@@ -4527,6 +4550,9 @@ var SleeperTeam = (function () {
         var gutArray = this.getGutPoints(activeLineupSlots, excludedLineupSlots, excludedPositions);
         this.gutDifference = gutArray[0];
         this.gutPlayers = gutArray[1];
+    };
+    SleeperTeam.prototype.getAllPlayers = function () {
+        return (this.lineup.concat(this.IR, this.bench));
     };
     return SleeperTeam;
 }());

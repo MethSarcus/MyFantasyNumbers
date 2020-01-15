@@ -28,4 +28,6 @@ interface Team {
     getGutPoints: (activeLineupSlots: number[][], excludedLineupSlots: number[], excludedPositions: number[]) => number[];
 
     getProjectedLinupPlayerDifference: (activeLineupSlots: number[][], excludedLineupSlots: number[], excludedPositions: number[]) => Player[][];
+
+    getAllPlayers: () => Player[];
 }

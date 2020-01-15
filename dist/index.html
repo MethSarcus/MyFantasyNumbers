@@ -776,26 +776,32 @@
                             <col width="45%">
                             <thead>
                               <tr class="finalScoreRow">
-                                <td><b id="matchup_modal_first_team_name">Team 1</b><br><small>Home Team</small><br>
-                                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <td><b id="matchup_modal_first_team_name">Team 1</b>
+                                  <br>
+                                  <b>Margin of victory: 24 points</b>
+                                  <br>
+                                  <div class="btn-group btn-group-toggle" data-toggle="buttons" id="modal-home-team-lineup-selection">
                                     <label class="btn btn-primary btn-sm season-portion-button active">
-                                      <input type="radio" autocomplete="off">Lineup</label>
+                                      <input type="radio" autocomplete="off" id="modal-home-lineup">Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
-                                      <input type="radio" autocomplete="off">Optimal Lineup</label>
+                                      <input type="radio" autocomplete="off" id="modal-home-optimal-lineup">Optimal Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
-                                      <input type="radio" autocomplete="off">OPSLAP</label>
+                                      <input type="radio" autocomplete="off" id="modal-home-opslap">OPSLAP</label>
                                   </div>
                                 </td>
-                                <td></td>
-                                <td><b id="matchup_modal_second_team_name">Team 2</b><br><small>Away Team</small>
+                                <td>
+                                </td>
+                                <td><b id="matchup_modal_second_team_name">Team 2</b>
                                   <br>
-                                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                  <b>Margin of victory: 24 points</b>
+                                  <br>
+                                  <div class="btn-group btn-group-toggle" data-toggle="buttons" id="modal-away-team-lineup-selection">
                                     <label class="btn btn-primary btn-sm season-portion-button active">
-                                      <input type="radio" autocomplete="off">Lineup</label>
+                                      <input type="radio" autocomplete="off" id="modal-away-lineup">Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
-                                      <input type="radio" autocomplete="off">Optimal Lineup</label>
+                                      <input type="radio" autocomplete="off" id="modal-away-optimal-lineup">Optimal Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
-                                      <input type="radio" autocomplete="off">OPSLAP</label>
+                                      <input type="radio" autocomplete="off" id="modal-away-opslap">OPSLAP</label>
                                   </div></td>
                               </tr>
                             </thead>

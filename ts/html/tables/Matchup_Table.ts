@@ -19,11 +19,28 @@ function generateMatchupTable(league: League, firstTeamId: number, weekNumber: n
     league.settings.activeLineupSlots.forEach((slot) => {
         const slotId = slot[0];
         const slotAmount = slot[1];
+        let homeLineup = matchup.home.lineup;
+        let awayLineup = matchup.away.lineup;
+        if (document.getElementById("modal-home-lineup").hasAttribute("active")) {
+            homeLineup = matchup.home.lineup;
+        } else if (document.getElementById("modal-home-optimal-lineup").hasAttribute("active")) {
+            homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        } else if (document.getElementById("modal-home-opslap").hasAttribute("active")){
+            homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        }
+
+        if (document.getElementById("modal-away-lineup").hasAttribute("active")) {
+            awayLineup = matchup.away.lineup;
+        } else if (document.getElementById("modal-away-optimal-lineup").hasAttribute("active")) {
+            awayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        } else if (document.getElementById("modal-away-opslap").hasAttribute("active")){
+            awayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        }
         for (let i = 0; i < slotAmount; i++) {
-            const firstPlayer = matchup.home.lineup[index];
+            const firstPlayer = homeLineup[index];
             let secondPlayer;
             if (!matchup.byeWeek) {
-                secondPlayer = matchup.away.lineup[index];
+                secondPlayer = awayLineup[index];
             } else {
                 secondPlayer = new EmptySlot(slotId);
             }

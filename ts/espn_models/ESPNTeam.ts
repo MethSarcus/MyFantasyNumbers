@@ -135,4 +135,8 @@ class ESPNTeam implements Team {
         return [gutPlayers, satPlayers];
 
     }
+
+    public getAllPlayers(): Player[] {
+        return (this.lineup.concat(this.bench, this.IR));
+    }
 }
