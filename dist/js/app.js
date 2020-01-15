@@ -3210,6 +3210,38 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
     if (!matchup.byeWeek) {
         document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
     }
+    generateModalScore(matchup);
+    generateLineupTable(league, matchup);
+    generateBenchTable(matchup);
+}
+function generateModalScore(matchup) {
+    var tableBody = document.getElementById("matchup_modal_table_body");
+    var scoreRow = document.createElement("tr");
+    var teamScoreCell = document.createElement("td");
+    var otherTeamScoreCell = document.createElement("td");
+    var marginScoreCell = document.createElement("td");
+    var teamScore = document.createElement("h5");
+    var otherTeamScore = document.createElement("h5");
+    var marginScore = document.createElement("h6");
+    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString() + " Points";
+    teamScore.innerText = roundToHundred(matchup.home.score).toString() + " Points";
+    if (!matchup.byeWeek) {
+        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
+    }
+    else {
+        marginScore.innerText = "0.00";
+    }
+    teamScoreCell.appendChild(teamScore);
+    otherTeamScoreCell.appendChild(otherTeamScore);
+    marginScoreCell.appendChild(marginScore);
+    scoreRow.appendChild(teamScoreCell);
+    scoreRow.appendChild(marginScoreCell);
+    scoreRow.appendChild(otherTeamScoreCell);
+    scoreRow.style.textAlign = "center";
+    tableBody.appendChild(scoreRow);
+}
+function generateLineupTable(league, matchup) {
+    var tableBody = document.getElementById("matchup_modal_table_body");
     var index = 0;
     league.settings.activeLineupSlots.forEach(function (slot) {
         var slotId = slot[0];
@@ -3247,30 +3279,6 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
             index += 1;
         }
     });
-    var scoreRow = document.createElement("tr");
-    var teamScoreCell = document.createElement("td");
-    var otherTeamScoreCell = document.createElement("td");
-    var marginScoreCell = document.createElement("td");
-    var teamScore = document.createElement("h5");
-    var otherTeamScore = document.createElement("h5");
-    var marginScore = document.createElement("h5");
-    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString();
-    teamScore.innerText = roundToHundred(matchup.home.score).toString();
-    if (!matchup.byeWeek) {
-        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
-    }
-    else {
-        marginScore.innerText = "0.00";
-    }
-    teamScoreCell.appendChild(teamScore);
-    otherTeamScoreCell.appendChild(otherTeamScore);
-    marginScoreCell.appendChild(marginScore);
-    scoreRow.appendChild(teamScoreCell);
-    scoreRow.appendChild(marginScoreCell);
-    scoreRow.appendChild(otherTeamScoreCell);
-    scoreRow.style.textAlign = "center";
-    tableBody.appendChild(scoreRow);
-    generateBenchTable(matchup);
 }
 function generateBenchTable(matchup) {
     var tableBody = document.getElementById("matchup_modal_bench_table_body");
@@ -3293,6 +3301,20 @@ function generateBenchTable(matchup) {
         }
         tableBody.appendChild(row);
     }
+}
+function enableModalLineupSwitcher(league, firstTeamId, weekNumber) {
+    console.log("ran");
+    [document.getElementById("modal-home-lineup"),
+        document.getElementById("modal-home-optimal-lineup"),
+        document.getElementById("modal-home-opslap"),
+        document.getElementById("modal-away-lineup"),
+        document.getElementById("modal-away-optimal-lineup"),
+        document.getElementById("modal-away-opslap")].forEach(function (button) {
+        button.addEventListener("click", function () {
+            console.log("clicked");
+            generateMatchupTable(league, firstTeamId, weekNumber);
+        });
+    });
 }
 function generateMatchupPlayerRow(player, otherPlayer) {
     var tr = document.createElement("tr");
@@ -3568,6 +3590,7 @@ function getMemberWeekTableData(league, week, teamID) {
     }
 }
 function updateMemberWeekTableHTML(league, member) {
+    console.log("Member week table running");
     $("#member_week_table_body").empty();
     var weekTable = document.getElementById("memberWeekTable");
     var tableBody = document.getElementById("member_week_table_body");
@@ -3610,8 +3633,10 @@ function updateMemberWeekTableHTML(league, member) {
     weekTable.appendChild(tableBody);
 }
 function createMatchupModal(elem, league) {
+    console.log("iran");
     var weekNum = parseInt(elem.firstChild.innerText);
     var teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+    enableModalLineupSwitcher(league, teamID, weekNum);
     generateMatchupTable(league, teamID, weekNum);
 }
 function createMemberWeekTable(league) {

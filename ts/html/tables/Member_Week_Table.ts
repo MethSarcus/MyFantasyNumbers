@@ -63,6 +63,7 @@ function getMemberWeekTableData(league: League, week: Week, teamID: number) {
 }
 
 function updateMemberWeekTableHTML(league: League, member: Member): void {
+    console.log("Member week table running");
     $("#member_week_table_body").empty();
     const weekTable = document.getElementById("memberWeekTable");
     const tableBody = document.getElementById("member_week_table_body");
@@ -105,8 +106,10 @@ function updateMemberWeekTableHTML(league: League, member: Member): void {
 }
 
 function createMatchupModal(elem: HTMLTableRowElement, league: League): void {
+    console.log("iran");
     const weekNum = parseInt((elem.firstChild as HTMLTableCellElement).innerText);
     const teamID = parseInt(document.getElementById("teamPill").getAttribute("currentTeam"));
+    enableModalLineupSwitcher(league, teamID, weekNum);
 
     generateMatchupTable(league, teamID, weekNum);
 }

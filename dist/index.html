@@ -29,8 +29,8 @@
   <!-- Dependency Imports -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-    crossorigin="anonymous"></script>
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+  </script>
 
   <!-- Plugin Imports -->
   <link rel="stylesheet" href="css/cubeSpinner.css">
@@ -42,8 +42,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- ChartJS -->
@@ -198,7 +198,8 @@
           </div>
         </li>
         <li>
-          <i class="fa fa-cog fa-lg settings-icon" id="settingsContainer" onclick="openNav()" aria-hidden="true" style="display: none;"></i>
+          <i class="fa fa-cog fa-lg settings-icon" id="settingsContainer" onclick="openNav()" aria-hidden="true"
+            style="display: none;"></i>
         </li>
       </ul>
     </nav>
@@ -776,33 +777,37 @@
                             <col width="45%">
                             <thead>
                               <tr class="finalScoreRow">
-                                <td><b id="matchup_modal_first_team_name">Team 1</b>
+                                <td>
+                                  <b id="matchup_modal_first_team_name">Team 1</b>
                                   <br>
-                                  <b>Margin of victory: 24 points</b>
-                                  <br>
-                                  <div class="btn-group btn-group-toggle" data-toggle="buttons" id="modal-home-team-lineup-selection">
+                                  <div class="btn-group btn-group-toggle" data-toggle="buttons"
+                                    id="modal-home-team-lineup-selection">
                                     <label class="btn btn-primary btn-sm season-portion-button active">
                                       <input type="radio" autocomplete="off" id="modal-home-lineup">Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
-                                      <input type="radio" autocomplete="off" id="modal-home-optimal-lineup">Optimal Lineup</label>
+                                      <input type="radio" autocomplete="off" id="modal-home-optimal-lineup">Optimal
+                                      Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
                                       <input type="radio" autocomplete="off" id="modal-home-opslap">OPSLAP</label>
                                   </div>
                                 </td>
+
+                                <td></td>
+
                                 <td>
-                                </td>
-                                <td><b id="matchup_modal_second_team_name">Team 2</b>
+                                  <b id="matchup_modal_second_team_name">Team 2</b>
                                   <br>
-                                  <b>Margin of victory: 24 points</b>
-                                  <br>
-                                  <div class="btn-group btn-group-toggle" data-toggle="buttons" id="modal-away-team-lineup-selection">
+                                  <div class="btn-group btn-group-toggle" data-toggle="buttons"
+                                    id="modal-away-team-lineup-selection">
                                     <label class="btn btn-primary btn-sm season-portion-button active">
                                       <input type="radio" autocomplete="off" id="modal-away-lineup">Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
-                                      <input type="radio" autocomplete="off" id="modal-away-optimal-lineup">Optimal Lineup</label>
+                                      <input type="radio" autocomplete="off" id="modal-away-optimal-lineup">Optimal
+                                      Lineup</label>
                                     <label class="btn btn-primary btn-sm season-portion-button">
                                       <input type="radio" autocomplete="off" id="modal-away-opslap">OPSLAP</label>
-                                  </div></td>
+                                  </div>
+                                </td>
                               </tr>
                             </thead>
                             <tbody id="matchup_modal_table_body">
