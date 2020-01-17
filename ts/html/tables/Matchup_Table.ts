@@ -1,4 +1,5 @@
 function generateMatchupTable(league: League, firstTeamId: number, weekNumber: number) {
+    $("#matchup_modal_table_body").empty();
     const tableBody = document.getElementById("matchup_modal_table_body");
     const matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
     const tableTitle = document.getElementById("matchup_modal_title");
@@ -9,7 +10,6 @@ function generateMatchupTable(league: League, firstTeamId: number, weekNumber: n
     } else {
         tableTitle.innerText = "Week " + weekNumber.toString() + ", Regular Season";
     }
-    tableBody.innerHTML = "";
     document.getElementById("matchup_modal_first_team_name").innerText = league.getMember(matchup.home.teamID).teamNameToString();
     if (!matchup.byeWeek) {
         document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
@@ -49,28 +49,31 @@ function generateModalScore(matchup: Matchup): void {
 
 function generateLineupTable(league: League, matchup: Matchup): void {
     const tableBody = document.getElementById("matchup_modal_table_body");
-
+    $("matchup_modal_table_body").empty();
     let index = 0;
+    let homeLineup = matchup.home.lineup;
+    let awayLineup = matchup.away.lineup;
+    if (document.getElementById("modal-home-lineup").classList.contains("active")) {
+        console.log("Normal Lineup");
+        homeLineup = matchup.home.lineup;
+    } else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
+        console.log("Optimal Lineup");
+        homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+    } else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
+        console.log("OPSLAP Lineup");
+        homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+    }
+
+    if (document.getElementById("modal-away-lineup").classList.contains("active")) {
+        awayLineup = matchup.away.lineup;
+    } else if (document.getElementById("modal-away-optimal-lineup").classList.contains("active")) {
+        awayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+    } else if (document.getElementById("modal-away-opslap").classList.contains("active")) {
+        awayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+    }
     league.settings.activeLineupSlots.forEach((slot) => {
         const slotId = slot[0];
         const slotAmount = slot[1];
-        let homeLineup = matchup.home.lineup;
-        let awayLineup = matchup.away.lineup;
-        if (document.getElementById("modal-home-lineup").hasAttribute("active")) {
-            homeLineup = matchup.home.lineup;
-        } else if (document.getElementById("modal-home-optimal-lineup").hasAttribute("active")) {
-            homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-        } else if (document.getElementById("modal-home-opslap").hasAttribute("active")) {
-            homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-        }
-
-        if (document.getElementById("modal-away-lineup").hasAttribute("active")) {
-            awayLineup = matchup.away.lineup;
-        } else if (document.getElementById("modal-away-optimal-lineup").hasAttribute("active")) {
-            awayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-        } else if (document.getElementById("modal-away-opslap").hasAttribute("active")) {
-            awayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-        }
         for (let i = 0; i < slotAmount; i++) {
             const firstPlayer = homeLineup[index];
             let secondPlayer;
@@ -108,17 +111,17 @@ function generateBenchTable(matchup: Matchup) {
 }
 
 function enableModalLineupSwitcher(league: League, firstTeamId: number, weekNumber: number): void {
-    console.log("ran");
-    [document.getElementById("modal-home-lineup"),
+    const inputList = [document.getElementById("modal-home-lineup"),
     document.getElementById("modal-home-optimal-lineup"),
     document.getElementById("modal-home-opslap"),
     document.getElementById("modal-away-lineup"),
     document.getElementById("modal-away-optimal-lineup"),
-    document.getElementById("modal-away-opslap")].forEach((button: HTMLButtonElement) => {
-        button.addEventListener("click", function() {
-            console.log("clicked");
+    document.getElementById("modal-away-opslap")];
+    inputList.forEach((button: HTMLInputElement, index) => {
+        button.name = "lineupTypeButton" + index;
+        button.onclick = () => {
             generateMatchupTable(league, firstTeamId, weekNumber);
-        });
+        };
     });
 }
 
