@@ -1,5 +1,5 @@
 function generateMatchupTable(league: League, firstTeamId: number, weekNumber: number) {
-    $("#matchup_modal_table_body").empty();
+    $("matchup_modal_table_body").empty();
     const tableBody = document.getElementById("matchup_modal_table_body");
     const matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
     const tableTitle = document.getElementById("matchup_modal_title");
@@ -14,7 +14,7 @@ function generateMatchupTable(league: League, firstTeamId: number, weekNumber: n
     if (!matchup.byeWeek) {
         document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
     }
-
+    
     generateModalScore(matchup);
     generateLineupTable(league, matchup);
     generateBenchTable(matchup);
@@ -22,7 +22,6 @@ function generateMatchupTable(league: League, firstTeamId: number, weekNumber: n
 
 function generateModalScore(matchup: Matchup): void {
     const tableBody = document.getElementById("matchup_modal_table_body");
-
     const scoreRow = document.createElement("tr");
     const teamScoreCell = document.createElement("td");
     const otherTeamScoreCell = document.createElement("td");
@@ -49,18 +48,14 @@ function generateModalScore(matchup: Matchup): void {
 
 function generateLineupTable(league: League, matchup: Matchup): void {
     const tableBody = document.getElementById("matchup_modal_table_body");
-    $("matchup_modal_table_body").empty();
     let index = 0;
     let homeLineup = matchup.home.lineup;
     let awayLineup = matchup.away.lineup;
     if (document.getElementById("modal-home-lineup").classList.contains("active")) {
-        console.log("Normal Lineup");
         homeLineup = matchup.home.lineup;
     } else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
-        console.log("Optimal Lineup");
         homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
     } else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
-        console.log("OPSLAP Lineup");
         homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
     }
 

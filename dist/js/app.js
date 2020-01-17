@@ -1081,7 +1081,7 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettin
             for (var y = 0; y < result.length; y++) {
                 _loop_2(y);
             }
-            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName, settings.excludedLineupSlots, settings.excludedPositions);
+            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName);
         });
     });
 }
@@ -1112,7 +1112,7 @@ function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder) {
     });
     return matchups;
 }
-function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName, excludedLineupSlots, excludedPositions) {
+function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID, seasonID, members, leagueName) {
     updateLoadingText("Getting Player Stats");
     makeRequest("./assets/player_library.json").then(function (result) {
         var lib = result.response;
@@ -1137,7 +1137,7 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
                 matchup.home.IR.forEach(function (player) {
                     assignSleeperPlayerAttributes(player, lib[player.playerID]);
                 });
-                matchup.home.setTeamMetrics(activeLineupSlots, excludedLineupSlots, excludedPositions);
+                matchup.home.setTeamMetrics(activeLineupSlots, settings.excludedLineupSlots, settings.excludedPositions);
                 if (!matchup.byeWeek) {
                     matchup.away.lineup.forEach(function (player) {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
@@ -1148,7 +1148,7 @@ function assignAllPlayerAttributes(weeks, activeLineupSlots, settings, leagueID,
                     matchup.away.IR.forEach(function (player) {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
                     });
-                    matchup.away.setTeamMetrics(activeLineupSlots, excludedLineupSlots, excludedPositions);
+                    matchup.away.setTeamMetrics(activeLineupSlots, settings.excludedLineupSlots, settings.excludedPositions);
                     matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
                     matchup.setPoorLineupDecisions();
                 }
