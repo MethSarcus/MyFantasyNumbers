@@ -30,6 +30,15 @@ function initMemberWeekTable(league: League) {
             $("td", row).eq(1).css( "background-color",  getCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
             $("td", row).eq(2).css( "background-color",  getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
             $("td", row).eq(3).css( "background-color",  getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
+            $(row).mouseenter(() => {
+                $("td", row).eq(1).css( "background-color",  getDarkCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
+                $("td", row).eq(2).css( "background-color",  getDarkCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
+                $("td", row).eq(3).css( "background-color",  getDarkCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
+            }).mouseleave(() => {
+                $("td", row).eq(1).css( "background-color",  getCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
+                $("td", row).eq(2).css( "background-color",  getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
+                $("td", row).eq(3).css( "background-color",  getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter((it: Matchup) => !it.byeWeek).length * 2));
+            });
         },
     });
 }
