@@ -966,7 +966,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
             var currentMatchupPeriod = json.settings.last_scored_leg;
             var previousLeagueId = json.previous_league_id;
             var numDivisions = json.settings.divisions;
-            var startWeek = json.settings.start_week;
+            var startWeek = 1;
             var isActive = (json.status === "in_season" || json.status === "post_season");
             var scoringSettings = json.scoring_settings;
             var divisions = [];
@@ -1537,16 +1537,16 @@ function generatePositionBadge(marginText, slotID) {
     td.appendChild(margin);
     return td;
 }
-function generateBenchPositionBadge(position) {
+function generateBenchPositionBadge(slot) {
     var td = document.createElement("td");
     td.style.textAlign = "center";
     var container = document.createElement("div");
-    container.style.backgroundColor = getMemberColor(positionToInt.get(position));
+    container.style.backgroundColor = getMemberColor(slot);
     container.style.color = "white";
     container.classList.add("bench_position_badge");
     var posText = document.createElement("b");
     posText.style.fontSize = "1em";
-    posText.innerText = position;
+    posText.innerText = intToPosition.get(slot);
     container.appendChild(posText);
     td.appendChild(container);
     return td;
@@ -3193,8 +3193,7 @@ function initLeagueStatsTable(league) {
     });
 }
 function generateMatchupTable(league, firstTeamId, weekNumber) {
-    $("#matchup_modal_table_body").empty();
-    var tableBody = document.getElementById("matchup_modal_table_body");
+    $("#matchup_modal_lineup_body").empty();
     var matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
     var tableTitle = document.getElementById("matchup_modal_title");
     if (matchup.isPlayoffs) {
@@ -3210,23 +3209,84 @@ function generateMatchupTable(league, firstTeamId, weekNumber) {
     if (!matchup.byeWeek) {
         document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
     }
-    generateModalScore(matchup);
-    generateLineupTable(league, matchup);
-    generateBenchTable(matchup);
+    var lineups = getLineups(league, matchup);
+    var homeLineup = lineups[0];
+    var homeBench = lineups[1];
+    var awayLineup = lineups[2];
+    var awayBench = lineups[3];
+    generateModalScore(homeLineup, awayLineup, matchup.byeWeek);
+    generateLineupTable(homeLineup, awayLineup, league, matchup.byeWeek);
+    generateBenchTable(homeBench, awayBench);
 }
-function generateModalScore(matchup) {
-    var tableBody = document.getElementById("matchup_modal_table_body");
+function getLineups(league, matchup) {
+    var lineups = [];
+    if (document.getElementById("modal-home-lineup").classList.contains("active")) {
+        lineups.push(matchup.home.lineup);
+        lineups.push(matchup.home.bench);
+    }
+    else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
+        var optimalLineup_1 = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        var optimalLineupBench = matchup.home.getAllPlayers().filter(function (player) {
+            return !optimalLineup_1.includes(player);
+        });
+        lineups.push(optimalLineup_1);
+        lineups.push(optimalLineupBench);
+    }
+    else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
+        var projectedOptimalLineup_1 = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        var projectedOptimalLineupBench = matchup.home.getAllPlayers().filter(function (player) {
+            return !projectedOptimalLineup_1.includes(player);
+        });
+        lineups.push(projectedOptimalLineup_1);
+        lineups.push(projectedOptimalLineupBench);
+    }
+    if (document.getElementById("modal-away-lineup").classList.contains("active")) {
+        lineups.push(matchup.away.lineup);
+        lineups.push(matchup.away.bench);
+    }
+    else if (document.getElementById("modal-away-optimal-lineup").classList.contains("active")) {
+        var optimalAwayLineup_1 = getOptimalLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        var optimalAwayLineupBench = matchup.away.getAllPlayers().filter(function (player) {
+            return !optimalAwayLineup_1.includes(player);
+        });
+        lineups.push(optimalAwayLineup_1);
+        lineups.push(optimalAwayLineupBench);
+    }
+    else if (document.getElementById("modal-away-opslap").classList.contains("active")) {
+        var projectedOptimalAwayLineup_1 = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        var projectedOptimalAwayLineupBench = matchup.away.getAllPlayers().filter(function (player) {
+            return !projectedOptimalAwayLineup_1.includes(player);
+        });
+        lineups.push(projectedOptimalAwayLineup_1);
+        lineups.push(projectedOptimalAwayLineupBench);
+    }
+    return lineups;
+}
+function generateModalScore(homeLineup, awayLineup, isBye) {
+    var homeScore = 0;
+    var awayScore = 0;
+    homeLineup.forEach(function (player) {
+        homeScore += player.score;
+    });
+    awayLineup.forEach(function (player) {
+        awayScore += player.score;
+    });
+    homeScore = roundToHundred(homeScore);
+    awayScore = roundToHundred(awayScore);
+    var tableBody = document.getElementById("matchup_modal_lineup_body");
     var scoreRow = document.createElement("tr");
     var teamScoreCell = document.createElement("td");
     var otherTeamScoreCell = document.createElement("td");
     var marginScoreCell = document.createElement("td");
     var teamScore = document.createElement("h5");
     var otherTeamScore = document.createElement("h5");
-    var marginScore = document.createElement("h6");
-    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString() + " Points";
-    teamScore.innerText = roundToHundred(matchup.home.score).toString() + " Points";
-    if (!matchup.byeWeek) {
-        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
+    teamScore.style.textAlign = "right;";
+    otherTeamScore.style.textAlign = "left;";
+    var marginScore = document.createElement("b");
+    otherTeamScore.innerText = roundToHundred(awayScore).toString() + " Points";
+    teamScore.innerText = roundToHundred(homeScore).toString() + " Points";
+    if (!isBye) {
+        marginScore.innerText = roundToHundred(homeScore - awayScore).toString();
     }
     else {
         marginScore.innerText = "0.00";
@@ -3240,90 +3300,76 @@ function generateModalScore(matchup) {
     scoreRow.style.textAlign = "center";
     tableBody.appendChild(scoreRow);
 }
-function generateLineupTable(league, matchup) {
-    var tableBody = document.getElementById("matchup_modal_table_body");
-    $("matchup_modal_table_body").empty();
+function generateLineupTable(homeLineup, awayLineup, league, isBye) {
+    var tableBody = document.getElementById("matchup_modal_lineup_body");
     var index = 0;
-    var homeLineup = matchup.home.lineup;
-    var awayLineup = matchup.away.lineup;
-    if (document.getElementById("modal-home-lineup").classList.contains("active")) {
-        console.log("Normal Lineup");
-        homeLineup = matchup.home.lineup;
-    }
-    else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
-        console.log("Optimal Lineup");
-        homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    }
-    else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
-        console.log("OPSLAP Lineup");
-        homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    }
-    if (document.getElementById("modal-away-lineup").classList.contains("active")) {
-        awayLineup = matchup.away.lineup;
-    }
-    else if (document.getElementById("modal-away-optimal-lineup").classList.contains("active")) {
-        awayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    }
-    else if (document.getElementById("modal-away-opslap").classList.contains("active")) {
-        awayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    }
     league.settings.activeLineupSlots.forEach(function (slot) {
         var slotId = slot[0];
         var slotAmount = slot[1];
         for (var i = 0; i < slotAmount; i++) {
             var firstPlayer = homeLineup[index];
             var secondPlayer = void 0;
-            if (!matchup.byeWeek) {
+            if (!isBye) {
                 secondPlayer = awayLineup[index];
             }
             else {
                 secondPlayer = new EmptySlot(slotId);
             }
-            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer));
+            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer, slotId));
             index += 1;
         }
     });
 }
-function generateBenchTable(matchup) {
+function generateBenchTable(homeBench, awayBench) {
     var tableBody = document.getElementById("matchup_modal_bench_table_body");
-    tableBody.innerHTML = "";
-    var size = Math.max(matchup.home.bench.length, matchup.away.bench.length);
+    $("#matchup_modal_bench_table_body").empty();
+    var size = Math.max(homeBench.length, awayBench.length);
     for (var i = 0; i < size; i++) {
         var row = document.createElement("tr");
-        if (matchup.home.bench[i]) {
-            row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
+        if (homeBench[i]) {
+            row.appendChild(generateBenchPlayerCell(homeBench[i], true, 20));
         }
         else {
-            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true, 20));
         }
         row.appendChild(document.createElement("td"));
-        if (matchup.away.bench[i]) {
-            row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
+        if (awayBench[i]) {
+            row.appendChild(generateBenchPlayerCell(awayBench[i], false, 20));
         }
         else {
-            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false));
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false, 20));
         }
         tableBody.appendChild(row);
     }
 }
 function enableModalLineupSwitcher(league, firstTeamId, weekNumber) {
-    var inputList = [document.getElementById("modal-home-lineup"),
+    var homeList = [document.getElementById("modal-home-lineup"),
         document.getElementById("modal-home-optimal-lineup"),
-        document.getElementById("modal-home-opslap"),
-        document.getElementById("modal-away-lineup"),
+        document.getElementById("modal-home-opslap")];
+    homeList.forEach(function (button) {
+        button.onclick = function () {
+            homeList.forEach(function (innerButton) { innerButton.classList.remove("active"); innerButton.children[0].classList.remove("active"); });
+            button.children[0].classList.add("active");
+            button.classList.add("active");
+            generateMatchupTable(league, firstTeamId, weekNumber);
+        };
+    });
+    var awayList = [document.getElementById("modal-away-lineup"),
         document.getElementById("modal-away-optimal-lineup"),
         document.getElementById("modal-away-opslap")];
-    inputList.forEach(function (button, index) {
-        button.name = "lineupTypeButton" + index;
+    awayList.forEach(function (button) {
         button.onclick = function () {
+            awayList.forEach(function (innerButton) { innerButton.classList.remove("active"); innerButton.children[0].classList.remove("active"); });
+            button.children[0].classList.add("active");
+            button.classList.add("active");
             generateMatchupTable(league, firstTeamId, weekNumber);
         };
     });
 }
-function generateMatchupPlayerRow(player, otherPlayer) {
+function generateMatchupPlayerRow(player, otherPlayer, slot) {
     var tr = document.createElement("tr");
     var margin = player.score - otherPlayer.score;
-    var playerBadgeCell = generatePositionBadge(margin, player.lineupSlotID);
+    var playerBadgeCell = generatePositionBadge(margin, slot);
     var firstPlayerCell;
     var otherPlayerCell;
     try {
@@ -3357,7 +3403,7 @@ function generateMatchupPlayerRow(player, otherPlayer) {
 }
 function generateTeamPlayerRow(player) {
     var tr = document.createElement("tr");
-    var firstPlayerCell = generateBenchPlayerCell(player, true);
+    var firstPlayerCell = generateBenchPlayerCell(player, true, 20);
     tr.appendChild(firstPlayerCell);
     return tr;
 }
@@ -3424,10 +3470,10 @@ function generatePlayerRowCell(player, homePlayer) {
     td.appendChild(row);
     return td;
 }
-function generateBenchPlayerCell(player, homePlayer) {
+function generateBenchPlayerCell(player, homePlayer, slot) {
     var td = document.createElement("td");
     var row = document.createElement("div");
-    var badge = generateBenchPositionBadge(player.position);
+    var badge = generateBenchPositionBadge(slot);
     row.classList.add("row");
     var imageDiv = document.createElement("div");
     imageDiv.classList.add("col-2", "pt-3");
@@ -3563,6 +3609,15 @@ function initMemberWeekTable(league) {
             $("td", row).eq(1).css("background-color", getCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
             $("td", row).eq(2).css("background-color", getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
             $("td", row).eq(3).css("background-color", getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
+            $(row).mouseenter(function () {
+                $("td", row).eq(1).css("background-color", getDarkCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
+                $("td", row).eq(2).css("background-color", getDarkCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
+                $("td", row).eq(3).css("background-color", getDarkCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
+            }).mouseleave(function () {
+                $("td", row).eq(1).css("background-color", getCardColor(week.getTeamScoreFinish(member.teamID), league.members.length));
+                $("td", row).eq(2).css("background-color", getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
+                $("td", row).eq(3).css("background-color", getCardColor(league.getMarginFinish(member.teamID, week.weekNumber), week.matchups.filter(function (it) { return !it.byeWeek; }).length * 2));
+            });
         },
     });
 }
@@ -3696,7 +3751,7 @@ function createTradeBlockTable(member) {
     table.classList.add("table", "table-hover", "table-sm", "trade-block-table");
     member.tradingBlock.forEach(function (player) {
         var playRow = document.createElement("tr");
-        var playerBadge = generateBenchPositionBadge(player.position);
+        var playerBadge = generateBenchPositionBadge(positionToInt.get(player.position));
         playerBadge.style.verticalAlign = "center";
         playRow.appendChild(playerBadge);
         playRow.appendChild(generateGenericPlayerCell(player));
@@ -4815,7 +4870,7 @@ function getSleeperValidSlotPlayers(slotPositions, players, optimalLineup, inclu
                 validPlayers.push(player);
             }
             else {
-                if (player.lineupSlotID != 88) {
+                if (player.lineupSlotID !== 88) {
                     validPlayers.push(player);
                 }
             }
@@ -4842,6 +4897,9 @@ function getOptimalLineup(activeLineupSlots, players, excludedLineupSlots, exclu
     });
     return optimalLineup;
 }
+function getOptimalLineupBench(players, excludedLineupSlots, excludedPositionSlots, benchSlots) {
+    return getHighestPlayersForSlotBench(20, benchSlots, players, [], excludedLineupSlots, excludedPositionSlots);
+}
 function getHighestPlayersForSlot(slotID, numPlayers, players, takenPlayers, excludedLineupSlots, excludedPositionSlots) {
     var eligibleSortedPlayers = players.filter(function (player) {
         return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player) && !excludedLineupSlots.includes(player.lineupSlotID) && !excludedPositionSlots.includes(positionToInt.get(player.position)));
@@ -4858,12 +4916,38 @@ function getHighestPlayersForSlot(slotID, numPlayers, players, takenPlayers, exc
         return eligibleSortedPlayers.slice(0, numPlayers);
     }
 }
+function getHighestPlayersForSlotBench(slotID, numPlayers, players, takenPlayers, excludedLineupSlots, excludedPositionSlots) {
+    var eligibleSortedPlayers = players.filter(function (player) {
+        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player) && !excludedLineupSlots.includes(player.lineupSlotID) && !excludedPositionSlots.includes(positionToInt.get(player.position)));
+    }).sort(function (a, b) {
+        return b.score - a.score;
+    });
+    if (eligibleSortedPlayers.length >= numPlayers) {
+        eligibleSortedPlayers = eligibleSortedPlayers.slice(0, numPlayers);
+    }
+    else {
+        while (eligibleSortedPlayers.length <= numPlayers) {
+            eligibleSortedPlayers.push(new EmptySlot(slotID));
+        }
+        eligibleSortedPlayers = eligibleSortedPlayers.slice(0, numPlayers);
+    }
+    return players.filter(function (player) {
+        return !eligibleSortedPlayers.includes(player);
+    });
+}
 function getOptimalProjectedLineup(activeLineupSlots, players, excludedLineupSlots, excludedPositions) {
     var optimalLineup = [];
     activeLineupSlots.forEach(function (slot) {
         optimalLineup = optimalLineup.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineup, excludedLineupSlots, excludedPositions));
     });
     return optimalLineup;
+}
+function getOptimalProjectedLineupBench(activeLineupSlots, players, excludedLineupSlots, excludedPositions) {
+    var optimalLineupBench = [];
+    activeLineupSlots.forEach(function (slot) {
+        optimalLineupBench = optimalLineupBench.concat(getHighestProjectedPlayersForSlot(slot[0], slot[1], players, optimalLineupBench, excludedLineupSlots, excludedPositions));
+    });
+    return optimalLineupBench;
 }
 function getHighestProjectedPlayersForSlot(slotID, numPlayers, players, takenPlayers, excludedLineupSlots, excludedPositions) {
     var eligibleSortedPlayers = players.filter(function (player) {
@@ -4880,6 +4964,25 @@ function getHighestProjectedPlayersForSlot(slotID, numPlayers, players, takenPla
         }
         return eligibleSortedPlayers.slice(0, numPlayers);
     }
+}
+function getHighestProjectedPlayersForSlotBench(slotID, numPlayers, players, takenPlayers, excludedLineupSlots, excludedPositionSlots) {
+    var eligibleSortedPlayers = players.filter(function (player) {
+        return (player.eligibleSlots.includes(slotID) && !takenPlayers.includes(player) && !excludedLineupSlots.includes(player.lineupSlotID) && !excludedPositionSlots.includes(positionToInt.get(player.position)));
+    }).sort(function (a, b) {
+        return b.projectedScore - a.projectedScore;
+    });
+    if (eligibleSortedPlayers.length >= numPlayers) {
+        eligibleSortedPlayers = eligibleSortedPlayers.slice(0, numPlayers);
+    }
+    else {
+        while (eligibleSortedPlayers.length <= numPlayers) {
+            eligibleSortedPlayers.push(new EmptySlot(slotID));
+        }
+        eligibleSortedPlayers = eligibleSortedPlayers.slice(0, numPlayers);
+    }
+    return players.filter(function (player) {
+        return !eligibleSortedPlayers.includes(player);
+    });
 }
 var eligibleSlotMap = new Map([
     [0, [0, 1, 7, 20, 21, 88]],

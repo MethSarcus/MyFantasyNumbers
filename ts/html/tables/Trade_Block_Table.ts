@@ -28,7 +28,7 @@ function createTradeBlockTable(member: SleeperMember): HTMLTableElement {
     table.classList.add("table", "table-hover", "table-sm", "trade-block-table");
     member.tradingBlock.forEach((player) => {
         const playRow = document.createElement("tr");
-        const playerBadge = generateBenchPositionBadge(player.position);
+        const playerBadge = generateBenchPositionBadge(positionToInt.get(player.position));
         playerBadge.style.verticalAlign = "center";
         playRow.appendChild(playerBadge);
         playRow.appendChild(generateGenericPlayerCell(player));

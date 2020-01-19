@@ -24,16 +24,16 @@ function generatePositionBadge(marginText: number, slotID: number): HTMLTableDat
     return td;
 }
 
-function generateBenchPositionBadge(position: string) {
+function generateBenchPositionBadge(slot: number) {
     const td = document.createElement("td");
     td.style.textAlign = "center";
     const container = document.createElement("div");
-    container.style.backgroundColor = getMemberColor(positionToInt.get(position));
+    container.style.backgroundColor = getMemberColor(slot);
     container.style.color = "white";
     container.classList.add("bench_position_badge");
     const posText = document.createElement("b");
     posText.style.fontSize = "1em";
-    posText.innerText = position;
+    posText.innerText = intToPosition.get(slot);
     container.appendChild(posText);
     td.appendChild(container);
 

@@ -52,6 +52,8 @@ a .nav-link {
 }
 
 .navBut {
+    margin-left: 3px !important;
+    margin-right: 3px !important;
     text-decoration: none;
     -webkit-appearance: none;
     color: white !important;

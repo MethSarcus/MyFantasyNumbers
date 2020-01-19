@@ -1,6 +1,5 @@
 function generateMatchupTable(league: League, firstTeamId: number, weekNumber: number) {
-    $("matchup_modal_table_body").empty();
-    const tableBody = document.getElementById("matchup_modal_table_body");
+    $("#matchup_modal_lineup_body").empty();
     const matchup = league.getWeek(weekNumber).getTeamMatchup(firstTeamId);
     const tableTitle = document.getElementById("matchup_modal_title");
     if (matchup.isPlayoffs) {
@@ -14,25 +13,85 @@ function generateMatchupTable(league: League, firstTeamId: number, weekNumber: n
     if (!matchup.byeWeek) {
         document.getElementById("matchup_modal_second_team_name").innerText = league.getMember(matchup.away.teamID).teamNameToString();
     }
-    
-    generateModalScore(matchup);
-    generateLineupTable(league, matchup);
-    generateBenchTable(matchup);
+    const lineups = getLineups(league, matchup);
+    const homeLineup = lineups[0];
+    const homeBench = lineups[1];
+    const awayLineup = lineups[2];
+    const awayBench = lineups[3];
+    generateModalScore(homeLineup, awayLineup, matchup.byeWeek);
+    generateLineupTable(homeLineup, awayLineup, league, matchup.byeWeek);
+    generateBenchTable(homeBench, awayBench);
 }
 
-function generateModalScore(matchup: Matchup): void {
-    const tableBody = document.getElementById("matchup_modal_table_body");
+function getLineups(league: League, matchup: Matchup) {
+    const lineups = [];
+    if (document.getElementById("modal-home-lineup").classList.contains("active")) {
+        lineups.push(matchup.home.lineup);
+        lineups.push(matchup.home.bench);
+    } else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
+        const optimalLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const optimalLineupBench = matchup.home.getAllPlayers().filter((player) => {
+            return !optimalLineup.includes(player);
+        });
+        lineups.push(optimalLineup);
+        lineups.push(optimalLineupBench);
+    } else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
+        const projectedOptimalLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const projectedOptimalLineupBench = matchup.home.getAllPlayers().filter((player) => {
+            return !projectedOptimalLineup.includes(player);
+        });
+        lineups.push(projectedOptimalLineup);
+        lineups.push(projectedOptimalLineupBench);
+    }
+
+    if (document.getElementById("modal-away-lineup").classList.contains("active")) {
+        lineups.push(matchup.away.lineup);
+        lineups.push(matchup.away.bench);
+    } else if (document.getElementById("modal-away-optimal-lineup").classList.contains("active")) {
+        const optimalAwayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const optimalAwayLineupBench = matchup.away.getAllPlayers().filter((player) => {
+            return !optimalAwayLineup.includes(player);
+        });
+        lineups.push(optimalAwayLineup);
+        lineups.push(optimalAwayLineupBench);
+    } else if (document.getElementById("modal-away-opslap").classList.contains("active")) {
+        const projectedOptimalAwayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const projectedOptimalAwayLineupBench = matchup.away.getAllPlayers().filter((player) => {
+            return !projectedOptimalAwayLineup.includes(player);
+        });
+        lineups.push(projectedOptimalAwayLineup);
+        lineups.push(projectedOptimalAwayLineupBench);
+    }
+
+    return lineups;
+}
+
+function generateModalScore(homeLineup: Player[], awayLineup: Player[], isBye: boolean): void {
+    let homeScore = 0;
+    let awayScore = 0;
+
+    homeLineup.forEach((player) => {
+        homeScore += player.score;
+    });
+    awayLineup.forEach((player) => {
+        awayScore += player.score;
+    });
+    homeScore = roundToHundred(homeScore);
+    awayScore = roundToHundred(awayScore);
+    const tableBody = document.getElementById("matchup_modal_lineup_body");
     const scoreRow = document.createElement("tr");
     const teamScoreCell = document.createElement("td");
     const otherTeamScoreCell = document.createElement("td");
     const marginScoreCell = document.createElement("td");
     const teamScore = document.createElement("h5");
     const otherTeamScore = document.createElement("h5");
-    const marginScore = document.createElement("h6");
-    otherTeamScore.innerText = roundToHundred(matchup.away.score).toString() + " Points";
-    teamScore.innerText = roundToHundred(matchup.home.score).toString() + " Points";
-    if (!matchup.byeWeek) {
-        marginScore.innerText = roundToHundred(matchup.home.score - matchup.away.score).toString();
+    teamScore.style.textAlign = "right;";
+    otherTeamScore.style.textAlign = "left;";
+    const marginScore = document.createElement("b");
+    otherTeamScore.innerText = roundToHundred(awayScore).toString() + " Points";
+    teamScore.innerText = roundToHundred(homeScore).toString() + " Points";
+    if (!isBye) {
+        marginScore.innerText = roundToHundred(homeScore - awayScore).toString();
     } else {
         marginScore.innerText = "0.00";
     }
@@ -46,84 +105,78 @@ function generateModalScore(matchup: Matchup): void {
     tableBody.appendChild(scoreRow);
 }
 
-function generateLineupTable(league: League, matchup: Matchup): void {
-    const tableBody = document.getElementById("matchup_modal_table_body");
+function generateLineupTable(homeLineup: Player[], awayLineup: Player[], league: League, isBye: boolean): void {
+    const tableBody = document.getElementById("matchup_modal_lineup_body");
     let index = 0;
-    let homeLineup = matchup.home.lineup;
-    let awayLineup = matchup.away.lineup;
-    if (document.getElementById("modal-home-lineup").classList.contains("active")) {
-        homeLineup = matchup.home.lineup;
-    } else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
-        homeLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    } else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
-        homeLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    }
-
-    if (document.getElementById("modal-away-lineup").classList.contains("active")) {
-        awayLineup = matchup.away.lineup;
-    } else if (document.getElementById("modal-away-optimal-lineup").classList.contains("active")) {
-        awayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    } else if (document.getElementById("modal-away-opslap").classList.contains("active")) {
-        awayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
-    }
     league.settings.activeLineupSlots.forEach((slot) => {
         const slotId = slot[0];
         const slotAmount = slot[1];
         for (let i = 0; i < slotAmount; i++) {
             const firstPlayer = homeLineup[index];
             let secondPlayer;
-            if (!matchup.byeWeek) {
+            if (!isBye) {
                 secondPlayer = awayLineup[index];
             } else {
                 secondPlayer = new EmptySlot(slotId);
             }
-            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer));
+            tableBody.appendChild(generateMatchupPlayerRow(firstPlayer, secondPlayer, slotId));
             index += 1;
         }
     });
 }
 
-function generateBenchTable(matchup: Matchup) {
+function generateBenchTable(homeBench: Player[], awayBench: Player[]) {
     const tableBody = document.getElementById("matchup_modal_bench_table_body");
-    tableBody.innerHTML = "";
-    const size = Math.max(matchup.home.bench.length, matchup.away.bench.length);
+    $("#matchup_modal_bench_table_body").empty();
+    const size = Math.max(homeBench.length, awayBench.length);
 
     for (let i = 0; i < size; i++) {
         const row = document.createElement("tr");
-        if (matchup.home.bench[i]) {
-            row.appendChild(generateBenchPlayerCell(matchup.home.bench[i], true));
+        if (homeBench[i]) {
+            row.appendChild(generateBenchPlayerCell(homeBench[i], true, 20));
         } else {
-            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true));
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), true, 20));
         }
         row.appendChild(document.createElement("td"));
-        if (matchup.away.bench[i]) {
-            row.appendChild(generateBenchPlayerCell(matchup.away.bench[i], false));
+        if (awayBench[i]) {
+            row.appendChild(generateBenchPlayerCell(awayBench[i], false, 20));
         } else {
-            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false));
+            row.appendChild(generateBenchPlayerCell(new EmptySlot(88), false, 20));
         }
         tableBody.appendChild(row);
     }
 }
 
 function enableModalLineupSwitcher(league: League, firstTeamId: number, weekNumber: number): void {
-    const inputList = [document.getElementById("modal-home-lineup"),
+    const homeList = [document.getElementById("modal-home-lineup"),
     document.getElementById("modal-home-optimal-lineup"),
-    document.getElementById("modal-home-opslap"),
-    document.getElementById("modal-away-lineup"),
+    document.getElementById("modal-home-opslap")];
+    homeList.forEach((button: HTMLLabelElement) => {
+        button.onclick = () => {
+            homeList.forEach((innerButton: HTMLLabelElement) => {innerButton.classList.remove("active"); innerButton.children[0].classList.remove("active"); });
+            button.children[0].classList.add("active");
+            button.classList.add("active");
+            generateMatchupTable(league, firstTeamId, weekNumber);
+        };
+    });
+
+    const awayList = [document.getElementById("modal-away-lineup"),
     document.getElementById("modal-away-optimal-lineup"),
     document.getElementById("modal-away-opslap")];
-    inputList.forEach((button: HTMLInputElement, index) => {
-        button.name = "lineupTypeButton" + index;
+    awayList.forEach((button: HTMLLabelElement) => {
         button.onclick = () => {
+            awayList.forEach((innerButton: HTMLLabelElement) => {innerButton.classList.remove("active"); innerButton.children[0].classList.remove("active"); });
+            button.children[0].classList.add("active");
+            button.classList.add("active");
             generateMatchupTable(league, firstTeamId, weekNumber);
         };
     });
 }
 
-function generateMatchupPlayerRow(player: Player, otherPlayer: Player): HTMLTableRowElement {
+function generateMatchupPlayerRow(player: Player, otherPlayer: Player, slot: number): HTMLTableRowElement {
     const tr = document.createElement("tr");
     const margin = player.score - otherPlayer.score;
-    const playerBadgeCell = generatePositionBadge(margin, player.lineupSlotID);
+    const playerBadgeCell = generatePositionBadge(margin, slot);
     let firstPlayerCell;
     let otherPlayerCell;
     try {
@@ -169,7 +222,7 @@ function generateMatchupPlayerRow(player: Player, otherPlayer: Player): HTMLTabl
 
 function generateTeamPlayerRow(player: Player): HTMLTableRowElement {
     const tr = document.createElement("tr");
-    const firstPlayerCell = generateBenchPlayerCell(player, true);
+    const firstPlayerCell = generateBenchPlayerCell(player, true, 20);
     tr.appendChild(firstPlayerCell);
     return tr;
 }
@@ -240,10 +293,10 @@ function generatePlayerRowCell(player: Player, homePlayer: boolean): HTMLTableDa
     return td;
 }
 
-function generateBenchPlayerCell(player: Player, homePlayer: boolean) {
+function generateBenchPlayerCell(player: Player, homePlayer: boolean, slot: number) {
     const td = document.createElement("td");
     const row = document.createElement("div");
-    const badge = generateBenchPositionBadge(player.position);
+    const badge = generateBenchPositionBadge(slot);
     row.classList.add("row");
     const imageDiv = document.createElement("div");
     imageDiv.classList.add("col-2", "pt-3");

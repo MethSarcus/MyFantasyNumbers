@@ -10,6 +10,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 location.reload();
                 return;
             }
+            // tslint:disable-next-line: no-console
             console.log(json);
             const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
             const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
@@ -20,7 +21,9 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             const currentMatchupPeriod = json.settings.last_scored_leg;
             const previousLeagueId = json.previous_league_id;
             const numDivisions = json.settings.divisions;
-            const startWeek = json.settings.start_week;
+            // Not working for some reason on sleepers end
+            // const startWeek = json.settings.start_week;
+            const startWeek = 1;
             const isActive = (json.status === "in_season" || json.status === "post_season");
             const scoringSettings: SleeperScoringSettings = json.scoring_settings;
             const divisions = [];
