@@ -5,7 +5,7 @@ class Matchup {
     public isTie: boolean;
     public byeWeek: boolean;
     public isUpset: boolean;
-    public away: any;
+    public away: Team;
     public projectedWinner: number;
     public projectedMOV: number;
     public winner: number;

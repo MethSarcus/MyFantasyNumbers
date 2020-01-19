@@ -29,8 +29,8 @@
   <!-- Dependency Imports -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-    crossorigin="anonymous"></script>
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+  </script>
 
   <!-- Plugin Imports -->
   <link rel="stylesheet" href="css/cubeSpinner.css">
@@ -42,8 +42,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- ChartJS -->
@@ -58,7 +58,7 @@
 
 
   <!-- Custom CSS Imports -->
-  <link href="css/master.css?v=13" rel="stylesheet" />
+  <link href="css/master.css?v=14" rel="stylesheet" />
 
   <!-- Scroll Hint Imports -->
   <link rel="stylesheet" href="https://unpkg.com/scroll-hint@latest/css/scroll-hint.css">
@@ -66,7 +66,7 @@
 
 
   <!-- Main JS Import -->
-  <script type="text/javascript" src="js/app.js?v=28"></script>
+  <script type="text/javascript" src="js/app.js?v=29"></script>
 </head>
 
 
@@ -103,7 +103,8 @@
               <div class="form-group row">
                 <label class="col-4 col-form-label" for="league_id_input">League ID</label>
                 <div class="col-12 col-md-8">
-                  <input id="league_id_input" name="league_id_input" placeholder="383472092907233280" type="text"
+                  <!--TODO: Change value back to placeholder-->
+                  <input id="league_id_input" name="league_id_input" value="383472092907233280" autocomplete="on" type="text"
                     required="required" class="form-control">
                 </div>
                 <div class="col-12 offset-4"><small><a href="https://imgur.com/a/vVJcvxI" target="_blank">How to find
@@ -147,7 +148,7 @@
   </div>
   <header style="display: none;" id="page_header">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-      <ul class="navbar-nav w-100">
+      <ul class="navbar-nav w-100" style="padding-top: 5px; padding-bottom: 5px;">
         <li><b><a id="league_name_header" class="nav-link navBut" data-toggle="pill" href="#leaguePage"></a></b></li>
         <!-- <li class="nav-item ml-2">
         <a id="graphButton" class="nav-link navBut" data-toggle="pill" type="button" href="#graphPage">Graphs</a>
@@ -188,6 +189,7 @@
           </select>
         </li>
         <li class="my-auto season-portion-group">
+          <form>
           <div class="btn-group btn-group-toggle" data-toggle="buttons" id="SeasonSegment">
             <label class="btn btn-primary btn-sm season-portion-button" id="Regular Season">
               <input type="radio" autocomplete="off" id="regular_radio_button">Regular Season</label>
@@ -196,9 +198,11 @@
             <label class="btn btn-primary btn-sm season-portion-button active" id="Complete Season">
               <input type="radio" autocomplete="off" id="complete_radio_button">All</label>
           </div>
+        </form>
         </li>
         <li>
-          <i class="fa fa-cog fa-lg settings-icon" id="settingsContainer" onclick="openNav()" aria-hidden="true" style="display: none;"></i>
+          <i class="fa fa-cog fa-lg settings-icon" id="settingsContainer" onclick="openNav()" aria-hidden="true"
+            style="display: none;"></i>
         </li>
       </ul>
     </nav>
@@ -770,29 +774,62 @@
                           </button>
                         </div>
                         <div class="modal-body" id="matchup_modal_body">
-                          <table class="table table-hover table-borderless table-sm matchup_modal_table">
+                          <table class="table table-hover table-borderless table-sm">
                             <col width="45%">
                             <col width="10%">
                             <col width="45%">
                             <thead>
                               <tr class="finalScoreRow">
-                                <td><b id="matchup_modal_first_team_name">Team 1</b><br><small>Home Team</small></td>
+                                <td>
+                                  <b id="matchup_modal_first_team_name">Team 1</b>
+                                  <br>
+                                  <form>
+                                  <div class="btn-group btn-group-toggle" data-toggle="buttons" id="modal-home-team-lineup-selection">
+                                    <label class="btn btn-primary btn-sm active" id="modal-home-lineup" for="homeLineup">
+                                      <input type="radio" name="homelineup" value="homelineup" id="homeLineup">Lineup
+                                    </label>
+                                    <label class="btn btn-primary btn-sm" id="modal-home-optimal-lineup" for="homeOptimal">
+                                      <input type="radio" name="homeOptimal" value="homeOptimal" id="homeOptimal">Optimal Lineup</label>
+                                    <label class="btn btn-primary btn-sm" id="modal-home-opslap" for="homeOPSLAP">
+                                      <input type="radio" name="homeOPSLAP" value="homeOPSLAP" id="homeOPSLAP">OPSLAP
+                                    </label>
+                                  </div>
+                                </form>
+                                </td>
+
                                 <td></td>
-                                <td><b id="matchup_modal_second_team_name">Team 2</b><br><small>Away Team</small></td>
+
+                                <td>
+                                  <b id="matchup_modal_second_team_name">Team 2</b>
+                                  <br>
+                                  <form>
+                                  <div class="btn-group btn-group-toggle" data-toggle="buttons"
+                                    id="modal-away-team-lineup-selection">
+                                    <label class="btn btn-primary btn-sm active" id="modal-away-lineup" for="awayLineup">
+                                      <input type="radio" value="awaylineup" name="awaylineup" id="awayLineup">Lineup
+                                    </label>
+                                    <label class="btn btn-primary btn-sm" id="modal-away-optimal-lineup" for="awayOptimal">
+                                      <input type="radio" value="awayOptimal" name="awayOptimal" id="awayOptimal">Optimal
+                                      Lineup</label>
+                                    <label class="btn btn-primary btn-sm" id="modal-away-opslap" for="awayOpslap">
+                                      <input type="radio" value="awayOpslap" name="awayOPSLAP" id="awayOPSLAP">OPSLAP</label>
+                                  </div>
+                                </form>
+                                </td>
                               </tr>
                             </thead>
-                            <tbody id="matchup_modal_table_body">
+                            <tbody id="matchup_modal_lineup_body">
                             </tbody>
                           </table>
 
-                          <table class="table table-hover table-borderless table-sm matchup_modal_table">
+                          <table class="table table-hover table-borderless table-sm">
                             <col width="45%">
                             <col width="10%">
                             <col width="45%">
                             <thead>
                               <tr class="finalScoreRow">
                                 <td></td>
-                                <td>Bench</td>
+                                <td><b>Bench</b></td>
                                 <td></td>
                               </tr>
                             </thead>

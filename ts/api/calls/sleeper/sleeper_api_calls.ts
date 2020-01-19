@@ -10,6 +10,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 location.reload();
                 return;
             }
+            // tslint:disable-next-line: no-console
             console.log(json);
             const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
             const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
@@ -20,7 +21,9 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             const currentMatchupPeriod = json.settings.last_scored_leg;
             const previousLeagueId = json.previous_league_id;
             const numDivisions = json.settings.divisions;
-            const startWeek = json.settings.start_week;
+            // Not working for some reason on sleepers end
+            // const startWeek = json.settings.start_week;
+            const startWeek = 1;
             const isActive = (json.status === "in_season" || json.status === "post_season");
             const scoringSettings: SleeperScoringSettings = json.scoring_settings;
             const divisions = [];
@@ -142,7 +145,7 @@ function getSleeperMatchups(leagueID: string, seasonID: number, members: Sleeper
                     }
                 });
             }
-            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName, settings.excludedLineupSlots, settings.excludedPositions);
+            assignAllPlayerAttributes(Weeks, settings.activeLineupSlots, settings, leagueID, seasonID, members, leagueName);
         });
     });
 }
@@ -174,7 +177,7 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
     return matchups;
 }
 
-function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: SleeperMember[], leagueName: string, excludedLineupSlots: number[], excludedPositions: number[]) {
+function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][], settings: Settings, leagueID: string, seasonID: number, members: SleeperMember[], leagueName: string) {
     updateLoadingText("Getting Player Stats");
     makeRequest("./assets/player_library.json").then((result) => {
         const lib = (result.response as SleeperPlayerLibrary);
@@ -199,7 +202,7 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
                 matchup.home.IR.forEach((player) => {
                     assignSleeperPlayerAttributes(player as SleeperPlayer, lib[player.playerID]);
                 });
-                (matchup.home as SleeperTeam).setTeamMetrics(activeLineupSlots, excludedLineupSlots, excludedPositions);
+                (matchup.home as SleeperTeam).setTeamMetrics(activeLineupSlots, settings.excludedLineupSlots, settings.excludedPositions);
                 if (!matchup.byeWeek) {
                     matchup.away.lineup.forEach((player: SleeperPlayer) => {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
@@ -210,7 +213,7 @@ function assignAllPlayerAttributes(weeks: Week[], activeLineupSlots: number[][],
                     matchup.away.IR.forEach((player: SleeperPlayer) => {
                         assignSleeperPlayerAttributes(player, lib[player.playerID]);
                     });
-                    (matchup.away as SleeperTeam).setTeamMetrics(activeLineupSlots, excludedLineupSlots, excludedPositions);
+                    (matchup.away as SleeperTeam).setTeamMetrics(activeLineupSlots, settings.excludedLineupSlots, settings.excludedPositions);
                     matchup.projectedMOV = (Math.abs(matchup.home.projectedScore - matchup.away.projectedScore));
                     matchup.setPoorLineupDecisions();
                 }
