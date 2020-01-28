@@ -2,7 +2,7 @@ class PositionInfo {
     public excludedLineupSlots: number[] = [];
     public excludedPositions: number[] = [];
 
-    constructor(public activeLineupSlots: number[][], public lineupSlots: number[][], public lineupOrder: string[]) {
+    constructor(public activeLineupSlots: number[][], public lineupSlots: number[][], public lineupOrder?: string[]) {
     }
 
     public getPositions(): string[] {

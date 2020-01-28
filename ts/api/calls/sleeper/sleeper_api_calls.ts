@@ -39,7 +39,8 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 16 - (16 - playoffStartWeek),
                 16 - playoffStartWeek, currentMatchupPeriod,
                 json.settings.last_scored_leg,
-                isActive);
+                isActive,
+                [2019]);
 
             const leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
             const rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);

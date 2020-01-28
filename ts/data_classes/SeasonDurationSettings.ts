@@ -4,6 +4,7 @@ class SeasonDurationSettings {
           public playoffLength: number,
            public currentMatchupPeriod: number,
            public isActive: boolean,
-           public yearsActive: number[] = yearsActive.sort((a, b) => b - a)) {
+           public yearsActive: number[]) {
+               this.yearsActive = this.yearsActive.sort((a, b) => b - a);
     }
 }

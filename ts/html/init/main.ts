@@ -12,14 +12,14 @@ function main() {
         if (sleeperButton.checked) {
             getSleeperLeagueSettings(leagueID, seasonID);
         } else if (espnButton.checked) {
-            if (localStorage.getItem(leagueID + seasonID)) {
-                const jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
-                const restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
-                restoredLeague.setPage();
-            } else {
+            // if (localStorage.getItem(leagueID + seasonID)) {
+            //     const jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
+            //     const restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
+            //     restoredLeague.setPage();
+            // } else {
                 localStorage.clear();
                 getESPNSettings(leagueID, seasonID);
-            }
+            // }
         }
     }
 }

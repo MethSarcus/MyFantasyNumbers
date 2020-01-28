@@ -1,4 +1,4 @@
-function getESPNMatchups(settings: Settings, members: Member[], leagueID: string, seasonID: number, leagueName: string) {
+function getESPNMatchups(settings: Settings, members: Member[]) {
     const weeks: Week[] = [];
     let weeksToGet: number;
     if (settings.seasonDuration.currentMatchupPeriod< settings.seasonDuration.regularSeasonLength + settings.seasonDuration.playoffLength) {
@@ -8,7 +8,7 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: string
     }
     for (let q = 1; q <= weeksToGet; q++) {
         espn_request("get", {
-            path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
+            path: "apis/v3/games/ffl/seasons/" + settings.leagueInfo.seasonId + "/segments/0/leagues/" + settings.leagueInfo.leagueId + "?view=mScoreboard&teamId=1&scoringPeriodId=" + q
         }).done((json: any) => {
             updateLoadingText("Getting week " + q + " matchups");
             const matchups = [];
@@ -90,9 +90,9 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: string
                     }
                     return 0;
                 });
-                const league = new ESPNLeague(leagueID, seasonID, weeks, members, settings, leagueName, PLATFORM.ESPN);
+                const league = new ESPNLeague(weeks, members, settings, settings.leagueInfo.leagueName, PLATFORM.ESPN);
                 league.setMemberStats(league.getSeasonPortionWeeks());
-                localStorage.setItem(leagueID + seasonID, JSON.stringify(league));
+                localStorage.setItem(settings.leagueInfo.leagueId + settings.leagueInfo.seasonId, JSON.stringify(league));
                 league.setPage();
             }
         });
@@ -131,18 +131,18 @@ function getESPNSettings(leagueID: string, seasonID: number) {
         const activeLineupSlots = lineup.filter((slot) => {
             return slot[0] !== 21 && slot[0] !== 20;
         });
-        new SeasonDurationSettings();
-        new LeagueInfo();
-        new PositionInfo(activeLineupSlots, lineupSlots, lineup);
-        const settings = new Settings(0, activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
-        getESPNMembers(settings, leagueID, seasonID, leagueName);
+        const seasonDur = new SeasonDurationSettings(0, regularSeasonMatchupCount, playoffLength, currentMatchupPeriod, isActive, [leagueSeasons]);
+        const leagueInfo = new LeagueInfo(leagueName, leagueID, seasonID, [seasonID]);
+        const posInfo = new ESPNPositionInfo(activeLineupSlots, lineupSlots);
+        const settings = new Settings(seasonDur, leagueInfo, posInfo);
+        getESPNMembers(settings);
     });
 }
 
-function getESPNMembers(settings: Settings, leagueID: string, seasonID: number, leagueName: string) {
+function getESPNMembers(settings: Settings) {
     updateLoadingText("Getting Members");
     espn_request("get", {
-        path: "apis/v3/games/ffl/seasons/" + seasonID + "/segments/0/leagues/" + leagueID + "?view=mTeam"
+        path: "apis/v3/games/ffl/seasons/" + settings.leagueInfo.seasonId + "/segments/0/leagues/" + settings.leagueInfo.leagueId + "?view=mTeam"
     }).done((json: any) => {
         const members = [];
         const teams = json.teams;
@@ -171,6 +171,6 @@ function getESPNMembers(settings: Settings, leagueID: string, seasonID: number, 
                 }
             }
         }
-        getESPNMatchups(settings, members, leagueID, seasonID, leagueName);
+        getESPNMatchups(settings, members);
     });
 }

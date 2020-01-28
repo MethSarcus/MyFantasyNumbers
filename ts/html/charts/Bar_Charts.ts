@@ -23,7 +23,7 @@ function createTeamBarChart(league: League, member: Member) {
     } else {
         const ctx = (document.getElementById("member_bar_chart_canvas") as HTMLCanvasElement).getContext("2d");
         const chartData = {
-            labels: league.settings.getPositions(),
+            labels: league.settings.positionInfo.getPositions(),
             datasets: [{
                 label: member.teamNameToString(),
                 backgroundColor: getMemberColor(member.teamID),
@@ -145,7 +145,7 @@ function createLeagueStackedGraph(league: League): void {
 
 function getLeagueStackedDatasets(league: League): object[] {
     const datasets: any[] = [];
-    const positions = league.settings.getPositions();
+    const positions = league.settings.positionInfo.getPositions();
     const backgroundColors = getPositionColors();
     const labels = [];
     let increment = 0;
