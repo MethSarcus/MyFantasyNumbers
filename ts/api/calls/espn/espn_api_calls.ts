@@ -1,10 +1,10 @@
 function getESPNMatchups(settings: Settings, members: Member[], leagueID: string, seasonID: number, leagueName: string) {
     const weeks: Week[] = [];
     let weeksToGet: number;
-    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
-        weeksToGet = settings.currentMatchupPeriod - 1;
+    if (settings.seasonDuration.currentMatchupPeriod< settings.seasonDuration.regularSeasonLength + settings.seasonDuration.playoffLength) {
+        weeksToGet = settings.seasonDuration.currentMatchupPeriod- 1;
     } else {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
+        weeksToGet = settings.seasonDuration.regularSeasonLength + settings.seasonDuration.playoffLength;
     }
     for (let q = 1; q <= weeksToGet; q++) {
         espn_request("get", {
@@ -68,17 +68,17 @@ function getESPNMatchups(settings: Settings, members: Member[], leagueID: string
                             const lineupSlotID = curPlayer.lineupSlotId;
                             awayPlayers.push(new ESPNPlayer(firstName, lastName, score, projectedScore, position, realTeamID, playerID, lineupSlotID, eligibleSlots, q));
                         }
-                        awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID, settings.excludedLineupSlots, settings.excludedPositions);
+                        awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.positionInfo.activeLineupSlots, homeTeamID, settings.positionInfo.excludedLineupSlots, settings.positionInfo.excludedPositions);
                         awayteamID = awayTeam.teamID;
                     }
-                    const isPlayoff = (q > settings.regularSeasonLength);
-                    const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayteamID, settings.excludedLineupSlots, settings.excludedPositions);
+                    const isPlayoff = (q > settings.seasonDuration.regularSeasonLength);
+                    const homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.positionInfo.activeLineupSlots, awayteamID, settings.positionInfo.excludedLineupSlots, settings.positionInfo.excludedPositions);
                     const matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
                     matchup.setPoorLineupDecisions();
                     matchups.push(matchup);
                 }
             }
-            const isPlayoffs = (q > settings.regularSeasonLength);
+            const isPlayoffs = (q > settings.seasonDuration.regularSeasonLength);
             weeks.push(new Week(q, isPlayoffs, matchups));
             if (weeks.length === weeksToGet) {
                 weeks.sort((x, y) => {
@@ -131,6 +131,9 @@ function getESPNSettings(leagueID: string, seasonID: number) {
         const activeLineupSlots = lineup.filter((slot) => {
             return slot[0] !== 21 && slot[0] !== 20;
         });
+        new SeasonDurationSettings();
+        new LeagueInfo();
+        new PositionInfo(activeLineupSlots, lineupSlots, lineup);
         const settings = new Settings(0, activeLineupSlots, lineup, regularSeasonMatchupCount, playoffLength, DRAFT_TYPE, currentMatchupPeriod, isActive, leagueSeasons);
         getESPNMembers(settings, leagueID, seasonID, leagueName);
     });
@@ -143,7 +146,7 @@ function getESPNMembers(settings: Settings, leagueID: string, seasonID: number, 
     }).done((json: any) => {
         const members = [];
         const teams = json.teams;
-        const seasonLength = settings.regularSeasonLength + settings.playoffLength;
+        const seasonLength = settings.seasonDuration.regularSeasonLength + settings.seasonDuration.playoffLength;
         for (const i in Object.keys(json.members)) {
             const member = json.members[i];
             const firstName = member.firstName;

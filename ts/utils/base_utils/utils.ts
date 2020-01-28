@@ -30,9 +30,9 @@ function getMean(numbers: number[]): number {
 function getBestLeastConsistent(league: League, teamID: number): SeasonPlayer[] {
     const players = getSeasonPlayers(league, teamID);
     let minSampleSize = 5;
-    if (league.settings.isActive) {
-        if (league.settings.currentMatchupPeriod <= 5) {
-            minSampleSize = league.settings.currentMatchupPeriod - 1;
+    if (league.settings.seasonDuration.isActive) {
+        if (league.settings.seasonDuration.currentMatchupPeriod<= 5) {
+            minSampleSize = league.settings.seasonDuration.currentMatchupPeriod- 1;
         }
     }
     let mostConsistentPlayers = players.filter((player: SeasonPlayer) => {

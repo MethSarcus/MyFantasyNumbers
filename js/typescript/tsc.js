@@ -1,11 +1,11 @@
 function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
     var weeks = [];
     var weeksToGet;
-    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
-        weeksToGet = settings.currentMatchupPeriod - 1;
+    if (settings.seasonDuration.currentMatchupPeriod< settings.seasonDuration.regularSeasonLength + settings.playoffLength) {
+        weeksToGet = settings.seasonDuration.currentMatchupPeriod- 1;
     }
     else {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
+        weeksToGet = settings.seasonDuration.regularSeasonLength + settings.playoffLength;
     }
     var _loop_1 = function (q) {
         espn_request("get", {
@@ -74,14 +74,14 @@ function getESPNMatchups(settings, members, leagueID, seasonID, leagueName) {
                         }
                         awayTeam = new ESPNTeam(awayTeamID, awayPlayers, settings.activeLineupSlots, homeTeamID);
                     }
-                    var isPlayoff = (q > settings.regularSeasonLength);
+                    var isPlayoff = (q > settings.seasonDuration.regularSeasonLength);
                     var homeTeam = new ESPNTeam(homeTeamID, homePlayers, settings.activeLineupSlots, awayTeam);
                     var matchup = new Matchup(homeTeam, awayTeam, q, isPlayoff);
                     matchup.setPoorLineupDecisions();
                     matchups.push(matchup);
                 }
             }
-            var isPlayoffs = (q > settings.regularSeasonLength);
+            var isPlayoffs = (q > settings.seasonDuration.regularSeasonLength);
             weeks.push(new Week(q, isPlayoffs, matchups));
             if (weeks.length === weeksToGet) {
                 weeks.sort(function (x, y) {
@@ -255,11 +255,11 @@ function getSleeperRosters(leagueID, seasonID, members, settings, scoringSetting
 }
 function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettings, lineupOrder, leagueName) {
     var weeksToGet;
-    if (settings.currentMatchupPeriod < settings.regularSeasonLength + settings.playoffLength) {
-        weeksToGet = settings.currentMatchupPeriod - 1;
+    if (settings.seasonDuration.currentMatchupPeriod< settings.seasonDuration.regularSeasonLength + settings.playoffLength) {
+        weeksToGet = settings.seasonDuration.currentMatchupPeriod- 1;
     }
     else {
-        weeksToGet = settings.regularSeasonLength + settings.playoffLength;
+        weeksToGet = settings.seasonDuration.regularSeasonLength + settings.playoffLength;
     }
     var promises = [];
     for (var i = 1; i <= weeksToGet; i++) {
@@ -270,7 +270,7 @@ function getSleeperMatchups(leagueID, seasonID, members, settings, scoringSettin
     var Weeks = [];
     Promise.all(promises).then(function (weeks) {
         weeks.forEach(function (week) {
-            var isPlayoffs = (weekCounter > settings.regularSeasonLength);
+            var isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
             var weekMatches = getSleeperWeekMatchups(week.response, settings.activeLineupSlots, weekCounter, isPlayoffs, lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
             weekCounter += 1;
@@ -450,7 +450,7 @@ function setPage(league) {
     localStorage.setItem(league.id + "" + league.id, JSON.stringify(league));
     var profileImage = document.getElementById("team_image");
     profileImage.addEventListener("error", fixNoImage);
-    if (league.settings.currentMatchupPeriod > league.settings.regularSeasonLength) {
+    if (league.settings.seasonDuration.currentMatchupPeriod> league.settings.seasonDuration.regularSeasonLength) {
         document.getElementById(SEASON_PORTION.REGULAR).onclick = function () {
             league.seasonPortion = SEASON_PORTION.REGULAR;
             league.resetStats();
@@ -2591,8 +2591,8 @@ function getBestLeastConsistent(league, teamID) {
     var players = getSeasonPlayers(league, teamID);
     var minSampleSize = 5;
     if (league.settings.isActive) {
-        if (league.settings.currentMatchupPeriod <= 5) {
-            minSampleSize = league.settings.currentMatchupPeriod - 1;
+        if (league.settings.seasonDuration.currentMatchupPeriod<= 5) {
+            minSampleSize = league.settings.seasonDuration.currentMatchupPeriod- 1;
         }
     }
     var mostConsistentPlayers = players.filter(function (player) {
@@ -3771,7 +3771,7 @@ function updateMemberWeekTable(league, member) {
 function createMemberWeekTable(league) {
     var weekTable = document.getElementById("memberWeekTable");
     var tableBody = document.getElementById("member_week_table_body");
-    for (var i = 1; i <= league.settings.regularSeasonLength; i++) {
+    for (var i = 1; i <= league.settings.seasonDuration.regularSeasonLength; i++) {
         var row = document.createElement("tr");
         var weekCell = document.createElement("td");
         var scoreCell = document.createElement("td");
