@@ -1,5 +1,6 @@
 function enableYearSelector(league: League): void {
     const yearSelector = document.getElementById("available_seasons");
+    yearSelector.style.display = null;
     league.settings.seasonDuration.yearsActive.forEach((year) => {
         const option = document.createElement("option");
         option.text = year.toString();

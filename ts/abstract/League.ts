@@ -789,7 +789,6 @@ abstract class League {
         // tslint:disable-next-line: no-console
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
-        enableYearSelector(this);
         createTeamMenu(this);
         createLeagueStackedGraph(this);
         createMemberStrengthScatterChart(this);

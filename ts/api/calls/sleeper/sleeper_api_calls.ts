@@ -119,7 +119,7 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
     const Weeks: Week[] = [];
     Promise.all(promises).then((weeks) => {
         weeks.forEach((week) => {
-            const isPlayoffs = (weekCounter >= settings.seasonDuration.startWeek);
+            const isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
             const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
             weekCounter += 1;

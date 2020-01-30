@@ -19,6 +19,7 @@ class SleeperLeague extends League {
         super.setPage();
         enableSeasonPortionSelector(this, this.settings.seasonDuration.currentMatchupPeriod >= this.settings.seasonDuration.regularSeasonLength);
         enableTradePage();
+        enableYearSelector(this);
         createLeagueTradeDiagram(this);
         constructTrades(this);
         generateTradeBlock(this);

@@ -712,7 +712,6 @@ var League = (function () {
     League.prototype.setPage = function () {
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
-        enableYearSelector(this);
         createTeamMenu(this);
         createLeagueStackedGraph(this);
         createMemberStrengthScatterChart(this);
@@ -1034,7 +1033,7 @@ function getSleeperMatchups(members, settings) {
     var Weeks = [];
     Promise.all(promises).then(function (weeks) {
         weeks.forEach(function (week) {
-            var isPlayoffs = (weekCounter >= settings.seasonDuration.startWeek);
+            var isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
             var weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder);
             Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
             weekCounter += 1;
@@ -2820,7 +2819,7 @@ function createTeamRadarChart(league, member) {
         window.myRadarChart = new Chart(document.getElementById("radar_chart_canvas").getContext("2d"), {
             type: "radar",
             data: {
-                labels: league.settings.positionInfo.getPositions,
+                labels: league.settings.positionInfo.getPositions(),
                 datasets: [
                     {
                         label: "Average",
@@ -3026,6 +3025,7 @@ function createTeamMenu(league) {
 }
 function enableYearSelector(league) {
     var yearSelector = document.getElementById("available_seasons");
+    yearSelector.style.display = null;
     league.settings.seasonDuration.yearsActive.forEach(function (year) {
         var option = document.createElement("option");
         option.text = year.toString();
@@ -4346,6 +4346,7 @@ var SleeperLeague = (function (_super) {
         _super.prototype.setPage.call(this);
         enableSeasonPortionSelector(this, this.settings.seasonDuration.currentMatchupPeriod >= this.settings.seasonDuration.regularSeasonLength);
         enableTradePage();
+        enableYearSelector(this);
         createLeagueTradeDiagram(this);
         constructTrades(this);
         generateTradeBlock(this);
