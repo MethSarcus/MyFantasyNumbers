@@ -76,7 +76,7 @@ function getMemberWeekTableData(league: League, week: Week, teamID: number) {
 function createMemberWeekTable(league: League): void {
     const weekTable = document.getElementById("memberWeekTable");
     const tableBody = document.getElementById("member_week_table_body");
-    for (let i = 1; i <= league.settings.regularSeasonLength; i++) {
+    for (let i = 1; i <= league.settings.seasonDuration.regularSeasonLength; i++) {
         const row = document.createElement("tr");
         const weekCell = document.createElement("td");
         const scoreCell = document.createElement("td");

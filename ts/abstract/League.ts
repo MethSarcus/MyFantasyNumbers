@@ -8,14 +8,14 @@ abstract class League {
     public seasonPortion: SEASON_PORTION;
     public weeklyPowerRanks: Map<number, WeeklyPowerRanks>;
     public leaguePlatform: PLATFORM;
-    constructor(id: string, season: number, weeks: Week[], members: Member[], settings: Settings, leagueName: string, leaguePlatform: PLATFORM) {
-        this.id = id;
+    constructor(weeks: Week[], members: Member[], settings: Settings, leaguePlatform: PLATFORM) {
+        this.id = settings.leagueInfo.leagueId;
         this.weeks = weeks;
-        this.season = season;
+        this.season = settings.leagueInfo.seasonId;
         this.members = members;
         this.settings = settings;
         this.seasonPortion = SEASON_PORTION.ALL;
-        this.leagueName = leagueName;
+        this.leagueName = settings.leagueInfo.leagueName;
         this.leaguePlatform = leaguePlatform;
     }
 
@@ -443,7 +443,7 @@ abstract class League {
 
     public getTeamAveragePointsPerPosition(teamID: number): number[] {
         const allPlayers = getSeasonPlayers(this, teamID);
-        const positions = this.settings.getPositions();
+        const positions = this.settings.positionInfo.getPositions();
         const scoreDict = new Map();
         const timesPlayedDict = new Map();
         const scores: number[] = [];
@@ -464,7 +464,7 @@ abstract class League {
 
     public getLeaguePointsPerPosition(): number[] {
         const allPlayers = getAllSeasonPlayers(this);
-        const positions = this.settings.getPositions();
+        const positions = this.settings.positionInfo.getPositions();
         const scoreDict = new Map();
         const scores: number[] = [];
         positions.forEach((position) => {
@@ -483,7 +483,7 @@ abstract class League {
 
     public getMemberTotalPointsPerPosition(teamID: number): number[] {
         const allPlayers = getSeasonPlayers(this, teamID);
-        const positions = this.settings.getPositions();
+        const positions = this.settings.positionInfo.getPositions();
         const scoreDict = new Map();
         const scores: number[] = [];
         positions.forEach((position) => {
@@ -521,7 +521,7 @@ abstract class League {
 
     public getMemberOpponentTotalPointsPerPosition(teamID: number): number[] {
         const allPlayers = getSeasonOpponentPlayers(this, teamID);
-        const positions = this.settings.getPositions();
+        const positions = this.settings.positionInfo.getPositions();
         const scoreDict = new Map();
         const scores: number[] = [];
         positions.forEach((position) => {
@@ -539,7 +539,7 @@ abstract class League {
 
     public getLeagueAveragePointsPerPosition(): number[] {
         const allPlayers = getAllSeasonPlayers(this);
-        const positions = this.settings.getPositions();
+        const positions = this.settings.positionInfo.getPositions();
         const scoreDict = new Map();
         const timesPlayedDict = new Map();
         const scores: number[] = [];
@@ -789,7 +789,6 @@ abstract class League {
         // tslint:disable-next-line: no-console
         document.getElementById("league_name_header").innerHTML = this.leagueName;
         enableButtons();
-        enableYearSelector(this);
         createTeamMenu(this);
         createLeagueStackedGraph(this);
         createMemberStrengthScatterChart(this);

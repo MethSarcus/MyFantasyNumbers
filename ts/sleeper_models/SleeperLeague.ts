@@ -10,15 +10,16 @@ class SleeperLeague extends League {
     public weeklyPowerRanks: Map<number, WeeklyPowerRanks>;
     public leaguePlatform: PLATFORM;
 
-    constructor(id: string, season: number, weeks: Week[], members: Member[], settings: Settings, leagueName: string, leaguePlatform: PLATFORM) {
-        super(id, season, weeks, members, settings, leagueName, leaguePlatform);
+    constructor(weeks: Week[], members: Member[], settings: SleeperSettings) {
+        super(weeks, members, settings, PLATFORM.SLEEPER);
     }
 
     public setPage() {
         console.log(this);
         super.setPage();
-        enableSeasonPortionSelector(this, this.settings.currentMatchupPeriod >= this.settings.regularSeasonLength);
+        enableSeasonPortionSelector(this, this.settings.seasonDuration.currentMatchupPeriod >= this.settings.seasonDuration.regularSeasonLength);
         enableTradePage();
+        enableYearSelector(this);
         createLeagueTradeDiagram(this);
         constructTrades(this);
         generateTradeBlock(this);

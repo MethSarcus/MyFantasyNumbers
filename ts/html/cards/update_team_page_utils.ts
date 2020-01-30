@@ -94,7 +94,7 @@ function updateTeamCard(league: League, member: Member): void {
     picture.addEventListener("error", fixNoImage);
     team.innerHTML = member.teamNameToString();
     owner.innerHTML = member.ownerToString();
-    if (league.settings.isActive) {
+    if (league.settings.seasonDuration.isActive) {
         finish.innerHTML = "Ranked " + member.rankToString() + " overall";
     } else {
         finish.innerHTML = "Finished " + member.finishToString() + " overall";

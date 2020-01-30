@@ -1,6 +1,6 @@
 function createPositionalCheckboxes(league: League) {
     const checkboxGroupContainer = document.getElementById("position_checkbox_container");
-    league.settings.positions.forEach((position) => {
+    league.settings.positionInfo.getPositions().forEach((position) => {
         checkboxGroupContainer.appendChild(createPositionCheckbox(position, league));
     })
 }
@@ -17,12 +17,12 @@ function createPositionCheckbox(position: string, league: League): HTMLDivElemen
     input.checked = true;
     input.onclick = () => {
             if (input.checked) {
-                const index = league.settings.excludedPositions.indexOf(positionToInt.get(position));
+                const index = league.settings.positionInfo.excludedPositions.indexOf(positionToInt.get(position));
                 if (index > -1) {
-                    league.settings.excludedPositions.splice(index, 1);
+                    league.settings.positionInfo.excludedPositions.splice(index, 1);
                 }
         } else {
-            league.settings.excludedPositions.push(positionToInt.get(position));
+            league.settings.positionInfo.excludedPositions.push(positionToInt.get(position));
         }
 
         league.resetStats();
