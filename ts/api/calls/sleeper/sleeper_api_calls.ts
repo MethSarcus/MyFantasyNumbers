@@ -257,3 +257,20 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
         league.setPage();
     });
 }
+
+function getPlayoffBrackets(league: SleeperLeague) {
+    const promises = [];
+    promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/winners_bracket"));
+    promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/losers_bracket"));
+
+    Promise.all(promises).then((bracketArray) => {
+        const winBracket = bracketArray[0];
+        const loseBracket = bracketArray[1];
+
+
+    });
+}
+
+function setSleeperRanks(league: SleeperLeague, winners_bracket, losers_bracket) {
+
+}
