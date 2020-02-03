@@ -24,6 +24,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             const draft = new SleeperDraftInfo(draftId, DRAFT_TYPE.SNAKE);
             const activeLineupSlots = rosters[0];
             const lineupSlots = rosters[0].concat(rosters[1]);
+            const playoffType = json.settings.playoff_type;
             // Not working for some reason on sleepers end
             // const startWeek = json.settings.start_week;
             const startWeek = 1;
@@ -40,7 +41,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 16 - playoffStartWeek, currentMatchupPeriod,
                 json.settings.last_scored_leg,
                 isActive,
-                [2019]);
+                [2019], playoffType);
 
             const leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
             const rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
@@ -254,7 +255,7 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
                 league.trades.push(new SleeperTrade(trade, lib));
             });
         });
-        league.setPage();
+        getPlayoffBrackets(league);
     });
 }
 
@@ -264,13 +265,42 @@ function getPlayoffBrackets(league: SleeperLeague) {
     promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/losers_bracket"));
 
     Promise.all(promises).then((bracketArray) => {
-        const winBracket = bracketArray[0];
-        const loseBracket = bracketArray[1];
-
-
+        const winBracket = bracketArray[0].response;
+        const loseBracket = bracketArray[1].response;
+        setSleeperRanks(league, winBracket, loseBracket);
+        league.setPage();
     });
 }
 
-function setSleeperRanks(league: SleeperLeague, winners_bracket, losers_bracket) {
+function setSleeperRanks(league: SleeperLeague, winners_bracket: SleeperPlayoffResponse[], losers_bracket: SleeperPlayoffResponse[]) {
+    // Playoff Type 1 = Toilet Bowel
+    // Playoff Type 2 = Consolation Bracket
+    winners_bracket.forEach((winBracket) => {
+        if (winBracket.hasOwnProperty("p")) {
+            const winnerId = winBracket.w;
+            const loserId = winBracket.l;
+            const winRank = winBracket.p;
+            const loseRank = winBracket.p + 1;
+            league.getMember(winnerId).stats.finalStanding = winRank;
+            league.getMember(loserId).stats.finalStanding = loseRank;
+        }
+    });
 
+    losers_bracket.forEach((loseBracket) => {
+        if (loseBracket.hasOwnProperty("p")) {
+            const winnerId = loseBracket.w;
+            const loserId = loseBracket.l;
+            let winRank;
+            let loseRank;
+            if (league.settings.seasonDuration.playoffType === 1) {
+                winRank = league.members.length - loseBracket.p + 1;
+                loseRank = league.members.length - loseBracket.p;
+            } else {
+
+            }
+            league.getMember(winnerId).stats.finalStanding = winRank;
+            league.getMember(loserId).stats.finalStanding = loseRank;
+            
+        }
+    });
 }
