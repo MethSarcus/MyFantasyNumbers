@@ -5,7 +5,7 @@ class SleeperLeague extends League {
     public season: number;
     public members: SleeperMember[];
     public trades: SleeperTrade[] = [];
-    public settings: Settings;
+    public settings: SleeperSettings;
     public seasonPortion: SEASON_PORTION;
     public weeklyPowerRanks: Map<number, WeeklyPowerRanks>;
     public leaguePlatform: PLATFORM;

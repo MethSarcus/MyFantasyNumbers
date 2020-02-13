@@ -954,6 +954,8 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
             var draft = new SleeperDraftInfo(draftId, DRAFT_TYPE.SNAKE);
             var activeLineupSlots = rosters[0];
             var lineupSlots = rosters[0].concat(rosters[1]);
+            var playoffType = json.settings.playoff_type;
+            var numPlayoffTeams = json.settings.playoff_teams;
             var startWeek = 1;
             var isActive = (json.status === "in_season" || json.status === "post_season");
             var scoringSettings = json.scoring_settings;
@@ -963,7 +965,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
                     divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
                 }
             }
-            var durationSettings = new SleeperSeasonDurationSettings(startWeek, 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, currentMatchupPeriod, json.settings.last_scored_leg, isActive, [2019]);
+            var durationSettings = new SleeperSeasonDurationSettings(startWeek, 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, currentMatchupPeriod, json.settings.last_scored_leg, isActive, [2019], playoffType, numPlayoffTeams);
             var leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
             var rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
             var settings = new SleeperSettings(scoringSettings, durationSettings, leagueInfo, draft, rosterInfo);
@@ -1166,7 +1168,50 @@ function getSleeperTrades(league, lib) {
                 league.trades.push(new SleeperTrade(trade, lib));
             });
         });
+        getPlayoffBrackets(league);
+    });
+}
+function getPlayoffBrackets(league) {
+    var promises = [];
+    promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/winners_bracket"));
+    promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/losers_bracket"));
+    Promise.all(promises).then(function (bracketArray) {
+        var winBracket = bracketArray[0].response;
+        var loseBracket = bracketArray[1].response;
+        setSleeperRanks(league, winBracket, loseBracket);
         league.setPage();
+    });
+}
+function setSleeperRanks(league, winners_bracket, losers_bracket) {
+    var playoffTeams = league.settings.seasonDuration.numPlayoffTeams;
+    winners_bracket.forEach(function (winBracket) {
+        if (winBracket.hasOwnProperty("p")) {
+            var winnerId = winBracket.w;
+            var loserId = winBracket.l;
+            var winRank = winBracket.p;
+            var loseRank = winBracket.p + 1;
+            league.getMember(winnerId).stats.finalStanding = winRank;
+            league.getMember(loserId).stats.finalStanding = loseRank;
+        }
+    });
+    losers_bracket.forEach(function (loseBracket) {
+        if (loseBracket.hasOwnProperty("p")) {
+            var winnerId = loseBracket.w;
+            var loserId = loseBracket.l;
+            var winRank = void 0;
+            var loseRank = void 0;
+            if (league.settings.seasonDuration.playoffType === 1) {
+                var loseBracketStartPosition = league.members.length - (league.members.length - playoffTeams);
+                winRank = loseBracketStartPosition + loseBracket.p;
+                loseRank = loseBracketStartPosition + loseBracket.p + 1;
+            }
+            else {
+                winRank = league.members.length - loseBracket.p + 1;
+                loseRank = league.members.length - loseBracket.p;
+            }
+            league.getMember(winnerId).stats.finalStanding = winRank;
+            league.getMember(loserId).stats.finalStanding = loseRank;
+        }
     });
 }
 function makeRequest(url) {
@@ -4800,9 +4845,11 @@ var SleeperPositionInfo = (function () {
 }());
 var SleeperSeasonDurationSettings = (function (_super) {
     __extends(SleeperSeasonDurationSettings, _super);
-    function SleeperSeasonDurationSettings(startWeek, regularSeasonLength, playoffLength, currentMatchupPeriod, last_scored_leg, isActive, yearsActive) {
+    function SleeperSeasonDurationSettings(startWeek, regularSeasonLength, playoffLength, currentMatchupPeriod, last_scored_leg, isActive, yearsActive, playoffType, numPlayoffTeams) {
         var _this = _super.call(this, startWeek, regularSeasonLength, playoffLength, currentMatchupPeriod, isActive, yearsActive) || this;
+        _this.playoffType = playoffType;
         _this.lastScoredLeg = last_scored_leg;
+        _this.numPlayoffTeams = numPlayoffTeams;
         return _this;
     }
     return SleeperSeasonDurationSettings;
