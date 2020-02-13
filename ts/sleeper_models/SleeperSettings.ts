@@ -1,6 +1,7 @@
 class SleeperSettings extends Settings {
     public scoringSettings: SleeperScoringSettings;
     public draft: SleeperDraftInfo;
+    public seasonDuration: SleeperSeasonDurationSettings;
 
     constructor(
         sleeperScoringSettings: SleeperScoringSettings,

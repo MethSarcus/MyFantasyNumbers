@@ -25,6 +25,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             const activeLineupSlots = rosters[0];
             const lineupSlots = rosters[0].concat(rosters[1]);
             const playoffType = json.settings.playoff_type;
+            const numPlayoffTeams = json.settings.playoff_teams;
             // Not working for some reason on sleepers end
             // const startWeek = json.settings.start_week;
             const startWeek = 1;
@@ -41,7 +42,10 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 16 - playoffStartWeek, currentMatchupPeriod,
                 json.settings.last_scored_leg,
                 isActive,
-                [2019], playoffType);
+                [2019],
+                playoffType,
+                numPlayoffTeams
+                );
 
             const leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
             const rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
@@ -273,8 +277,9 @@ function getPlayoffBrackets(league: SleeperLeague) {
 }
 
 function setSleeperRanks(league: SleeperLeague, winners_bracket: SleeperPlayoffResponse[], losers_bracket: SleeperPlayoffResponse[]) {
-    // Playoff Type 1 = Toilet Bowel
-    // Playoff Type 2 = Consolation Bracket
+    // Playoff Type 1 = Consolation Bracket
+    // Playoff Type 2 = Toilet Bowl
+    let playoffTeams = league.settings.seasonDuration.numPlayoffTeams;
     winners_bracket.forEach((winBracket) => {
         if (winBracket.hasOwnProperty("p")) {
             const winnerId = winBracket.w;
@@ -292,11 +297,17 @@ function setSleeperRanks(league: SleeperLeague, winners_bracket: SleeperPlayoffR
             const loserId = loseBracket.l;
             let winRank;
             let loseRank;
+
+            // When consolation bracket the start position becomes the best possible finish position and increments up
             if (league.settings.seasonDuration.playoffType === 1) {
+                let loseBracketStartPosition = league.members.length - (league.members.length - playoffTeams);
+                winRank = loseBracketStartPosition + loseBracket.p;
+                loseRank = loseBracketStartPosition + loseBracket.p + 1;
+
+            // When toilet bowl we subtract the bracket finish position from league size
+            } else {
                 winRank = league.members.length - loseBracket.p + 1;
                 loseRank = league.members.length - loseBracket.p;
-            } else {
-
             }
             league.getMember(winnerId).stats.finalStanding = winRank;
             league.getMember(loserId).stats.finalStanding = loseRank;
