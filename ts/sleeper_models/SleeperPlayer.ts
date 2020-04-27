@@ -13,6 +13,9 @@ class SleeperPlayer implements Player {
 
     constructor(playerID: string, weekNumber: number, lineupSlotID: number) {
         this.playerID = playerID;
+        if (playerID === "OAK") {
+            this.playerID = "LV";
+        }
         this.score = 0;
         this.projectedScore = 0;
         this.weekNumber = weekNumber;

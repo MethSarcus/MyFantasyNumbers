@@ -61,7 +61,11 @@ class SleeperMember implements Member {
         if (this.currentRosterIDs) {
             this.currentRosterIDs.forEach((id) => {
                 if (id !== null) {
-                    this.currentRoster.push(new SleeperBasePlayer(lib[id]));
+                    if (id === "OAK") {
+                        this.currentRoster.push(new SleeperBasePlayer(lib["LV"]));
+                    } else {
+                        this.currentRoster.push(new SleeperBasePlayer(lib[id]));
+                    }
                 }
             });
             this.setNicknames();

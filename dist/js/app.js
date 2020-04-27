@@ -1219,8 +1219,13 @@ function assignAllPlayerAttributes(weeks, settings, members) {
 }
 function getSleeperTrades(league, lib) {
     var promises = [];
-    for (var i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod - 1; i++) {
-        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
+    if (league.season === 2020) {
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/1"));
+    }
+    else {
+        for (var i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod - 1; i++) {
+            promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
+        }
     }
     updateLoadingText("Getting Transactions");
     Promise.all(promises).then(function (transactionArray) {
@@ -4521,7 +4526,12 @@ var SleeperMember = (function () {
         if (this.currentRosterIDs) {
             this.currentRosterIDs.forEach(function (id) {
                 if (id !== null) {
-                    _this.currentRoster.push(new SleeperBasePlayer(lib[id]));
+                    if (id === "OAK") {
+                        _this.currentRoster.push(new SleeperBasePlayer(lib["LV"]));
+                    }
+                    else {
+                        _this.currentRoster.push(new SleeperBasePlayer(lib[id]));
+                    }
                 }
             });
             this.setNicknames();
@@ -4563,6 +4573,9 @@ var SleeperMember = (function () {
 var SleeperPlayer = (function () {
     function SleeperPlayer(playerID, weekNumber, lineupSlotID) {
         this.playerID = playerID;
+        if (playerID === "OAK") {
+            this.playerID = "LV";
+        }
         this.score = 0;
         this.projectedScore = 0;
         this.weekNumber = weekNumber;

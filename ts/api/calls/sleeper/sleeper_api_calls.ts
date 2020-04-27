@@ -200,7 +200,7 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
                             (result[y] as SleeperWeekStats).calculatePlayerScore(settings.scoringSettings, player);
                             (result[y] as SleeperWeekStats).calculateProjectedPlayerScore(settings.scoringSettings, player);
                         });
-    
+
                         if (!matchup.byeWeek) {
                             matchup.away.lineup.forEach((player: SleeperPlayer) => {
                                 (result[y] as SleeperWeekStats).calculatePlayerScore(settings.scoringSettings, player);
@@ -314,8 +314,12 @@ function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, mem
 
 function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
     const promises = [];
-    for (let i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod - 1; i++) {
-        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
+    if (league.season === 2020) {
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/1"));
+    } else {
+        for (let i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod - 1; i++) {
+            promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
+        }
     }
     updateLoadingText("Getting Transactions");
     Promise.all(promises).then((transactionArray) => {
