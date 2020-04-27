@@ -3,6 +3,6 @@ class LeagueInfo {
         public leagueId: string, 
         public seasonId: number, 
         public activeSeasons: number[]) {
-            this.leagueId = leagueId.toString()
+            this.leagueId = leagueId.toString();
     }
 }

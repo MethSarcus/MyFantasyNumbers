@@ -148,6 +148,11 @@ abstract class League {
             weekPortion = this.weeks.filter((it) => {
                 return it.isPlayoffs === true;
             });
+        } else if (this.seasonPortion === SEASON_PORTION.PRE) {
+            this.seasonPortion = SEASON_PORTION.PRE;
+            weekPortion = this.weeks.filter((it) => {
+                return it.isPlayoffs === false;
+            });
         } else if (weekPortion === []) {
             this.seasonPortion = SEASON_PORTION.POST;
             weekPortion = this.weeks.filter((it) => {
