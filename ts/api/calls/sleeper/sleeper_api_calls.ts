@@ -2,8 +2,11 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done((json: SleeperLeagueResponse) => {
-        if (json.season === "2020") {
+        console.log(json);
+        if (json.season === "2020" && seasonID === 2020) {
             getNewSeasonSleeperSettings(leagueID, 2020);
+        } else if (json.season === "2020" && seasonID === 2019) {
+            getSleeperLeagueSettings(json.previous_league_id, 2019);
         } else {
             if (json == null) {
                 alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
@@ -42,7 +45,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 16 - playoffStartWeek, currentMatchupPeriod,
                 json.settings.last_scored_leg,
                 isActive,
-                [2019],
+                [seasonID],
                 playoffType,
                 numPlayoffTeams
                 );

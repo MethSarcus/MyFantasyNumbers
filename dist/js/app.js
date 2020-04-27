@@ -938,8 +938,12 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done(function (json) {
-        if (json.season === "2020") {
+        console.log(json);
+        if (json.season === "2020" && seasonID === 2020) {
             getNewSeasonSleeperSettings(leagueID, 2020);
+        }
+        else if (json.season === "2020" && seasonID === 2019) {
+            getSleeperLeagueSettings(json.previous_league_id, 2019);
         }
         else {
             if (json == null) {
@@ -971,7 +975,7 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
                     divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
                 }
             }
-            var durationSettings = new SleeperSeasonDurationSettings(startWeek, 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, currentMatchupPeriod, json.settings.last_scored_leg, isActive, [2019], playoffType, numPlayoffTeams);
+            var durationSettings = new SleeperSeasonDurationSettings(startWeek, 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, currentMatchupPeriod, json.settings.last_scored_leg, isActive, [seasonID], playoffType, numPlayoffTeams);
             var leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
             var rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
             var settings = new SleeperSettings(scoringSettings, durationSettings, leagueInfo, draft, rosterInfo);
@@ -3016,6 +3020,7 @@ function main() {
     if (leagueID !== undefined && seasonID !== undefined) {
         initCube();
         if (sleeperButton.checked) {
+            console.log(seasonID);
             getSleeperLeagueSettings(leagueID, seasonID);
         }
         else if (espnButton.checked) {
