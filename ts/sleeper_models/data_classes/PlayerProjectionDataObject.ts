@@ -1,7 +1,7 @@
 interface PlayerProjectionDataObject {
     week: number;
     team: string;
-    stats: Object;
+    stats: any;
     sport: string;
     season_type: string;
     season: string;

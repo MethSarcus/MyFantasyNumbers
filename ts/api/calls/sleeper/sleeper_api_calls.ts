@@ -168,28 +168,34 @@ function getSleeperRosters(members: SleeperMember[], settings: SleeperSettings) 
             });
         });
         updateLoadingText("Getting Matchups");
-        getSleeperMatchups(members.filter((member) => member.teamID !== undefined), settings);
+        if (settings.leagueInfo.seasonId == 2020) {
+            getSleeper2020Matchups(members.filter((member) => member.teamID !== undefined), settings);
+        } else {
+            getSleeperMatchups(members.filter((member) => member.teamID !== undefined), settings);
+        }
+        
     });
 }
 
 function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSettings) {
     const promises = [];
     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
-        for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
+        console.log(settings.seasonDuration.currentMatchupPeriod);
+        for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod - 2; i++) {
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
         }
+        console.log(promises);
         updateLoadingText("Getting weekly stats");
         let weekCounter = settings.seasonDuration.startWeek;
         const Weeks: Week[] = [];
         Promise.all(promises).then((weeks) => {
             weeks.forEach((week) => {
                 const isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
-                const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder);
+                const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder, settings.leagueInfo.seasonId);
                 Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
                 weekCounter += 1;
             });
-            
-            getSleeperWeekStats(settings.seasonDuration.startWeek, settings.seasonDuration.currentMatchupPeriod).then((result) => {
+            getSleeper2020WeekStats(settings.seasonDuration.startWeek, settings.seasonDuration.currentMatchupPeriod).then((result) => {
                 for (let y = 0; y < result.length; y++) {
                     (Weeks as Week[])[y].matchups.forEach((matchup) => {
                         matchup.home.lineup.forEach((player) => {
@@ -230,7 +236,63 @@ function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSetti
     }
 }
 
+// function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSettings) {
+//     const promises = [];
+//     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
+//         for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
+//             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
+//         }
+//         updateLoadingText("Getting weekly stats");
+//         let weekCounter = settings.seasonDuration.startWeek;
+//         const Weeks: Week[] = [];
+//         Promise.all(promises).then((weeks) => {
+//             weeks.forEach((week) => {
+//                 const isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
+//                 const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder, settings.leagueInfo.seasonId);
+//                 Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
+//                 weekCounter += 1;
+//             });
+//             Weeks.forEach(week => {
+//                 week.matchups.forEach(matchup => {
+//                     matchup.home.lineup.forEach((player) => {
+//                         (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
+//                         (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
+//                         });
+//                     if (matchup.home.score === null) {
+//                         matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
+//                         matchup.setMatchupStats();
+//                     }
+//                     matchup.home.bench.forEach((player) => {
+//                         (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
+//                         (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
+//                     });
+    
+//                     if (!matchup.byeWeek) {
+//                         matchup.away.lineup.forEach((player: SleeperPlayer) => {
+//                             (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
+//                         (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
+//                         });
+//                         if (matchup.away.score === null) {
+//                             matchup.away.score = matchup.away.getTeamScore(matchup.away.lineup);
+//                             matchup.setMatchupStats();
+//                         }
+//                          matchup.away.bench.forEach((player: SleeperPlayer) => {
+//                             (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
+//                             (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
+//                         });
+//                     }
+//                 });
+//             });          
+//             assignAllPlayerAttributes(Weeks, settings, members);
+//         });
+//     } else {
+//         console.log("Getting player stats skipped");
+//         assignAllPlayerAttributes([], settings, members);
+//     }
+// }
+
 function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings) {
+    console.log(settings);
     const promises = [];
     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
         for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
@@ -242,7 +304,7 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
         Promise.all(promises).then((weeks) => {
             weeks.forEach((week) => {
                 const isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
-                const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder);
+                const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder, settings.leagueInfo.seasonId);
                 Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
                 weekCounter += 1;
             });
@@ -287,7 +349,7 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
     }
 }
 
-function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number, isPlayoff: boolean, lineupOrder: string[]): Matchup[] {
+function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number, isPlayoff: boolean, lineupOrder: string[], seasonID: number): Matchup[] {
     const allTeams = (teams).map((team: SleeperTeamResponse) => {
         return new SleeperTeam(team.starters, team.players, team.points, team.matchup_id, team.roster_id, findOpponent(teams, team.roster_id, team.matchup_id), weekNumber, lineupOrder);
     });
@@ -447,12 +509,4 @@ function setSleeperRanks(league: SleeperLeague, winners_bracket: SleeperPlayoffR
             league.getMember(loserId).stats.finalStanding = loseRank;
         }
     });
-}
-
-function retrieveAllInvolvedPlayers(weeks: Week[]): number[] {
-    let allPlayers = []
-    weeks.forEach(week => {
-        
-    });
-    return;
 }
