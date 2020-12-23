@@ -30,13 +30,7 @@ function selectedPlatform(button: HTMLButtonElement): void {
     const children = seasonIDSelector.childNodes;
     if (button.value === "espn") {
         children.forEach((option) => {
-            if ((option as HTMLSelectElement).value !== "2019") {
-                (option as HTMLSelectElement).disabled = true;
-            } else {
                 (option as HTMLSelectElement).disabled = false;
-                (option as HTMLSelectElement).setAttribute("checked", "checked");
-                (option as HTMLSelectElement).setAttribute("selected", "true");
-            }
         });
     } else {
         children.forEach((option) => {

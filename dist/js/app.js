@@ -3034,14 +3034,7 @@ function selectedPlatform(button) {
     var children = seasonIDSelector.childNodes;
     if (button.value === "espn") {
         children.forEach(function (option) {
-            if (option.value !== "2019") {
-                option.disabled = true;
-            }
-            else {
-                option.disabled = false;
-                option.setAttribute("checked", "checked");
-                option.setAttribute("selected", "true");
-            }
+            option.disabled = false;
         });
     }
     else {
