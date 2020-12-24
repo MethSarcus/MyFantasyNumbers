@@ -53,12 +53,12 @@ function makeSleeperPlayers(players: Player[]): SleeperPlayer[] {
 
 function getSleeper2020WeekStats(startWeek: number, lastScoredLeg: number): Promise<any> {
     const statPromises = [];
-    for (let i = startWeek; i <= lastScoredLeg; i++) {
+    for (let i = startWeek + 1; i < lastScoredLeg; i++) {
         statPromises.push(makeRequest("./assets/weekstats/week_" + i + "_stats.json"));
     }
 
     const projectionPromises = [];
-    for (let i = startWeek; i <= lastScoredLeg; i++) {
+    for (let i = startWeek + 1; i < lastScoredLeg; i++) {
         projectionPromises.push(makeRequest("./assets/weekstats/week_" + i + "_projections.json"));
     }
     const allPromises = statPromises.concat(projectionPromises);

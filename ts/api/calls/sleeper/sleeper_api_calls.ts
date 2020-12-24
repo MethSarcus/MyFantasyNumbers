@@ -3,7 +3,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
         path: "league/" + leagueID.toString()
     }).done((json: SleeperLeagueResponse) => {
         console.log(json);
-        if (json.season === "2020" && seasonID === 2020) {
+        if (json.season == "2020" && seasonID == 2020) {
             getNewSeasonSleeperSettings(leagueID, 2020);
         } else if (json.season === "2020" && seasonID === 2019) {
             getSleeperLeagueSettings(json.previous_league_id, 2019);
@@ -30,8 +30,7 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
             const playoffType = json.settings.playoff_type;
             const numPlayoffTeams = json.settings.playoff_teams;
             // Not working for some reason on sleepers end
-            // const startWeek = json.settings.start_week;
-            const startWeek = 1;
+            const startWeek = json.settings.start_week;
             const isActive = (json.status === "in_season" || json.status === "post_season");
             const scoringSettings: SleeperScoringSettings = json.scoring_settings;
             const divisions = [];
@@ -77,7 +76,7 @@ function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
             const leagueAvatar = json.avatar;
             const draftId = json.draft_id;
             const playoffStartWeek = json.settings.playoff_week_start;
-            const currentMatchupPeriod = 0;
+            const currentMatchupPeriod = json.settings.last_scored_leg;
             const previousLeagueId = json.previous_league_id;
             const numDivisions = json.settings.divisions;
             const draft = new SleeperDraftInfo(draftId, DRAFT_TYPE.SNAKE);
@@ -86,8 +85,7 @@ function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
             const playoffType = json.settings.playoff_type;
             const numPlayoffTeams = json.settings.playoff_teams;
             // Not working for some reason on sleepers end
-            // const startWeek = json.settings.start_week;
-            const startWeek = 0;
+            const startWeek = json.settings.start_week;
             const isActive = (json.status === "in_season" || json.status === "post_season");
             const scoringSettings: SleeperScoringSettings = json.scoring_settings;
             const divisions = [];
@@ -96,7 +94,7 @@ function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
                     divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
                 }
             }
-            const durationSettings = new SleeperSeasonDurationSettings(0,
+            const durationSettings = new SleeperSeasonDurationSettings(startWeek,
                 16 - (16 - playoffStartWeek),
                 16 - playoffStartWeek, currentMatchupPeriod,
                 json.settings.last_scored_leg,
@@ -167,6 +165,7 @@ function getSleeperRosters(members: SleeperMember[], settings: SleeperSettings) 
                 }
             });
         });
+        console.log(settings);
         updateLoadingText("Getting Matchups");
         if (settings.leagueInfo.seasonId == 2020) {
             getSleeper2020Matchups(members.filter((member) => member.teamID !== undefined), settings);
@@ -179,12 +178,13 @@ function getSleeperRosters(members: SleeperMember[], settings: SleeperSettings) 
 
 function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSettings) {
     const promises = [];
+    console.log(settings.seasonDuration.currentMatchupPeriod);
     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
         console.log(settings.seasonDuration.currentMatchupPeriod);
-        for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod - 2; i++) {
+        console.log(settings.seasonDuration.startWeek);
+        for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
         }
-        console.log(promises);
         updateLoadingText("Getting weekly stats");
         let weekCounter = settings.seasonDuration.startWeek;
         const Weeks: Week[] = [];
@@ -227,6 +227,7 @@ function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSetti
                         }
                     });
                 }
+                console.log(Weeks);
                 assignAllPlayerAttributes(Weeks, settings, members);
             });
         });
@@ -236,61 +237,6 @@ function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSetti
     }
 }
 
-// function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSettings) {
-//     const promises = [];
-//     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
-//         for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
-//             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
-//         }
-//         updateLoadingText("Getting weekly stats");
-//         let weekCounter = settings.seasonDuration.startWeek;
-//         const Weeks: Week[] = [];
-//         Promise.all(promises).then((weeks) => {
-//             weeks.forEach((week) => {
-//                 const isPlayoffs = (weekCounter > settings.seasonDuration.regularSeasonLength);
-//                 const weekMatches = getSleeperWeekMatchups(week.response, weekCounter, isPlayoffs, settings.positionInfo.lineupOrder, settings.leagueInfo.seasonId);
-//                 Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
-//                 weekCounter += 1;
-//             });
-//             Weeks.forEach(week => {
-//                 week.matchups.forEach(matchup => {
-//                     matchup.home.lineup.forEach((player) => {
-//                         (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
-//                         (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
-//                         });
-//                     if (matchup.home.score === null) {
-//                         matchup.home.score = matchup.home.getTeamScore(matchup.home.lineup);
-//                         matchup.setMatchupStats();
-//                     }
-//                     matchup.home.bench.forEach((player) => {
-//                         (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
-//                         (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
-//                     });
-    
-//                     if (!matchup.byeWeek) {
-//                         matchup.away.lineup.forEach((player: SleeperPlayer) => {
-//                             (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
-//                         (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
-//                         });
-//                         if (matchup.away.score === null) {
-//                             matchup.away.score = matchup.away.getTeamScore(matchup.away.lineup);
-//                             matchup.setMatchupStats();
-//                         }
-//                          matchup.away.bench.forEach((player: SleeperPlayer) => {
-//                             (player as Sleeper2020Player).calculatePlayerScore(settings.scoringSettings);
-//                             (player as Sleeper2020Player).calculatePlayerProjectedScore(settings.scoringSettings);;
-//                         });
-//                     }
-//                 });
-//             });          
-//             assignAllPlayerAttributes(Weeks, settings, members);
-//         });
-//     } else {
-//         console.log("Getting player stats skipped");
-//         assignAllPlayerAttributes([], settings, members);
-//     }
-// }
-
 function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings) {
     console.log(settings);
     const promises = [];
@@ -299,7 +245,7 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
         }
         updateLoadingText("Getting weekly stats");
-        let weekCounter = settings.seasonDuration.startWeek;
+        let weekCounter = 1;
         const Weeks: Week[] = [];
         Promise.all(promises).then((weeks) => {
             weeks.forEach((week) => {
@@ -309,7 +255,7 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
                 weekCounter += 1;
             });
             getSleeperWeekStats(settings.seasonDuration.startWeek, settings.seasonDuration.currentMatchupPeriod).then((result) => {
-                for (let y = 0; y < result.length; y++) {
+                for (let y = 1; y < result.length; y++) {
                     (Weeks as Week[])[y].matchups.forEach((matchup) => {
                         matchup.home.lineup.forEach((player) => {
                             (result[y] as SleeperWeekStats).calculatePlayerScore(settings.scoringSettings, player);
@@ -378,7 +324,11 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
 
 function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, members: SleeperMember[]) {
     updateLoadingText("Getting Player Stats");
-    makeRequest("./assets/player_library.json").then((result) => {
+    let playerlib = "./assets/player_library.json";
+    if (settings.leagueInfo.seasonId == 2020) {
+        playerlib = "./assets/sleeper2020players.json";
+    }
+    makeRequest(playerlib).then((result) => {
         const lib = (result.response as SleeperPlayerLibrary);
         weeks.forEach((week) => {
             week.matchups.forEach((matchup) => {
@@ -423,7 +373,7 @@ function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, mem
         });
         let league;
 
-        if (settings.leagueInfo.seasonId === 2020) {
+        if (settings.leagueInfo.seasonId === 2021) {
             console.log("Pre Season");
             league = new SleeperPreSeasonLeague(weeks, members, settings);
         } else {
