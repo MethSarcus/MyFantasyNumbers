@@ -1087,10 +1087,7 @@ function getSleeperRosters(members, settings) {
 }
 function getSleeper2020Matchups(members, settings) {
     var promises = [];
-    console.log(settings.seasonDuration.currentMatchupPeriod);
     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
-        console.log(settings.seasonDuration.currentMatchupPeriod);
-        console.log(settings.seasonDuration.startWeek);
         for (var i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
         }
@@ -1138,7 +1135,6 @@ function getSleeper2020Matchups(members, settings) {
                 for (var y = 0; y < result.length; y++) {
                     _loop_2(y);
                 }
-                console.log(Weeks_1);
                 assignAllPlayerAttributes(Weeks_1, settings, members);
             });
         });
@@ -1149,7 +1145,6 @@ function getSleeper2020Matchups(members, settings) {
     }
 }
 function getSleeperMatchups(members, settings) {
-    console.log(settings);
     var promises = [];
     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
         for (var i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
