@@ -6,7 +6,7 @@ function enableSeasonPortionSelector(league: League, isPlayoffs: boolean): void 
         document.getElementById(SEASON_PORTION.REGULAR).classList.add("active");
         (document.getElementById("post_radio_button") as HTMLButtonElement).disabled = true;
         (document.getElementById("complete_radio_button") as HTMLButtonElement).disabled = true;
-    } else if (league.settings.regularSeasonLength === 0) {
+    } else if (league.settings.seasonDuration.regularSeasonLength === 0) {
         document.getElementById(SEASON_PORTION.ALL).classList.add("disabled");
         document.getElementById(SEASON_PORTION.REGULAR).classList.add("disabled");
         (document.getElementById("regular_radio_button") as HTMLButtonElement).disabled = true;

@@ -10,16 +10,17 @@ function main() {
     if (leagueID !== undefined && seasonID !== undefined) {
         initCube();
         if (sleeperButton.checked) {
+            console.log(seasonID);
             getSleeperLeagueSettings(leagueID, seasonID);
         } else if (espnButton.checked) {
-            if (localStorage.getItem(leagueID + seasonID)) {
-                const jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
-                const restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
-                restoredLeague.setPage();
-            } else {
+            // if (localStorage.getItem(leagueID + seasonID)) {
+            //     const jsonLeague = JSON.parse(localStorage.getItem(leagueID + seasonID));
+            //     const restoredLeague = ESPNLeague.convertESPNFromJson(jsonLeague);
+            //     restoredLeague.setPage();
+            // } else {
                 localStorage.clear();
                 getESPNSettings(leagueID, seasonID);
-            }
+            // }
         }
     }
 }
@@ -29,13 +30,7 @@ function selectedPlatform(button: HTMLButtonElement): void {
     const children = seasonIDSelector.childNodes;
     if (button.value === "espn") {
         children.forEach((option) => {
-            if ((option as HTMLSelectElement).value !== "2019") {
-                (option as HTMLSelectElement).disabled = true;
-            } else {
                 (option as HTMLSelectElement).disabled = false;
-                (option as HTMLSelectElement).setAttribute("checked", "checked");
-                (option as HTMLSelectElement).setAttribute("selected", "true");
-            }
         });
     } else {
         children.forEach((option) => {

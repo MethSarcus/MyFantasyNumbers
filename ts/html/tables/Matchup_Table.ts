@@ -29,14 +29,14 @@ function getLineups(league: League, matchup: Matchup) {
         lineups.push(matchup.home.lineup);
         lineups.push(matchup.home.bench);
     } else if (document.getElementById("modal-home-optimal-lineup").classList.contains("active")) {
-        const optimalLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const optimalLineup = getOptimalLineup(league.settings.positionInfo.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.positionInfo.excludedLineupSlots, league.settings.positionInfo.excludedPositions);
         const optimalLineupBench = matchup.home.getAllPlayers().filter((player) => {
             return !optimalLineup.includes(player);
         });
         lineups.push(optimalLineup);
         lineups.push(optimalLineupBench);
     } else if (document.getElementById("modal-home-opslap").classList.contains("active")) {
-        const projectedOptimalLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const projectedOptimalLineup = getOptimalProjectedLineup(league.settings.positionInfo.activeLineupSlots, matchup.home.getAllPlayers(), league.settings.positionInfo.excludedLineupSlots, league.settings.positionInfo.excludedPositions);
         const projectedOptimalLineupBench = matchup.home.getAllPlayers().filter((player) => {
             return !projectedOptimalLineup.includes(player);
         });
@@ -48,14 +48,14 @@ function getLineups(league: League, matchup: Matchup) {
         lineups.push(matchup.away.lineup);
         lineups.push(matchup.away.bench);
     } else if (document.getElementById("modal-away-optimal-lineup").classList.contains("active")) {
-        const optimalAwayLineup = getOptimalLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const optimalAwayLineup = getOptimalLineup(league.settings.positionInfo.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.positionInfo.excludedLineupSlots, league.settings.positionInfo.excludedPositions);
         const optimalAwayLineupBench = matchup.away.getAllPlayers().filter((player) => {
             return !optimalAwayLineup.includes(player);
         });
         lineups.push(optimalAwayLineup);
         lineups.push(optimalAwayLineupBench);
     } else if (document.getElementById("modal-away-opslap").classList.contains("active")) {
-        const projectedOptimalAwayLineup = getOptimalProjectedLineup(league.settings.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.excludedLineupSlots, league.settings.excludedPositions);
+        const projectedOptimalAwayLineup = getOptimalProjectedLineup(league.settings.positionInfo.activeLineupSlots, matchup.away.getAllPlayers(), league.settings.positionInfo.excludedLineupSlots, league.settings.positionInfo.excludedPositions);
         const projectedOptimalAwayLineupBench = matchup.away.getAllPlayers().filter((player) => {
             return !projectedOptimalAwayLineup.includes(player);
         });
@@ -108,7 +108,7 @@ function generateModalScore(homeLineup: Player[], awayLineup: Player[], isBye: b
 function generateLineupTable(homeLineup: Player[], awayLineup: Player[], league: League, isBye: boolean): void {
     const tableBody = document.getElementById("matchup_modal_lineup_body");
     let index = 0;
-    league.settings.activeLineupSlots.forEach((slot) => {
+    league.settings.positionInfo.activeLineupSlots.forEach((slot) => {
         const slotId = slot[0];
         const slotAmount = slot[1];
         for (let i = 0; i < slotAmount; i++) {

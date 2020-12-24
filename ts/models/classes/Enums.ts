@@ -2,6 +2,7 @@ enum SEASON_PORTION {
     REGULAR = "Regular Season",
     POST = "Post-Season",
     ALL = "Complete Season",
+    PRE = "Pre Season"
 }
 
 enum FLEX_SLOT {

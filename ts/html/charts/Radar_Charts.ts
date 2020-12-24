@@ -25,7 +25,7 @@ function createTeamRadarChart(league: League, member: Member) {
     (window as any).myRadarChart = new Chart((document.getElementById("radar_chart_canvas") as HTMLCanvasElement).getContext("2d"), {
       type: "radar",
       data: {
-        labels: league.settings.positions,
+        labels: league.settings.positionInfo.getPositions(),
         datasets: [
           {
             label: "Average",
