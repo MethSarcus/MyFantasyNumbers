@@ -2,59 +2,73 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done((json: SleeperLeagueResponse) => {
+        console.log(leagueID);
+        console.log(seasonID);
         console.log(json);
-        if (json.season == "2020" && seasonID == 2020) {
-            getNewSeasonSleeperSettings(leagueID, 2020);
-        } else if (json.season === "2020" && seasonID === 2019) {
-            getSleeperLeagueSettings(json.previous_league_id, 2019);
-        } else {
-            if (json == null) {
-                alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
-                location.reload();
+        if (parseInt(json.season) != seasonID) {
+            if (parseInt(json.season) < seasonID) {
+                alert("Cannot look at future seasons of a league from a previous leagueID");
+                return;
+            } else if (json.previous_league_id != "0") {
+                getSleeperLeagueSettings(json.previous_league_id, seasonID);
+            } else {
+                alert("The season you selected does not exist for this league");
                 return;
             }
-            // tslint:disable-next-line: no-console
-            console.log(json);
-            const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
-            const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
-            const leagueName = json.name;
-            const leagueAvatar = json.avatar;
-            const draftId = json.draft_id;
-            const playoffStartWeek = json.settings.playoff_week_start;
-            const currentMatchupPeriod = json.settings.last_scored_leg;
-            const previousLeagueId = json.previous_league_id;
-            const numDivisions = json.settings.divisions;
-            const draft = new SleeperDraftInfo(draftId, DRAFT_TYPE.SNAKE);
-            const activeLineupSlots = rosters[0];
-            const lineupSlots = rosters[0].concat(rosters[1]);
-            const playoffType = json.settings.playoff_type;
-            const numPlayoffTeams = json.settings.playoff_teams;
-            // Not working for some reason on sleepers end
-            const startWeek = json.settings.start_week;
-            const isActive = (json.status === "in_season" || json.status === "post_season");
-            const scoringSettings: SleeperScoringSettings = json.scoring_settings;
-            const divisions = [];
-            if (json.metadata) {
-                for (let i = 0; i < numDivisions; i++) {
-                    divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
+        } else {
+            if (json.season == "2020" && seasonID == 2020) {
+                getNewSeasonSleeperSettings(leagueID, 2020);
+            } else if (json.season === "2020" && seasonID === 2019) {
+                getSleeperLeagueSettings(json.previous_league_id, 2019);
+            } else {
+                if (json == null) {
+                    alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
+                    location.reload();
+                    return;
                 }
+                // tslint:disable-next-line: no-console
+                console.log(json);
+                const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
+                const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
+                const leagueName = json.name;
+                const leagueAvatar = json.avatar;
+                const draftId = json.draft_id;
+                const playoffStartWeek = json.settings.playoff_week_start;
+                const currentMatchupPeriod = json.settings.last_scored_leg;
+                const previousLeagueId = json.previous_league_id;
+                const numDivisions = json.settings.divisions;
+                const draft = new SleeperDraftInfo(draftId, DRAFT_TYPE.SNAKE);
+                const activeLineupSlots = rosters[0];
+                const lineupSlots = rosters[0].concat(rosters[1]);
+                const playoffType = json.settings.playoff_type;
+                const numPlayoffTeams = json.settings.playoff_teams;
+                // Not working for some reason on sleepers end
+                const startWeek = json.settings.start_week;
+                const isActive = (json.status === "in_season" || json.status === "post_season");
+                const scoringSettings: SleeperScoringSettings = json.scoring_settings;
+                const divisions = [];
+                if (json.metadata) {
+                    for (let i = 0; i < numDivisions; i++) {
+                        divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
+                    }
+                }
+                const durationSettings = new SleeperSeasonDurationSettings(startWeek,
+                    16 - (16 - playoffStartWeek),
+                    16 - playoffStartWeek, currentMatchupPeriod,
+                    json.settings.last_scored_leg,
+                    isActive,
+                    [seasonID],
+                    playoffType,
+                    numPlayoffTeams
+                    );
+    
+                const leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
+                const rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
+                const settings = new SleeperSettings(scoringSettings, durationSettings, leagueInfo, draft, rosterInfo);
+                settings.positionInfo.excludedLineupSlots.push(88);
+                updateLoadingText("Getting Members");
+                getSleeperMembers(settings);
             }
-            const durationSettings = new SleeperSeasonDurationSettings(startWeek,
-                16 - (16 - playoffStartWeek),
-                16 - playoffStartWeek, currentMatchupPeriod,
-                json.settings.last_scored_leg,
-                isActive,
-                [seasonID],
-                playoffType,
-                numPlayoffTeams
-                );
-
-            const leagueInfo = new SleeperLeagueInfo(leagueName, leagueID, seasonID, [seasonID], leagueAvatar, previousLeagueId);
-            const rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
-            const settings = new SleeperSettings(scoringSettings, durationSettings, leagueInfo, draft, rosterInfo);
-            settings.positionInfo.excludedLineupSlots.push(88);
-            updateLoadingText("Getting Members");
-            getSleeperMembers(settings);
         }
     });
 }
