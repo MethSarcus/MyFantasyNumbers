@@ -21,7 +21,7 @@ class SleeperPreSeasonLeague extends League {
         createTeamMenu(this);
         enablePlugins();
         enableTradePage();
-        enableYearSelector(this);
+        //enableYearSelector(this);
         createLeagueTradeDiagram(this);
         constructTrades(this);
         generateTradeBlock(this);

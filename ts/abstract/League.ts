@@ -14,7 +14,11 @@ abstract class League {
         this.season = settings.leagueInfo.seasonId;
         this.members = members;
         this.settings = settings;
-        this.seasonPortion = SEASON_PORTION.ALL;
+        if (settings.leagueInfo.seasonId === 2021) {
+            this.seasonPortion = SEASON_PORTION.REGULAR;
+        } else {
+            this.seasonPortion = SEASON_PORTION.ALL;
+        }
         this.leagueName = settings.leagueInfo.leagueName;
         this.leaguePlatform = leaguePlatform;
     }
@@ -630,9 +634,9 @@ abstract class League {
 
     public getPowerRankDiffFinish(teamID: number): number {
         let finish = 1;
-        const pwrRankDiff = this.getMember(teamID).stats.powerRank - this.getMember(teamID).stats.rank;
+        const pwrRankDiff = this.getMember(teamID).stats.rank - this.getMember(teamID).stats.powerRank;
         this.members.forEach((member) => {
-            if (pwrRankDiff < (member.stats.rank - member.stats.powerRank) && member.teamID !== teamID) {
+            if (pwrRankDiff < (member.stats.powerRank - member.stats.rank) && member.teamID !== teamID) {
                 finish += 1;
             }
         });

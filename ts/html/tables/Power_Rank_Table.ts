@@ -24,7 +24,7 @@ function getPowerRankStatsRowData(member: Member): object {
         "Team": image.outerHTML + member.teamNameToString(),
         "Power Rank": member.stats.powerRank,
         "Actual Rank": member.stats.rank,
-        "Difference": member.stats.powerRank - member.stats.rank,
+        "Difference": member.stats.rank - member.stats.powerRank,
         "Power Record": member.powerRecordToString(),
     };
 }

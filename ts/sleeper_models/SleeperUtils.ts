@@ -79,10 +79,10 @@ function getSleeper2020WeekStats(startWeek: number, lastScoredLeg: number): Prom
     });
 }
 
-function getSleeperWeekStats(startWeek: number, lastScoredLeg: number): Promise<any> {
+function getSleeperWeekStats(startWeek: number, lastScoredLeg: number, seasonId: number): Promise<any> {
     const statPromises = [];
     for (let i = startWeek; i <= lastScoredLeg; i++) {
-        statPromises.push(makeRequest("./assets/st/" + i + ".json"));
+        statPromises.push(makeRequest("./assets/" + seasonId.toString() + "/st/" + i + ".json"));
     }
 
     const projectionPromises = [];

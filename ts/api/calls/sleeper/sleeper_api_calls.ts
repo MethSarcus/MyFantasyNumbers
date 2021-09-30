@@ -16,7 +16,9 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 return;
             }
         } else {
-            if (json.season == "2020" && seasonID == 2020) {
+            if (json.season == "2021" && seasonID == 2021) {
+                getNewSeasonSleeperSettings(leagueID, 2021);
+            } else if (json.season == "2020" && seasonID == 2020) {
                 getNewSeasonSleeperSettings(leagueID, 2020);
             } else if (json.season === "2020" && seasonID === 2019) {
                 getSleeperLeagueSettings(json.previous_league_id, 2019);
@@ -250,7 +252,7 @@ function getSleeper2020Matchups(members: SleeperMember[], settings: SleeperSetti
 function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings) {
     const promises = [];
     if (settings.seasonDuration.currentMatchupPeriod !== 0) {
-        for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.currentMatchupPeriod; i++) {
+        for (let i = settings.seasonDuration.startWeek; i <= settings.seasonDuration.lastScoredLeg; i++) {
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId + "/matchups/" + i));
         }
         updateLoadingText("Getting weekly stats");
@@ -263,8 +265,8 @@ function getSleeperMatchups(members: SleeperMember[], settings: SleeperSettings)
                 Weeks.push(new Week(weekCounter, isPlayoffs, weekMatches));
                 weekCounter += 1;
             });
-            getSleeperWeekStats(settings.seasonDuration.startWeek, settings.seasonDuration.currentMatchupPeriod).then((result) => {
-                for (let y = 1; y < result.length; y++) {
+            getSleeperWeekStats(settings.seasonDuration.startWeek, settings.seasonDuration.lastScoredLeg, settings.leagueInfo.seasonId).then((result) => {
+                for (let y = 0; y < result.length; y++) {
                     (Weeks as Week[])[y].matchups.forEach((matchup) => {
                         matchup.home.lineup.forEach((player) => {
                             (result[y] as SleeperWeekStats).calculatePlayerScore(settings.scoringSettings, player);
@@ -336,6 +338,8 @@ function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, mem
     let playerlib = "./assets/player_library.json";
     if (settings.leagueInfo.seasonId == 2020) {
         playerlib = "./assets/sleeper2020players.json";
+    } else if (settings.leagueInfo.seasonId === 2021) {
+        playerlib = "./assets/2021/player_library.json";
     }
     makeRequest(playerlib).then((result) => {
         const lib = (result.response as SleeperPlayerLibrary);
@@ -383,8 +387,9 @@ function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, mem
         let league;
 
         if (settings.leagueInfo.seasonId === 2021) {
-            console.log("Pre Season");
-            league = new SleeperPreSeasonLeague(weeks, members, settings);
+            league = new SleeperLeague(weeks, members, settings);
+            updateLoadingText("Setting Page");
+            league.setMemberStats(league.getSeasonPortionWeeks());
         } else {
             league = new SleeperLeague(weeks, members, settings);
             updateLoadingText("Setting Page");
@@ -410,7 +415,7 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
                 league.trades.push(new SleeperTrade(trade, lib));
             });
         });
-        if (league.settings.leagueInfo.seasonId === 2020) {
+        if (league.settings.leagueInfo.seasonId === 2021) {
             league.setPage();
         } else {
             getPlayoffBrackets(league);
@@ -419,16 +424,18 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
 }
 
 function getPlayoffBrackets(league: SleeperLeague) {
-    const promises = [];
-    promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/winners_bracket"));
-    promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/losers_bracket"));
-
-    Promise.all(promises).then((bracketArray) => {
-        const winBracket = bracketArray[0].response;
-        const loseBracket = bracketArray[1].response;
-        setSleeperRanks(league, winBracket, loseBracket);
-        league.setPage();
-    });
+    if (league.season != 2021) {
+        const promises = [];
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/winners_bracket"));
+        promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/losers_bracket"));
+    
+        Promise.all(promises).then((bracketArray) => {
+            const winBracket = bracketArray[0].response;
+            const loseBracket = bracketArray[1].response;
+            setSleeperRanks(league, winBracket, loseBracket);
+            league.setPage();
+        });
+    }
 }
 
 function setSleeperRanks(league: SleeperLeague, winners_bracket: SleeperPlayoffResponse[], losers_bracket: SleeperPlayoffResponse[]) {
