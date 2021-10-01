@@ -115,7 +115,7 @@ function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
                 16 - playoffStartWeek, currentMatchupPeriod,
                 json.settings.last_scored_leg,
                 isActive,
-                [2020],
+                [seasonID],
                 playoffType,
                 numPlayoffTeams
                 );
@@ -412,7 +412,9 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
     Promise.all(promises).then((transactionArray) => {
         transactionArray.map((it) => it.response).forEach((week) => {
             week.filter((it: SleeperTransactionResponse) => it.type === "trade" && it.status === "complete").forEach((trade: SleeperTransactionResponse) => {
-                league.trades.push(new SleeperTrade(trade, lib));
+                if (trade.consenter_ids.some(x => x > league.members.length) == false) {
+                    league.trades.push(new SleeperTrade(trade, lib));
+                }
             });
         });
         if (league.settings.leagueInfo.seasonId === 2021) {

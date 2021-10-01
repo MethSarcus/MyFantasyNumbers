@@ -643,12 +643,11 @@ var League = (function () {
         this.getSeasonPortionWeeks().forEach(function (week) {
             var match = week.getTeamMatchup(teamID);
             if (!match.byeWeek) {
-                if (match.getWinningTeam().teamID === teamID && match.isUpset) {
-                    upsetCount += 1;
+                if (match.getTeam(teamID).projectedScore < match.getTeam(match.getTeam(teamID).opponentID).projectedScore) {
                     underdogCount += 1;
                 }
-                else if (match.getWinningTeam().teamID !== teamID && !match.isUpset) {
-                    underdogCount += 1;
+                if (match.getTeam(teamID).projectedScore < match.getTeam(match.getTeam(teamID).opponentID).projectedScore && match.getWinningTeam().teamID === teamID) {
+                    upsetCount += 1;
                 }
             }
         });
@@ -1047,7 +1046,7 @@ function getNewSeasonSleeperSettings(leagueId, seasonID) {
                 divisions.push((json.metadata["division_" + (i + 1)], json.metadata["division_" + (i + 1) + "_avatar"]));
             }
         }
-        var durationSettings = new SleeperSeasonDurationSettings(startWeek, 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, currentMatchupPeriod, json.settings.last_scored_leg, isActive, [2020], playoffType, numPlayoffTeams);
+        var durationSettings = new SleeperSeasonDurationSettings(startWeek, 16 - (16 - playoffStartWeek), 16 - playoffStartWeek, currentMatchupPeriod, json.settings.last_scored_leg, isActive, [seasonID], playoffType, numPlayoffTeams);
         var leagueInfo = new SleeperLeagueInfo(leagueName, leagueId, seasonID, [seasonID], leagueAvatar, previousLeagueId);
         var rosterInfo = new PositionInfo(activeLineupSlots, lineupSlots, lineupOrder);
         var settings = new SleeperSettings(scoringSettings, durationSettings, leagueInfo, draft, rosterInfo);
@@ -1337,7 +1336,9 @@ function getSleeperTrades(league, lib) {
     Promise.all(promises).then(function (transactionArray) {
         transactionArray.map(function (it) { return it.response; }).forEach(function (week) {
             week.filter(function (it) { return it.type === "trade" && it.status === "complete"; }).forEach(function (trade) {
-                league.trades.push(new SleeperTrade(trade, lib));
+                if (trade.consenter_ids.some(function (x) { return x > league.members.length; }) == false) {
+                    league.trades.push(new SleeperTrade(trade, lib));
+                }
             });
         });
         if (league.settings.leagueInfo.seasonId === 2021) {
@@ -4133,7 +4134,7 @@ var Matchup = (function () {
             }
             this.marginOfVictory = (Math.abs(this.home.score - this.away.score));
             this.byeWeek = false;
-            if (this.projectedWinner !== this.winner) {
+            if (this.projectedWinner != this.winner) {
                 this.isUpset = true;
             }
             else {
@@ -4549,7 +4550,12 @@ var SleeperDraftPick = (function () {
         this.associatedRosterId = associatedRosterId;
     }
     SleeperDraftPick.prototype.toString = function (league) {
-        return this.season + " " + ordinal_suffix_of(this.round) + " (" + league.getMember(this.associatedRosterId).ownerToString() + ")";
+        if (league.members.length >= this.associatedRosterId) {
+            return this.season + " " + ordinal_suffix_of(this.round) + " (" + league.getMember(this.associatedRosterId).ownerToString() + ")";
+        }
+        else {
+            return this.season + " " + ordinal_suffix_of(this.round) + " (Team " + this.associatedRosterId + ")";
+        }
     };
     return SleeperDraftPick;
 }());
@@ -4980,7 +4986,7 @@ function getSleeperWeekStats(startWeek, lastScoredLeg, seasonId) {
     }
     var projectionPromises = [];
     for (var i = startWeek; i <= lastScoredLeg; i++) {
-        projectionPromises.push(makeRequest("./assets/prj/" + i + ".json"));
+        projectionPromises.push(makeRequest("./assets/" + seasonId.toString() + "/pr/" + i + ".json"));
     }
     var allPromises = statPromises.concat(projectionPromises);
     return Promise.all(allPromises).then(function (result) {

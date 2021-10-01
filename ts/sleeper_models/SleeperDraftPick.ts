@@ -14,6 +14,11 @@ class SleeperDraftPick {
     }
 
     public toString(league: League): string {
-        return this.season + " " + ordinal_suffix_of(this.round) + " (" + league.getMember(this.associatedRosterId).ownerToString() + ")";
+        if (league.members.length >= this.associatedRosterId) {
+            return this.season + " " + ordinal_suffix_of(this.round) + " (" + league.getMember(this.associatedRosterId).ownerToString() + ")";
+        } else {
+            return this.season + " " + ordinal_suffix_of(this.round) + " (Team " + this.associatedRosterId + ")";
+        }
+        
     }
 }

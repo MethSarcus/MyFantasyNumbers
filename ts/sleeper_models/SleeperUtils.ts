@@ -87,7 +87,7 @@ function getSleeperWeekStats(startWeek: number, lastScoredLeg: number, seasonId:
 
     const projectionPromises = [];
     for (let i = startWeek; i <= lastScoredLeg; i++) {
-        projectionPromises.push(makeRequest("./assets/prj/" + i + ".json"));
+        projectionPromises.push(makeRequest("./assets/" + seasonId.toString() + "/pr/" + i + ".json"));
     }
     const allPromises = statPromises.concat(projectionPromises);
     return Promise.all(allPromises).then((result) => {

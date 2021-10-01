@@ -698,11 +698,11 @@ abstract class League {
         this.getSeasonPortionWeeks().forEach((week) => {
             const match = week.getTeamMatchup(teamID);
             if (!match.byeWeek) {
-                if (match.getWinningTeam().teamID === teamID && match.isUpset) {
+                if (match.getTeam(teamID).projectedScore < match.getTeam(match.getTeam(teamID).opponentID).projectedScore) {
+                    underdogCount += 1;
+                }
+                if (match.getTeam(teamID).projectedScore < match.getTeam(match.getTeam(teamID).opponentID).projectedScore && match.getWinningTeam().teamID === teamID) {
                     upsetCount += 1;
-                    underdogCount += 1;
-                } else if (match.getWinningTeam().teamID !== teamID && !match.isUpset) {
-                    underdogCount += 1;
                 }
             }
         });

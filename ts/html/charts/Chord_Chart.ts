@@ -8,6 +8,8 @@ function createLeagueTradeDiagram(league: SleeperLeague): void {
     initChordChart(leagueTradeData);
 }
 
+
+
 function createLeagueTradeDiagramData(league: SleeperLeague): object[] {
     const tradeMap = new Map<string, number>();
     const tradeList: object[] = [];

@@ -43,7 +43,7 @@ class Matchup {
             }
             this.marginOfVictory = (Math.abs(this.home.score - this.away.score));
             this.byeWeek = false;
-            if (this.projectedWinner !== this.winner) {
+            if (this.projectedWinner != this.winner) {
                 this.isUpset = true;
             } else {
                 this.isUpset = false;
