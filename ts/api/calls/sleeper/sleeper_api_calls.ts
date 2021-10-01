@@ -404,7 +404,7 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
     if (league.season === 2020) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/1"));
     } else {
-        for (let i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod - 1; i++) {
+        for (let i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod; i++) {
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
         }
     }

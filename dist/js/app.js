@@ -1328,7 +1328,7 @@ function getSleeperTrades(league, lib) {
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/1"));
     }
     else {
-        for (var i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod - 1; i++) {
+        for (var i = 1; i <= league.settings.seasonDuration.currentMatchupPeriod; i++) {
             promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/transactions/" + i));
         }
     }
