@@ -10,6 +10,7 @@ class ESPNPlayer implements Player {
     public lineupSlotID: number;
     public weekNumber: number;
     public playerID: string;
+    public positions: string[];
     constructor(firstName: string, lastName: string, score: number, projectedScore: number,
                 position: string, realTeamID: string, playerID: string, lineupSlotID: number, eligibleSlots: number[], weekNumber: number) {
         this.firstName = firstName;
@@ -22,6 +23,7 @@ class ESPNPlayer implements Player {
         this.score = score;
         this.projectedScore = projectedScore;
         this.position = position;
+        this.positions = [position];
         this.realTeamID = realTeamID;
         this.playerID = playerID;
         this.lineupSlotID = lineupSlotID;

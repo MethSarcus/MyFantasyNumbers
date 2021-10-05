@@ -10,6 +10,7 @@ interface Player {
     weekNumber: number;
     lineupSlotID: number;
     playerID: string;
+    positions: string[];
 
     isEligible: (slot: number) => boolean;
 }

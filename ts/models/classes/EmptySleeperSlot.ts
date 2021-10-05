@@ -13,6 +13,7 @@ class EmptySleeperSlot implements SleeperPlayer {
     public jerseyNumber = -1;
     public espnID = "-1";
     public playerID = "-1";
+    public positions = ["EMPTY"];
     public isEligible: (slot: number) => true;
     constructor(positions: string[]) {
         this.currentSlot = positions;

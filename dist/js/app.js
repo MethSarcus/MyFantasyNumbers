@@ -1548,6 +1548,7 @@ var ESPNPlayer = (function () {
         this.score = score;
         this.projectedScore = projectedScore;
         this.position = position;
+        this.positions = [position];
         this.realTeamID = realTeamID;
         this.playerID = playerID;
         this.lineupSlotID = lineupSlotID;
@@ -4011,6 +4012,7 @@ var EmptySleeperSlot = (function () {
         this.jerseyNumber = -1;
         this.espnID = "-1";
         this.playerID = "-1";
+        this.positions = ["EMPTY"];
         this.currentSlot = positions;
     }
     return EmptySleeperSlot;
@@ -4024,6 +4026,7 @@ var EmptySlot = (function () {
         this.actualScore = 0;
         this.projectedScore = 0;
         this.position = "EMPTY";
+        this.positions = ["EMPTY"];
         this.realTeamID = "-1";
         this.jerseyNumber = -1;
         this.espnID = "-1";
@@ -5016,7 +5019,16 @@ function assignSleeperPlayerAttributes(player, playerAttributes) {
     player.firstName = playerAttributes.first_name;
     player.lastName = playerAttributes.last_name;
     player.position = playerAttributes.position;
-    player.eligibleSlots = eligibleSlotMap.get(positionToInt.get(playerAttributes.position));
+    player.positions = playerAttributes.fantasy_positions;
+    var ellSlots = [];
+    player.positions.forEach(function (pos) {
+        eligibleSlotMap.get(positionToInt.get(pos)).forEach(function (slot) {
+            if (!ellSlots.includes(slot)) {
+                ellSlots.push(slot);
+            }
+        });
+    });
+    player.eligibleSlots = ellSlots.sort();
     player.realTeamID = playerAttributes.team;
     if (playerAttributes.espn_id) {
         player.espnID = playerAttributes.espn_id.toString();
