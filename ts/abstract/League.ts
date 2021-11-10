@@ -422,7 +422,7 @@ abstract class League {
     }
 
     public getOverallWorstWeek(): Matchup {
-        let worstWeekMatchup;
+        let worstWeekMatchup: Matchup;
         let lowestScore: number = null;
         let i = 0;
         while (lowestScore === null) {
@@ -435,11 +435,11 @@ abstract class League {
         }
         this.getSeasonPortionWeeks().forEach((week) => {
             week.matchups.forEach((matchup) => {
-                if (matchup.home.score < lowestScore) {
+                if (matchup.home.score <= lowestScore) {
                     worstWeekMatchup = matchup;
                     lowestScore = matchup.home.score;
                 } else if (!matchup.byeWeek && matchup.away) {
-                    if (matchup.away.score < lowestScore) {
+                    if (matchup.away.score <= lowestScore) {
                         worstWeekMatchup = matchup;
                         lowestScore = matchup.away.score;
                     }

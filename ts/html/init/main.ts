@@ -10,7 +10,6 @@ function main() {
     if (leagueID !== undefined && seasonID !== undefined) {
         initCube();
         if (sleeperButton.checked) {
-            console.log(seasonID);
             getSleeperLeagueSettings(leagueID, seasonID);
         } else if (espnButton.checked) {
             // if (localStorage.getItem(leagueID + seasonID)) {

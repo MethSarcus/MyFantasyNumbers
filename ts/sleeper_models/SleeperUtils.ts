@@ -119,23 +119,25 @@ function findOpponent(teams: SleeperTeamResponse[], rosterId: number, matchupId:
 }
 
 function assignSleeperPlayerAttributes(player: SleeperPlayer, playerAttributes: SleeperPlayerLibraryEntry) {
-    player.firstName = playerAttributes.first_name;
-    player.lastName = playerAttributes.last_name;
-    player.position = playerAttributes.position;
-    player.positions = playerAttributes.fantasy_positions;
-    const ellSlots: number[] = [];
-    player.positions.forEach(pos => {
-        eligibleSlotMap.get(positionToInt.get(pos)).forEach(slot => {
-            if (!ellSlots.includes(slot)) {
-                ellSlots.push(slot);
-            }
+    if (player.playerID != "-1") {
+        player.firstName = playerAttributes.first_name;
+        player.lastName = playerAttributes.last_name;
+        player.position = playerAttributes.position;
+        player.positions = playerAttributes.fantasy_positions;
+        const ellSlots: number[] = [];
+        player.positions.forEach(pos => {
+            eligibleSlotMap.get(positionToInt.get(pos)).forEach(slot => {
+                if (!ellSlots.includes(slot)) {
+                    ellSlots.push(slot);
+                }
+            });
         });
-    });
-    player.eligibleSlots = ellSlots.sort();
-    player.realTeamID = playerAttributes.team;
-    if (playerAttributes.espn_id) {
-        player.espnID = playerAttributes.espn_id.toString();
-    } else {
-        player.espnID = player.playerID;
+        player.eligibleSlots = ellSlots.sort();
+        player.realTeamID = playerAttributes.team;
+        if (playerAttributes.espn_id) {
+            player.espnID = playerAttributes.espn_id.toString();
+        } else {
+            player.espnID = player.playerID;
+        }
     }
 }

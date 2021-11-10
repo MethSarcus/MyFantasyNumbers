@@ -13,7 +13,13 @@ class SleeperTeam implements Team {
     public projectedBestLineupPoints: number;
     constructor(lineup: string[], totalRoster: string[], score: number, matchupID: number, rosterID: number, opponentID: number, weekNumber: number, lineupOrder: string[]) {
         this.lineup = lineup.map((playerID, index) => {
-            return new SleeperPlayer(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
+            if (playerID != "0") {
+                return new SleeperPlayer(playerID, weekNumber, positionToInt.get(lineupOrder[index]));
+            } else {
+                var nonPlayer = new EmptySlot(positionToInt.get(lineupOrder[index]));
+                return nonPlayer;
+            }
+            
         });
         this.bench = totalRoster.filter((element) => {
             return !lineup.includes(element);

@@ -2,9 +2,6 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
     sleeper_request("get", {
         path: "league/" + leagueID.toString()
     }).done((json: SleeperLeagueResponse) => {
-        console.log(leagueID);
-        console.log(seasonID);
-        console.log(json);
         if (parseInt(json.season) != seasonID) {
             if (parseInt(json.season) < seasonID) {
                 alert("Cannot look at future seasons of a league from a previous leagueID");
@@ -29,7 +26,6 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                     return;
                 }
                 // tslint:disable-next-line: no-console
-                console.log(json);
                 const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
                 const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
                 const leagueName = json.name;
@@ -85,7 +81,6 @@ function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
                 return;
             }
             // tslint:disable-next-line: no-console
-            console.log(json);
             const rosters = convertSleeperRoster(json.roster_positions, json.settings.reserve_slots, json.settings.taxi_slots);
             const lineupOrder = json.roster_positions.filter((it) => it !== "BN");
             const leagueName = json.name;
@@ -181,7 +176,6 @@ function getSleeperRosters(members: SleeperMember[], settings: SleeperSettings) 
                 }
             });
         });
-        console.log(settings);
         updateLoadingText("Getting Matchups");
         if (settings.leagueInfo.seasonId == 2020) {
             getSleeper2020Matchups(members.filter((member) => member.teamID !== undefined), settings);
