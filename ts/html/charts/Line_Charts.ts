@@ -17,9 +17,9 @@ function createMainWeeklyLineChart(league: League) {
     league.getSeasonPortionWeeks().forEach((week) => {
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
         week.matchups.forEach((matchup) => {
-            weeklyScoreMap.get(matchup.home.teamID).push(matchup.home.score);
+            weeklyScoreMap.get(matchup.home.teamID).push(roundToHundred(matchup.home.score));
             if (!matchup.byeWeek) {
-                weeklyScoreMap.get(matchup.away.teamID).push(matchup.away.score);
+                weeklyScoreMap.get(matchup.away.teamID).push(roundToHundred(matchup.away.score));
             }
         });
     });
@@ -30,8 +30,8 @@ function createMainWeeklyLineChart(league: League) {
             datasets.push({
                 label: "League Average",
                 data: value,
-                borderColor: "black",
-                backGroundColor: "black",
+                borderColor: "grey",
+                backGroundColor: "grey",
                 fill: false,
                 lineTension: 0,
             });
@@ -109,11 +109,11 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
 
     league.weeks.forEach((week) => {
         if (!week.getTeamMatchup(member.teamID).byeWeek) {
-            weeklyScoreMap.get(-2).push(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score);
+            weeklyScoreMap.get(-2).push(roundToHundred(week.getTeamMatchup(member.teamID).getOpponent(member.teamID).score));
         } else {
             weeklyScoreMap.get(-2).push(null);
         }
-        weeklyScoreMap.get(member.teamID).push(week.getTeam(member.teamID).score);
+        weeklyScoreMap.get(member.teamID).push(roundToHundred(week.getTeam(member.teamID).score));
         weeklyScoreMap.get(-1).push(week.getWeekAverage());
     });
     const datasets: any = [];
@@ -122,9 +122,9 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
             datasets.push({
                 label: "League Average",
                 data: value,
-                borderColor: "darkgrey",
-                backgroundColor: "darkgrey",
-                pointBackgroundColor: "darkgrey",
+                borderColor: "grey",
+                backgroundColor: "grey",
+                pointBackgroundColor: "grey",
                 fill: false,
                 lineTension: 0,
             });
@@ -132,9 +132,9 @@ function createMemberWeeklyLineChart(league: League, member: Member) {
             datasets.push({
                 label: "Opponent",
                 data: value,
-                borderColor: "black",
-                backgroundColor: "black",
-                pointBackgroundColor: "black",
+                borderColor: "darkgrey",
+                backgroundColor: "darkgrey",
+                pointBackgroundColor: "darkgrey",
                 fill: false,
                 lineTension: 0,
             });
