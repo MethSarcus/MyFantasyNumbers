@@ -182,7 +182,10 @@ function getBestPositionPlayerAverageScore(league: League, position: any): numbe
 function getMemberColor(memberID: number): string {
     const colorCode = ["#3366cc", "#ff9900", "#109618", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395",
     "#3366cc", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac",
-    "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411"];
+    "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411",
+    '#ff00ff', '#ffd700', '#b0c4de', '#556b2f', '#00008b', '#32cd32', '#00ffff', '#0000ff', '#00ff00', '#adff2f', '#800000',
+     '#9400d3', '#00fa9a', '#3cb371', '#ff8c00', '#b8860b', '#ffb6c1', '#008080', '#00bfff', '#ee82ee', '#fa8072', '#f5f5dc',
+      '#1e90ff', '#008000', '#dc143c', '#7b68ee', '#f0e68c', '#ff4500', '#ff1493', '#483d8b', '#b03060', '#800080'];
 
     return colorCode[memberID];
 }
