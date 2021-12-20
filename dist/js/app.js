@@ -2615,9 +2615,9 @@ function createMemberWeeklyLineChart(league, member) {
             datasets.push({
                 label: "Opponent",
                 data: value,
-                borderColor: "darkgrey",
-                backgroundColor: "darkgrey",
-                pointBackgroundColor: "darkgrey",
+                borderColor: "#565656",
+                backgroundColor: "#565656",
+                pointBackgroundColor: "#565656",
                 fill: false,
                 lineTension: 0,
             });
