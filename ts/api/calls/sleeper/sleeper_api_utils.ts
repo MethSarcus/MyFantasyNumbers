@@ -32,14 +32,3 @@ function makeRequest(url: string): Promise<XMLHttpRequest> {
 
     });
 }
-
-function sleeper_request(t: string, d: object) {
-    return $.ajax({
-        type: t,
-        url: "./proxies/sleeper_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
-    });
-}

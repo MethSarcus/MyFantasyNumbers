@@ -1,6 +1,10 @@
 function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
-    sleeper_request("get", {
-        path: "league/" + leagueID.toString()
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + leagueID.toString(),
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done((json: SleeperLeagueResponse) => {
         if (parseInt(json.season) != seasonID) {
             if (parseInt(json.season) < seasonID) {
@@ -72,8 +76,12 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
 }
 
 function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
-    sleeper_request("get", {
-        path: "league/" + leagueId.toString()
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + leagueId.toString(),
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done((json: SleeperLeagueResponse) => {
             if (json == null) {
                 alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
@@ -125,8 +133,12 @@ function getNewSeasonSleeperSettings(leagueId: string, seasonID: number) {
 }
 
 function getSleeperMembers(settings: SleeperSettings) {
-    sleeper_request("get", {
-        path: "league/" + settings.leagueInfo.leagueId.toString() + "/users"
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId.toString() + "/users",
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done((json: SleeperUserResponse[]) => {
         const members: SleeperMember[] = [];
         json.forEach((member) => {
@@ -142,8 +154,12 @@ function getSleeperMembers(settings: SleeperSettings) {
 }
 
 function getSleeperRosters(members: SleeperMember[], settings: SleeperSettings) {
-    sleeper_request("get", {
-        path: "league/" + settings.leagueInfo.leagueId.toString() + "/rosters/"
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId.toString() + "/rosters/",
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done((json: SleeperRosterResponse[]) => {
         json.forEach((roster) => {
             const teamID = parseInt(roster.roster_id, 10);

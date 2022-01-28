@@ -943,8 +943,12 @@ function espn_request(t, d) {
 function getSleeper2020PlayerStats() {
 }
 function getSleeperLeagueSettings(leagueID, seasonID) {
-    sleeper_request("get", {
-        path: "league/" + leagueID.toString()
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + leagueID.toString(),
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done(function (json) {
         if (parseInt(json.season) != seasonID) {
             if (parseInt(json.season) < seasonID) {
@@ -1010,8 +1014,12 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
     });
 }
 function getNewSeasonSleeperSettings(leagueId, seasonID) {
-    sleeper_request("get", {
-        path: "league/" + leagueId.toString()
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + leagueId.toString(),
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done(function (json) {
         if (json == null) {
             alert("Something went wrong, make sure the leagueID was input correctly and the season you are looking up exists");
@@ -1051,8 +1059,12 @@ function getNewSeasonSleeperSettings(leagueId, seasonID) {
     });
 }
 function getSleeperMembers(settings) {
-    sleeper_request("get", {
-        path: "league/" + settings.leagueInfo.leagueId.toString() + "/users"
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId.toString() + "/users",
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done(function (json) {
         var members = [];
         json.forEach(function (member) {
@@ -1067,8 +1079,12 @@ function getSleeperMembers(settings) {
     });
 }
 function getSleeperRosters(members, settings) {
-    sleeper_request("get", {
-        path: "league/" + settings.leagueInfo.leagueId.toString() + "/rosters/"
+    $.ajax({
+        type: "get",
+        url: "https://api.sleeper.app/v1/league/" + settings.leagueInfo.leagueId.toString() + "/rosters/",
+        dataType: "json",
+        cache: false,
+        async: true,
     }).done(function (json) {
         json.forEach(function (roster) {
             var teamID = parseInt(roster.roster_id, 10);
@@ -1408,16 +1424,6 @@ function makeRequest(url) {
         };
         request.open("GET", url, true);
         request.send();
-    });
-}
-function sleeper_request(t, d) {
-    return $.ajax({
-        type: t,
-        url: "./proxies/sleeper_proxy.php",
-        dataType: "json",
-        data: d,
-        cache: false,
-        async: true,
     });
 }
 var TransactionMetadata;
@@ -2661,7 +2667,7 @@ function createMemberWeeklyLineChart(league, member) {
                 scales: {
                     yAxes: [{
                             ticks: {
-                                beginAtZero: true,
+                                beginAtZero: false,
                             }
                         }],
                     xAxes: [{
