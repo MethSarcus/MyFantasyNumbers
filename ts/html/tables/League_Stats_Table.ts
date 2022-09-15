@@ -35,7 +35,8 @@ function getLeagueStatsTableRowData(member: Member): object {
         PF: roundToHundred(member.stats.pf),
         OPSLAP: roundToHundred(member.stats.OPSLAP),
         PP: roundToHundred(member.stats.pp),
-        PA: roundToHundred(member.stats.pa)
+        PA: roundToHundred(member.stats.pa),
+        GP: roundToHundred(member.stats.gutPoints)
     };
 }
 
@@ -71,6 +72,9 @@ function initLeagueStatsTable(league: League) {
             {
                 data: "PA"
             },
+            {
+                data: "GP"
+            }
         ],
         createdRow( row: any, data: any, index: any ) {
             const member = league.getMemberByStats(data.PF, data.PA, data.PP, data.OPSLAP, data.Record);
