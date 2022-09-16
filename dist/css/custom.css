@@ -1,0 +1,383 @@
+.season-portion-button {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.container-fluid {
+  height: 100%;
+}
+
+#content-wrapper {
+  margin-top: 56px;
+}
+
+.mainDonut {
+  max-height: 75vh;
+  max-width: 75vh;
+}
+
+.mainChart {
+  max-height: 100vh;
+  max-width: 100vw;
+}
+
+.wrapper {
+  margin-top: 0 !important;
+}
+
+.padMe {
+  padding-left: 3px !important;
+}
+
+.score-widget-container {
+  background: #FFFFFF;
+  box-shadow: inset 0px 0px 100px rgba(0, 10, 255, 0.8);
+  border-radius: 15px;
+}
+
+.score-widget-main-text {
+  left: 0%;
+  right: 0%;
+  top: 20.78%;
+  font-size: 3em;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  line-height: normal;
+  text-align: center;
+  color: #000000;
+}
+
+.score-widget-catagory {
+  left: 0%;
+  right: 0%;
+  top: 5%;
+  bottom: 79.22%;
+  font-size: 1.5em;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  line-height: normal;
+  text-align: center;
+  color: #000000;
+}
+
+.score-widget-comparison {
+  left: 0%;
+  right: 44.16%;
+  top: 56.49%;
+  bottom: 0%;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  line-height: normal;
+  text-align: center;
+  color: #000000;
+}
+
+img.resize {
+  width: auto;
+  height: auto;
+  max-height: 75px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profileImage {
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.textFact {
+  background-color: lightgrey;
+  border-radius: 10px;
+  height: auto;
+  text-align: center;
+}
+
+#memberWeekTable {
+  width: 100% !important;
+}
+
+.donutchart {
+  max-height: 16em;
+  position: relative;
+}
+
+.DONUTCANVAS1 {
+  position: absolute;
+  top: 50%;
+  height: 100%;
+  width: 100%;
+  margin: 0 0 0 0;
+}
+
+#tabs-content {
+  padding-top: 16px;
+}
+
+.offcanvas a:focus {
+  color: blue;
+}
+
+.closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px !important;
+  margin-left: 50px;
+}
+
+#wrapper {
+  transition: margin-left 0.5s;
+}
+
+.breadcrumb {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+#league_name_header {
+  width: max-content;
+  line-height: auto;
+}
+
+#yearSelector {
+  color: black;
+}
+
+table.dataTable thead .sorting {
+  background: none;
+}
+table.dataTable thead .sorting_asc {
+  background: none;
+}
+table.dataTable thead .sorting_desc {
+  background: none;
+}
+
+.dataTables_info {
+  visibility: hidden;
+}
+
+.page-footer {
+  margin-top: 70px;
+  background-color: darkgrey;
+  color: white;
+  height: 100%;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+header {
+  overflow: auto;
+}
+
+#power_rank_table tr:hover {
+  background-color: #666 !important;
+  color: #f0f0f0;
+  color-adjust: economy !important;
+}
+
+img.newresize {
+  width: auto;
+  height: auto;
+  max-height: 100px;
+  max-width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5% !important;
+}
+
+#teamPill {
+  padding-left: 3em;
+  padding-right: 3em;
+}
+
+.nomarg {
+  margin: 0 !important;
+}
+
+.statWidget {
+  cursor: default;
+  color: white;
+  display: flex;
+  flex-flow: row nowrap;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 5px;
+}
+
+.statwidgetcatagory {
+  margin: auto;
+  color: black;
+  background-color: white;
+  font-size: 24px;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  border-radius: 5px;
+}
+
+.statwidgetcontent {
+  color: black;
+  flex: auto;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.5em;
+  border-radius: 0px 5px 5px 0px;
+}
+
+.c3-tooltip-container {
+  width: 30% !important;
+}
+
+.c3-tooltip {
+  width: 30% !important;
+}
+
+div.statWidget > div:nth-child(1) {
+  padding-left: 1em !important;
+  padding-right: 1em !important;
+}
+div.statWidget > div:nth-child(1) > h5:nth-child(1) {
+  margin-bottom: 0px !important;
+  margin-top: 0.5em !important;
+}
+div.statWidget > div:nth-child(1) > h4:nth-child(2) {
+  margin-bottom: 0.5em !important;
+}
+
+.league_trade {
+  margin: 16px 0;
+  box-shadow: 0 0 5px rgba(0,0,0,.05), 2px 2px 5px rgba(0,0,0,.1);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.league_trade:hover {
+  box-shadow: 0 0 10px rgba(0,0,0,.05), 4px 4px 10px rgba(0,0,0,.1);
+}
+
+.settingsMenuText {
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+}
+
+#SeasonSegment {
+  width: 80%;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.settings-checkbox {
+  margin-left: 20px;
+}
+
+.settingsRosterIncludes {
+  width: 80%;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.includes-checkbox {
+  color: white;
+}
+
+.specialInputGroup {
+  background-color: #fff;
+  display: block;
+  margin: 10px 0;
+  position: relative;
+  padding: 0px;
+  margin: auto;
+}
+.specialInputGroup label {
+  padding: 12px 30px;
+  width: 100%;
+  display: block;
+  text-align: left;
+  color: #3c454c;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 200ms ease-in;
+  overflow: hidden;
+}
+.specialInputGroup label:before {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: '';
+  background-color: #007bff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale3d(1, 1, 1);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  z-index: -1;
+}
+.specialInputGroup label:after {
+  width: 32px;
+  height: 32px;
+  content: '';
+  border: 2px solid #d1d7dc;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+  background-repeat: no-repeat;
+  background-position: 2px 3px;
+  border-radius: 50%;
+  z-index: 2;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 200ms ease-in;
+}
+.specialInputGroup input:checked ~ label {
+  color: #fff;
+}
+.specialInputGroup input:checked ~ label:before {
+  transform: translate(-50%, -50%) scale3d(56, 56, 1);
+  opacity: 1;
+}
+.specialInputGroup input:checked ~ label:after {
+  background-color: #54e0c7;
+  border-color: #54e0c7;
+}
+.specialInputGroup input {
+  width: 32px;
+  height: 32px;
+  order: 1;
+  z-index: 2;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: hidden;
+}
+
+#settingsContainer {
+  display:inline-block;
+  font-size: 40px;
+  line-height: 50px;
+  color:white;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.navbar-nav {
+  align-items: center;
+}
+
+#team_dropdown {
+  align-items: start;
+}
+
+/*# sourceMappingURL=custom.css.map */
