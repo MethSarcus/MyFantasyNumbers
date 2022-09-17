@@ -156,7 +156,7 @@ var League = (function () {
                 return it.isPlayoffs === false;
             });
         }
-        else if (weekPortion === []) {
+        else if (weekPortion.length == 0) {
             this.seasonPortion = SEASON_PORTION.POST;
             weekPortion = this.weeks.filter(function (it) {
                 return it.isPlayoffs === true;
@@ -1272,13 +1272,14 @@ function getSleeperWeekMatchups(teams, weekNumber, isPlayoff, lineupOrder, seaso
 function assignAllPlayerAttributes(weeks, settings, members) {
     updateLoadingText("Getting Player Stats");
     var playerlib = "./assets/player_library.json";
-    if (settings.leagueInfo.seasonId == 2020) {
+    if (settings.leagueInfo.seasonId == 2022) {
+        playerlib = "./assets/2022/player_library.json";
+    }
+    else if (settings.leagueInfo.seasonId == 2020) {
         playerlib = "./assets/sleeper2020players.json";
     }
     else if (settings.leagueInfo.seasonId === 2021) {
         playerlib = "./assets/2021/player_library.json";
-    } else if (settings.leagueInfo.seasonId === 2022) {
-        playerlib = "./assets/2022/player_library.json";
     }
     makeRequest(playerlib).then(function (result) {
         var lib = result.response;
@@ -3397,9 +3398,6 @@ function initLeagueStatsTable(league) {
             },
             {
                 data: "PA"
-            },
-            {
-                data: "GP"
             }
         ],
         createdRow: function (row, data, index) {
