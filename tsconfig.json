@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "outDir": "docs",
+        "outDir": "dics",
         "noImplicitAny": true,
-        "outFile": "docs/js/app.js",
+        "outFile": "dics/js/app.js",
         "allowJs": false,
         "target": "es5",
         "removeComments": true,
