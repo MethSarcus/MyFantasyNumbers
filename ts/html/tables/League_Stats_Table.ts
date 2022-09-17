@@ -71,9 +71,6 @@ function initLeagueStatsTable(league: League) {
             },
             {
                 data: "PA"
-            },
-            {
-                data: "GP"
             }
         ],
         createdRow( row: any, data: any, index: any ) {

@@ -14,7 +14,7 @@ abstract class League {
         this.season = settings.leagueInfo.seasonId;
         this.members = members;
         this.settings = settings;
-        if (settings.leagueInfo.seasonId === 2021) {
+        if (settings.leagueInfo.seasonId === 2022) {
             this.seasonPortion = SEASON_PORTION.REGULAR;
         } else {
             this.seasonPortion = SEASON_PORTION.ALL;
@@ -157,7 +157,7 @@ abstract class League {
             weekPortion = this.weeks.filter((it) => {
                 return it.isPlayoffs === false;
             });
-        } else if (weekPortion === []) {
+        } else if (weekPortion.length == 0) {
             this.seasonPortion = SEASON_PORTION.POST;
             weekPortion = this.weeks.filter((it) => {
                 return it.isPlayoffs === true;

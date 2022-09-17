@@ -17,7 +17,10 @@ function getSleeperLeagueSettings(leagueID: string, seasonID: number) {
                 return;
             }
         } else {
-            if (json.season == "2021" && seasonID == 2021) {
+            if (json.season == "2022" && seasonID == 2022) {
+                getNewSeasonSleeperSettings(leagueID, 2022);
+            }
+            else if (json.season == "2021" && seasonID == 2021) {
                 getNewSeasonSleeperSettings(leagueID, 2021);
             } else if (json.season == "2020" && seasonID == 2020) {
                 getNewSeasonSleeperSettings(leagueID, 2020);
@@ -346,7 +349,10 @@ function getSleeperWeekMatchups(teams: SleeperTeamResponse[], weekNumber: number
 function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, members: SleeperMember[]) {
     updateLoadingText("Getting Player Stats");
     let playerlib = "./assets/player_library.json";
-    if (settings.leagueInfo.seasonId == 2020) {
+    if (settings.leagueInfo.seasonId == 2022) {
+        playerlib = "./assets/2022/player_library.json";
+    }
+    else if (settings.leagueInfo.seasonId == 2020) {
         playerlib = "./assets/sleeper2020players.json";
     } else if (settings.leagueInfo.seasonId === 2021) {
         playerlib = "./assets/2021/player_library.json";
@@ -396,7 +402,7 @@ function assignAllPlayerAttributes(weeks: Week[], settings: SleeperSettings, mem
         });
         let league;
 
-        if (settings.leagueInfo.seasonId === 2021) {
+        if (settings.leagueInfo.seasonId === 2022) {
             league = new SleeperLeague(weeks, members, settings);
             updateLoadingText("Setting Page");
             league.setMemberStats(league.getSeasonPortionWeeks());
@@ -427,7 +433,7 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
                 }
             });
         });
-        if (league.settings.leagueInfo.seasonId === 2021) {
+        if (league.settings.leagueInfo.seasonId === 2022) {
             league.setPage();
         } else {
             getPlayoffBrackets(league);
@@ -436,7 +442,7 @@ function getSleeperTrades(league: SleeperLeague, lib: SleeperPlayerLibrary) {
 }
 
 function getPlayoffBrackets(league: SleeperLeague) {
-    if (league.season != 2021) {
+    if (league.season != 2022) {
         const promises = [];
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/winners_bracket"));
         promises.push(makeRequest("https://api.sleeper.app/v1/league/" + league.id + "/losers_bracket"));

@@ -20,7 +20,7 @@ var League = (function () {
         this.season = settings.leagueInfo.seasonId;
         this.members = members;
         this.settings = settings;
-        if (settings.leagueInfo.seasonId === 2021) {
+        if (settings.leagueInfo.seasonId === 2022) {
             this.seasonPortion = SEASON_PORTION.REGULAR;
         }
         else {
@@ -964,7 +964,10 @@ function getSleeperLeagueSettings(leagueID, seasonID) {
             }
         }
         else {
-            if (json.season == "2021" && seasonID == 2021) {
+            if (json.season == "2022" && seasonID == 2022) {
+                getNewSeasonSleeperSettings(leagueID, 2022);
+            }
+            else if (json.season == "2021" && seasonID == 2021) {
                 getNewSeasonSleeperSettings(leagueID, 2021);
             }
             else if (json.season == "2020" && seasonID == 2020) {
@@ -1274,7 +1277,7 @@ function assignAllPlayerAttributes(weeks, settings, members) {
     }
     else if (settings.leagueInfo.seasonId === 2021) {
         playerlib = "./assets/2021/player_library.json";
-    }else if (settings.leagueInfo.seasonId === 2022) {
+    } else if (settings.leagueInfo.seasonId === 2022) {
         playerlib = "./assets/2022/player_library.json";
     }
     makeRequest(playerlib).then(function (result) {
@@ -1321,7 +1324,7 @@ function assignAllPlayerAttributes(weeks, settings, members) {
             member.setRosterAttributes(lib);
         });
         var league;
-        if (settings.leagueInfo.seasonId === 2021) {
+        if (settings.leagueInfo.seasonId === 2022) {
             league = new SleeperLeague(weeks, members, settings);
             updateLoadingText("Setting Page");
             league.setMemberStats(league.getSeasonPortionWeeks());
